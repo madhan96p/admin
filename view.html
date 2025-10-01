@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Duty Slip | Shrish Admin</title>
+    <link rel="stylesheet" href="/assets/css/duty_slip_form.css"> 
+    <style>
+        /* Simple style to make the print view visible on screen */
+        body { background-color: #f4f7fa; display: flex; justify-content: center; align-items: flex-start; padding: 2rem; }
+        .duty-slip-print { display: block !important; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+    <div class="duty-slip-print">
+        <table class="print-main-table">
+            <tbody>
+                <tr>
+                    <td>
+                        <table class="print-header-table">
+                            </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table class="print-body-table">
+                            </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table class="print-usage-table">
+                            </table>
+                    </td>
+                </tr>
+                 <tr>
+                    <td>
+                        <table class="print-footer-table">
+                            </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="/assets/js/view-slip.js"></script>
+</body>
+</html>

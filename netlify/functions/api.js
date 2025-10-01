@@ -59,6 +59,29 @@ exports.handler = async function (event, context) {
                 });
                 responseData = { slips: slips };
                 break;
+
+            // Add this new case inside the switch (action) block in api.js
+
+            case 'getDutySlipById':
+                const slipId = event.queryStringParameters.id;
+                if (!slipId) {
+                    responseData = { error: 'No ID provided.' };
+                    break;
+                }
+                const slipRows = await sheet.getRows();
+                const foundRow = slipRows.find(row => row.DS_No === slipId);
+
+                if (foundRow) {
+                    // Convert the row object to a simple key-value pair object
+                    const slipData = {};
+                    sheet.headerValues.forEach(header => {
+                        slipData[header] = foundRow[header];
+                    });
+                    responseData = { slip: slipData };
+                } else {
+                    responseData = { error: `Duty Slip with ID ${slipId} not found.` };
+                }
+                break;
                 
             default:
                 responseData = { error: 'Invalid action specified.' };

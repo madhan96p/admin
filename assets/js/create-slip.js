@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
             button.innerHTML = '<i class="fas fa-save"></i>';
         }
     }
-    
+
     // --- NEW & IMPROVED WHATSAPP FUNCTION ---
     function handleWhatsAppShare() {
         const shareWith = prompt("Who do you want to share this with? (Type 'driver' or 'guest')");
@@ -171,17 +171,14 @@ We wish you a pleasant journey.
     }
 
     // --- 6. UTILITY FUNCTIONS ---
-    function generateLink(isForDriver = false) {
-        const params = new URLSearchParams();
-        form.querySelectorAll('input, textarea').forEach(el => {
-            if (el.id && el.value) params.append(el.id, el.value);
-        });
-        // Add signature data if available
-        const authSig = document.getElementById('auth-signature-image').src;
-        if (authSig && !authSig.endsWith('/')) params.append('auth-signature-image', authSig);
-
-        let page = isForDriver ? 'fill-slip.html' : 'view.html'; // Direct driver to a different page later
-        return `${window.location.origin}/${page}?${params.toString()}`;
+    // Replace the old generateLink function
+    function generateLink() {
+        const dsNo = document.getElementById('ds-no').value;
+        if (!dsNo) {
+            alert('Please save the slip first to generate a link.');
+            return null;
+        }
+        return `${window.location.origin}/view.html?id=${dsNo}`;
     }
 
     function handleDriverSelection() {
