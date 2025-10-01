@@ -1,91 +1,250 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+    // --- 1. CONFIGURATION & DATA ---
+    const driverData = {
+        "AjithKumar": { mobile: "9047382896", signatureUrl: "/assets/images/signs/Ajithkumar.png" },
+        "Raja": { mobile: "8838750975", signatureUrl: "/assets/images/signs/jeganraj.png" },
+        "Jeganraj": { mobile: "8883451668", signatureUrl: "/assets/images/signs/jeganraj01.png" },
+    };
+
+    // --- 2. ELEMENT REFERENCES ---
     const form = document.getElementById('dutySlipForm');
     const saveButton = document.getElementById('save-slip-button');
+    const mobileSaveButton = document.getElementById('mobile-save-slip-button');
     const dsNoInput = document.getElementById('ds-no');
     const dateInput = document.getElementById('date');
+    const fabToggle = document.getElementById('fab-main-toggle');
+    const fabContainer = fabToggle ? fabToggle.parentElement : null;
 
-    // Function to fetch the next available Duty Slip ID
+    // Signature Modal Elements
+    const sigModal = document.getElementById("signature-modal");
+    const sigCanvas = document.getElementById("signature-canvas");
+    const signaturePad = new SignaturePad(sigCanvas, { backgroundColor: 'rgb(255, 255, 255)' });
+    let currentSignatureTarget = null;
+
+    // --- 3. INITIALIZATION ---
+    function initializePage() {
+        fetchNextDutySlipId();
+        setCurrentDate();
+        populateDriverDatalist();
+        setupEventListeners();
+    }
+
+    // --- 4. SETUP FUNCTIONS ---
     async function fetchNextDutySlipId() {
         try {
             const response = await fetch('/api?action=getNextDutySlipId');
             const data = await response.json();
             if (data.nextId) {
                 dsNoInput.value = data.nextId;
+                document.getElementById('booking-id').value = data.nextId;
             }
-        } catch (error) {
-            console.error('Failed to fetch from API:', error);
+        } catch (error) { console.error('Failed to fetch from API:', error); }
+    }
+
+    function setCurrentDate() {
+        const today = new Date();
+        dateInput.value = today.toISOString().split('T')[0];
+    }
+
+    function populateDriverDatalist() {
+        const datalist = document.getElementById('driver-list');
+        if (!datalist) return;
+        for (const driverName in driverData) {
+            const option = document.createElement('option');
+            option.value = driverName;
+            datalist.appendChild(option);
         }
     }
 
-    // Function to set the current date
-    function setCurrentDate() {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        dateInput.value = `${year}-${month}-${day}`;
+    function setupEventListeners() {
+        // Attach to all action buttons
+        document.querySelectorAll('#save-slip-button, #mobile-save-slip-button').forEach(btn => btn.addEventListener('click', handleSave));
+        document.querySelectorAll('#whatsapp-button, #mobile-whatsapp-button').forEach(btn => btn.addEventListener('click', handleWhatsAppShare));
+        document.querySelectorAll('#generate-link-button, #mobile-generate-link-button').forEach(btn => btn.addEventListener('click', handleGenerateLink));
+        document.querySelectorAll('#download-pdf-button, #mobile-download-pdf-button').forEach(btn => btn.addEventListener('click', () => window.print()));
+
+        // Attach to form inputs for validation and calculation
+        const inputsToWatch = [
+            'driver-time-out', 'driver-time-in', 'driver-km-out', 'driver-km-in', 'date', 'date-out', 'date-in', 'time-out', 'time-in', 'km-out', 'km-in'
+        ];
+        inputsToWatch.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', calculateTotals);
+                el.addEventListener('input', validateAllInputs);
+            }
+        });
+        document.getElementById('driver-name')?.addEventListener('input', handleDriverSelection);
+
+        // Signature boxes
+        document.getElementById('auth-signature-box')?.addEventListener('click', () => openSignaturePad('auth-signature-image'));
+        document.getElementById('guest-signature-box')?.addEventListener('click', () => openSignaturePad('guest-signature-image'));
+
+        // FAB menu
+        if (fabToggle) {
+            fabToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                fabContainer.classList.toggle('active');
+            });
+            document.addEventListener('click', () => fabContainer.classList.remove('active'));
+        }
     }
 
-    // --- NEW CODE STARTS HERE ---
-    // Function to handle the form submission
+    // --- 5. CORE HANDLERS ---
     async function handleSave(event) {
-        event.preventDefault(); // Prevent default form submission
-        saveButton.disabled = true;
-        saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        event.preventDefault();
+        const button = event.currentTarget;
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
-        // 1. Get all column headers from our Google Sheet
-        const headers = [
-            'DS_No', 'Booking_ID', 'Date', 'Organisation', 'Guest_Name', 'Guest_Mobile',
-            'Booked_By', 'Reporting_Time', 'Reporting_Address', 'Spl_Instruction',
-            'Vehicle_Type', 'Vehicle_No', 'Driver_Name', 'Driver_Mobile', 'Assignment',
-            'Routing', 'Date_Out', 'Date_In', 'Total_Days', 'Time_Out', 'Time_In',
-            'Km_Out', 'Km_In', 'Driver_Time_Out', 'Driver_Time_In', 'Driver_Km_Out',
-            'Driver_Km_In', 'Driver_Total_Hrs', 'Driver_Total_Kms',
-            'Auth_Signature_Link', 'Guest_Signature_Link', 'Status'
-        ]; 
-
-        // 2. Create a data object with values from the form
+        const headers = ['DS_No', 'Booking_ID', 'Date', 'Organisation', 'Guest_Name', 'Guest_Mobile', 'Booked_By', 'Reporting_Time', 'Reporting_Address', 'Spl_Instruction', 'Vehicle_Type', 'Vehicle_No', 'Driver_Name', 'Driver_Mobile', 'Assignment', 'Routing', 'Date_Out', 'Date_In', 'Total_Days', 'Time_Out', 'Time_In', 'Km_Out', 'Km_In', 'Driver_Time_Out', 'Driver_Time_In', 'Driver_Km_Out', 'Driver_Km_In', 'Driver_Total_Hrs', 'Driver_Total_Kms', 'Auth_Signature_Link', 'Guest_Signature_Link', 'Status'];
         const formData = {};
-        for (const header of headers) {
-            // Convert header name to kebab-case to match input IDs (e.g., DS_No -> ds-no)
+        headers.forEach(header => {
             const inputId = header.toLowerCase().replace(/_/g, '-');
             const inputElement = document.getElementById(inputId);
             if (inputElement) {
-                formData[header] = inputElement.value;
+                formData[header] = inputElement.tagName === 'IMG' ? inputElement.src : inputElement.value;
             } else {
-                formData[header] = ''; // Default to empty string if no input found
+                formData[header] = '';
             }
-        }
+        });
 
-        // 3. Send the data to our backend function
         try {
-            const response = await fetch('/api?action=saveDutySlip', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-            });
+            const response = await fetch('/api?action=saveDutySlip', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) });
             const result = await response.json();
-
             if (result.success) {
                 alert(result.message);
-                // Redirect back to the main duty slips page
                 window.location.href = '/duty-slips.html';
-            } else {
-                throw new Error(result.error || 'Unknown error occurred.');
-            }
+            } else { throw new Error(result.error); }
         } catch (error) {
-            console.error("Save failed:", error);
             alert(`Error: Could not save the duty slip. ${error.message}`);
-            saveButton.disabled = false;
-            saveButton.innerHTML = '<i class="fas fa-save"></i> Save & Generate Link';
+            button.disabled = false;
+            button.innerHTML = '<i class="fas fa-save"></i>';
+        }
+    }
+    
+    // --- NEW & IMPROVED WHATSAPP FUNCTION ---
+    function handleWhatsAppShare() {
+        const shareWith = prompt("Who do you want to share this with? (Type 'driver' or 'guest')");
+
+        if (shareWith && shareWith.toLowerCase() === 'driver') {
+            const driverMobile = document.getElementById('driver-mobile').value.replace(/\D/g, '');
+            if (!driverMobile) return alert('Please select a driver first.');
+
+            const link = generateLink(true); // Generate link for the driver
+            const message = `
+*Duty Details*
+Guest: ${document.getElementById('guest-name').value || 'NA'}
+Reporting Time: ${document.getElementById('rep-time').value || 'NA'}
+Address: ${document.getElementById('reporting-address').value || 'NA'}
+
+Please fill the closing details using this link: ${link}
+
+- Shrish Travels
+            `.trim();
+            window.open(`https://wa.me/91${driverMobile}?text=${encodeURIComponent(message)}`, '_blank');
+
+        } else if (shareWith && shareWith.toLowerCase() === 'guest') {
+            const guestMobile = document.getElementById('guest-mobile').value.replace(/\D/g, '');
+            if (!guestMobile) return alert('Please enter a guest mobile number.');
+
+            const message = `
+Dear Guest,
+
+Thank you for choosing Shrish Travels. Your ride has been confirmed.
+
+Driver: ${document.getElementById('driver-name').value || 'NA'}
+Contact: ${document.getElementById('driver-mobile').value || 'NA'}
+Vehicle: ${document.getElementById('vehicle-type').value || 'NA'} (${document.getElementById('vehicle-no').value || 'NA'})
+
+We wish you a pleasant journey.
+- Shrish Travels
+            `.trim();
+            window.open(`https://wa.me/91${guestMobile}?text=${encodeURIComponent(message)}`, '_blank');
         }
     }
 
-    // Add event listener to the save button
-    saveButton.addEventListener('click', handleSave);
-    // --- NEW CODE ENDS HERE ---
+    function handleGenerateLink() {
+        const link = generateLink();
+        navigator.clipboard.writeText(link).then(() => alert('Shareable link copied to clipboard!'));
+    }
 
-    // Run setup functions when the page loads
-    fetchNextDutySlipId();
-    setCurrentDate();
+    // --- 6. UTILITY FUNCTIONS ---
+    function generateLink(isForDriver = false) {
+        const params = new URLSearchParams();
+        form.querySelectorAll('input, textarea').forEach(el => {
+            if (el.id && el.value) params.append(el.id, el.value);
+        });
+        // Add signature data if available
+        const authSig = document.getElementById('auth-signature-image').src;
+        if (authSig && !authSig.endsWith('/')) params.append('auth-signature-image', authSig);
+
+        let page = isForDriver ? 'fill-slip.html' : 'view.html'; // Direct driver to a different page later
+        return `${window.location.origin}/${page}?${params.toString()}`;
+    }
+
+    function handleDriverSelection() {
+        const selectedDriver = driverData[this.value];
+        const authSigImg = document.getElementById('auth-signature-image');
+        const authSigPlaceholder = document.getElementById('auth-sig-placeholder');
+        if (selectedDriver) {
+            document.getElementById('driver-mobile').value = selectedDriver.mobile;
+            if (selectedDriver.signatureUrl) {
+                authSigImg.src = selectedDriver.signatureUrl;
+                authSigImg.style.display = 'block';
+                authSigPlaceholder.style.display = 'none';
+            }
+        } else {
+            document.getElementById('driver-mobile').value = '';
+            authSigImg.src = '';
+            authSigImg.style.display = 'none';
+            authSigPlaceholder.style.display = 'block';
+        }
+    }
+
+    function calculateTotals() {
+        const timeOutVal = document.getElementById('driver-time-out').value;
+        const timeInVal = document.getElementById('driver-time-in').value;
+        if (timeOutVal && timeInVal) {
+            let t1 = new Date(`1970-01-01T${timeOutVal}`);
+            let t2 = new Date(`1970-01-01T${timeInVal}`);
+            if (t2 < t1) t2.setDate(t2.getDate() + 1);
+            const diff = (t2 - t1) / 3600000;
+            document.getElementById('driver-total-hrs').value = `${diff.toFixed(2)} hrs`;
+        }
+        const kmOut = parseFloat(document.getElementById('driver-km-out').value) || 0;
+        const kmIn = parseFloat(document.getElementById('driver-km-in').value) || 0;
+        if (kmIn > kmOut) {
+            document.getElementById('driver-total-kms').value = `${(kmIn - kmOut).toFixed(1)} Kms`;
+        }
+    }
+
+    function validateAllInputs() { /* ... Your full validation logic can be pasted here ... */ }
+
+    // --- 7. SIGNATURE PAD LOGIC ---
+    window.openSignaturePad = (targetImageId) => {
+        currentSignatureTarget = document.getElementById(targetImageId);
+        sigModal.style.display = "flex";
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        sigCanvas.width = sigCanvas.offsetWidth * ratio;
+        sigCanvas.height = sigCanvas.offsetHeight * ratio;
+        sigCanvas.getContext("2d").scale(ratio, ratio);
+        signaturePad.clear();
+    };
+    window.closeSignaturePad = () => sigModal.style.display = "none";
+    window.clearSignature = () => signaturePad.clear();
+    window.saveSignature = () => {
+        if (signaturePad.isEmpty()) return alert("Please provide a signature.");
+        const dataURL = signaturePad.toDataURL("image/png");
+        if (currentSignatureTarget) {
+            currentSignatureTarget.src = dataURL;
+            currentSignatureTarget.style.display = 'block';
+            currentSignatureTarget.previousElementSibling.style.display = 'none';
+        }
+        closeSignaturePad();
+    };
+
+    // --- 8. RUN INITIALIZATION ---
+    initializePage();
 });
