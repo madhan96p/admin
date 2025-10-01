@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="/assets/css/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
+
 <body>
 
     <script src="/assets/js/auth.js"></script>
@@ -28,8 +30,26 @@
 
                 <div class="content-card">
                     <h2>Recent Duty Slips</h2>
-                    <p>Your recent duty slips will be listed here.</p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>D.S. No</th>
+                                    <th>Date</th>
+                                    <th>Guest Name</th>
+                                    <th>Driver Name</th>
+                                    <th>Routing</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="slips-table-body">
+                            </tbody>
+                        </table>
                     </div>
+                    <div id="loading-indicator">
+                        <p>Loading slips...</p>
+                    </div>
+                </div>
             </div>
 
             <div id="admin-footer"></div>
@@ -39,4 +59,5 @@
     <script src="/assets/js/common.js"></script>
     <script src="/assets/js/duty-slips.js"></script>
 </body>
+
 </html>

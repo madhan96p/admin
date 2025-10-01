@@ -185,3 +185,53 @@ body {
     padding-bottom: 1rem;
     margin-bottom: 1rem;
 }
+
+/* --- Table Styling --- */
+.table-container {
+    width: 100%;
+    overflow-x: auto; /* Allows horizontal scrolling on small screens */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+th, td {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+thead tr {
+    background-color: #f9fafb;
+}
+
+th {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+tbody tr:hover {
+    background-color: #f4f7fa;
+}
+
+.action-button-sm {
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-right: 5px;
+    font-size: 14px;
+    color: var(--text-dark);
+}
+
+#loading-indicator {
+    text-align: center;
+    padding: 20px;
+    color: #6b7280;
+}

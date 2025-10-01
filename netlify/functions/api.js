@@ -1,8 +1,8 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 
-const SPREADSHEET_ID = '1eqSsdKzF71WR6KR7XFkEI8NW7ObtnxC16ZtavJeePq8'; 
+const SPREADSHEET_ID = '1eqSsdKzF71WR6KR7XFkEI8NW7ObtnxC16ZtavJeePq8';
 
-exports.handler = async function(event, context) {
+exports.handler = async function (event, context) {
     const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
     const creds = {
         client_email: process.env.GOOGLE_CLIENT_EMAIL,
@@ -37,13 +37,29 @@ exports.handler = async function(event, context) {
                 const dataToSave = JSON.parse(event.body);
                 dataToSave.Timestamp = new Date().toISOString(); // Add a server-side timestamp
                 await sheet.addRow(dataToSave);
-                responseData = { 
-                    success: true, 
-                    message: `Duty Slip ${dataToSave.DS_No} saved successfully.` 
+                responseData = {
+                    success: true,
+                    message: `Duty Slip ${dataToSave.DS_No} saved successfully.`
                 };
                 break;
             // --- NEW CODE ENDS HERE ---
+            // Add this new case inside the switch (action) block in api.js
 
+            case 'getAllDutySlips':
+                const allRows = await sheet.getRows();
+                // We map the rows to a simpler array of objects
+                const slips = allRows.map(row => {
+                    return {
+                        DS_No: row.DS_No,
+                        Date: row.Date,
+                        Guest_Name: row.Guest_Name,
+                        Driver_Name: row.Driver_Name,
+                        Routing: row.Routing,
+                    };
+                });
+                responseData = { slips: slips };
+                break;
+                
             default:
                 responseData = { error: 'Invalid action specified.' };
                 break;
