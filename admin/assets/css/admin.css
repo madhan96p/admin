@@ -1,0 +1,139 @@
+/* --- Main Admin Layout --- */
+:root {
+    --sidebar-width: 260px;
+    --header-height: 70px;
+    --bg-main: #f4f7fa; /* Light grey background */
+    --bg-sidebar: #111827; /* Dark sidebar */
+    --text-light: #f9fafb;
+    --text-dark: #374151;
+    --border-color: #e5e7eb;
+    --primary-accent: #3b82f6;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+    margin: 0;
+    font-family: 'Inter', sans-serif; /* A clean, modern font */
+}
+
+.admin-layout {
+    display: flex;
+}
+
+#admin-sidebar {
+    width: var(--sidebar-width);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    background-color: var(--bg-sidebar);
+    color: var(--text-light);
+}
+
+.admin-main-content {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.page-content {
+    padding: 2rem;
+    flex-grow: 1; /* Makes sure footer stays at the bottom */
+}
+
+/* --- Sidebar Styling --- */
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.sidebar-header {
+    padding: 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-logo {
+    max-width: 60px;
+    margin: 0 auto 0.5rem;
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.nav-links {
+    list-style: none;
+    padding: 1rem 0;
+    margin: 0;
+}
+
+.nav-links a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1.5rem;
+    color: #d1d5db; /* Lighter grey for text */
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active { /* For showing the current page */
+    background-color: rgba(59, 130, 246, 0.2);
+    color: var(--text-light);
+    border-left: 3px solid var(--primary-accent);
+    padding-left: calc(1.5rem - 3px);
+}
+
+.nav-links a i {
+    width: 20px;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+/* --- Header Styling --- */
+.admin-header {
+    height: var(--header-height);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header-title {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.logout-btn {
+    background-color: var(--primary-accent);
+    color: white;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.logout-btn:hover {
+    background-color: #2563eb; /* Darker blue */
+}
+
+/* --- Footer Styling --- */
+.admin-footer {
+    padding: 1rem 2rem;
+    text-align: center;
+    background-color: #ffffff;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    color: #6b7280;
+}

@@ -1,0 +1,13 @@
+# This is the main configuration file for Netlify
+
+[build]
+  # This tells Netlify where our serverless functions are located.
+  functions = "netlify/functions/"
+
+[[redirects]]
+  # This is a rewrite rule. It makes our function accessible 
+  # through a clean URL. Instead of calling a long function URL,
+  # our website can just call "/api" to talk to our "brain".
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
