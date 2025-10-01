@@ -1,0 +1,7 @@
+{
+  "name": "shrish-admin-functions",
+  "version": "1.0.0",
+  "dependencies": {
+    "google-spreadsheet": "^3.3.0"
+  }
+}
