@@ -1,24 +1,27 @@
-// This is a Netlify Serverless Function
+// This function will use the secure variables from Netlify
 exports.handler = async function(event, context) {
-    // Get the type of request (e.g., 'getDutySlip', 'saveSalarySlip') from the URL
     const { action, id } = event.queryStringParameters;
 
-    console.log(`Received action: ${action} with ID: ${id}`);
+    // Securely access the credentials
+    const privateKey = process.env.GOOGLE_PRIVATE_KEY;
+    const clientEmail = process.env.GOOGLE_CLIENT_EMAIL;
+    const projectId = process.env.GOOGLE_PROJECT_ID;
 
-    // Here, we will add the logic later.
-    // Example:
-    // if (action === 'getNextDutySlipId') {
-    //     // Connect to Google Sheets and get the next ID
-    // }
+    // We check if the credentials are set
+    if (!privateKey || !clientEmail || !projectId) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: "Google credentials are not configured correctly on Netlify." }),
+        };
+    }
 
-    // This is the response we send back to the website
+    // For now, we'll just confirm they are loaded.
+    // Later, we will add the code here to connect to Google Sheets.
     return {
         statusCode: 200,
-        headers: {
-            "Access-Control-Allow-Origin": "*", // Allow requests from our website
-        },
         body: JSON.stringify({ 
-            message: `Action '${action}' received successfully. Logic not yet implemented.` 
+            message: `Action '${action}' received. Credentials loaded successfully!`,
+            email: clientEmail // Sending back the email to confirm it works
         }),
     };
 };
