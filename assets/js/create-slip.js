@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'Km_Out', 'Km_In', 'Driver_Time_Out', 'Driver_Time_In', 'Driver_Km_Out',
             'Driver_Km_In', 'Driver_Total_Hrs', 'Driver_Total_Kms',
             'Auth_Signature_Link', 'Guest_Signature_Link', 'Status'
-        ];
+        ]; 
 
         // 2. Create a data object with values from the form
         const formData = {};
