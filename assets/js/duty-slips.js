@@ -1,31 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Duty Slips page loaded. Attempting to fetch next ID...");
+    // Find the "Create New Duty Slip" button on the main page
+    const createButton = document.querySelector('.page-title-bar .btn-primary');
 
-    // This function calls our backend API
-    async function getNextDutySlipId() {
-        try {
-            // We call the clean URL we set up in netlify.toml
-            const response = await fetch('/api?action=getNextDutySlipId');
-
-            if (!response.ok) {
-                throw new Error(`Server responded with an error: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-
-            if (data.error) {
-                throw new Error(data.error);
-            }
-
-            console.log(`✅ Success! Next available Duty Slip ID is: ${data.nextId}`);
-            // Later, we will display this on the page instead of the console.
-
-        } catch (error) {
-            console.error("❌ Error fetching next Duty Slip ID:", error);
-            alert("Could not connect to the database. Please check the console (F12) for errors. Make sure your Netlify environment variables are set correctly.");
-        }
+    if (createButton) {
+        // Add a click event to navigate to the creation form
+        createButton.addEventListener('click', () => {
+            window.location.href = '/create-duty-slip.html';
+        });
     }
 
-    // Run the function as soon as the page loads
-    getNextDutySlipId();
+    console.log("Duty Slips management page is ready.");
+    // We are keeping the test function here for now, but it's not the main focus.
+    // It's good to confirm the connection is still working.
+    fetch('/api?action=getNextDutySlipId')
+        .then(res => res.json())
+        .then(data => console.log(`Connection test successful. Next ID: ${data.nextId}`))
+        .catch(err => console.error("Connection test failed.", err));
 });
