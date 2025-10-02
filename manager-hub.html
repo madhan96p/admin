@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Hub | Shrish Admin</title>
+    <link rel="stylesheet" href="/assets/css/common.css">
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <script src="/assets/js/auth.js"></script>
+    <div class="admin-layout">
+        <div id="admin-sidebar"></div>
+        <main class="admin-main-content">
+            <div id="admin-header"></div>
+            <div class="page-content">
+                <div class="page-title-bar">
+                    <h1>Manager Hub</h1>
+                </div>
+
+                <div class="content-card">
+                    <h2>Find a Duty Slip</h2>
+                    <div class="filter-controls">
+                        <div class="search-group">
+                            <label for="search-ds-no">Find D.S. No:</label>
+                            <input type="text" id="search-ds-no" placeholder="Enter D.S. No...">
+                        </div>
+                        <div class="search-group">
+                            <label for="search-guest">Search by Guest:</label>
+                            <input type="text" id="search-guest" placeholder="Enter guest name...">
+                        </div>
+                        <div class="search-group">
+                            <label for="search-date">Filter by Date:</label>
+                            <input type="date" id="search-date">
+                        </div>
+                        <button id="find-slip-btn" class="btn-primary" style="margin-left: auto;">Find Slips</button>
+                    </div>
+                </div>
+
+                <div id="results-container"></div>
+
+            </div>
+            <div id="admin-footer"></div>
+        </main>
+    </div>
+    <script src="/assets/js/common.js"></script>
+    <script src="/assets/js/manager-hub.js"></script>
+</body>
+</html>

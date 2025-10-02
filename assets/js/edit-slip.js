@@ -173,7 +173,7 @@ function handleWhatsAppShare() {
     const dsNo = getValue('ds-no');
 
     // The static, professional link that will generate the preview card
-    const contactLink = "https://shrishgroup.com/contact.html";
+    const contactLink = "shrishgroup.com/contact.html";
 
     switch (shareOption) {
         case '1': // Share with DRIVER
