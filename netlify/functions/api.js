@@ -31,11 +31,50 @@ exports.handler = async function (event, context) {
                 responseData = { nextId: nextId };
                 break;
 
+            // Inside api.js, replace the 'getAllDutySlips' case with this
+
             case 'getAllDutySlips':
                 const allRows = await sheet.getRows();
-                responseData = { slips: allRows.map(row => ({ DS_No: row.DS_No, Date: row.Date, Guest_Name: row.Guest_Name, Driver_Name: row.Driver_Name, Routing: row.Routing })) };
+                const slips = allRows.map(row => {
+                    // Now returning ALL columns from the sheet for maximum flexibility
+                    return {
+                        Timestamp: row.Timestamp,
+                        DS_No: row.DS_No,
+                        Booking_ID: row.Booking_ID,
+                        Date: row.Date,
+                        Organisation: row.Organisation,
+                        Guest_Name: row.Guest_Name,
+                        Guest_Mobile: row.Guest_Mobile,
+                        Booked_By: row.Booked_By,
+                        Reporting_Time: row.Reporting_Time,
+                        Reporting_Address: row.Reporting_Address,
+                        Spl_Instruction: row.Spl_Instruction,
+                        Vehicle_Type: row.Vehicle_Type,
+                        Vehicle_No: row.Vehicle_No,
+                        Driver_Name: row.Driver_Name,
+                        Driver_Mobile: row.Driver_Mobile,
+                        Assignment: row.Assignment,
+                        Routing: row.Routing,
+                        Date_Out: row.Date_Out,
+                        Date_In: row.Date_In,
+                        Total_Days: row.Total_Days,
+                        Time_Out: row.Time_Out,
+                        Time_In: row.Time_In,
+                        Km_Out: row.Km_Out,
+                        Km_In: row.Km_In,
+                        Driver_Time_Out: row.Driver_Time_Out,
+                        Driver_Time_In: row.Driver_Time_In,
+                        Driver_Km_Out: row.Driver_Km_Out,
+                        Driver_Km_In: row.Driver_Km_In,
+                        Driver_Total_Hrs: row.Driver_Total_Hrs,
+                        Driver_Total_Kms: row.Driver_Total_Kms,
+                        Auth_Signature_Link: row.Auth_Signature_Link,
+                        Guest_Signature_Link: row.Guest_Signature_Link,
+                        Status: row.Status
+                    };
+                });
+                responseData = { slips: slips };
                 break;
-
             case 'getDutySlipById':
                 const slipId = event.queryStringParameters.id;
                 if (!slipId) { responseData = { error: 'No ID provided.' }; break; }
