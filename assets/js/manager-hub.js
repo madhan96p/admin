@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="slip-info">
             <h3>DS #${slip['DS_No']}</h3>
             <p><strong>Date:</strong> ${slip['Date']}</p>
-            <p><strong>Guest:</strong> ${slip['Guest Name']} (${slip['Guest_Mobile'] || 'N/A'})</p>
+            <p><strong>Guest:</strong> ${slip['Guest_Name']} (${slip['Guest_Mobile'] || 'N/A'})</p>
             <p><strong>Driver:</strong> ${slip['Driver_Name']} | <strong>Vehicle:</strong> ${slip['Vehicle_No'] || 'N/A'}</p>
             <p><strong>Timestamp:</strong> ${new Date(slip['Timestamp']).toLocaleString()}</p>
         </div>
@@ -75,6 +75,14 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     </div>
     <div class="slip-actions">
+                    <a href="/view.html?id=${slip['DS_No']}" target="_blank" class="action-link"><i class="fas fa-print"></i> View/Print</a>
+                    <a href="/edit-slip.html?id=${slip['DS_No']}" class="action-link"><i class="fas fa-edit"></i> Edit Full Slip</a>
+                    <button class="action-link copy-btn" data-link="/view.html?id=${slip['DS_No']}"><i class="fas fa-copy"></i> Copy View Link</button>
+                    <button class="action-link whatsapp-btn" data-type="driver" data-id="${slip['DS_No']}"><i class="fab fa-whatsapp"></i> Share to Driver</button>
+                    <button class="action-link whatsapp-btn" data-type="guest-close" data-id="${slip['DS_No']}"><i class="fas fa-signature"></i> Ask Guest to Close</button>
+                    <button class="action-link whatsapp-btn" data-type="guest-info" data-id="${slip['DS_No']}"><i class="fas fa-info-circle"></i> Send Info to Guest</button>
+                    <button class="action-link whatsapp-btn" data-type="thank-you" data-id="${slip['DS_No']}"><i class="fas fa-gift"></i> Send Thank You</button>
+                
         <a href="/edit-slip.html?id=${slip['DS_No']}" class="action-link"><i class="fas fa-edit"></i> Edit</a>
         <button class="action-link whatsapp-btn" data-type="driver" data-id="${slip['DS_No']}"><i class="fab fa-whatsapp"></i> Share</button>
         <button class="action-link copy-btn" data-link="/view.html?id=${slip['DS_No']}"><i class="fas fa-copy"></i> Copy Link</button>

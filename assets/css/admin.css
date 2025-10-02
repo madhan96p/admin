@@ -325,3 +325,13 @@ tbody tr:hover {
     height: 100%;
     object-fit: contain; /* Ensures signature fits inside the circle */
 }
+
+/* --- Manager Hub Results Styling --- */
+.slip-card { margin-top: 2rem; }
+.slip-summary { border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem; }
+.slip-summary h3 { margin-top: 0; }
+.slip-summary p { margin-bottom: 0; }
+.slip-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+.action-link { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: var(--text-dark); background-color: var(--bg-main); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); transition: all 0.2s ease; }
+.action-link:hover { background-color: var(--primary-accent); color: white; border-color: var(--primary-accent); }
+.no-results { text-align: center; padding: 2rem; }
