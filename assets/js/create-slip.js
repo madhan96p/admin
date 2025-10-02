@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const driverData = {
         "AjithKumar": { mobile: "9047382896", signatureUrl: "/assets/images/signs/Ajithkumar.png" },
         "Raja": { mobile: "8838750975", signatureUrl: "/assets/images/signs/jeganraj.png" },
-        "Jeganraj": { mobile: "8883451668", signatureUrl: "/assets/images/signs/jeganraj01.png" },
+        "Jeganraj": { mobile: "8883451668", signatureUrl: "/assets/images/signs/Raja.jpg" },
     };
 
     // --- 2. ELEMENT REFERENCES ---
