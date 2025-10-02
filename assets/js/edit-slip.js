@@ -2,9 +2,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 1. CONFIGURATION & DATA ---
     const driverData = {
-        "AjithKumar": { mobile: "9047382896", signatureUrl: "/assets/images/signs/Ajithkumar.jpg" },
-        "Raja": { mobile: "8838750975", signatureUrl: "/assets/images/signs/Raja.png" },
-        "Jeganraj": { mobile: "8883451668", signatureUrl: "/assets/images/signs/jeganraj.jpg" },
+        "AjithKumar": { mobile: "9047382896", signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/Ajithkumar.jpg" },
+        "Raja": { mobile: "8838750975", signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/Raja.png" },
+        "Jeganraj": { mobile: "8883451668", signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/jeganraj.jpg" },
     };
 
     // --- 2. ELEMENT REFERENCES ---
