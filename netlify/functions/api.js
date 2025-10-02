@@ -60,11 +60,11 @@ exports.handler = async function (event, context) {
             // --- THIS CASE WAS MISSING ---
             case 'updateDutySlip':
                 const updatedData = JSON.parse(event.body);
-                const slipToUpdateId = updatedData.DS_No;
+                const slipToUpdateId = String(updatedData.DS_No);
                 if (!slipToUpdateId) { responseData = { error: 'No DS_No provided for update.' }; break; }
 
                 const updateRows = await sheet.getRows();
-                const rowToUpdate = updateRows.find(row => row.DS_No === slipToUpdateId);
+                const rowToUpdate = updateRows.find(row => String(row.DS_No) === slipToUpdateId);
 
                 if (rowToUpdate) {
                     for (const header of sheet.headerValues) {
