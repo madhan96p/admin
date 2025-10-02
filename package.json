@@ -2,6 +2,7 @@
   "name": "shrish-admin-functions",
   "version": "1.0.0",
   "dependencies": {
-    "google-spreadsheet": "^3.3.0"
+    "google-spreadsheet": "^3.3.0",
+    "googleapis": "^105.0.0" 
   }
 }
