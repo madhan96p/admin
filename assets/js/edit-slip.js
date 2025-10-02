@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.addEventListener('click', () => fabContainer.classList.remove('active'));
         }
     }
-async function loadSlipDataForEditing() {
+    async function loadSlipDataForEditing() {
         const params = new URLSearchParams(window.location.search);
         const slipId = params.get('id');
 
@@ -88,14 +88,20 @@ async function loadSlipDataForEditing() {
             if (data.error || !data.slip) { throw new Error(data.error); }
 
             // Loop through the received slip data and populate the form
+            // Inside loadSlipDataForEditing in edit-slip.js
+
             for (const key in data.slip) {
                 const inputId = key.toLowerCase().replace(/_/g, '-');
                 const inputElement = document.getElementById(inputId);
                 if (inputElement) {
+                    // --- THIS IS THE FIX ---
                     if (inputElement.tagName === 'IMG') {
-                        inputElement.src = data.slip[key];
-                        if(data.slip[key]) {
+                        const signatureData = data.slip[key];
+                        // Check if there is actual signature data (not a placeholder URL)
+                        if (signatureData && signatureData.startsWith('data:image')) {
+                            inputElement.src = signatureData;
                             inputElement.style.display = 'block';
+                            // Hide the "Tap to sign" placeholder
                             inputElement.previousElementSibling.style.display = 'none';
                         }
                     } else {
@@ -118,9 +124,12 @@ async function loadSlipDataForEditing() {
 
         const headers = ['DS_No', 'Booking_ID', 'Date', 'Organisation', 'Guest_Name', 'Guest_Mobile', 'Booked_By', 'Reporting_Time', 'Reporting_Address', 'Spl_Instruction', 'Vehicle_Type', 'Vehicle_No', 'Driver_Name', 'Driver_Mobile', 'Assignment', 'Routing', 'Date_Out', 'Date_In', 'Total_Days', 'Time_Out', 'Time_In', 'Km_Out', 'Km_In', 'Driver_Time_Out', 'Driver_Time_In', 'Driver_Km_Out', 'Driver_Km_In', 'Driver_Total_Hrs', 'Driver_Total_Kms', 'Auth_Signature_Link', 'Guest_Signature_Link', 'Status'];
         const formData = {};
+        // Apply the same fix inside the updateDutySlip function in edit-slip.js
+
         headers.forEach(header => {
             const inputId = header.toLowerCase().replace(/_/g, '-');
             const inputElement = document.getElementById(inputId);
+
             if (inputElement) {
                 formData[header] = inputElement.tagName === 'IMG' ? inputElement.src : inputElement.value;
             } else {

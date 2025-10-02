@@ -100,10 +100,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const headers = ['DS_No', 'Booking_ID', 'Date', 'Organisation', 'Guest_Name', 'Guest_Mobile', 'Booked_By', 'Reporting_Time', 'Reporting_Address', 'Spl_Instruction', 'Vehicle_Type', 'Vehicle_No', 'Driver_Name', 'Driver_Mobile', 'Assignment', 'Routing', 'Date_Out', 'Date_In', 'Total_Days', 'Time_Out', 'Time_In', 'Km_Out', 'Km_In', 'Driver_Time_Out', 'Driver_Time_In', 'Driver_Km_Out', 'Driver_Km_In', 'Driver_Total_Hrs', 'Driver_Total_Kms', 'Auth_Signature_Link', 'Guest_Signature_Link', 'Status'];
         const formData = {};
+        // Find the headers.forEach loop inside handleSave in create-slip.js
+
         headers.forEach(header => {
             const inputId = header.toLowerCase().replace(/_/g, '-');
             const inputElement = document.getElementById(inputId);
+
+            // --- THIS IS THE FIX ---
             if (inputElement) {
+                // If the element is an IMG, get its 'src' (the base64 data)
+                // Otherwise, get its 'value'
                 formData[header] = inputElement.tagName === 'IMG' ? inputElement.src : inputElement.value;
             } else {
                 formData[header] = '';
