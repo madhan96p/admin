@@ -59,10 +59,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         document.getElementById('driver-name')?.addEventListener('input', handleDriverSelection);
 
-        // Signature boxes
-        document.getElementById('auth-signature-box')?.addEventListener('click', () => openSignaturePad('auth-signature-image'));
-        document.getElementById('guest-signature-box')?.addEventListener('click', () => openSignaturePad('guest-signature-image'));
+        // In edit-slip.js, inside the setupEventListeners function:
 
+        // Signature boxes
+        document.getElementById('auth-signature-box')?.addEventListener('click', () => openSignaturePad('auth-signature-link'));
+        document.getElementById('guest-signature-box')?.addEventListener('click', () => openSignaturePad('guest-signature-link'));
         // FAB menu
         if (fabToggle) {
             fabToggle.addEventListener('click', (e) => {
