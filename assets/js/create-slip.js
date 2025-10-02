@@ -91,71 +91,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function handleSave(event) {
-        event.preventDefault();
-        const button = event.currentTarget;
-        button.disabled = true;
-        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+async function handleSave(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
 
-        try {
-            // --- NEW TWO-STEP SIGNATURE UPLOAD ---
-            const guestSigImg = document.getElementById('guest-signature-image');
-            let guestSignatureUrl = guestSigImg.src;
-
-            // 1. Check if there's a NEW guest signature to upload
-            if (guestSignatureUrl && guestSignatureUrl.startsWith('data:image/png;base64,')) {
-                const fileName = `Guest_Sig_${document.getElementById('ds-no').value}.png`;
-
-                // Call the API to upload the image
-                const sigResponse = await fetch('/api?action=uploadSignature', {
-                    method: 'POST',
-                    body: JSON.stringify({ signatureData: guestSignatureUrl, fileName: fileName })
-                });
-                const sigResult = await sigResponse.json();
-
-                if (!sigResult.success) throw new Error('Failed to upload signature.');
-
-                // Update the URL to the new Google Drive link
-                guestSignatureUrl = sigResult.url;
-            }
-
-            // 2. Gather all form data, now with the correct signature URL
-            const headers = ['DS_No', 'Booking_ID', 'Date', 'Organisation', 'Guest_Name', 'Guest_Mobile', 'Booked_By', 'Reporting_Time', 'Reporting_Address', 'Spl_Instruction', 'Vehicle_Type', 'Vehicle_No', 'Driver_Name', 'Driver_Mobile', 'Assignment', 'Routing', 'Date_Out', 'Date_In', 'Total_Days', 'Time_Out', 'Time_In', 'Km_Out', 'Km_In', 'Driver_Time_Out', 'Driver_Time_In', 'Driver_Km_Out', 'Driver_Km_In', 'Driver_Total_Hrs', 'Driver_Total_Kms', 'Auth_Signature_Link', 'Guest_Signature_Link', 'Status'];
-            const formData = {};
-            headers.forEach(header => {
-                const inputId = header.toLowerCase().replace(/_/g, '-');
-                const inputElement = document.getElementById(inputId);
-
-                if (header === 'Guest_Signature_Link') {
-                    formData[header] = guestSignatureUrl;
-                } else if (inputElement) {
-                    formData[header] = inputElement.tagName === 'IMG' ? inputElement.src : inputElement.value;
-                } else {
-                    formData[header] = '';
-                }
-            });
-
-            // 3. Save the complete record to Google Sheets
-            const response = await fetch('/api?action=saveDutySlip', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-            const result = await response.json();
-
-            if (result.success) {
-                alert(result.message);
-                window.location.href = '/duty-slips.html';
-            } else {
-                throw new Error(result.error || 'Unknown error during save.');
-            }
-        } catch (error) {
-            console.error("Save failed:", error);
-            alert(`Error: Could not save the duty slip. ${error.message}`);
-            button.disabled = false;
-            button.innerHTML = '<i class="fas fa-save"></i> Save & Generate Link';
+    const headers = ['DS_No', 'Booking_ID', 'Date', 'Organisation', 'Guest_Name', 'Guest_Mobile', 'Booked_By', 'Reporting_Time', 'Reporting_Address', 'Spl_Instruction', 'Vehicle_Type', 'Vehicle_No', 'Driver_Name', 'Driver_Mobile', 'Assignment', 'Routing', 'Date_Out', 'Date_In', 'Total_Days', 'Time_Out', 'Time_In', 'Km_Out', 'Km_In', 'Driver_Time_Out', 'Driver_Time_In', 'Driver_Km_Out', 'Driver_Km_In', 'Driver_Total_Hrs', 'Driver_Total_Kms', 'Auth_Signature_Link', 'Guest_Signature_Link', 'Status'];
+    const formData = {};
+    headers.forEach(header => {
+        const inputId = header.toLowerCase().replace(/_/g, '-');
+        const inputElement = document.getElementById(inputId);
+        if (inputElement) {
+            // This correctly gets the base64 data from the image's src
+            formData[header] = inputElement.tagName === 'IMG' ? inputElement.src : inputElement.value;
+        } else {
+            formData[header] = '';
         }
+    });
+
+    try {
+        const response = await fetch('/api?action=saveDutySlip', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            alert(result.message);
+            window.location.href = '/duty-slips.html';
+        } else {
+            throw new Error(result.error || 'Unknown error during save.');
+        }
+    } catch (error) {
+        console.error("Save failed:", error);
+        alert(`Error: Could not save the duty slip. ${error.message}`);
+        button.disabled = false;
+        button.innerHTML = '<i class="fas fa-save"></i> Save & Generate Link';
     }
+}
     // --- NEW & IMPROVED WHATSAPP FUNCTION ---
     function handleWhatsAppShare() {
         const shareWith = prompt("Who do you want to share this with? (Type 'driver' or 'guest')");
