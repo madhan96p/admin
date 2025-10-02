@@ -78,8 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.innerHTML = `
                     <td>${slip['DS_No']}</td>
                     <td>${slip['Date']}</td>
-                    <td>${slip['Guest Name']}</td>
-                    <td>${slip['Driver Name']}</td>
+                    <td>${slip['Guest_Name']}</td>
+                    <td>${slip['Driver_Name']}</td>
                     <td>${slip['Routing']}</td>
                     <td>
                         <button class="action-button-sm view-btn" data-id="${slip['DS_No']}">View</button>
