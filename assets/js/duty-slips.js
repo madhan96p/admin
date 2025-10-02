@@ -71,10 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // 3. Build the HTML
         tableBody.innerHTML = '';
         if (limitedSlips.length > 0) {
-            limitedSlips.forEach(slip => {
+            limitedSlips.forEach((slip, index) => {
                 const row = document.createElement('tr');
-                // --- THIS IS THE FIX ---
-                // Use bracket notation here as well
+                // --- ADD THIS LINE ---
+                row.style.animationDelay = `${index * 0.05}s`;
                 row.innerHTML = `
                     <td>${slip['DS_No']}</td>
                     <td>${slip['Date']}</td>

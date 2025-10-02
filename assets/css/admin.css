@@ -265,3 +265,18 @@ tbody tr:hover {
     border-radius: 6px;
     font-size: 0.9rem;
 }
+/* --- Animation for table rows --- */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#slips-table-body tr {
+    animation: fadeIn 0.5s ease-out forwards;
+}
