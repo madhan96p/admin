@@ -32,7 +32,6 @@ exports.handler = async function (event, context) {
                 responseData = { nextId: nextId };
                 break;
 
-            // --- NEW CODE STARTS HERE ---
             case 'saveDutySlip':
                 const dataToSave = JSON.parse(event.body);
                 dataToSave.Timestamp = new Date().toISOString(); // Add a server-side timestamp
@@ -42,8 +41,6 @@ exports.handler = async function (event, context) {
                     message: `Duty Slip ${dataToSave.DS_No} saved successfully.`
                 };
                 break;
-            // --- NEW CODE ENDS HERE ---
-            // Add this new case inside the switch (action) block in api.js
 
             case 'getAllDutySlips':
                 const allRows = await sheet.getRows();
@@ -59,8 +56,6 @@ exports.handler = async function (event, context) {
                 });
                 responseData = { slips: slips };
                 break;
-
-            // Add this new case inside the switch (action) block in api.js
 
             case 'getDutySlipById':
                 const slipId = event.queryStringParameters.id;
@@ -82,7 +77,33 @@ exports.handler = async function (event, context) {
                     responseData = { error: `Duty Slip with ID ${slipId} not found.` };
                 }
                 break;
-                
+
+            case 'updateDutySlip':
+                const updatedData = JSON.parse(event.body);
+                const slipToUpdateId = updatedData.DS_No;
+
+                if (!slipToUpdateId) {
+                    responseData = { error: 'No DS_No provided for update.' };
+                    break;
+                }
+
+                const updateRows = await sheet.getRows();
+                const rowToUpdate = updateRows.find(row => row.DS_No === slipToUpdateId);
+
+                if (rowToUpdate) {
+                    // Update each property of the row with the new data
+                    for (const header of sheet.headerValues) {
+                        if (updatedData.hasOwnProperty(header)) {
+                            rowToUpdate[header] = updatedData[header];
+                        }
+                    }
+                    await rowToUpdate.save(); // Save the changes back to the sheet
+                    responseData = { success: true, message: `Duty Slip ${slipToUpdateId} updated successfully.` };
+                } else {
+                    responseData = { error: `Could not find Duty Slip ${slipToUpdateId} to update.` };
+                }
+                break;
+
             default:
                 responseData = { error: 'Invalid action specified.' };
                 break;

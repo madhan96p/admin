@@ -2,7 +2,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const createButton = document.querySelector('.page-title-bar .btn-primary');
     const tableBody = document.getElementById('slips-table-body');
     const loadingIndicator = document.getElementById('loading-indicator');
-
+    // Add this code inside the DOMContentLoaded listener in duty-slips.js
+    tableBody.addEventListener('click', (event) => {
+        if (event.target.classList.contains('edit-btn')) {
+            const slipId = event.target.dataset.id;
+            window.location.href = `/edit-slip.html?id=${slipId}`;
+        }
+    });
     // Navigate to the creation page when the button is clicked
     if (createButton) {
         createButton.addEventListener('click', () => {
@@ -36,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td>${slip.Routing}</td>
                         <td>
                             <button class="action-button-sm">View</button>
-                            <button class="action-button-sm">Edit</button>
+                            <button class="action-button-sm edit-btn" data-id="${slip.DS_No}">Edit</button>
                         </td>
                     `;
                     tableBody.appendChild(row);

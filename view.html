@@ -6,9 +6,22 @@
     <title>View Duty Slip | Shrish Admin</title>
     <link rel="stylesheet" href="/assets/css/duty_slip_form.css"> 
     <style>
-        /* Simple style to make the print view visible on screen */
-        body { background-color: #f4f7fa; display: flex; justify-content: center; align-items: flex-start; padding: 2rem; }
-        .duty-slip-print { display: block !important; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        /* This makes the print layout look good on a normal screen */
+        body { 
+            background-color: #f4f7fa; 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start; 
+            padding: 2rem; 
+            font-family: sans-serif;
+        }
+        .duty-slip-print { 
+            display: block !important; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            background-color: white;
+            width: 210mm; /* A4 paper width */
+            min-height: 297mm; /* A4 paper height */
+        }
     </style>
 </head>
 <body>
@@ -19,25 +32,105 @@
                 <tr>
                     <td>
                         <table class="print-header-table">
-                            </table>
+                            <tr>
+                                <td class="p-h-left">
+                                    <img src="/assets/images/logo.webp" alt="Shrish Travels Logo" class="logo-print">
+                                    <div>
+                                        <center>Plot No.5, Door No.G1, 1st Main Road, Gangai Nagar,<br>
+                                            Velachery, Chennai - 600042<br>
+                                            <strong>Cell: 8883451668, 9176500207</strong>
+                                        </center>
+                                    </div>
+                                </td>
+                                <td class="p-h-center">DUTY SLIP</td>
+                                <td class="p-h-right">
+                                    <table>
+                                        <tr>
+                                            <td>D.S No:</td>
+                                            <td><span id="print-ds-no"></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Date:</td>
+                                            <td><span id="print-date"></span></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <table class="print-body-table">
-                            </table>
+                            <tbody>
+                                <tr>
+                                    <td class="p-b-left">
+                                        <table class="field-table">
+                                            <tr><td class="label">Organisation:</td><td class="value"><span id="print-organisation"></span></td></tr>
+                                            <tr><td class="label">Guest Name:</td><td class="value"><span id="print-guest-name"></span></td></tr>
+                                            <tr><td class="label">Guest Mobile:</td><td class="value"><span id="print-guest-mobile"></span></td></tr>
+                                            <tr><td class="label">Booked By:</td><td class="value"><span id="print-booked-by"></span></td></tr>
+                                            <tr><td class="label">Reporting Time:</td><td class="value"><span id="print-rep-time"></span></td></tr>
+                                            <tr><td class="label" style="vertical-align: top;">Reporting Address:</td><td class="value"><textarea id="print-reporting-address" readonly></textarea></td></tr>
+                                            <tr><td class="label" style="vertical-align: top;">Spl. Instruction:</td><td class="value"><textarea id="print-spl-ins" readonly></textarea></td></tr>
+                                        </table>
+                                    </td>
+                                    <td class="p-b-right">
+                                        <table class="nested-right-table">
+                                             <tr>
+                                                <td colspan="2"><table class="field-table">
+                                                    <tr><td class="label">Booking ID:</td><td class="value"><span id="print-booking-id"></span></td></tr>
+                                                </table></td>
+                                             </tr>
+                                            <tr><td colspan="2"><hr style="border: none; border-top: 1px solid #ccc; margin: 5px 0;"></td></tr>
+                                            <tr><td colspan="2"><table class="field-table">
+                                                <tr><td class="label">Vehicle Type:</td><td class="value"><span id="print-vehicle-type"></span></td></tr>
+                                                <tr><td class="label">Vehicle No:</td><td class="value"><span id="print-vehicle-no"></span></td></tr>
+                                                <tr><td class="label">Driver Name:</td><td class="value"><span id="print-driver-name"></span></td></tr>
+                                                <tr><td class="label">Driver Mobile:</td><td class="value"><span id="print-driver-mobile"></span></td></tr>
+                                            </table></td></tr>
+                                            <tr><td colspan="2"><hr style="border: none; border-top: 1px solid #ccc; margin: 5px 0;"></td></tr>
+                                            <tr><td colspan="2"><table class="field-table">
+                                                <tr><td class="label" style="vertical-align: top;">Assignment:</td><td class="value"><textarea id="print-assignment" readonly></textarea></td></tr>
+                                            </table></td></tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <table class="print-usage-table">
-                            </table>
+                            <tr>
+                                <td class="usage-left-panel">
+                                    <table class="left-grid">
+                                        <tr><td>Date Out: <span id="print-date-out"></span></td><td>Date In: <span id="print-date-in"></span></td><td>No. of Days: <span id="print-total-days"></span></td></tr>
+                                        <tr><td>Op. Time: <span id="print-driver-time-out"></span></td><td>Cl. Time: <span id="print-driver-time-in"></span></td><td>Total Hrs: <span id="print-driver-total-hrs"></span></td></tr>
+                                        <tr><td>Op. Km: <span id="print-driver-km-out"></span></td><td>Cl. Km: <span id="print-driver-km-in"></span></td><td>Total Kms: <span id="print-driver-total-kms"></span></td></tr>
+                                    </table>
+                                </td>
+                                <td class="usage-right-panel">
+                                    <div class="customer-usage-box">
+                                        <strong>CUSTOMER USAGE</strong>
+                                        Op.Time: <span id="print-time-out"></span> Cl.Time: <span id="print-time-in"></span><br>
+                                        Op.Km: <span id="print-km-out"></span> Cl.Km: <span id="print-km-in"></span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
-                 <tr>
+                <tr>
                     <td>
                         <table class="print-footer-table">
-                            </table>
+                            <tr>
+                                <td class="p-f-auth">For <strong>SHRISH TRAVELS</strong><br><br><img id="print-auth-signature-image" class="signature-display" alt="Auth Sig"><br>Authorised Signatory</td>
+                                <td class="p-f-routing">Routing: <span id="print-routing"></span></td>
+                                <td class="p-f-guest"><br><br><img id="print-guest-signature-image" class="signature-display" alt="Guest Sig"><br>Guest Signature</td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
             </tbody>
