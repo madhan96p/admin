@@ -4,7 +4,7 @@ const { Readable } = require('stream');
 
 const SPREADSHEET_ID = '1eqSsdKzF71WR6KR7XFkEI8NW7ObtnxC16ZtavJeePq8';
 // --- IMPORTANT: Paste your Google Drive Folder ID here ---
-const SIGNATURE_FOLDER_ID = 'YOUR_GOOGLE_DRIVE_FOLDER_ID';
+const SIGNATURE_FOLDER_ID = '1J5WEhZnBFzxkbDdAZqqqj_TdbYNAyrVQ';
 
 exports.handler = async function (event, context) {
     // Auth setup
