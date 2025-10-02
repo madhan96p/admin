@@ -164,45 +164,88 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- NEW & IMPROVED WHATSAPP FUNCTION ---
-    function handleWhatsAppShare() {
-        const shareWith = prompt("Who do you want to share this with? (Type 'driver' or 'guest')");
+// This is the full, final version of the function
+function handleWhatsAppShare() {
+    const shareOption = prompt("Who do you want to share this with?\n\n1. Share with DRIVER (to close slip)\n2. Share Info with GUEST\n3. Ask GUEST to close slip\n\nEnter 1, 2, or 3");
 
-        if (shareWith && shareWith.toLowerCase() === 'driver') {
-            const driverMobile = document.getElementById('driver-mobile').value.replace(/\D/g, '');
+    // Helper to get form values cleanly
+    const getValue = (id) => document.getElementById(id)?.value || 'Not specified';
+    const dsNo = getValue('ds-no');
+
+    // The static, professional link that will generate the preview card
+    const contactLink = "https://shrishgroup.com/contact.html";
+
+    switch (shareOption) {
+        case '1': // Share with DRIVER
+            const driverMobile = getValue('driver-mobile').replace(/\D/g, '');
             if (!driverMobile) return alert('Please select a driver first.');
 
-            const link = generateLink(true); // Generate link for the driver
-            const message = `
-*Duty Details*
-Guest: ${document.getElementById('guest-name').value || 'NA'}
-Reporting Time: ${document.getElementById('rep-time').value || 'NA'}
-Address: ${document.getElementById('reporting-address').value || 'NA'}
+            const driverLink = `${window.location.origin}/close-slip.html?id=${dsNo}`;
+            const driverMessage = `
+*New Duty Slip: #${dsNo}*
 
-Please fill the closing details using this link: ${link}
+Dear ${getValue('driver-name')},
+Please find the details for your next duty:
+
+👤 *Guest:* ${getValue('guest-name')}
+⏰ *Reporting Time:* ${getValue('rep-time')}
+📍 *Address:* ${getValue('reporting-address')}
+📋 *Routing:* ${getValue('routing')}
+
+Please use the link below to enter closing KM and time at the end of the trip.
+🔗 *Closing Link:* ${driverLink}
 
 - Shrish Travels
+${contactLink}
             `.trim();
-            window.open(`https://wa.me/91${driverMobile}?text=${encodeURIComponent(message)}`, '_blank');
+            window.open(`https://wa.me/91${driverMobile}?text=${encodeURIComponent(driverMessage)}`, '_blank');
+            break;
 
-        } else if (shareWith && shareWith.toLowerCase() === 'guest') {
-            const guestMobile = document.getElementById('guest-mobile').value.replace(/\D/g, '');
-            if (!guestMobile) return alert('Please enter a guest mobile number.');
+        case '2': // Share Info with GUEST
+            const guestMobileInfo = getValue('guest-mobile').replace(/\D/g, '');
+            if (!guestMobileInfo) return alert('Please enter a guest mobile number.');
 
-            const message = `
-Dear Guest,
+            const guestInfoMessage = `
+Dear ${getValue('guest-name')},
 
-Thank you for choosing Shrish Travels. Your ride has been confirmed.
+Thank you for choosing Shrish Travels. Your ride for Duty Slip #${dsNo} has been confirmed.
 
-Driver: ${document.getElementById('driver-name').value || 'NA'}
-Contact: ${document.getElementById('driver-mobile').value || 'NA'}
-Vehicle: ${document.getElementById('vehicle-type').value || 'NA'} (${document.getElementById('vehicle-no').value || 'NA'})
+*Your Driver Details:*
+ chauffeur: ${getValue('driver-name')}
+📞 *Contact:* ${getValue('driver-mobile')}
+*Vehicle:* ${getValue('vehicle-type')} (${getValue('vehicle-no')})
 
-We wish you a pleasant journey.
+We wish you a pleasant and safe journey. For any questions, please visit our contact page.
 - Shrish Travels
+${contactLink}
             `.trim();
-            window.open(`https://wa.me/91${guestMobile}?text=${encodeURIComponent(message)}`, '_blank');
-        }
+            window.open(`https://wa.me/91${guestMobileInfo}?text=${encodeURIComponent(guestInfoMessage)}`, '_blank');
+            break;
+
+        case '3': // Ask GUEST to close slip
+            const guestMobileClose = getValue('guest-mobile').replace(/\D/g, '');
+            if (!guestMobileClose) return alert('Please enter a guest mobile number.');
+
+            const guestLink = `${window.location.origin}/client-close.html?id=${dsNo}`;
+            const guestCloseMessage = `
+Dear ${getValue('guest-name')},
+
+Thank you for travelling with us. To ensure accuracy, please take a moment to confirm your trip details by filling out the closing time and signing via the secure link below.
+
+🔗 *Confirm Your Trip:* ${guestLink}
+
+Your feedback is valuable to us.
+- Shrish Travels
+${contactLink}
+            `.trim();
+            window.open(`https://wa.me/91${guestMobileClose}?text=${encodeURIComponent(guestCloseMessage)}`, '_blank');
+            break;
+
+        default:
+            // Do nothing if the user cancels or enters an invalid option
+            break;
     }
+}
 
     function handleGenerateLink() {
         const link = generateLink();
