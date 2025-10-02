@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let filteredSlips = allSlips.filter(slip => {
             // --- THIS IS THE FIX ---
             // Use bracket notation for properties with spaces
-            const guestMatch = (slip['Guest Name'] || '').toLowerCase().includes(guestFilter);
+            const guestMatch = (slip['Guest_Name'] || '').toLowerCase().includes(guestFilter);
             const dsNoMatch = (slip['DS_No'] || '').toLowerCase().includes(dsNoFilter);
             return guestMatch && dsNoMatch;
         });
