@@ -235,3 +235,33 @@ tbody tr:hover {
     padding: 20px;
     color: #6b7280;
 }
+
+/* --- Filter Controls Styling --- */
+.filter-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.search-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.search-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.search-group input,
+.search-group select {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.9rem;
+}

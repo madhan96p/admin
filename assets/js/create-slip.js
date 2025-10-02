@@ -191,8 +191,9 @@ We wish you a pleasant journey.
 
     function handleDriverSelection() {
         const selectedDriver = driverData[this.value];
-        const authSigImg = document.getElementById('auth-signature-image');
+        const authSigImg = document.getElementById('auth-signature-link');
         const authSigPlaceholder = document.getElementById('auth-sig-placeholder');
+
         if (selectedDriver) {
             document.getElementById('driver-mobile').value = selectedDriver.mobile;
             if (selectedDriver.signatureUrl) {
