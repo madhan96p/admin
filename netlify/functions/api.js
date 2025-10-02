@@ -17,6 +17,8 @@ exports.handler = async function (event, context) {
         const sheet = doc.sheetsByTitle['duty_slips'];
         let responseData = {};
 
+        // Inside api.js, replace your entire switch block with this
+
         switch (action) {
             case 'getNextDutySlipId':
                 const rows = await sheet.getRows();
@@ -29,6 +31,25 @@ exports.handler = async function (event, context) {
                 responseData = { nextId: nextId };
                 break;
 
+            case 'getAllDutySlips':
+                const allRows = await sheet.getRows();
+                responseData = { slips: allRows.map(row => ({ DS_No: row.DS_No, Date: row.Date, Guest_Name: row.Guest_Name, Driver_Name: row.Driver_Name, Routing: row.Routing })) };
+                break;
+
+            case 'getDutySlipById':
+                const slipId = event.queryStringParameters.id;
+                if (!slipId) { responseData = { error: 'No ID provided.' }; break; }
+                const slipRows = await sheet.getRows();
+                const foundRow = slipRows.find(row => row.DS_No === slipId);
+                if (foundRow) {
+                    const slipData = {};
+                    sheet.headerValues.forEach(header => { slipData[header] = foundRow[header]; });
+                    responseData = { slip: slipData };
+                } else {
+                    responseData = { error: `Duty Slip with ID ${slipId} not found.` };
+                }
+                break;
+
             case 'saveDutySlip':
                 const dataToSave = JSON.parse(event.body);
                 dataToSave.Timestamp = new Date().toISOString();
@@ -36,67 +57,28 @@ exports.handler = async function (event, context) {
                 responseData = { success: true, message: `Duty Slip ${dataToSave.DS_No} saved.` };
                 break;
 
-            case 'getAllDutySlips':
-                const allRows = await sheet.getRows();
-                // We map the rows to a simpler array of objects
-                const slips = allRows.map(row => {
-                    return {
-                        DS_No: row.DS_No,
-                        Date: row.Date,
-                        Guest_Name: row.Guest_Name,
-                        Driver_Name: row.Driver_Name,
-                        Routing: row.Routing,
-                    };
-                });
-                responseData = { slips: slips };
-                break;
-
-            case 'getDutySlipById':
-                const slipId = event.queryStringParameters.id;
-                if (!slipId) {
-                    responseData = { error: 'No ID provided.' };
-                    break;
-                }
-                const slipRows = await sheet.getRows();
-                const foundRow = slipRows.find(row => row.DS_No === slipId);
-
-                if (foundRow) {
-                    // Convert the row object to a simple key-value pair object
-                    const slipData = {};
-                    sheet.headerValues.forEach(header => {
-                        slipData[header] = foundRow[header];
-                    });
-                    responseData = { slip: slipData };
-                } else {
-                    responseData = { error: `Duty Slip with ID ${slipId} not found.` };
-                }
-                break;
-
+            // --- THIS CASE WAS MISSING ---
             case 'updateDutySlip':
                 const updatedData = JSON.parse(event.body);
                 const slipToUpdateId = updatedData.DS_No;
-
-                if (!slipToUpdateId) {
-                    responseData = { error: 'No DS_No provided for update.' };
-                    break;
-                }
+                if (!slipToUpdateId) { responseData = { error: 'No DS_No provided for update.' }; break; }
 
                 const updateRows = await sheet.getRows();
                 const rowToUpdate = updateRows.find(row => row.DS_No === slipToUpdateId);
 
                 if (rowToUpdate) {
-                    // Update each property of the row with the new data
                     for (const header of sheet.headerValues) {
                         if (updatedData.hasOwnProperty(header)) {
                             rowToUpdate[header] = updatedData[header];
                         }
                     }
-                    await rowToUpdate.save(); // Save the changes back to the sheet
-                    responseData = { success: true, message: `Duty Slip ${slipToUpdateId} updated successfully.` };
+                    await rowToUpdate.save();
+                    responseData = { success: true, message: `Duty Slip ${slipToUpdateId} updated.` };
                 } else {
                     responseData = { error: `Could not find Duty Slip ${slipToUpdateId} to update.` };
                 }
                 break;
+            // --- END OF MISSING CASE ---
 
             default:
                 responseData = { error: 'Invalid action specified.' };

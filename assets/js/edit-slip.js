@@ -90,6 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Loop through the received slip data and populate the form
             // Inside loadSlipDataForEditing in edit-slip.js
 
+            // Inside the loadSlipDataForEditing function in edit-slip.js
+
             for (const key in data.slip) {
                 const inputId = key.toLowerCase().replace(/_/g, '-');
                 const inputElement = document.getElementById(inputId);
@@ -97,12 +99,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     // --- THIS IS THE FIX ---
                     if (inputElement.tagName === 'IMG') {
                         const signatureData = data.slip[key];
-                        // Check if there is actual signature data (not a placeholder URL)
-                        if (signatureData && signatureData.startsWith('data:image')) {
+                        // Check if there is ANY valid image source (not a blank URL)
+                        if (signatureData && !signatureData.endsWith('/')) {
                             inputElement.src = signatureData;
                             inputElement.style.display = 'block';
                             // Hide the "Tap to sign" placeholder
-                            inputElement.previousElementSibling.style.display = 'none';
+                            if (inputElement.previousElementSibling) {
+                                inputElement.previousElementSibling.style.display = 'none';
+                            }
                         }
                     } else {
                         inputElement.value = data.slip[key];
