@@ -4,7 +4,7 @@ const { Resend } = require('resend');
 const SPREADSHEET_ID = '1eqSsdKzF71WR6KR7XFkEI8NW7ObtnxC16ZtavJeePq8';
 
 // --- Main Handler ---
-exports.handler = async function(event, context) {
+exports.handler = async function (event, context) {
     // --- 1. Authentication for Google Sheets ---
     const sheetAuth = {
         client_email: process.env.GOOGLE_CLIENT_EMAIL,
@@ -31,7 +31,7 @@ exports.handler = async function(event, context) {
                 }
                 responseData = { nextId: nextId };
                 break;
-            
+
             case 'getAllDutySlips':
                 const allRows = await sheet.getRows();
                 const slips = allRows.map(row => {
@@ -49,13 +49,25 @@ exports.handler = async function(event, context) {
                 });
                 responseData = { slips: slips };
                 break;
-            
+
             case 'getDutySlipById':
                 const slipId = event.queryStringParameters.id;
                 const slipRows = await sheet.getRows();
                 const foundRow = slipRows.find(row => String(row.DS_No) === slipId);
-                if (foundRow) { responseData = { slip: foundRow._rawData }; } 
-                else { responseData = { error: `Duty Slip with ID ${slipId} not found.` };}
+
+                if (foundRow) {
+                    // FIX STARTS HERE: Create a proper key-value object
+                    const headers = sheet.headerValues; // Get all column headers
+                    const slipObject = {};
+                    headers.forEach((header, index) => {
+                        slipObject[header] = foundRow[header]; // Use the named property from the row
+                    });
+                    responseData = { slip: slipObject };
+                    // FIX ENDS HERE
+                }
+                else {
+                    responseData = { error: `Duty Slip with ID ${slipId} not found.` };
+                }
                 break;
 
             case 'saveDutySlip':
@@ -76,14 +88,14 @@ exports.handler = async function(event, context) {
                     for (const header in updatedData) { if (updatedData[header] !== undefined) rowToUpdate[header] = updatedData[header]; }
                     await rowToUpdate.save();
 
-                    if (updatedData.Status === 'Closed by Driver') { await sendDriverClosedEmail(rowToUpdate); } 
-                    else if (updatedData.Status === 'Closed by Client') { await sendClientClosedEmail(rowToUpdate); } 
+                    if (updatedData.Status === 'Closed by Driver') { await sendDriverClosedEmail(rowToUpdate); }
+                    else if (updatedData.Status === 'Closed by Client') { await sendClientClosedEmail(rowToUpdate); }
                     else if (updatedData.Status === 'Updated by Manager') { await sendManagerUpdatedEmail(rowToUpdate); }
-                    
+
                     responseData = { success: true, message: `Duty Slip ${slipToUpdateId} updated.` };
                 } else { responseData = { error: `Could not find Duty Slip ${slipToUpdateId}` }; }
                 break;
-            
+
             default:
                 responseData = { error: 'Invalid action.' };
         }
@@ -136,7 +148,7 @@ function generateActionButtons(data) {
     // 2. Updated message with Chauffeur Info for Guest
     const guestInfoMessage = `Dear Sir/Madam,\nPlease find below the driver and vehicle details for your trip:\n\nDriver Name : ${data.Driver_Name} (+91 ${data.Driver_Mobile})\nVehicle : ${data.Vehicle_Type} (${data.Vehicle_No})\n\nThe driver will arrive on time at the pickup location.\nFor any assistance, feel free to contact us.\n\nThank you for choosing Shrish Travels.${guestSignature}`;
     const guestInfoLink = generateWhatsappLink(data.Guest_Mobile, guestInfoMessage);
-    
+
     // 3. Message asking Guest to sign/close (Unchanged, but uses new signature)
     const guestCloseMessage = `Dear ${data.Guest_Name},\n\nThank you for travelling with us. Please confirm your trip details by signing via the secure link below.\n\n🔗 *Confirm Your Trip:* https://admin.shrishgroup.com/client-close.html?id=${data.DS_No}${guestSignature}`;
     const guestCloseLink = generateWhatsappLink(data.Guest_Mobile, guestCloseMessage);
