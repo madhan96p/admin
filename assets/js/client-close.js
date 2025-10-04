@@ -22,7 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const el = document.getElementById(id);
         if (el) {
             if (el.tagName === 'IMG') {
-                if(value) {
+                // Check for a valid value that isn't just a placeholder or empty data URL
+                if(value && value.length > 100) { // Simple check for non-empty base64
                     el.src = value;
                     el.style.display = 'block';
                 }
@@ -40,9 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            // Adding a small delay to prevent aggressive refetching if server is slow
-            await new Promise(resolve => setTimeout(resolve, 500));
-
+            await new Promise(resolve => setTimeout(resolve, 500)); // Prevent aggressive refetching
             const response = await fetch(`/api?action=getDutySlipById&id=${slipId}`);
             if (!response.ok) {
                  throw new Error(`Server responded with status: ${response.status}`);
@@ -55,29 +54,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const { slip } = data;
 
-            // Populate Header
+            // Populate all fields
             populateField('ds-id', `Duty Slip #${slip.DS_No || slipId}`);
-            populateField('ds-date', `Date: ${slip.Trip_Date || new Date().toLocaleDateString('en-CA')}`);
-
-            // Populate Guest Details
+            populateField('ds-date', `Date: ${slip.Date || new Date().toLocaleDateString('en-CA')}`);
             populateField('guest-name', slip.Guest_Name);
-            populateField('guest-number', slip.Guest_Number);
+            populateField('guest-number', slip.Guest_Mobile);
             populateField('reporting-address', slip.Reporting_Address);
             populateField('reporting-time', slip.Reporting_Time);
-
-            // Populate Driver & Vehicle Details
             populateField('driver-name', slip.Driver_Name);
-            populateField('driver-number', slip.Driver_Number);
+            populateField('driver-number', slip.Driver_Mobile);
             populateField('vehicle-type', slip.Vehicle_Type);
             populateField('vehicle-no', slip.Vehicle_No);
-            
-            // Populate Journey Summary
-            populateField('km-out', slip.Km_Out);
-            populateField('km-in', slip.Km_In);
-            populateField('total-kms', slip.Total_Kms);
-            populateField('total-hrs', slip.Total_Hrs);
-
-            // Populate Signatures
+            populateField('km-out', slip.Driver_Km_Out);
+            populateField('km-in', slip.Driver_Km_In);
+            populateField('total-kms', slip.Driver_Total_Kms);
+            populateField('total-hrs', slip.Driver_Total_Hrs);
             populateField('auth-signature-link', slip.Auth_Signature_Link);
             
             // Show the content
@@ -90,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Form Submission ---
+    // --- Form Submission (CORRECTED LOGIC) ---
     async function handleClientSave(event) {
         event.preventDefault();
 
@@ -102,27 +93,15 @@ document.addEventListener('DOMContentLoaded', () => {
         saveButton.disabled = true;
         saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
         
-        const guestSignatureData = signaturePad.toDataURL("image/png");
+        // This gets the signature as a base64 data URL string
+        const guestSignatureDataURL = signaturePad.toDataURL("image/png");
 
         try {
-            // 1. Upload the new signature to Drive
-            const sigResponse = await fetch('/api?action=uploadSignature', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    signatureData: guestSignatureData, 
-                    fileName: `Guest_Sig_${slipId}.png` 
-                })
-            });
-            const sigResult = await sigResponse.json();
-            if (!sigResult.success || !sigResult.url) {
-                throw new Error('Failed to upload signature.');
-            }
-            
-            // 2. Prepare data and update the duty slip in Google Sheet
+            // THE FIX: We no longer call 'uploadSignature'.
+            // We now send the base64 data URL directly to the 'updateDutySlip' action.
             const dataToUpdate = {
                 DS_No: slipId,
-                Guest_Signature_Link: sigResult.url,
+                Guest_Signature_Link: guestSignatureDataURL, // Send the data URL directly
                 Status: 'Closed by Client'
             };
 
@@ -134,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (result.success) {
-                // Show Thank You Page
                 const guestName = document.getElementById('guest-name').textContent;
                 document.getElementById('thank-you-greeting').textContent = `Thank You, ${guestName}!`;
                 dutySlipView.style.display = 'none';
@@ -183,3 +161,4 @@ document.addEventListener('DOMContentLoaded', () => {
         closeSignaturePad();
     };
 });
+
