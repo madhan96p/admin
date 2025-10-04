@@ -1,22 +1,18 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
-const { google } = require('googleapis');
+const { Resend } = require('resend');
 
 const SPREADSHEET_ID = '1eqSsdKzF71WR6KR7XFkEI8NW7ObtnxC16ZtavJeePq8';
 
 // --- Main Handler ---
 exports.handler = async function(event, context) {
-    // --- 1. Authentication ---
-    const auth = new google.auth.JWT({
-        email: process.env.GOOGLE_CLIENT_EMAIL,
-        key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-        scopes: [
-            'https://www.googleapis.com/auth/spreadsheets',
-            'https://www.googleapis.com/auth/gmail.send'
-        ],
-    });
+    // --- 1. Authentication for Google Sheets ---
+    const sheetAuth = {
+        client_email: process.env.GOOGLE_CLIENT_EMAIL,
+        private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+    };
 
     const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
-    await doc.useServiceAccountAuth({ client_email: auth.email, private_key: auth.key });
+    await doc.useServiceAccountAuth(sheetAuth);
     await doc.loadInfo();
     const sheet = doc.sheetsByTitle['duty_slips'];
     const { action } = event.queryStringParameters;
@@ -39,61 +35,34 @@ exports.handler = async function(event, context) {
             case 'getAllDutySlips':
                 const allRows = await sheet.getRows();
                 const slips = allRows.map(row => {
-                    // Now returning ALL columns from the sheet for maximum flexibility
                     return {
-                        Timestamp: row.Timestamp,
-                        DS_No: row.DS_No,
-                        Booking_ID: row.Booking_ID,
-                        Date: row.Date,
-                        Organisation: row.Organisation,
-                        Guest_Name: row.Guest_Name,
-                        Guest_Mobile: row.Guest_Mobile,
-                        Booked_By: row.Booked_By,
-                        Reporting_Time: row.Reporting_Time,
-                        Reporting_Address: row.Reporting_Address,
-                        Spl_Instruction: row.Spl_Instruction,
-                        Vehicle_Type: row.Vehicle_Type,
-                        Vehicle_No: row.Vehicle_No,
-                        Driver_Name: row.Driver_Name,
-                        Driver_Mobile: row.Driver_Mobile,
-                        Assignment: row.Assignment,
-                        Routing: row.Routing,
-                        Date_Out: row.Date_Out,
-                        Date_In: row.Date_In,
-                        Total_Days: row.Total_Days,
-                        Time_Out: row.Time_Out,
-                        Time_In: row.Time_In,
-                        Km_Out: row.Km_Out,
-                        Km_In: row.Km_In,
-                        Driver_Time_Out: row.Driver_Time_Out,
-                        Driver_Time_In: row.Driver_Time_In,
-                        Driver_Km_Out: row.Driver_Km_Out,
-                        Driver_Km_In: row.Driver_Km_In,
-                        Driver_Total_Hrs: row.Driver_Total_Hrs,
-                        Driver_Total_Kms: row.Driver_Total_Kms,
-                        Auth_Signature_Link: row.Auth_Signature_Link,
-                        Guest_Signature_Link: row.Guest_Signature_Link,
-                        Status: row.Status
+                        Timestamp: row.Timestamp, DS_No: row.DS_No, Booking_ID: row.Booking_ID, Date: row.Date, Organisation: row.Organisation,
+                        Guest_Name: row.Guest_Name, Guest_Mobile: row.Guest_Mobile, Booked_By: row.Booked_By, Reporting_Time: row.Reporting_Time,
+                        Reporting_Address: row.Reporting_Address, Spl_Instruction: row.Spl_Instruction, Vehicle_Type: row.Vehicle_Type,
+                        Vehicle_No: row.Vehicle_No, Driver_Name: row.Driver_Name, Driver_Mobile: row.Driver_Mobile, Assignment: row.Assignment,
+                        Routing: row.Routing, Date_Out: row.Date_Out, Date_In: row.Date_In, Total_Days: row.Total_Days, Time_Out: row.Time_Out,
+                        Time_In: row.Time_In, Km_Out: row.Km_Out, Km_In: row.Km_In, Driver_Time_Out: row.Driver_Time_Out, Driver_Time_In: row.Driver_Time_In,
+                        Driver_Km_Out: row.Driver_Km_Out, Driver_Km_In: row.Driver_Km_In, Driver_Total_Hrs: row.Driver_Total_Hrs,
+                        Driver_Total_Kms: row.Driver_Total_Kms, Auth_Signature_Link: row.Auth_Signature_Link,
+                        Guest_Signature_Link: row.Guest_Signature_Link, Status: row.Status
                     };
                 });
                 responseData = { slips: slips };
                 break;
             
-
             case 'getDutySlipById':
                 const slipId = event.queryStringParameters.id;
                 const slipRows = await sheet.getRows();
                 const foundRow = slipRows.find(row => String(row.DS_No) === slipId);
-                if (foundRow) {
-                    responseData = { slip: foundRow._rawData };
-                } else { responseData = { error: `Duty Slip with ID ${slipId} not found.` };}
+                if (foundRow) { responseData = { slip: foundRow._rawData }; } 
+                else { responseData = { error: `Duty Slip with ID ${slipId} not found.` };}
                 break;
 
             case 'saveDutySlip':
                 const dataToSave = JSON.parse(event.body);
                 dataToSave.Timestamp = new Date().toISOString();
                 const newRow = await sheet.addRow(dataToSave);
-                await sendNewSlipEmail(auth, newRow);
+                await sendNewSlipEmail(newRow); // Auth removed
                 responseData = { success: true, message: `Duty Slip ${dataToSave.DS_No} saved.` };
                 break;
 
@@ -107,14 +76,10 @@ exports.handler = async function(event, context) {
                     for (const header in updatedData) { if (updatedData[header] !== undefined) rowToUpdate[header] = updatedData[header]; }
                     await rowToUpdate.save();
 
-                    // Decide which update email to send
-                    if (updatedData.Status === 'Closed by Driver') {
-                        await sendDriverClosedEmail(auth, rowToUpdate);
-                    } else if (updatedData.Status === 'Closed by Client') {
-                        await sendClientClosedEmail(auth, rowToUpdate);
-                    } else if (updatedData.Status === 'Updated by Manager') {
-                        await sendManagerUpdatedEmail(auth, rowToUpdate);
-                    }
+                    if (updatedData.Status === 'Closed by Driver') { await sendDriverClosedEmail(rowToUpdate); } 
+                    else if (updatedData.Status === 'Closed by Client') { await sendClientClosedEmail(rowToUpdate); } 
+                    else if (updatedData.Status === 'Updated by Manager') { await sendManagerUpdatedEmail(rowToUpdate); }
+                    
                     responseData = { success: true, message: `Duty Slip ${slipToUpdateId} updated.` };
                 } else { responseData = { error: `Could not find Duty Slip ${slipToUpdateId}` }; }
                 break;
@@ -130,19 +95,27 @@ exports.handler = async function(event, context) {
     }
 };
 
-// --- 3. Email Sending Logic ---
-async function sendEmail(auth, subject, htmlBody) {
-    const gmail = google.gmail({ version: 'v1', auth });
-    const email = [
-        'Content-Type: text/html; charset="UTF-8"', 'MIME-Version: 1.0',
-        'to: travels@shrishgroup.com', 'cc: shrishtravels1@gmail.com',
-        `subject: =?utf-8?B?${Buffer.from(subject).toString('base64')}?=`, '', htmlBody
-    ].join('\n');
-    const encodedMessage = Buffer.from(email).toString('base64').replace(/\+/g, '-').replace(/\//g, '_');
-    await gmail.users.messages.send({ userId: 'me', requestBody: { raw: encodedMessage } });
+// --- 3. Email Sending Logic (NEW with Resend) ---
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+async function sendEmail(subject, htmlBody) {
+    try {
+        await resend.emails.send({
+            from: 'Shrish Travels <travels@shrishgroup.com>',
+            to: ['travels@shrishgroup.com'],
+            cc: ['shrishtravels1@gmail.com'],
+            subject: subject,
+            html: htmlBody,
+        });
+        console.log('Email sent successfully via Resend.');
+    } catch (error) {
+        console.error('Error sending email with Resend:', error);
+        throw error;
+    }
 }
 
 // --- 4. HTML Email Templates ---
+// (No changes needed in this section, it's just the function calls that were updated)
 
 function generateActionButtons(data) {
     return `
@@ -165,7 +138,7 @@ function generateActionButtons(data) {
         </div>`;
 }
 
-function sendNewSlipEmail(auth, data) {
+function sendNewSlipEmail(data) {
     const subject = `📝 New Duty Slip Created: #${data.DS_No}`;
     const htmlBody = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
@@ -175,10 +148,10 @@ function sendNewSlipEmail(auth, data) {
             <p style="color: #666; text-align: center;">Guest: <strong>${data.Guest_Name || 'N/A'}</strong> | Driver: <strong>${data.Driver_Name || 'N/A'}</strong></p>
             ${generateActionButtons(data)}
         </div>`;
-    return sendEmail(auth, subject, htmlBody);
+    return sendEmail(subject, htmlBody);
 }
 
-function sendManagerUpdatedEmail(auth, data) {
+function sendManagerUpdatedEmail(data) {
     const subject = `✏️ Duty Slip Updated by Manager: #${data.DS_No}`;
     const htmlBody = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
@@ -187,10 +160,10 @@ function sendManagerUpdatedEmail(auth, data) {
             <p style="color: #666; text-align: center;">A manager has made changes to this duty slip.</p>
             ${generateActionButtons(data)}
         </div>`;
-    return sendEmail(auth, subject, htmlBody);
+    return sendEmail(subject, htmlBody);
 }
 
-function sendDriverClosedEmail(auth, data) {
+function sendDriverClosedEmail(data) {
     const subject = `✅ Duty Slip Closed by Driver: #${data.DS_No}`;
     const htmlBody = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
@@ -199,10 +172,10 @@ function sendDriverClosedEmail(auth, data) {
             <p style="color: #666; text-align: center;">The driver has submitted their closing details.</p>
             ${generateActionButtons(data)}
         </div>`;
-    return sendEmail(auth, subject, htmlBody);
+    return sendEmail(subject, htmlBody);
 }
 
-function sendClientClosedEmail(auth, data) {
+function sendClientClosedEmail(data) {
     const subject = `✅ Duty Slip Confirmed by Guest: #${data.DS_No}`;
     const htmlBody = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
@@ -211,5 +184,5 @@ function sendClientClosedEmail(auth, data) {
             <p style="color: #666; text-align: center;">The guest has confirmed their trip details and signed.</p>
             ${generateActionButtons(data)}
         </div>`;
-    return sendEmail(auth, subject, htmlBody);
+    return sendEmail(subject, htmlBody);
 }
