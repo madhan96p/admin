@@ -113,7 +113,97 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    function handleQuickShare(shareType, slipData) { /* ... Same function from duty-slips.js ... */ }
+    // In manager-hub.js, replace the placeholder function with this
+    function handleQuickShare(shareType, slipData) {
+        const dsNo = slipData['DS_No'];
+        const contactInfo = `\nFor assistance:\n📞 +91 8883451668\n📧 travels@shrishgroup.com\n🌐 https://shrishgroup.com/contact`;
+        let mobile = '';
+        let message = '';
+
+        // Helper to conditionally add a line to the message if the data exists
+        const addDetail = (label, value) => {
+            return value && value !== 'Not specified' ? `\n${label}: ${value}` : '';
+        };
+
+        switch (shareType) {
+            case 'driver':
+                mobile = slipData['Driver_Mobile']?.replace(/\D/g, '');
+                if (!mobile) return alert('Driver mobile not found.');
+
+                const driverLink = `${window.location.origin}/close-slip.html?id=${dsNo}`;
+                message = `
+*New Duty Slip: #${dsNo}*
+
+👤 Passenger: ${slipData['Guest_Name']} (${slipData['Guest_Mobile']})
+🚗 Vehicle: ${slipData['Vehicle_Type']} (${slipData['Vehicle_No']})
+🗓️ Date: ${slipData['Date']}`
+                    + addDetail('⏰ Reporting time', slipData['Reporting_Time'])
+                    + addDetail('📍 Reporting address', slipData['Reporting_Address'])
+                    + addDetail('➡️ Drop address', slipData['Routing'])
+                    + addDetail('📝 Remarks', slipData['Spl_Instruction'])
+                    + `\n\n🔗 *Close link:* ${driverLink}\n\nRegards\n- Shrish Travels`;
+
+                break;
+
+            case 'guest-info':
+                mobile = slipData['Guest_Mobile']?.replace(/\D/g, '');
+                if (!mobile) return alert('Guest mobile not found.');
+
+                message = `
+Dear ${slipData['Guest_Name']},
+
+Your ride with Shrish Travels is confirmed.
+
+*Your Chauffeur Details:*
+👤 Name: ${slipData['Driver_Name']}
+📞 Contact: ${slipData['Driver_Mobile']}
+🚗 Vehicle: ${slipData['Vehicle_Type']} (${slipData['Vehicle_No']})
+
+The driver will arrive on time at the pickup location. Thank you for choosing us.
+${contactInfo}
+            `.trim();
+                break;
+
+            case 'guest-close':
+                mobile = slipData['Guest_Mobile']?.replace(/\D/g, '');
+                if (!mobile) return alert('Guest mobile not found.');
+
+                const guestLink = `${window.location.origin}/client-close.html?id=${dsNo}`;
+                message = `
+Dear ${slipData['Guest_Name']},
+
+Thank you for travelling with Shrish Travels. To ensure accuracy, please take a moment to confirm your trip details and sign via the secure link below.
+
+🔗 *Confirm Your Trip:* ${guestLink}
+
+Your feedback is valuable to us.
+${contactInfo}
+            `.trim();
+                break;
+
+            case 'thank-you':
+                mobile = slipData['Guest_Mobile']?.replace(/\D/g, '');
+                if (!mobile) return alert('Guest mobile not found.');
+
+                const viewLink = `${window.location.origin}/view.html?id=${dsNo}`;
+                message = `
+Dear ${slipData['Guest_Name']},
+
+We hope you had a pleasant journey. Thank you for choosing Shrish Travels!
+
+For your records, you can view your last trip's duty slip here:
+🧾 *View Last Trip:* ${viewLink}
+
+We look forward to serving you again.
+${contactInfo}
+            `.trim();
+                break;
+        }
+
+        if (mobile && message) {
+            window.open(`https://wa.me/91${mobile}?text=${encodeURIComponent(message.trim())}`, '_blank');
+        }
+    }
 
     // --- 5. INITIALIZE ---
     loadAllSlips();
