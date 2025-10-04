@@ -125,22 +125,24 @@ function generateWhatsappLink(mobile, message) {
 
 // Generates the action buttons for the email body
 function generateActionButtons(data) {
-    const contactInfo = `\nFor assistance:\n📞 +91 8883451668\n📧 travels@shrishgroup.com\n🌐 https://shrishgroup.com/contact`;
+    // New, more detailed signature for guest messages
+    const guestSignature = `\n\nFor bookings, please contact:\n📞 ‪‪+91 8883451668‬‬ / ‪‪+91 9176500207‬‬\n📧 info@shrishgroup.com\n🌐 ‪www.shrishgroup.com/contact`;
+    const driverSignature = `\n\nRegards Shrish Group\nContact +91 8883451668 / 9176500207\n- Sent via Shrish Travels`;
 
-    // 1. Message for Driver
-    const driverMessage = `*Duty Slip: #${data.DS_No}*\n\n👤 Guest: ${data.Guest_Name}\n⏰ Time: ${data.Reporting_Time}\n📍 Address: ${data.Reporting_Address}\n\n🔗 *Close Link:* https://admin.shrishgroup.com/close-slip.html?id=${data.DS_No}\n\n- Shrish Travels`;
+    // 1. Updated message for Driver based on your new template
+    const driverMessage = `Booking: DS#${data.Booking_ID}\nPassenger: ${data.Guest_Name} (${data.Guest_Mobile})\nVehicle: ${data.Vehicle_Type} (${data.Vehicle_No})\nDate: ${data.Date}\nReporting time: ${data.Reporting_Time}\nReporting address: ${data.Reporting_Address}\nClose link: https://admin.shrishgroup.com/close-slip.html?id=${data.DS_No}${driverSignature}`;
     const driverLink = generateWhatsappLink(data.Driver_Mobile, driverMessage);
 
-    // 2. Message with Chauffeur Info for Guest
-    const guestInfoMessage = `Dear ${data.Guest_Name},\n\nYour ride with Shrish Travels is confirmed.\n\n*Your Chauffeur Details:*\n👤 Name: ${data.Driver_Name}\n📞 Contact: ${data.Driver_Mobile}\n🚗 Vehicle: ${data.Vehicle_Type} (${data.Vehicle_No})\n\nThank you for choosing us.${contactInfo}`;
+    // 2. Updated message with Chauffeur Info for Guest
+    const guestInfoMessage = `Dear Sir/Madam,\nPlease find below the driver and vehicle details for your trip:\n\nDriver Name : ${data.Driver_Name} (+91 ${data.Driver_Mobile})\nVehicle : ${data.Vehicle_Type} (${data.Vehicle_No})\n\nThe driver will arrive on time at the pickup location.\nFor any assistance, feel free to contact us.\n\nThank you for choosing Shrish Travels.${guestSignature}`;
     const guestInfoLink = generateWhatsappLink(data.Guest_Mobile, guestInfoMessage);
     
-    // 3. Message asking Guest to sign/close
-    const guestCloseMessage = `Dear ${data.Guest_Name},\n\nThank you for travelling with us. Please confirm your trip details by signing via the secure link below.\n\n🔗 *Confirm Your Trip:* https://admin.shrishgroup.com/client-close.html?id=${data.DS_No}\n\n- Shrish Travels${contactInfo}`;
+    // 3. Message asking Guest to sign/close (Unchanged, but uses new signature)
+    const guestCloseMessage = `Dear ${data.Guest_Name},\n\nThank you for travelling with us. Please confirm your trip details by signing via the secure link below.\n\n🔗 *Confirm Your Trip:* https://admin.shrishgroup.com/client-close.html?id=${data.DS_No}${guestSignature}`;
     const guestCloseLink = generateWhatsappLink(data.Guest_Mobile, guestCloseMessage);
 
-    // 4. Thank You & Review Message
-    const thankYouMessage = `Dear ${data.Guest_Name},\n\nWe hope you had a pleasant journey. If you have a moment, please consider leaving us a review on Google.\n\n⭐ *Leave a Review:* https://g.page/r/CaYoGVSEfXMNEBM/review\n\nWe look forward to serving you again.\n- Shrish Travels${contactInfo}`;
+    // 4. Thank You & Review Message (Unchanged, but uses new signature)
+    const thankYouMessage = `Dear ${data.Guest_Name},\n\nWe hope you had a pleasant journey. If you have a moment, please consider leaving us a review on Google.\n\n⭐ *Leave a Review:* https://g.page/r/CaYoGVSEfXMNEBM/review\n\nWe look forward to serving you again.\n- Shrish Travels${guestSignature}`;
     const thankYouLink = generateWhatsappLink(data.Guest_Mobile, thankYouMessage);
 
     return `
@@ -164,17 +166,21 @@ function generateActionButtons(data) {
         </div>`;
 }
 
-// Generates a standard, professional footer for all emails
+// Updated footer with developer contact information
 function generateEmailFooter() {
     return `
         <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #999;">
             <p>Shrish Group | Shrish Travels</p>
-            <p>For assistance, contact <a href="mailto:travels@shrishgroup.com">travels@shrishgroup.com</a> or call +91 8883451668</p>
+            <p>For assistance, contact <a href="mailto:travels@shrishgroup.com" style="color: #999;">travels@shrishgroup.com</a> or call +91 8883451668</p>
+            <p style="color: #aaa; font-size: 10px; margin-top: 15px;">
+                Developer: <a href="https://pragadeeshfolio.netlify.app/" style="color: #aaa;">Pragadeesh S</a> | <a href="tel:+918903558066" style="color: #aaa;">Call Him</a>
+            </p>
         </div>
     `;
 }
 
-// Improved Email Template for New Slips
+// (The email template functions below remain the same, they will just use the new buttons and footer automatically)
+
 function sendNewSlipEmail(data) {
     const subject = `📝 New Duty Slip Created: #${data.DS_No} for ${data.Guest_Name || 'N/A'}`;
     const htmlBody = `
@@ -196,7 +202,6 @@ function sendNewSlipEmail(data) {
     return sendEmail(subject, htmlBody);
 }
 
-// Improved Email Template for Manager Updates
 function sendManagerUpdatedEmail(data) {
     const subject = `✏️ Duty Slip Updated: #${data.DS_No} for ${data.Guest_Name || 'N/A'}`;
     const htmlBody = `
@@ -215,7 +220,6 @@ function sendManagerUpdatedEmail(data) {
     return sendEmail(subject, htmlBody);
 }
 
-// Improved Email Template for Driver Closing Slip
 function sendDriverClosedEmail(data) {
     const subject = `✅ Driver Closed Trip: #${data.DS_No} | Ready for Review`;
     const htmlBody = `
@@ -234,7 +238,6 @@ function sendDriverClosedEmail(data) {
     return sendEmail(subject, htmlBody);
 }
 
-// Improved Email Template for Guest Closing Slip
 function sendClientClosedEmail(data) {
     const subject = `✍️ Guest Confirmed Trip: #${data.DS_No} | Finalized`;
     const htmlBody = `
