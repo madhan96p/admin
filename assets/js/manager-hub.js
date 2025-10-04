@@ -181,22 +181,27 @@ ${contactInfo}
             `.trim();
                 break;
 
+            // In manager-hub.js, replace the 'thank-you' case
+
             case 'thank-you':
                 mobile = slipData['Guest_Mobile']?.replace(/\D/g, '');
                 if (!mobile) return alert('Guest mobile not found.');
 
-                const viewLink = `${window.location.origin}/view.html?id=${dsNo}`;
+                // --- THIS IS THE FIX ---
+                // Using the Google Review link instead of the view link
+                const reviewLink = "https://g.page/r/CaYoGVSEfXMNEBM/review";
                 message = `
 Dear ${slipData['Guest_Name']},
 
-We hope you had a pleasant journey. Thank you for choosing Shrish Travels!
+We hope you had a pleasant journey. Thank you again for choosing Shrish Travels!
 
-For your records, you can view your last trip's duty slip here:
-🧾 *View Last Trip:* ${viewLink}
+Your feedback is very important to us. If you have a moment, please consider leaving us a review on Google. It helps other travelers find us.
+
+⭐ *Leave a Review:* ${reviewLink}
 
 We look forward to serving you again.
 ${contactInfo}
-            `.trim();
+    `.trim();
                 break;
         }
 
