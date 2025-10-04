@@ -142,11 +142,11 @@ function generateActionButtons(data) {
     const driverSignature = `\n\nRegards Shrish Group\nContact +91 8883451668 / 9176500207\n- Sent via Shrish Travels`;
 
     // 1. Updated message for Driver based on your new template
-    const driverMessage = `Booking: DS#${data.Booking_ID}\nPassenger: ${data.Guest_Name} (${data.Guest_Mobile})\nVehicle: ${data.Vehicle_Type} (${data.Vehicle_No})\nDate: ${data.Date}\nReporting time: ${data.Reporting_Time}\nReporting address: ${data.Reporting_Address}\nClose link: https://admin.shrishgroup.com/close-slip.html?id=${data.DS_No}${driverSignature}`;
+    const driverMessage = `Booking: DS#${data.Booking_ID}\nPassenger: ${data.Guest_Name} ( +91${data.Guest_Mobile} )\nVehicle: ${data.Vehicle_Type} (${data.Vehicle_No})\nDate: ${data.Date}\nReporting time: ${data.Reporting_Time}\nReporting address: ${data.Reporting_Address}\nClose link: https://admin.shrishgroup.com/close-slip.html?id=${data.DS_No}${driverSignature}`;
     const driverLink = generateWhatsappLink(data.Driver_Mobile, driverMessage);
 
     // 2. Updated message with Chauffeur Info for Guest
-    const guestInfoMessage = `Dear Sir/Madam,\nPlease find below the driver and vehicle details for your trip:\n\nDriver Name : ${data.Driver_Name} (+91 ${data.Driver_Mobile})\nVehicle : ${data.Vehicle_Type} (${data.Vehicle_No})\n\nThe driver will arrive on time at the pickup location.\nFor any assistance, feel free to contact us.\n\nThank you for choosing Shrish Travels.${guestSignature}`;
+    const guestInfoMessage = `Dear Sir/Madam,\nPlease find below the driver and vehicle details for your trip:\n\nDriver Name : ${data.Driver_Name} ( +91${data.Driver_Mobile})\nVehicle : ${data.Vehicle_Type} (${data.Vehicle_No})\n\nThe driver will arrive on time at the pickup location.\nFor any assistance, feel free to contact us.\n\nThank you for choosing Shrish Travels.${guestSignature}`;
     const guestInfoLink = generateWhatsappLink(data.Guest_Mobile, guestInfoMessage);
 
     // 3. Message asking Guest to sign/close (Unchanged, but uses new signature)
@@ -201,11 +201,11 @@ function sendNewSlipEmail(data) {
             <h2 style="color: #4F46E5; text-align: center;">New Duty Slip Created</h2>
             <p style="color: #333; text-align: center; font-size: 18px;">D.S. No: <strong>#${data.DS_No}</strong></p>
             <div style="background-color: #f9f9f9; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: left;">
-                <p><strong>Guest:</strong> ${data.Guest_Name || 'N/A'} (${data.Guest_Mobile || 'N/A'})</p>
+                <p><strong>Guest:</strong> ${data.Guest_Name || 'N/A'} ( +91${data.Guest_Mobile || 'N/A'})</p>
                 <p><strong>Reporting Time:</strong> ${data.Reporting_Time || 'N/A'}</p>
                 <p><strong>Reporting Address:</strong> ${data.Reporting_Address || 'N/A'}</p>
                 <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
-                <p><strong>Driver:</strong> ${data.Driver_Name || 'N/A'} (${data.Driver_Mobile || 'N/A'})</p>
+                <p><strong>Driver:</strong> ${data.Driver_Name || 'N/A'} ( +91${data.Driver_Mobile || 'N/A'})</p>
                 <p><strong>Vehicle:</strong> ${data.Vehicle_Type || 'N/A'} (${data.Vehicle_No || 'N/A'})</p>
             </div>
             ${generateActionButtons(data)}
