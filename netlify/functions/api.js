@@ -27,7 +27,7 @@ exports.handler = async function(event, context) {
         switch (action) {
             case 'getNextDutySlipId':
                 const rows = await sheet.getRows();
-                let nextId = 1001;
+                let nextId = 1;
                 if (rows.length > 0) {
                     const lastRow = rows[rows.length - 1];
                     const lastId = parseInt(lastRow.DS_No);
@@ -38,8 +38,47 @@ exports.handler = async function(event, context) {
             
             case 'getAllDutySlips':
                 const allRows = await sheet.getRows();
-                responseData = { slips: allRows.map(row => row._rawData) };
+                const slips = allRows.map(row => {
+                    // Now returning ALL columns from the sheet for maximum flexibility
+                    return {
+                        Timestamp: row.Timestamp,
+                        DS_No: row.DS_No,
+                        Booking_ID: row.Booking_ID,
+                        Date: row.Date,
+                        Organisation: row.Organisation,
+                        Guest_Name: row.Guest_Name,
+                        Guest_Mobile: row.Guest_Mobile,
+                        Booked_By: row.Booked_By,
+                        Reporting_Time: row.Reporting_Time,
+                        Reporting_Address: row.Reporting_Address,
+                        Spl_Instruction: row.Spl_Instruction,
+                        Vehicle_Type: row.Vehicle_Type,
+                        Vehicle_No: row.Vehicle_No,
+                        Driver_Name: row.Driver_Name,
+                        Driver_Mobile: row.Driver_Mobile,
+                        Assignment: row.Assignment,
+                        Routing: row.Routing,
+                        Date_Out: row.Date_Out,
+                        Date_In: row.Date_In,
+                        Total_Days: row.Total_Days,
+                        Time_Out: row.Time_Out,
+                        Time_In: row.Time_In,
+                        Km_Out: row.Km_Out,
+                        Km_In: row.Km_In,
+                        Driver_Time_Out: row.Driver_Time_Out,
+                        Driver_Time_In: row.Driver_Time_In,
+                        Driver_Km_Out: row.Driver_Km_Out,
+                        Driver_Km_In: row.Driver_Km_In,
+                        Driver_Total_Hrs: row.Driver_Total_Hrs,
+                        Driver_Total_Kms: row.Driver_Total_Kms,
+                        Auth_Signature_Link: row.Auth_Signature_Link,
+                        Guest_Signature_Link: row.Guest_Signature_Link,
+                        Status: row.Status
+                    };
+                });
+                responseData = { slips: slips };
                 break;
+            
 
             case 'getDutySlipById':
                 const slipId = event.queryStringParameters.id;
