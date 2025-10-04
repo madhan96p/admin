@@ -4,29 +4,317 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Duty Slip | Shrish Admin</title>
-    <link rel="stylesheet" href="/assets/css/duty_slip_form.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* This makes the print layout look good on a normal screen */
-        body { 
-            background-color: #f4f7fa; 
-            display: flex; 
-            justify-content: center; 
-            align-items: flex-start; 
-            padding: 2rem; 
-            font-family: sans-serif;
+        /* --- General Page Setup --- */
+        body {
+            background-color: #e9ebee;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem 1rem;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+            color: #000;
         }
-        .duty-slip-print { 
-            display: block !important; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
-            background-color: white;
+
+        /* --- Main Slip Container --- */
+        .duty-slip-container {
             width: 210mm; /* A4 paper width */
             min-height: 297mm; /* A4 paper height */
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 15mm;
+            box-sizing: border-box;
+        }
+
+        .print-main-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid #000;
+        }
+
+        .print-main-table>tbody>tr>td {
+            border-bottom: 2px solid #000;
+            padding: 0;
+            vertical-align: top;
+        }
+
+        .print-main-table>tbody:last-child>tr>td {
+            border-bottom: none;
+        }
+
+        span[id^="print-"],
+        textarea[id^="print-"] {
+            font-weight: 500;
+            padding: 0 4px;
+        }
+
+        /* --- Header Section --- */
+        .print-header-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .print-header-table td {
+            padding: 5px;
+            vertical-align: middle;
+        }
+
+        .logo-print {
+            max-height: 65px;
+            width: auto;
+        }
+
+        .p-h-left {
+            width: 48%;
+            line-height: 1.3;
+        }
+        
+        .p-h-left .company-details {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .p-h-center {
+            width: 12%;
+            text-align: center;
+            text-decoration: underline;
+            font-weight: bold;
+            font-size: 1.5em;
+        }
+
+        .p-h-right {
+            width: 40%;
+            border-left: 2px solid #000;
+        }
+
+        .p-h-right table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .p-h-right table td {
+            padding: 4px 5px;
+            border-bottom: 1px solid #000;
+        }
+
+        .p-h-right table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .p-h-right table td:first-child {
+            font-weight: bold;
+            width: 60px;
+        }
+
+        /* --- Body Section --- */
+        .print-body-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .print-body-table>tbody>tr>td {
+            padding: 5px;
+            vertical-align: top;
+        }
+
+        .p-b-left {
+            width: 55%;
+        }
+
+        .p-b-right {
+            width: 45%;
+            border-left: 2px solid #000;
+        }
+
+        .field-table {
+            width: 100%;
+            border-collapse: collapse;
+            line-height: 1.6;
+        }
+
+        .field-table td {
+            padding: 2px;
+        }
+
+        .field-table td.label {
+            font-weight: bold;
+            width: 120px;
+            vertical-align: top;
+        }
+
+        .field-table td.value span,
+        .field-table td.value textarea {
+            display: inline-block;
+            width: 98%;
+            min-height: 1.3em;
+            border-bottom: 1px dotted #999;
+        }
+
+        .field-table textarea {
+            border: none;
+            background: transparent;
+            padding: 0;
+            font: inherit;
+            resize: none;
+            overflow: hidden;
+            height: 4.8em; /* 3 lines */
+        }
+        
+        .field-table #print-assignment {
+             height: 6.4em; /* 4 lines */
+        }
+        
+        .field-table #print-next-req {
+             height: 3.2em; /* 2 lines */
+        }
+
+        /* --- Usage Section --- */
+        .print-usage-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .print-usage-table td {
+            padding: 5px;
+            vertical-align: top;
+        }
+
+        .usage-left-panel {
+            width: 65%;
+            border-right: 2px solid #000;
+        }
+
+        .usage-right-panel {
+            width: 35%;
+            padding: 0;
+        }
+
+        .left-grid {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .left-grid td {
+            border: 1px solid #000;
+            padding: 5px 8px;
+            font-weight: bold;
+        }
+        .left-grid span {
+            font-weight: 500;
+        }
+
+        .customer-usage-box {
+            border: 1px solid #000;
+            margin: 5px;
+            padding: 5px 8px;
+            height: calc(100% - 12px); /* Full height minus margin */
+            line-height: 1.8;
+            box-sizing: border-box;
+            font-weight: bold;
+        }
+        .customer-usage-box span {
+             font-weight: 500;
+        }
+        .customer-usage-box strong {
+            text-align: center;
+            display: block;
+            margin-bottom: 5px;
+            text-decoration: underline;
+        }
+
+        /* --- Footer Section --- */
+        .print-footer-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .print-footer-table td {
+            vertical-align: top;
+            padding: 8px;
+            text-align: center;
+            height: 100px;
+        }
+
+        .p-f-auth { width: 35%; }
+        .p-f-guest { width: 35%; }
+        .p-f-routing {
+            width: 30%;
+            border-left: 2px solid #000;
+            border-right: 2px solid #000;
+            text-align: left;
+            vertical-align: middle;
+        }
+        .p-f-routing span {
+            width: 100%;
+            min-height: 1.3em;
+            display: inline-block;
+            border-bottom: 1px dotted #999;
+        }
+
+        .signature-display {
+            display: block;
+            margin: 5px auto;
+            max-height: 45px;
+            min-height: 45px; /* Reserve space */
+            max-width: 150px;
+            object-fit: contain;
+        }
+        
+        /* --- Floating Print Button --- */
+        .print-fab {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            background-color: #4F46E5;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease-in-out;
+            z-index: 1000;
+        }
+        .print-fab:hover {
+            transform: scale(1.1);
+        }
+        
+        /* --- Print-Specific Styles --- */
+        @media print {
+            body {
+                background-color: #fff;
+                padding: 0;
+                margin: 0;
+            }
+            .duty-slip-container {
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+                min-height: auto;
+                padding: 0;
+            }
+            .print-fab {
+                display: none !important;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="duty-slip-print">
+    <div class="print-fab" onclick="window.print()" title="Print Duty Slip">
+        <i class="fas fa-print"></i>
+    </div>
+
+    <div class="duty-slip-container">
         <table class="print-main-table">
             <tbody>
                 <tr>
@@ -34,12 +322,13 @@
                         <table class="print-header-table">
                             <tr>
                                 <td class="p-h-left">
-                                    <img src="/assets/images/logo.webp" alt="Shrish Travels Logo" class="logo-print">
-                                    <div>
-                                        <center>Plot No.5, Door No.G1, 1st Main Road, Gangai Nagar,<br>
+                                    <div class="company-details">
+                                        <img src="https://shrishgroup.com/assets/img/logo.webp" alt="Shrish Travels Logo" class="logo-print">
+                                        <div>
+                                            Plot No.5, Door No.G1, 1st Main Road, Gangai Nagar,<br>
                                             Velachery, Chennai - 600042<br>
                                             <strong>Cell: 8883451668, 9176500207</strong>
-                                        </center>
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="p-h-center">DUTY SLIP</td>
@@ -59,6 +348,7 @@
                         </table>
                     </td>
                 </tr>
+                
                 <tr>
                     <td>
                         <table class="print-body-table">
@@ -71,28 +361,24 @@
                                             <tr><td class="label">Guest Mobile:</td><td class="value"><span id="print-guest-mobile"></span></td></tr>
                                             <tr><td class="label">Booked By:</td><td class="value"><span id="print-booked-by"></span></td></tr>
                                             <tr><td class="label">Reporting Time:</td><td class="value"><span id="print-rep-time"></span></td></tr>
-                                            <tr><td class="label" style="vertical-align: top;">Reporting Address:</td><td class="value"><textarea id="print-reporting-address" readonly></textarea></td></tr>
-                                            <tr><td class="label" style="vertical-align: top;">Spl. Instruction:</td><td class="value"><textarea id="print-spl-ins" readonly></textarea></td></tr>
+                                            <tr><td class="label">Reporting Address:</td><td class="value"><textarea id="print-reporting-address" readonly></textarea></td></tr>
+                                            <tr><td class="label">Spl. Instruction:</td><td class="value"><textarea id="print-spl-ins" readonly></textarea></td></tr>
                                         </table>
                                     </td>
                                     <td class="p-b-right">
-                                        <table class="nested-right-table">
-                                             <tr>
-                                                <td colspan="2"><table class="field-table">
-                                                    <tr><td class="label">Booking ID:</td><td class="value"><span id="print-booking-id"></span></td></tr>
-                                                </table></td>
-                                             </tr>
-                                            <tr><td colspan="2"><hr style="border: none; border-top: 1px solid #ccc; margin: 5px 0;"></td></tr>
-                                            <tr><td colspan="2"><table class="field-table">
-                                                <tr><td class="label">Vehicle Type:</td><td class="value"><span id="print-vehicle-type"></span></td></tr>
-                                                <tr><td class="label">Vehicle No:</td><td class="value"><span id="print-vehicle-no"></span></td></tr>
-                                                <tr><td class="label">Driver Name:</td><td class="value"><span id="print-driver-name"></span></td></tr>
-                                                <tr><td class="label">Driver Mobile:</td><td class="value"><span id="print-driver-mobile"></span></td></tr>
-                                            </table></td></tr>
-                                            <tr><td colspan="2"><hr style="border: none; border-top: 1px solid #ccc; margin: 5px 0;"></td></tr>
-                                            <tr><td colspan="2"><table class="field-table">
-                                                <tr><td class="label" style="vertical-align: top;">Assignment:</td><td class="value"><textarea id="print-assignment" readonly></textarea></td></tr>
-                                            </table></td></tr>
+                                        <table class="field-table">
+                                            <tr><td class="label">Booking ID:</td><td class="value"><span id="print-booking-id"></span></td></tr>
+                                            <tr><td class="label">CC No:</td><td class="value"><span id="print-cc-no"></span></td></tr>
+                                            <tr><td class="label">Emp. No:</td><td class="value"><span id="print-emp-no"></span></td></tr>
+                                            <tr><td class="label">Dept. Code:</td><td class="value"><span id="print-dept-code"></span></td></tr>
+                                            <tr><td colspan="2"><hr style="border:0; border-top: 1px solid #ccc; margin: 4px 0;"></td></tr>
+                                            <tr><td class="label">Vehicle Type:</td><td class="value"><span id="print-vehicle-type"></span></td></tr>
+                                            <tr><td class="label">Vehicle No:</td><td class="value"><span id="print-vehicle-no"></span></td></tr>
+                                            <tr><td class="label">Driver Name:</td><td class="value"><span id="print-driver-name"></span></td></tr>
+                                            <tr><td class="label">Driver Mobile:</td><td class="value"><span id="print-driver-mobile"></span></td></tr>
+                                            <tr><td colspan="2"><hr style="border:0; border-top: 1px solid #ccc; margin: 4px 0;"></td></tr>
+                                            <tr><td class="label">Assignment:</td><td class="value"><textarea id="print-assignment" readonly></textarea></td></tr>
+                                            <tr><td class="label">Next Req:</td><td class="value"><textarea id="print-next-req" readonly></textarea></td></tr>
                                         </table>
                                     </td>
                                 </tr>
@@ -100,6 +386,7 @@
                         </table>
                     </td>
                 </tr>
+
                 <tr>
                     <td>
                         <table class="print-usage-table">
@@ -122,13 +409,14 @@
                         </table>
                     </td>
                 </tr>
+
                 <tr>
                     <td>
                         <table class="print-footer-table">
                             <tr>
-                                <td class="p-f-auth">For <strong>SHRISH TRAVELS</strong><br><br><img id="print-auth-signature-image" class="signature-display" alt="Auth Sig"><br>Authorised Signatory</td>
+                                <td class="p-f-auth">For <strong>SHRISH TRAVELS</strong><img id="print-auth-signature-image" class="signature-display" alt="Auth Sig"><br>Authorised Signatory</td>
                                 <td class="p-f-routing">Routing: <span id="print-routing"></span></td>
-                                <td class="p-f-guest"><br><br><img id="print-guest-signature-image" class="signature-display" alt="Guest Sig"><br>Guest Signature</td>
+                                <td class="p-f-guest">Guest Signature<img id="print-guest-signature-image" class="signature-display" alt="Guest Sig"></td>
                             </tr>
                         </table>
                     </td>
