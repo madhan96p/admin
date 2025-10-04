@@ -16,29 +16,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const slip = data.slip;
 
-            // Helper to set text content for <span>
+            // Helper to set text content for <span> elements
             const setText = (id, value) => {
                 const el = document.getElementById(id);
                 if (el) el.textContent = value || '';
             };
 
-            // Helper to set value for <textarea>
+            // Helper to set value for <textarea> elements
             const setValue = (id, value) => {
                 const el = document.getElementById(id);
                 if (el) el.value = value || '';
             };
 
-            // Helper to set image source
+            // Helper to set image source for <img> elements
             const setImg = (id, src) => {
                 const el = document.getElementById(id);
-                if (el && src && !src.endsWith('/')) el.src = src;
+                // Check for a valid src (not empty or just a placeholder)
+                if (el && src && src.length > 100) {
+                    el.src = src;
+                }
             };
 
-            // Populate Header
+            // --- Populate Header ---
             setText('print-ds-no', slip.DS_No);
             setText('print-date', slip.Date);
 
-            // Populate Body (Left)
+            // --- Populate Body (Left Panel) ---
             setText('print-organisation', slip.Organisation);
             setText('print-guest-name', slip.Guest_Name);
             setText('print-guest-mobile', slip.Guest_Mobile);
@@ -47,15 +50,19 @@ document.addEventListener('DOMContentLoaded', () => {
             setValue('print-reporting-address', slip.Reporting_Address);
             setValue('print-spl-ins', slip.Spl_Instruction);
 
-            // Populate Body (Right)
+            // --- Populate Body (Right Panel) ---
             setText('print-booking-id', slip.Booking_ID);
+            setText('print-cc-no', slip.CC_No); // New field
+            setText('print-emp-no', slip.Emp_No); // New field
+            setText('print-dept-code', slip.Dept_Code); // New field
             setText('print-vehicle-type', slip.Vehicle_Type);
             setText('print-vehicle-no', slip.Vehicle_No);
             setText('print-driver-name', slip.Driver_Name);
             setText('print-driver-mobile', slip.Driver_Mobile);
             setValue('print-assignment', slip.Assignment);
+            setValue('print-next-req', slip.Next_Requirement); // New field
 
-            // Populate Usage Table
+            // --- Populate Usage Table (Shed-to-Shed) ---
             setText('print-date-out', slip.Date_Out);
             setText('print-date-in', slip.Date_In);
             setText('print-total-days', slip.Total_Days);
@@ -66,17 +73,18 @@ document.addEventListener('DOMContentLoaded', () => {
             setText('print-driver-km-in', slip.Driver_Km_In);
             setText('print-driver-total-kms', slip.Driver_Total_Kms);
 
-            // Populate Customer Usage Box
+            // --- Populate Customer Usage Box ---
             setText('print-time-out', slip.Time_Out);
             setText('print-time-in', slip.Time_In);
             setText('print-km-out', slip.Km_Out);
             setText('print-km-in', slip.Km_In);
 
-            // Populate Footer
+            // --- Populate Footer ---
             setText('print-routing', slip.Routing);
             setImg('print-auth-signature-image', slip.Auth_Signature_Link);
             setImg('print-guest-signature-image', slip.Guest_Signature_Link);
 
+            // Update the browser tab title
             document.title = `Duty Slip #${slip.DS_No} | Shrish Admin`;
 
         } catch (error) {
