@@ -21,8 +21,8 @@
 
         /* --- Main Slip Container --- */
         .duty-slip-container {
-            width: 210mm; /* A4 paper width */
-            min-height: 297mm; /* A4 paper height */
+            width: 210mm;
+            min-height: 297mm;
             background-color: white;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             padding: 15mm;
@@ -41,13 +41,19 @@
             vertical-align: top;
         }
 
-        .print-main-table>tbody:last-child>tr>td {
+        .print-main-table>tbody>tr:last-child>td {
             border-bottom: none;
         }
 
+        /* --- Text Styling & Bolding --- */
+        strong {
+            font-weight: bold;
+        }
+
+        /* Data values will be bold */
         span[id^="print-"],
         textarea[id^="print-"] {
-            font-weight: 500;
+            font-weight: bold;
             padding: 0 4px;
         }
 
@@ -68,34 +74,35 @@
         }
 
         .p-h-left {
-            width: 48%;
+            width: 55%;
             line-height: 1.3;
         }
-        
+
         .p-h-left .company-details {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .p-h-center {
-            width: 12%;
+            width: 15%;
             text-align: center;
-            text-decoration: underline;
             font-weight: bold;
             font-size: 1.5em;
+            text-decoration: underline;
         }
 
         .p-h-right {
-            width: 40%;
+            width: 30%;
             border-left: 2px solid #000;
         }
 
         .p-h-right table {
             width: 100%;
             border-collapse: collapse;
+            border: 1px solid #000;
         }
-        
+
         .p-h-right table td {
             padding: 4px 5px;
             border-bottom: 1px solid #000;
@@ -106,8 +113,11 @@
         }
 
         .p-h-right table td:first-child {
-            font-weight: bold;
-            width: 60px;
+            font-weight: normal;
+        }
+        
+        .p-h-right td.colon {
+            width: 5px;
         }
 
         /* --- Body Section --- */
@@ -141,8 +151,13 @@
         }
 
         .field-table td.label {
-            font-weight: bold;
+            font-weight: normal;
             width: 120px;
+            vertical-align: top;
+        }
+        
+        .field-table td.colon {
+            width: 5px;
             vertical-align: top;
         }
 
@@ -164,15 +179,15 @@
             height: 4.8em; /* 3 lines */
         }
 
-        /* --- Usage Section --- */
+        /* --- Usage Section (Reverted to stable version) --- */
         .print-usage-table {
             width: 100%;
             border-collapse: collapse;
         }
-
-        .print-usage-table td {
-            padding: 5px;
+        
+        .print-usage-table>tbody>tr>td {
             vertical-align: top;
+            padding: 5px;
         }
 
         .usage-left-panel {
@@ -182,41 +197,39 @@
 
         .usage-right-panel {
             width: 35%;
-            padding: 0;
         }
 
         .left-grid {
             width: 100%;
             border-collapse: collapse;
-            text-align: left;
+            table-layout: fixed;
         }
 
         .left-grid td {
             border: 1px solid #000;
             padding: 5px 8px;
-            font-weight: bold;
-        }
-        .left-grid span {
-            font-weight: 500;
+            font-weight: normal;
+            width: 33.33%;
         }
 
         .customer-usage-box {
             border: 1px solid #000;
-            margin: 5px;
+            height: 100%;
             padding: 5px 8px;
-            height: calc(100% - 12px); /* Full height minus margin */
             line-height: 1.8;
             box-sizing: border-box;
-            font-weight: bold;
+            font-weight: normal;
         }
-        .customer-usage-box span {
-             font-weight: 500;
-        }
+
         .customer-usage-box strong {
             text-align: center;
             display: block;
             margin-bottom: 5px;
             text-decoration: underline;
+            font-weight: bold;
+        }
+        .customer-usage-box span {
+             font-weight: bold;
         }
 
         /* --- Footer Section --- */
@@ -232,15 +245,19 @@
             height: 100px;
         }
 
-        .p-f-auth { width: 35%; }
-        .p-f-guest { width: 35%; }
+        .p-f-auth, .p-f-guest {
+            width: 35%;
+        }
+        
         .p-f-routing {
             width: 30%;
             border-left: 2px solid #000;
             border-right: 2px solid #000;
             text-align: left;
             vertical-align: middle;
+            font-weight: normal;
         }
+
         .p-f-routing span {
             width: 100%;
             min-height: 1.3em;
@@ -252,7 +269,7 @@
             display: block;
             margin: 5px auto;
             max-height: 45px;
-            min-height: 45px; /* Reserve space */
+            min-height: 45px;
             max-width: 150px;
             object-fit: contain;
         }
@@ -272,10 +289,11 @@
             align-items: center;
             font-size: 24px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             transition: transform 0.2s ease-in-out;
             z-index: 1000;
         }
+
         .print-fab:hover {
             transform: scale(1.1);
         }
@@ -309,6 +327,7 @@
     <div class="duty-slip-container">
         <table class="print-main-table">
             <tbody>
+                <!-- HEADER SECTION -->
                 <tr>
                     <td>
                         <table class="print-header-table">
@@ -326,21 +345,26 @@
                                 <td class="p-h-center">DUTY SLIP</td>
                                 <td class="p-h-right">
                                     <table>
-                                        <tr>
-                                            <td>D.S No:</td>
-                                            <td><span id="print-ds-no"></span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Date:</td>
-                                            <td><span id="print-date"></span></td>
-                                        </tr>
+                                        <tbody>
+                                            <tr>
+                                                <td>D.S No</td>
+                                                <td class="colon">:</td>
+                                                <td><span id="print-ds-no"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Date</td>
+                                                <td class="colon">:</td>
+                                                <td><span id="print-date"></span></td>
+                                            </tr>
+                                        </tbody>
                                     </table>
                                 </td>
                             </tr>
                         </table>
                     </td>
                 </tr>
-                
+
+                <!-- BODY SECTION -->
                 <tr>
                     <td>
                         <table class="print-body-table">
@@ -348,25 +372,29 @@
                                 <tr>
                                     <td class="p-b-left">
                                         <table class="field-table">
-                                            <tr><td class="label">Organisation:</td><td class="value"><span id="print-organisation"></span></td></tr>
-                                            <tr><td class="label">Guest Name:</td><td class="value"><span id="print-guest-name"></span></td></tr>
-                                            <tr><td class="label">Guest Mobile:</td><td class="value"><span id="print-guest-mobile"></span></td></tr>
-                                            <tr><td class="label">Booked By:</td><td class="value"><span id="print-booked-by"></span></td></tr>
-                                            <tr><td class="label">Reporting Time:</td><td class="value"><span id="print-rep-time"></span></td></tr>
-                                            <tr><td class="label">Reporting Address:</td><td class="value"><textarea id="print-reporting-address" readonly></textarea></td></tr>
-                                            <tr><td class="label">Spl. Instruction:</td><td class="value"><textarea id="print-spl-ins" readonly></textarea></td></tr>
+                                            <tbody>
+                                                <tr><td class="label">Organisation</td><td class="colon">:</td><td class="value"><span id="print-organisation"></span></td></tr>
+                                                <tr><td class="label">Guest Name</td><td class="colon">:</td><td class="value"><span id="print-guest-name"></span></td></tr>
+                                                <tr><td class="label">Guest Mobile</td><td class="colon">:</td><td class="value"><span id="print-guest-mobile"></span></td></tr>
+                                                <tr><td class="label">Booked By</td><td class="colon">:</td><td class="value"><span id="print-booked-by"></span></td></tr>
+                                                <tr><td class="label">Reporting Time</td><td class="colon">:</td><td class="value"><span id="print-rep-time"></span></td></tr>
+                                                <tr><td class="label">Reporting Address</td><td class="colon">:</td><td class="value"><textarea id="print-reporting-address" readonly></textarea></td></tr>
+                                                <tr><td class="label">Spl. Instruction</td><td class="colon">:</td><td class="value"><textarea id="print-spl-ins" readonly></textarea></td></tr>
+                                            </tbody>
                                         </table>
                                     </td>
                                     <td class="p-b-right">
                                         <table class="field-table">
-                                            <tr><td class="label">Booking ID:</td><td class="value"><span id="print-booking-id"></span></td></tr>
-                                            <tr><td colspan="2"><hr style="border:0; border-top: 1px solid #ccc; margin: 4px 0;"></td></tr>
-                                            <tr><td class="label">Vehicle Type:</td><td class="value"><span id="print-vehicle-type"></span></td></tr>
-                                            <tr><td class="label">Vehicle No:</td><td class="value"><span id="print-vehicle-no"></span></td></tr>
-                                            <tr><td class="label">Driver Name:</td><td class="value"><span id="print-driver-name"></span></td></tr>
-                                            <tr><td class="label">Driver Mobile:</td><td class="value"><span id="print-driver-mobile"></span></td></tr>
-                                            <tr><td colspan="2"><hr style="border:0; border-top: 1px solid #ccc; margin: 4px 0;"></td></tr>
-                                            <tr><td class="label">Assignment:</td><td class="value"><textarea id="print-assignment" readonly></textarea></td></tr>
+                                            <tbody>
+                                                <tr><td class="label">Booking ID</td><td class="colon">:</td><td class="value"><span id="print-booking-id"></span></td></tr>
+                                                <tr><td colspan="3"><hr style="border:0; border-top: 1px dotted #999; margin: 2px 0;"></td></tr>
+                                                <tr><td class="label">Vehicle Type</td><td class="colon">:</td><td class="value"><span id="print-vehicle-type"></span></td></tr>
+                                                <tr><td class="label">Vehicle No</td><td class="colon">:</td><td class="value"><span id="print-vehicle-no"></span></td></tr>
+                                                <tr><td class="label">Driver Name</td><td class="colon">:</td><td class="value"><span id="print-driver-name"></span></td></tr>
+                                                <tr><td class="label">Driver Mobile</td><td class="colon">:</td><td class="value"><span id="print-driver-mobile"></span></td></tr>
+                                                <tr><td colspan="3"><hr style="border:0; border-top: 1px dotted #999; margin: 2px 0;"></td></tr>
+                                                <tr><td class="label">Assignment</td><td class="colon">:</td><td class="value"><textarea id="print-assignment" readonly></textarea></td></tr>
+                                            </tbody>
                                         </table>
                                     </td>
                                 </tr>
@@ -375,37 +403,45 @@
                     </td>
                 </tr>
 
+                <!-- USAGE SECTION -->
                 <tr>
                     <td>
                         <table class="print-usage-table">
-                            <tr>
-                                <td class="usage-left-panel">
-                                    <table class="left-grid">
-                                        <tr><td>Date Out: <span id="print-date-out"></span></td><td>Date In: <span id="print-date-in"></span></td><td>No. of Days: <span id="print-total-days"></span></td></tr>
-                                        <tr><td>Op. Time: <span id="print-driver-time-out"></span></td><td>Cl. Time: <span id="print-driver-time-in"></span></td><td>Total Hrs: <span id="print-driver-total-hrs"></span></td></tr>
-                                        <tr><td>Op. Km: <span id="print-driver-km-out"></span></td><td>Cl. Km: <span id="print-driver-km-in"></span></td><td>Total Kms: <span id="print-driver-total-kms"></span></td></tr>
-                                    </table>
-                                </td>
-                                <td class="usage-right-panel">
-                                    <div class="customer-usage-box">
-                                        <strong>CUSTOMER USAGE</strong>
-                                        Op.Time: <span id="print-time-out"></span> Cl.Time: <span id="print-time-in"></span><br>
-                                        Op.Km: <span id="print-km-out"></span> Cl.Km: <span id="print-km-in"></span>
-                                    </div>
-                                </td>
-                            </tr>
+                           <tbody>
+                                <tr>
+                                    <td class="usage-left-panel">
+                                        <table class="left-grid">
+                                            <tbody>
+                                                <tr><td>Date Out: <span id="print-date-out"></span></td><td>Date In: <span id="print-date-in"></span></td><td>No. of Days: <span id="print-total-days"></span></td></tr>
+                                                <tr><td>Op. Time: <span id="print-driver-time-out"></span></td><td>Cl. Time: <span id="print-driver-time-in"></span></td><td>Total Hrs: <span id="print-driver-total-hrs"></span></td></tr>
+                                                <tr><td>Op. Km: <span id="print-driver-km-out"></span></td><td>Cl. Km: <span id="print-driver-km-in"></span></td><td>Total Kms: <span id="print-driver-total-kms"></span></td></tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="usage-right-panel">
+                                        <div class="customer-usage-box">
+                                            <strong>CUSTOMER USAGE</strong>
+                                            Op.Time: <span id="print-time-out"></span> Cl.Time: <span id="print-time-in"></span><br>
+                                            Op.Km: <span id="print-km-out"></span> Cl.Km: <span id="print-km-in"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                           </tbody>
                         </table>
                     </td>
                 </tr>
 
+                <!-- FOOTER SECTION -->
                 <tr>
                     <td>
                         <table class="print-footer-table">
-                            <tr>
-                                <td class="p-f-auth">For <strong>SHRISH TRAVELS</strong><img id="print-auth-signature-image" class="signature-display" alt="Auth Sig"><br>Authorised Signatory</td>
-                                <td class="p-f-routing">Routing: <span id="print-routing"></span></td>
-                                <td class="p-f-guest">Guest Signature<img id="print-guest-signature-image" class="signature-display" alt="Guest Sig"></td>
-                            </tr>
+                           <tbody>
+                                <tr>
+                                    <td class="p-f-auth"><strong>For SHRISH TRAVELS</strong><img id="print-auth-signature-image" class="signature-display" alt="Auth Sig"><br>Authorised Signatory</td>
+                                    <td class="p-f-routing">Routing: <span id="print-routing"></span></td>
+                                    <td class="p-f-guest"><strong>Guest Signature</strong><img id="print-guest-signature-image" class="signature-display" alt="Guest Sig"></td>
+                                </tr>
+                           </tbody>
                         </table>
                     </td>
                 </tr>
@@ -416,3 +452,4 @@
     <script src="/assets/js/view-slip.js"></script>
 </body>
 </html>
+
