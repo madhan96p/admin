@@ -5,24 +5,55 @@ document.addEventListener('DOMContentLoaded', () => {
     const dsNoInput = document.getElementById('search-ds-no');
     const guestInput = document.getElementById('search-guest');
     const dateInput = document.getElementById('search-date');
-    let allSlips = []; // Master list of slips
+    let allSlips = [];
 
     // --- 2. INITIAL DATA LOAD ---
     async function loadAllSlips() {
         try {
             const response = await fetch('/api?action=getAllDutySlips');
             const data = await response.json();
-            if (data.slips) {
-                allSlips = data.slips;
-            }
-        } catch (error) {
-            console.error("Failed to pre-load slips:", error);
-        }
+            if (data.slips) { allSlips = data.slips.reverse(); }
+        } catch (error) { console.error("Failed to pre-load slips:", error); }
     }
 
     // --- 3. EVENT LISTENERS ---
     findBtn.addEventListener('click', handleSearch);
 
+    // Event delegation for all dynamically created buttons
+    resultsContainer.addEventListener('click', (e) => {
+        const target = e.target.closest('.action-link');
+        if (!target) return;
+
+        // This prevents the card's main click event from firing
+        e.preventDefault();
+        e.stopPropagation();
+
+        const slipId = target.dataset.id;
+        const slipData = allSlips.find(s => s.DS_No === slipId);
+
+        if (target.classList.contains('copy-btn')) {
+            navigator.clipboard.writeText(window.location.origin + target.dataset.link)
+                .then(() => alert('Link copied!'));
+        }
+        else if (target.classList.contains('whatsapp-btn')) {
+            if (!slipData) return alert('Slip data not found.');
+            const shareType = target.dataset.type;
+
+            // Call the specific share function based on the button's data-type
+            switch (shareType) {
+                case 'driver': shareWithDriver(slipData); break;
+                case 'guest-info': shareInfoWithGuest(slipData); break;
+                case 'guest-close': askGuestToClose(slipData); break;
+                case 'thank-you': sendThankYouToGuest(slipData); break;
+            }
+        }
+        else if (target.hasAttribute('href')) {
+            // For View and Edit buttons, which are regular links
+            window.open(target.href, '_blank');
+        }
+    });
+
+    // --- 4. CORE FUNCTIONS ---
     // --- 4. CORE FUNCTIONS ---
     function handleSearch() {
         const dsNoQuery = dsNoInput.value.trim().toLowerCase();
@@ -88,128 +119,42 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Event delegation for dynamically created buttons
-    // In manager-hub.js, replace the existing resultsContainer event listener
+    // --- 5. FINAL WHATSAPP MESSAGE FUNCTIONS ---
+    const contactInfo = `\nFor assistance:\n📞 +91 8883451668\n📧 travels@shrishgroup.com\n🌐 https://shrishgroup.com/contact`;
+    const addDetail = (label, value) => (value ? `\n${label}: ${value}` : '');
 
-    resultsContainer.addEventListener('click', (e) => {
-        const actionTarget = e.target.closest('.action-link');
-        const cardTarget = e.target.closest('.slip-card');
-
-        if (actionTarget) { // If a specific action button was clicked
-            e.preventDefault(); // Prevent card click from also firing
-            if (actionTarget.classList.contains('copy-btn')) {
-                navigator.clipboard.writeText(window.location.origin + actionTarget.dataset.link)
-                    .then(() => alert('Link copied!'));
-            } else if (actionTarget.classList.contains('whatsapp-btn')) {
-                const slipData = allSlips.find(s => s['DS_No'] === actionTarget.dataset.id);
-                handleQuickShare(actionTarget.dataset.type, slipData);
-            } else if (actionTarget.hasAttribute('href')) {
-                // Handle regular links like Edit
-                window.location.href = actionTarget.href;
-            }
-        } else if (cardTarget) { // If anywhere else on the card was clicked
-            const slipId = cardTarget.dataset.id;
-            window.open(`/view.html?id=${slipId}`, '_blank');
-        }
-    });
-
-    // In manager-hub.js, replace the placeholder function with this
-    function handleQuickShare(shareType, slipData) {
-        const dsNo = slipData['DS_No'];
-        const contactInfo = `\nFor assistance:\n📞 +91 8883451668\n📧 travels@shrishgroup.com\n🌐 shrishgroup.com/contact`;
-        let mobile = '';
-        let message = '';
-
-        // Helper to conditionally add a line to the message if the data exists
-        const addDetail = (label, value) => {
-            return value && value !== 'Not specified' ? `\n${label}: ${value}` : '';
-        };
-
-        switch (shareType) {
-            case 'driver':
-                mobile = slipData['Driver_Mobile']?.replace(/\D/g, '');
-                if (!mobile) return alert('Driver mobile not found.');
-
-                const driverLink = `${window.location.origin}/close-slip.html?id=${dsNo}`;
-                message = `
-*New Duty Slip: #${dsNo}*
-
-👤 Passenger: ${slipData['Guest_Name']} (${slipData['Guest_Mobile']})
-🚗 Vehicle: ${slipData['Vehicle_Type']} (${slipData['Vehicle_No']})
-🗓️ Date: ${slipData['Date']}`
-                    + addDetail('⏰ Reporting time', slipData['Reporting_Time'])
-                    + addDetail('📍 Reporting address', slipData['Reporting_Address'])
-                    + addDetail('➡️ Drop address', slipData['Routing'])
-                    + addDetail('📝 Remarks', slipData['Spl_Instruction'])
-                    + `\n\n🔗 *Close link:* ${driverLink}\n\nRegards\n- Shrish Travels`;
-
-                break;
-
-            case 'guest-info':
-                mobile = slipData['Guest_Mobile']?.replace(/\D/g, '');
-                if (!mobile) return alert('Guest mobile not found.');
-
-                message = `
-Dear ${slipData['Guest_Name']},
-
-Your ride with Shrish Travels is confirmed.
-
-*Your Chauffeur Details:*
-👤 Name: ${slipData['Driver_Name']}
-📞 Contact: ${slipData['Driver_Mobile']}
-🚗 Vehicle: ${slipData['Vehicle_Type']} (${slipData['Vehicle_No']})
-
-The driver will arrive on time at the pickup location. Thank you for choosing us.
-${contactInfo}
-            `.trim();
-                break;
-
-            case 'guest-close':
-                mobile = slipData['Guest_Mobile']?.replace(/\D/g, '');
-                if (!mobile) return alert('Guest mobile not found.');
-
-                const guestLink = `${window.location.origin}/client-close.html?id=${dsNo}`;
-                message = `
-Dear ${slipData['Guest_Name']},
-
-Thank you for travelling with Shrish Travels. To ensure accuracy, please take a moment to confirm your trip details and sign via the secure link below.
-
-🔗 *Confirm Your Trip:* ${guestLink}
-
-Your feedback is valuable to us.
-${contactInfo}
-            `.trim();
-                break;
-
-            // In manager-hub.js, replace the 'thank-you' case
-
-            case 'thank-you':
-                mobile = slipData['Guest_Mobile']?.replace(/\D/g, '');
-                if (!mobile) return alert('Guest mobile not found.');
-
-                // --- THIS IS THE FIX ---
-                // Using the Google Review link instead of the view link
-                const reviewLink = "https://g.page/r/CaYoGVSEfXMNEBM/review";
-                message = `
-Dear ${slipData['Guest_Name']},
-
-We hope you had a pleasant journey. Thank you again for choosing Shrish Travels!
-
-Your feedback is very important to us. If you have a moment, please consider leaving us a review on Google. It helps other travelers find us.
-
-⭐ *Leave a Review:* ${reviewLink}
-
-We look forward to serving you again.
-${contactInfo}
-    `.trim();
-                break;
-        }
-
-        if (mobile && message) {
-            window.open(`https://wa.me/91${mobile}?text=${encodeURIComponent(message.trim())}`, '_blank');
-        }
+    function shareWithDriver(slip) {
+        const mobile = slip.Driver_Mobile?.replace(/\D/g, '');
+        if (!mobile) return alert('Driver mobile not found.');
+        const link = `${window.location.origin}/close-slip.html?id=${slip.DS_No}`;
+        const message = `*Duty Slip: #${slip.DS_No}*\n\n👤 Guest: ${slip.Guest_Name}\n⏰ Time: ${slip.Reporting_Time}\n📍 Address: ${slip.Reporting_Address}\n\n🔗 *Close Link:* ${link}\n\n- Shrish Travels`;
+        window.open(`https://wa.me/91${mobile}?text=${encodeURIComponent(message.trim())}`, '_blank');
     }
 
-    // --- 5. INITIALIZE ---
+    function shareInfoWithGuest(slip) {
+        const mobile = slip.Guest_Mobile?.replace(/\D/g, '');
+        if (!mobile) return alert('Guest mobile not found.');
+        const message = `Dear ${slip.Guest_Name},\n\nYour ride with Shrish Travels is confirmed.\n\n*Your Chauffeur Details:*\n👤 Name: ${slip.Driver_Name}\n📞 Contact: ${slip.Driver_Mobile}\n🚗 Vehicle: ${slip.Vehicle_Type} (${slip.Vehicle_No})\n\nThank you for choosing us.${contactInfo}`;
+        window.open(`https://wa.me/91${mobile}?text=${encodeURIComponent(message.trim())}`, '_blank');
+    }
+
+    function askGuestToClose(slip) {
+        const mobile = slip.Guest_Mobile?.replace(/\D/g, '');
+        if (!mobile) return alert('Guest mobile not found.');
+        const link = `${window.location.origin}/client-close.html?id=${slip.DS_No}`;
+        const message = `Dear ${slip.Guest_Name},\n\nThank you for travelling with us. Please confirm your trip details by signing via the secure link below.\n\n🔗 *Confirm Your Trip:* ${link}\n\n- Shrish Travels${contactInfo}`;
+        window.open(`https://wa.me/91${mobile}?text=${encodeURIComponent(message.trim())}`, '_blank');
+    }
+
+    function sendThankYouToGuest(slip) {
+        const mobile = slip.Guest_Mobile?.replace(/\D/g, '');
+        if (!mobile) return alert('Guest mobile not found.');
+        const reviewLink = "https://g.page/r/CaYoGVSEfXMNEBM/review";
+        const message = `Dear ${slip.Guest_Name},\n\nWe hope you had a pleasant journey. If you have a moment, please consider leaving us a review on Google.\n\n⭐ *Leave a Review:* ${reviewLink}\n\nWe look forward to serving you again.\n- Shrish Travels${contactInfo}`;
+        window.open(`https://wa.me/91${mobile}?text=${encodeURIComponent(message.trim())}`, '_blank');
+    }
+
+    // --- 6. INITIALIZE ---
     loadAllSlips();
 });
+
