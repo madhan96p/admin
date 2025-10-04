@@ -55,7 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 DS_No: slipId,
                 Time_In: document.getElementById('time-in').value,
                 Km_In: document.getElementById('km-in').value,
-                Guest_Signature_Link: guestSignatureData
+                Guest_Signature_Link: guestSignatureData,
+                Status: 'Closed by Client'
             };
 
             const response = await fetch('/api?action=updateDutySlip', {
