@@ -36,10 +36,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         validateMobileInput('guest-mobile');
         validateMobileInput('driver-mobile');
-        
+
         document.getElementById('driver-name')?.addEventListener('input', handleDriverSelection);
         document.getElementById('auth-signature-box')?.addEventListener('click', () => openSignaturePad('auth-signature-link'));
         document.getElementById('guest-signature-box')?.addEventListener('click', () => openSignaturePad('guest-signature-link'));
+        // NEW LOGIC: PDF Download Button
+        const pdfButtons = document.querySelectorAll('#download-pdf-button, #mobile-download-pdf-button');
+        pdfButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const dsNo = document.getElementById('ds-no').value;
+                if (dsNo) {
+                    // Open the view page in a new tab
+                    const viewUrl = `${window.location.origin}/view.html?id=${dsNo}`;
+                    const printWindow = window.open(viewUrl, '_blank');
+
+                    // Once the new window loads, trigger its print function
+                    printWindow.onload = function () {
+                        printWindow.print();
+                    };
+                } else {
+                    alert("Please save the duty slip first to generate a PDF.");
+                }
+            });
+        });
     }
 
     async function loadSlipDataForEditing() {
@@ -79,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 3. CORE UPDATE HANDLER ---
     async function updateDutySlip(event) {
         event.preventDefault();
-        
+
         if (!validateAllInputs()) {
             alert('Please fix the validation errors before saving.');
             return;
@@ -100,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 formData[header] = '';
             }
         });
-        
+
         formData['Status'] = 'Updated by Manager';
 
         try {

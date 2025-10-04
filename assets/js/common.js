@@ -1,20 +1,16 @@
 /**
  * ====================================================================
- * Shrish Travels - Common Duty Slip Logic (V1.0)
+ * Shrish Travels - Common Logic (V3.0 - Fully Integrated)
  * ====================================================================
- * This file contains all the shared data and functions used across
- * create-slip.js, edit-slip.js, and close-slip.js.
+ * This file contains all shared logic for the entire admin panel.
  *
- * It centralizes:
- * - Configuration (Driver Data)
- * - Signature Pad Management
- * - Calculation Logic (Totals for Hours & KMs)
- * - Input Validation (Mobile numbers, logical checks)
- * - Sharing functionality (WhatsApp, Link Generation)
+ * - Component Loading (Sidebar, Header, Footer)
+ * - Global Event Handling (Logout, Active Links)
+ * - Duty Slip Form Logic (Calculations, Validation, Sharing, etc.)
  * ====================================================================
  */
 
-// --- 1. CENTRALIZED CONFIGURATION & DATA ---
+// --- 1. DUTY SLIP FORM - SHARED DATA & FUNCTIONS ---
 
 const driverData = {
     "AjithKumar": { mobile: "9047382896", signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/Ajithkumar.jpg" },
@@ -22,15 +18,9 @@ const driverData = {
     "Jeganraj": { mobile: "8883451668", signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/jeganraj.jpg" },
 };
 
-// --- 2. SIGNATURE PAD MANAGEMENT ---
-
 let signaturePad;
 let currentSignatureTarget;
 
-/**
- * Initializes the global signature pad.
- * @param {string} canvasId - The ID of the canvas element.
- */
 function initializeSignaturePad(canvasId) {
     const canvas = document.getElementById(canvasId);
     if (canvas) {
@@ -38,15 +28,10 @@ function initializeSignaturePad(canvasId) {
     }
 }
 
-/**
- * Opens the signature modal and prepares the canvas.
- * @param {string} targetImageId - The ID of the <img> element to update upon saving.
- */
 function openSignaturePad(targetImageId) {
     currentSignatureTarget = document.getElementById(targetImageId);
     const sigModal = document.getElementById("signature-modal");
     const sigCanvas = document.getElementById("signature-canvas");
-
     if (sigModal && sigCanvas && signaturePad) {
         sigModal.style.display = "flex";
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
@@ -57,34 +42,22 @@ function openSignaturePad(targetImageId) {
     }
 }
 
-/**
- * Closes the signature modal.
- */
 function closeSignaturePad() {
-    const sigModal = document.getElementById("signature-modal");
-    if (sigModal) sigModal.style.display = "none";
+    document.getElementById("signature-modal").style.display = "none";
 }
 
-/**
- * Clears the signature pad canvas.
- */
 function clearSignature() {
     if (signaturePad) signaturePad.clear();
 }
 
-/**
- * Saves the signature from the canvas to the target image element.
- */
 function saveSignature() {
     if (signaturePad && signaturePad.isEmpty()) {
-        alert("Please provide a signature first.");
-        return;
+        return alert("Please provide a signature first.");
     }
     const dataURL = signaturePad.toDataURL("image/png");
     if (currentSignatureTarget) {
         currentSignatureTarget.src = dataURL;
         currentSignatureTarget.style.display = 'block';
-        // Hide the "Tap to sign" placeholder text
         if (currentSignatureTarget.previousElementSibling) {
             currentSignatureTarget.previousElementSibling.style.display = 'none';
         }
@@ -92,23 +65,29 @@ function saveSignature() {
     closeSignaturePad();
 }
 
-
-// --- 3. CALCULATION & VALIDATION LOGIC ---
-
-/**
- * Calculates total hours and kilometers based on driver inputs.
- * Uses the improved "hrs mins" format.
- */
 function calculateTotals() {
-    // Calculate Total Hours
+    const dateOutVal = document.getElementById('date-out').value;
+    const dateInVal = document.getElementById('date-in').value;
+    if (dateOutVal && dateInVal) {
+        const dateOut = new Date(dateOutVal);
+        const dateIn = new Date(dateInVal);
+        if (dateIn >= dateOut) {
+            const diffTime = Math.abs(dateIn - dateOut);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            document.getElementById('total-days').value = diffDays;
+        } else {
+            document.getElementById('total-days').value = '';
+        }
+    } else {
+        document.getElementById('total-days').value = '';
+    }
+
     const timeOutVal = document.getElementById('driver-time-out').value;
     const timeInVal = document.getElementById('driver-time-in').value;
     if (timeOutVal && timeInVal) {
         const timeOut = new Date(`1970-01-01T${timeOutVal}`);
         let timeIn = new Date(`1970-01-01T${timeInVal}`);
-        if (timeIn < timeOut) { // Handle overnight trips
-            timeIn.setDate(timeIn.getDate() + 1);
-        }
+        if (timeIn < timeOut) timeIn.setDate(timeIn.getDate() + 1);
         const diffMs = timeIn - timeOut;
         const diffHrs = Math.floor(diffMs / 3600000);
         const diffMins = Math.round((diffMs % 3600000) / 60000);
@@ -117,58 +96,26 @@ function calculateTotals() {
         document.getElementById('driver-total-hrs').value = '';
     }
 
-    // Calculate Total Kilometers
     const kmOut = parseFloat(document.getElementById('driver-km-out').value) || 0;
     const kmIn = parseFloat(document.getElementById('driver-km-in').value) || 0;
     if (kmIn > kmOut) {
-        const totalKms = (kmIn - kmOut).toFixed(1);
-        document.getElementById('driver-total-kms').value = `${totalKms} Kms`;
+        document.getElementById('driver-total-kms').value = `${(kmIn - kmOut).toFixed(1)} Kms`;
     } else {
         document.getElementById('driver-total-kms').value = '';
     }
 }
 
-/**
- * Reusable function to validate a 10-digit mobile number input.
- * @param {string} inputId - The ID of the mobile number input field.
- */
 function validateMobileInput(inputId) {
     const mobileInput = document.getElementById(inputId);
-    const errorId = inputId + '-error';
-    let errorElement = document.getElementById(errorId);
-
-    // Create error message element if it doesn't exist
-    if (!errorElement) {
-        errorElement = document.createElement('span');
-        errorElement.id = errorId;
-        errorElement.className = 'input-validation-error';
-        errorElement.style.display = 'none';
-        mobileInput.parentNode.appendChild(errorElement);
-    }
-
+    if (!mobileInput) return;
     mobileInput.addEventListener('input', function () {
         this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10);
-        if (this.value.length > 0 && this.value.length !== 10) {
-            this.classList.add('input-error');
-            errorElement.textContent = 'Must be exactly 10 digits.';
-            errorElement.style.display = 'inline';
-        } else {
-            this.classList.remove('input-error');
-            errorElement.style.display = 'none';
-        }
     });
 }
 
-/**
- * Performs a comprehensive logical validation across all date, time, and KM fields.
- * Returns true if the form is valid, false otherwise.
- */
 function validateAllInputs() {
     let isValid = true;
-    const errorMessages = [];
-
     const fields = {
-        headerDate: document.getElementById('date'),
         dateOut: document.getElementById('date-out'),
         dateIn: document.getElementById('date-in'),
         driverTimeOut: document.getElementById('driver-time-out'),
@@ -181,144 +128,94 @@ function validateAllInputs() {
         customerKmIn: document.getElementById('km-in')
     };
 
-    const clearError = (el) => el.classList.remove('input-error');
     const setError = (el, message) => {
-        el.classList.add('input-error');
-        isValid = false;
-        if (!errorMessages.includes(message)) {
-            errorMessages.push(message);
+        if (el) {
+            el.classList.remove('input-error');
+            void el.offsetWidth;
+            el.classList.add('input-error');
+            isValid = false;
         }
     };
     
-    Object.values(fields).forEach(clearError);
+    Object.values(fields).forEach(el => el ? el.classList.remove('input-error') : null);
 
-    const createDateTime = (dateEl, timeEl) => {
-        const dateVal = dateEl.value;
-        const timeVal = timeEl.value;
-        return (dateVal && timeVal) ? new Date(`${dateVal}T${timeVal}`) : null;
-    };
-
-    const driverStartDateTime = createDateTime(fields.dateOut, fields.driverTimeOut);
-    const driverEndDateTime = createDateTime(fields.dateIn, fields.driverTimeIn);
-    const customerStartDateTime = createDateTime(fields.dateOut, fields.customerTimeOut);
-    const customerEndDateTime = createDateTime(fields.dateIn, fields.customerTimeIn);
-
+    const createDateTime = (d, t) => (d.value && t.value) ? new Date(`${d.value}T${t.value}`) : null;
+    const driverStart = createDateTime(fields.dateOut, fields.driverTimeOut);
+    const driverEnd = createDateTime(fields.dateIn, fields.driverTimeIn);
+    const customerStart = createDateTime(fields.dateOut, fields.customerTimeOut);
+    const customerEnd = createDateTime(fields.dateIn, fields.customerTimeIn);
     const drKmOut = parseFloat(fields.driverKmOut.value) || 0;
     const drKmIn = parseFloat(fields.driverKmIn.value) || 0;
     const custKmOut = parseFloat(fields.customerKmOut.value) || 0;
     const custKmIn = parseFloat(fields.customerKmIn.value) || 0;
 
-    // RULE B: Chronology
-    if (driverEndDateTime && driverStartDateTime && driverEndDateTime < driverStartDateTime) {
-        setError(fields.driverTimeIn, "Driver's end time cannot be before start time.");
-        setError(fields.dateIn, "Driver's end time cannot be before start time.");
-    }
-    // RULE C: Kilometer Logic
-    if (drKmIn > 0 && drKmIn < drKmOut) {
-        setError(fields.driverKmIn, "Driver's Closing KM cannot be less than Opening KM.");
-    }
-    if (custKmIn > 0 && custKmIn < custKmOut) {
-        setError(fields.customerKmIn, "Customer's Closing KM cannot be less than Opening KM.");
-    }
-    // RULE D: Trip Sequence Logic
-    if (customerStartDateTime && driverStartDateTime && customerStartDateTime < driverStartDateTime) {
-        setError(fields.customerTimeOut, "Customer trip cannot start before driver's duty.");
-    }
-    if (driverEndDateTime && customerEndDateTime && driverEndDateTime < customerEndDateTime) {
-        setError(fields.driverTimeIn, "Driver's duty cannot end before the customer's trip.");
-    }
-    if (custKmOut > 0 && custKmOut < drKmOut) {
-        setError(fields.customerKmOut, "Customer Opening KM cannot be less than Driver Opening KM.");
-    }
-    if (drKmIn > 0 && drKmIn < custKmIn) {
-        setError(fields.driverKmIn, "Driver Closing KM cannot be less than Customer Closing KM.");
-    }
+    if (driverEnd && driverStart && driverEnd < driverStart) setError(fields.driverTimeIn);
+    if (drKmIn > 0 && drKmIn < drKmOut) setError(fields.driverKmIn);
+    if (custKmIn > 0 && custKmIn < custKmOut) setError(fields.customerKmIn);
+    if (customerStart && driverStart && customerStart < driverStart) setError(fields.customerTimeOut);
+    if (customerEnd && driverEnd && customerEnd > driverEnd) setError(fields.customerTimeIn);
+    if (custKmOut > 0 && custKmOut < drKmOut) setError(fields.customerKmOut);
+    if (custKmIn > 0 && custKmIn > drKmIn) setError(fields.customerKmIn);
     
-    // Update UI with error messages
-    const errorContainer = document.getElementById('validation-errors');
-    if (errorContainer) {
-        if (!isValid) {
-            errorContainer.innerHTML = errorMessages.map(msg => `<li>${msg}</li>`).join('');
-            errorContainer.style.display = 'block';
-        } else {
-            errorContainer.style.display = 'none';
-        }
-    }
-
     return isValid;
 }
 
-
-// --- 4. SHARING & UTILITY FUNCTIONS ---
-
-/**
- * Handles auto-filling driver mobile and signature when a name is selected.
- */
 function handleDriverSelection() {
-    const selectedDriver = driverData[this.value];
-    const authSigImg = document.getElementById('auth-signature-link');
-    const authSigPlaceholder = document.getElementById('auth-sig-placeholder');
+    const selected = driverData[this.value];
+    if (selected) {
+        document.getElementById('driver-mobile').value = selected.mobile;
+        const img = document.getElementById('auth-signature-link');
+        img.src = selected.signatureUrl;
+        img.style.display = 'block';
+        document.getElementById('auth-sig-placeholder').style.display = 'none';
+    }
+}
 
-    if (selectedDriver) {
-        document.getElementById('driver-mobile').value = selectedDriver.mobile;
-        if (selectedDriver.signatureUrl) {
-            authSigImg.src = selectedDriver.signatureUrl;
-            authSigImg.style.display = 'block';
-            authSigPlaceholder.style.display = 'none';
+// --- 2. GLOBAL COMPONENT & EVENT MANAGEMENT ---
+
+async function loadComponents() {
+    const components = [
+        { id: 'admin-sidebar', path: '/components/_sidebar.html' },
+        { id: 'admin-header', path: '/components/_header.html' },
+        { id: 'admin-footer', path: '/components/_footer.html' }
+    ];
+
+    for (const { id, path } of components) {
+        const element = document.getElementById(id);
+        if (element) {
+            try {
+                const response = await fetch(path);
+                if (response.ok) element.innerHTML = await response.text();
+            } catch (error) { console.error(`Error loading ${path}:`, error); }
         }
-    } else {
-        document.getElementById('driver-mobile').value = '';
-        authSigImg.src = '';
-        authSigImg.style.display = 'none';
-        authSigPlaceholder.style.display = 'block';
     }
 }
 
-/**
- * Handles the multi-option WhatsApp sharing logic.
- */
-function handleWhatsAppShare() {
-    const shareOption = prompt("Who do you want to share this with?\n\n1. Share with DRIVER (to close slip)\n2. Share Info with GUEST\n3. Ask GUEST to close slip\n\nEnter 1, 2, or 3");
+function setActiveNavLink() {
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('.sidebar-nav .nav-links a').forEach(link => {
+        if (link.pathname === currentPath) {
+            link.classList.add('active');
+        }
+    });
+}
 
-    const getValue = (id) => document.getElementById(id)?.value || 'Not specified';
-    const dsNo = getValue('ds-no');
-    const contactLink = "shrishgroup.com/contact.html";
-
-    switch (shareOption) {
-        case '1': // Share with DRIVER
-            const driverMobile = getValue('driver-mobile').replace(/\D/g, '');
-            if (!driverMobile) return alert('Please select a driver first.');
-            const driverLink = `${window.location.origin}/close-slip.html?id=${dsNo}`;
-            const driverMessage = `*New Duty Slip: #${dsNo}*\n\nDear ${getValue('driver-name')},\nPlease find the details for your next duty:\n\nGuest: ${getValue('guest-name')}\nReporting Time: ${getValue('rep-time')}\nAddress: ${getValue('reporting-address')}\nRouting: ${getValue('routing')}\n\nPlease use the link below to enter closing KM and time at the end of the trip.\nClosing Link: ${driverLink}\n\n- Shrish Travels\n${contactLink}`.trim();
-            window.open(`https://wa.me/91${driverMobile}?text=${encodeURIComponent(driverMessage)}`, '_blank');
-            break;
-
-        case '2': // Share Info with GUEST
-            const guestMobileInfo = getValue('guest-mobile').replace(/\D/g, '');
-            if (!guestMobileInfo) return alert('Please enter a guest mobile number.');
-            const guestInfoMessage = `Dear ${getValue('guest-name')},\n\nThank you for choosing Shrish Travels. Your ride for Duty Slip #${dsNo} has been confirmed.\n\n*Your Driver Details:*\nDriver: ${getValue('driver-name')}\nContact: ${getValue('driver-mobile')}\nVehicle: ${getValue('vehicle-type')} (${getValue('vehicle-no')})\n\nWe wish you a pleasant and safe journey. For any questions, please visit our contact page.\n- Shrish Travels\n${contactLink}`.trim();
-            window.open(`https://wa.me/91${guestMobileInfo}?text=${encodeURIComponent(guestInfoMessage)}`, '_blank');
-            break;
-
-        case '3': // Ask GUEST to close slip
-            const guestMobileClose = getValue('guest-mobile').replace(/\D/g, '');
-            if (!guestMobileClose) return alert('Please enter a guest mobile number.');
-            const guestLink = `${window.location.origin}/client-close.html?id=${dsNo}`;
-            const guestCloseMessage = `Dear ${getValue('guest-name')},\n\nThank you for travelling with us. To ensure accuracy, please take a moment to confirm your trip details by filling out the closing time and signing via the secure link below.\n\nConfirm Your Trip: ${guestLink}\n\nYour feedback is valuable to us.\n- Shrish Travels\n${contactLink}`.trim();
-            window.open(`https://wa.me/91${guestMobileClose}?text=${encodeURIComponent(guestCloseMessage)}`, '_blank');
-            break;
+function setupGlobalEventListeners() {
+    const header = document.getElementById('admin-header');
+    if (header) {
+        header.addEventListener('click', (event) => {
+            if (event.target.classList.contains('logout-btn')) {
+                sessionStorage.removeItem('shrish-admin-auth');
+                window.location.href = '/login.html'; // Assuming you have a login page
+            }
+        });
     }
 }
 
-/**
- * Generates and copies a shareable view link for the current slip.
- */
-function handleGenerateLink() {
-    const dsNo = document.getElementById('ds-no').value;
-    if (!dsNo) {
-        alert('Please save the slip first to generate a link.');
-        return;
-    }
-    const link = `${window.location.origin}/view.html?id=${dsNo}`;
-    navigator.clipboard.writeText(link).then(() => alert('Shareable view link copied to clipboard!'));
-}
+// --- 3. DOMCONTENTLOADED ---
+// This is the main entry point for all pages.
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadComponents();
+    setActiveNavLink();
+    setupGlobalEventListeners();
+});

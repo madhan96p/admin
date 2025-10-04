@@ -1,86 +1,78 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. ELEMENT REFERENCES ---
-    const form = document.getElementById('dutySlipForm');
-    const saveButton = document.getElementById('save-slip-button');
-    const mobileSaveButton = document.getElementById('mobile-save-slip-button');
-    const dsNoInput = document.getElementById('ds-no');
-    const dateInput = document.getElementById('date');
-
-    // --- 2. INITIALIZATION ---
     function initializePage() {
         fetchNextDutySlipId();
         setCurrentDate();
         populateDriverDatalist();
         setupEventListeners();
-        initializeSignaturePad('signature-canvas'); // From common.js
+        initializeSignaturePad('signature-canvas');
     }
 
-    // --- 3. PAGE-SPECIFIC SETUP ---
     async function fetchNextDutySlipId() {
         try {
             const response = await fetch('/api?action=getNextDutySlipId');
             const data = await response.json();
             if (data.nextId) {
-                dsNoInput.value = data.nextId;
+                document.getElementById('ds-no').value = data.nextId;
                 document.getElementById('booking-id').value = data.nextId;
             }
-        } catch (error) { console.error('Failed to fetch next Duty Slip ID:', error); }
+        } catch (error) { console.error('Failed to fetch next ID:', error); }
     }
 
     function setCurrentDate() {
-        const today = new Date();
-        dateInput.value = today.toISOString().split('T')[0];
+        document.getElementById('date').value = new Date().toISOString().split('T')[0];
     }
 
     function populateDriverDatalist() {
         const datalist = document.getElementById('driver-list');
-        if (!datalist) return;
-        Object.keys(driverData).forEach(driverName => {
+        Object.keys(driverData).forEach(name => {
             const option = document.createElement('option');
-            option.value = driverName;
+            option.value = name;
             datalist.appendChild(option);
         });
     }
 
     function setupEventListeners() {
-        // Save buttons
         document.querySelectorAll('#save-slip-button, #mobile-save-slip-button').forEach(btn => btn.addEventListener('click', handleSave));
         
-        // Buttons that use common functions
-        document.querySelectorAll('#whatsapp-button, #mobile-whatsapp-button').forEach(btn => btn.addEventListener('click', handleWhatsAppShare));
-        document.querySelectorAll('#generate-link-button, #mobile-generate-link-button').forEach(btn => btn.addEventListener('click', handleGenerateLink));
-        
-        // Calculation and Validation listeners
-        const inputsToWatch = [
-            'driver-time-out', 'driver-time-in', 'driver-km-out', 'driver-km-in', 'date', 'date-out', 'date-in', 'time-out', 'time-in', 'km-out', 'km-in'
-        ];
-        inputsToWatch.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.addEventListener('input', calculateTotals);
-                el.addEventListener('input', validateAllInputs);
-            }
+        document.querySelectorAll('#download-pdf-button, #mobile-download-pdf-button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const dsNo = document.getElementById('ds-no').value;
+                if (dsNo) {
+                    const printWindow = window.open(`${window.location.origin}/view.html?id=${dsNo}`, '_blank');
+                    printWindow.onload = () => printWindow.print();
+                } else {
+                    alert("Please save the slip first to generate a PDF.");
+                }
+            });
         });
         
-        // Mobile validation from common.js
+        const inputsToWatch = ['driver-time-out', 'driver-time-in', 'driver-km-out', 'driver-km-in', 'date-out', 'date-in'];
+        inputsToWatch.forEach(id => document.getElementById(id)?.addEventListener('input', calculateTotals));
+        
+        document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', validateAllInputs));
+        
         validateMobileInput('guest-mobile');
         validateMobileInput('driver-mobile');
         
-        // Other common listeners
         document.getElementById('driver-name')?.addEventListener('input', handleDriverSelection);
         document.getElementById('auth-signature-box')?.addEventListener('click', () => openSignaturePad('auth-signature-link'));
         document.getElementById('guest-signature-box')?.addEventListener('click', () => openSignaturePad('guest-signature-link'));
+
+        document.getElementById('rep-time')?.addEventListener('change', (e) => {
+            if (e.target.value) {
+                const [h, m] = e.target.value.split(':');
+                const date = new Date();
+                date.setHours(parseInt(h), parseInt(m) + 50);
+                document.getElementById('driver-time-out').value = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+            }
+        });
     }
 
-    // --- 4. CORE SAVE HANDLER ---
     async function handleSave(event) {
         event.preventDefault();
-
-        // Prevent saving if validation fails
         if (!validateAllInputs()) {
-            alert('Please fix the validation errors before saving.');
-            return;
+            return alert('Please fix the validation errors (marked in red) before saving.');
         }
 
         const button = event.currentTarget;
@@ -89,17 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const headers = ['DS_No', 'Booking_ID', 'Date', 'Organisation', 'Guest_Name', 'Guest_Mobile', 'Booked_By', 'Reporting_Time', 'Reporting_Address', 'Spl_Instruction', 'Vehicle_Type', 'Vehicle_No', 'Driver_Name', 'Driver_Mobile', 'Assignment', 'Routing', 'Date_Out', 'Date_In', 'Total_Days', 'Time_Out', 'Time_In', 'Km_Out', 'Km_In', 'Driver_Time_Out', 'Driver_Time_In', 'Driver_Km_Out', 'Driver_Km_In', 'Driver_Total_Hrs', 'Driver_Total_Kms', 'Auth_Signature_Link', 'Guest_Signature_Link', 'Status'];
         const formData = {};
-        headers.forEach(header => {
-            const inputId = header.toLowerCase().replace(/_/g, '-');
-            const inputElement = document.getElementById(inputId);
-            if (inputElement) {
-                formData[header] = inputElement.tagName === 'IMG' ? inputElement.src : inputElement.value;
-            } else {
-                formData[header] = '';
-            }
+        headers.forEach(h => {
+            const id = h.toLowerCase().replace(/_/g, '-');
+            const el = document.getElementById(id);
+            if (el) formData[h] = el.tagName === 'IMG' ? el.src : el.value;
         });
-
-        formData['Status'] = 'New'; // Set initial status
+        formData['Status'] = 'New';
 
         try {
             const response = await fetch('/api?action=saveDutySlip', {
@@ -108,21 +95,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(formData)
             });
             const result = await response.json();
-
             if (result.success) {
                 alert(result.message);
                 window.location.href = '/duty-slips.html';
             } else {
-                throw new Error(result.error || 'Unknown error during save.');
+                throw new Error(result.error);
             }
         } catch (error) {
-            console.error("Save failed:", error);
-            alert(`Error: Could not save the duty slip. ${error.message}`);
+            alert(`Save failed: ${error.message}`);
             button.disabled = false;
             button.innerHTML = '<i class="fas fa-save"></i> Save & Generate Link';
         }
     }
 
-    // --- 5. RUN INITIALIZATION ---
     initializePage();
 });

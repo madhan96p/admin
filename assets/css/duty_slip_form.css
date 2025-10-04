@@ -288,7 +288,14 @@
     .p-f-routing { width: 30%; border-left: 1px solid #000; border-right: 1px solid #000; }
     .signature-display { max-height: 45px; max-width: 140px; }
 }
+@keyframes blink-error {
+    50% { border-color: #ef4444; }
+}
 
+.input-error {
+    border-color: #f87171 !important;
+    animation: blink-error 1s ease-in-out;
+}
 /* --- Button Submitting State --- */
 .action-button:disabled {
     cursor: not-allowed;
