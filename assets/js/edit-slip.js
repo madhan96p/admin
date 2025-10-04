@@ -3,20 +3,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 1. CONFIGURATION & DATA ---
     const driverData = {
         "AjithKumar": { mobile: "9047382896", signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/Ajithkumar.jpg" },
-        "Raja": { mobile: "8838750975", signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/Raja.png" },
+        "Raja": { mobile: "8838750975", signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/Raja.jpg" },
         "Jeganraj": { mobile: "8883451668", signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/jeganraj.jpg" },
     };
 
     // --- 2. ELEMENT REFERENCES ---
     const form = document.getElementById('dutySlipForm');
-    const saveButton = document.getElementById('save-slip-button');
-    const mobileSaveButton = document.getElementById('mobile-save-slip-button');
-    const dsNoInput = document.getElementById('ds-no');
-    const dateInput = document.getElementById('date');
-    const fabToggle = document.getElementById('fab-main-toggle');
-    const fabContainer = fabToggle ? fabToggle.parentElement : null;
-
-    // Signature Modal Elements
     const sigModal = document.getElementById("signature-modal");
     const sigCanvas = document.getElementById("signature-canvas");
     const signaturePad = new SignaturePad(sigCanvas, { backgroundColor: 'rgb(255, 255, 255)' });
@@ -29,9 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
         loadSlipDataForEditing();
     }
 
+    // --- 4. SETUP FUNCTIONS ---
     function populateDriverDatalist() {
         const datalist = document.getElementById('driver-list');
-        if (!datalist) return;
         for (const driverName in driverData) {
             const option = document.createElement('option');
             option.value = driverName;
@@ -40,71 +32,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function setupEventListeners() {
-        // Attach to all action buttons
         document.querySelectorAll('#save-slip-button, #mobile-save-slip-button').forEach(btn => btn.addEventListener('click', updateDutySlip));
         document.querySelectorAll('#whatsapp-button, #mobile-whatsapp-button').forEach(btn => btn.addEventListener('click', handleWhatsAppShare));
-        document.querySelectorAll('#generate-link-button, #mobile-generate-link-button').forEach(btn => btn.addEventListener('click', handleGenerateLink));
-        document.querySelectorAll('#download-pdf-button, #mobile-download-pdf-button').forEach(btn => btn.addEventListener('click', () => window.print()));
+        // ... (other listeners for generate link, download, etc.)
 
-        // Attach to form inputs for validation and calculation
-        const inputsToWatch = [
-            'driver-time-out', 'driver-time-in', 'driver-km-out', 'driver-km-in', 'date', 'date-out', 'date-in', 'time-out', 'time-in', 'km-out', 'km-in'
-        ];
-        inputsToWatch.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.addEventListener('input', calculateTotals);
-                el.addEventListener('input', validateAllInputs);
-            }
-        });
         document.getElementById('driver-name')?.addEventListener('input', handleDriverSelection);
-
-        // In edit-slip.js, inside the setupEventListeners function:
-
-        // Signature boxes
         document.getElementById('auth-signature-box')?.addEventListener('click', () => openSignaturePad('auth-signature-link'));
         document.getElementById('guest-signature-box')?.addEventListener('click', () => openSignaturePad('guest-signature-link'));
-        // FAB menu
-        if (fabToggle) {
-            fabToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                fabContainer.classList.toggle('active');
-            });
-            document.addEventListener('click', () => fabContainer.classList.remove('active'));
-        }
-    }
-    async function loadSlipDataForEditing() {
-        const params = new URLSearchParams(window.location.search);
-        const slipId = params.get('id');
 
-        if (!slipId) {
-            alert('Error: No Duty Slip ID provided.');
-            return;
-        }
+        const calculationInputs = ['driver-time-out', 'driver-time-in', 'driver-km-out', 'driver-km-in'];
+        calculationInputs.forEach(id => document.getElementById(id)?.addEventListener('input', calculateTotals));
+    }
+
+    async function loadSlipDataForEditing() {
+        const slipId = new URLSearchParams(window.location.search).get('id');
+        if (!slipId) return alert('Error: No Duty Slip ID provided.');
 
         try {
             const response = await fetch(`/api?action=getDutySlipById&id=${slipId}`);
             const data = await response.json();
-
-            if (data.error || !data.slip) { throw new Error(data.error); }
-
-            // Loop through the received slip data and populate the form
-            // Inside loadSlipDataForEditing in edit-slip.js
-
-            // Inside the loadSlipDataForEditing function in edit-slip.js
+            if (data.error || !data.slip) throw new Error(data.error);
 
             for (const key in data.slip) {
                 const inputId = key.toLowerCase().replace(/_/g, '-');
                 const inputElement = document.getElementById(inputId);
                 if (inputElement) {
-                    // --- THIS IS THE FIX ---
                     if (inputElement.tagName === 'IMG') {
                         const signatureData = data.slip[key];
-                        // Check if there is ANY valid image source (not a blank URL)
                         if (signatureData && !signatureData.endsWith('/')) {
                             inputElement.src = signatureData;
                             inputElement.style.display = 'block';
-                            // Hide the "Tap to sign" placeholder
                             if (inputElement.previousElementSibling) {
                                 inputElement.previousElementSibling.style.display = 'none';
                             }
@@ -114,38 +71,39 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             }
-            calculateTotals(); // Recalculate totals after loading data
-
+            calculateTotals();
         } catch (error) {
             alert(`Failed to load duty slip data: ${error.message}`);
         }
     }
+
     // --- 5. CORE HANDLERS ---
-    // In create-slip.js, replace the entire handleSave function
     async function updateDutySlip(event) {
         event.preventDefault();
         const button = event.currentTarget;
         button.disabled = true;
-        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
 
-        const headers = ['DS_No', 'Booking_ID', 'Date', 'Organisation', 'Guest_Name', 'Guest_Mobile', 'Booked_By', 'Reporting_Time', 'Reporting_Address', 'Spl_Instruction', 'Vehicle_Type', 'Vehicle_No', 'Driver_Name', 'Driver_Mobile', 'Assignment', 'Routing', 'Date_Out', 'Date_In', 'Total_Days', 'Time_Out', 'Time_In', 'Km_Out', 'Km_In', 'Driver_Time_Out', 'Driver_Time_In', 'Driver_Km_Out', 'Driver_Km_In', 'Driver_Total_Hrs', 'Driver_Total_Kms', 'Auth_Signature_Link', 'Guest_Signature_Link', 'Guest_Signature_Note', 'Status'];
+        const headers = ['DS_No', 'Booking_ID', 'Date', 'Organisation', 'Guest_Name', 'Guest_Mobile', 'Booked_By', 'Reporting_Time', 'Reporting_Address', 'Spl_Instruction', 'Vehicle_Type', 'Vehicle_No', 'Driver_Name', 'Driver_Mobile', 'Assignment', 'Routing', 'Date_Out', 'Date_In', 'Total_Days', 'Time_Out', 'Time_In', 'Km_Out', 'Km_In', 'Driver_Time_Out', 'Driver_Time_In', 'Driver_Km_Out', 'Driver_Km_In', 'Driver_Total_Hrs', 'Driver_Total_Kms', 'Auth_Signature_Link', 'Guest_Signature_Link', 'Status'];
         const formData = {};
         headers.forEach(header => {
             const inputId = header.toLowerCase().replace(/_/g, '-');
             const inputElement = document.getElementById(inputId);
             if (inputElement) {
-                // This correctly gets the base64 data from the image's src
                 formData[header] = inputElement.tagName === 'IMG' ? inputElement.src : inputElement.value;
             } else {
                 formData[header] = '';
             }
         });
 
+        // --- THIS IS THE CRUCIAL ADDITION ---
+        formData['Status'] = 'Updated by Manager';
+
         try {
             const response = await fetch('/api?action=updateDutySlip', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(formData),
             });
             const result = await response.json();
 
@@ -153,35 +111,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(result.message);
                 window.location.href = '/duty-slips.html';
             } else {
-                throw new Error(result.error || 'Unknown error during save.');
+                throw new Error(result.error || 'Unknown error during update.');
             }
         } catch (error) {
-            console.error("Save failed:", error);
-            alert(`Error: Could not save the duty slip. ${error.message}`);
+            console.error("Update failed:", error);
+            alert(`Error: Could not update the duty slip. ${error.message}`);
             button.disabled = false;
-            button.innerHTML = '<i class="fas fa-save"></i> Save & Generate Link';
+            button.innerHTML = '<i class="fas fa-save"></i> Update Duty Slip';
         }
     }
 
-    // --- NEW & IMPROVED WHATSAPP FUNCTION ---
-// This is the full, final version of the function
-function handleWhatsAppShare() {
-    const shareOption = prompt("Who do you want to share this with?\n\n1. Share with DRIVER (to close slip)\n2. Share Info with GUEST\n3. Ask GUEST to close slip\n\nEnter 1, 2, or 3");
+    // This is the full, final version of the function
+    function handleWhatsAppShare() {
+        const shareOption = prompt("Who do you want to share this with?\n\n1. Share with DRIVER (to close slip)\n2. Share Info with GUEST\n3. Ask GUEST to close slip\n\nEnter 1, 2, or 3");
 
-    // Helper to get form values cleanly
-    const getValue = (id) => document.getElementById(id)?.value || 'Not specified';
-    const dsNo = getValue('ds-no');
+        // Helper to get form values cleanly
+        const getValue = (id) => document.getElementById(id)?.value || 'Not specified';
+        const dsNo = getValue('ds-no');
 
-    // The static, professional link that will generate the preview card
-    const contactLink = "shrishgroup.com/contact.html";
+        // The static, professional link that will generate the preview card
+        const contactLink = "shrishgroup.com/contact.html";
 
-    switch (shareOption) {
-        case '1': // Share with DRIVER
-            const driverMobile = getValue('driver-mobile').replace(/\D/g, '');
-            if (!driverMobile) return alert('Please select a driver first.');
+        switch (shareOption) {
+            case '1': // Share with DRIVER
+                const driverMobile = getValue('driver-mobile').replace(/\D/g, '');
+                if (!driverMobile) return alert('Please select a driver first.');
 
-            const driverLink = `${window.location.origin}/close-slip.html?id=${dsNo}`;
-            const driverMessage = `
+                const driverLink = `${window.location.origin}/close-slip.html?id=${dsNo}`;
+                const driverMessage = `
 *New Duty Slip: #${dsNo}*
 
 Dear ${getValue('driver-name')},
@@ -198,14 +155,14 @@ Please use the link below to enter closing KM and time at the end of the trip.
 - Shrish Travels
 ${contactLink}
             `.trim();
-            window.open(`https://wa.me/91${driverMobile}?text=${encodeURIComponent(driverMessage)}`, '_blank');
-            break;
+                window.open(`https://wa.me/91${driverMobile}?text=${encodeURIComponent(driverMessage)}`, '_blank');
+                break;
 
-        case '2': // Share Info with GUEST
-            const guestMobileInfo = getValue('guest-mobile').replace(/\D/g, '');
-            if (!guestMobileInfo) return alert('Please enter a guest mobile number.');
+            case '2': // Share Info with GUEST
+                const guestMobileInfo = getValue('guest-mobile').replace(/\D/g, '');
+                if (!guestMobileInfo) return alert('Please enter a guest mobile number.');
 
-            const guestInfoMessage = `
+                const guestInfoMessage = `
 Dear ${getValue('guest-name')},
 
 Thank you for choosing Shrish Travels. Your ride for Duty Slip #${dsNo} has been confirmed.
@@ -219,15 +176,15 @@ We wish you a pleasant and safe journey. For any questions, please visit our con
 - Shrish Travels
 ${contactLink}
             `.trim();
-            window.open(`https://wa.me/91${guestMobileInfo}?text=${encodeURIComponent(guestInfoMessage)}`, '_blank');
-            break;
+                window.open(`https://wa.me/91${guestMobileInfo}?text=${encodeURIComponent(guestInfoMessage)}`, '_blank');
+                break;
 
-        case '3': // Ask GUEST to close slip
-            const guestMobileClose = getValue('guest-mobile').replace(/\D/g, '');
-            if (!guestMobileClose) return alert('Please enter a guest mobile number.');
+            case '3': // Ask GUEST to close slip
+                const guestMobileClose = getValue('guest-mobile').replace(/\D/g, '');
+                if (!guestMobileClose) return alert('Please enter a guest mobile number.');
 
-            const guestLink = `${window.location.origin}/client-close.html?id=${dsNo}`;
-            const guestCloseMessage = `
+                const guestLink = `${window.location.origin}/client-close.html?id=${dsNo}`;
+                const guestCloseMessage = `
 Dear ${getValue('guest-name')},
 
 Thank you for travelling with us. To ensure accuracy, please take a moment to confirm your trip details by filling out the closing time and signing via the secure link below.
@@ -238,14 +195,14 @@ Your feedback is valuable to us.
 - Shrish Travels
 ${contactLink}
             `.trim();
-            window.open(`https://wa.me/91${guestMobileClose}?text=${encodeURIComponent(guestCloseMessage)}`, '_blank');
-            break;
+                window.open(`https://wa.me/91${guestMobileClose}?text=${encodeURIComponent(guestCloseMessage)}`, '_blank');
+                break;
 
-        default:
-            // Do nothing if the user cancels or enters an invalid option
-            break;
+            default:
+                // Do nothing if the user cancels or enters an invalid option
+                break;
+        }
     }
-}
 
     function handleGenerateLink() {
         const link = generateLink();
