@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // In manager-hub.js, replace the placeholder function with this
     function handleQuickShare(shareType, slipData) {
         const dsNo = slipData['DS_No'];
-        const contactInfo = `\nFor assistance:\n📞 +91 8883451668\n📧 travels@shrishgroup.com\n🌐 https://shrishgroup.com/contact`;
+        const contactInfo = `\nFor assistance:\n📞 +91 8883451668\n📧 travels@shrishgroup.com\n🌐 shrishgroup.com/contact`;
         let mobile = '';
         let message = '';
 
