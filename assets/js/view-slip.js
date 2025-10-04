@@ -7,6 +7,19 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // --- Date Formatting Helper ---
+    function formatDate(dateString) {
+        if (!dateString) return ''; // Return empty string if no date provided
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            return dateString; // Return original string if date is invalid
+        }
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+    }
+
     async function fetchAndDisplaySlip() {
         try {
             const response = await fetch(`/api?action=getDutySlipById&id=${slipId}`);
@@ -39,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // --- Populate Header ---
             setText('print-ds-no', slip.DS_No);
-            setText('print-date', slip.Date);
+            setText('print-date', formatDate(slip.Date)); // Apply formatting
 
             // --- Populate Body (Left Panel) ---
             setText('print-organisation', slip.Organisation);
@@ -52,19 +65,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // --- Populate Body (Right Panel) ---
             setText('print-booking-id', slip.Booking_ID);
-            setText('print-cc-no', slip.CC_No); // New field
-            setText('print-emp-no', slip.Emp_No); // New field
-            setText('print-dept-code', slip.Dept_Code); // New field
             setText('print-vehicle-type', slip.Vehicle_Type);
             setText('print-vehicle-no', slip.Vehicle_No);
             setText('print-driver-name', slip.Driver_Name);
             setText('print-driver-mobile', slip.Driver_Mobile);
             setValue('print-assignment', slip.Assignment);
-            setValue('print-next-req', slip.Next_Requirement); // New field
 
             // --- Populate Usage Table (Shed-to-Shed) ---
-            setText('print-date-out', slip.Date_Out);
-            setText('print-date-in', slip.Date_In);
+            setText('print-date-out', formatDate(slip.Date_Out)); // Apply formatting
+            setText('print-date-in', formatDate(slip.Date_In));   // Apply formatting
             setText('print-total-days', slip.Total_Days);
             setText('print-driver-time-out', slip.Driver_Time_Out);
             setText('print-driver-time-in', slip.Driver_Time_In);
