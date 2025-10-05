@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainContent = document.getElementById('main-content');
     const dutySlipView = document.getElementById('duty-slip-view');
     const thankYouPage = document.getElementById('thank-you-page');
-    
+
     const params = new URLSearchParams(window.location.search);
     const slipId = params.get('id');
 
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sigModal = document.getElementById("signature-modal");
     const sigCanvas = document.getElementById("signature-canvas");
     const signaturePad = new SignaturePad(sigCanvas);
-    
+
     document.getElementById('guest-signature-box')?.addEventListener('click', () => openSignaturePad());
 
     // --- Data Population Function ---
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (el) {
             if (el.tagName === 'IMG') {
                 // Check for a valid value that isn't just a placeholder or empty data URL
-                if(value && value.length > 100) { // Simple check for non-empty base64
+                if (value && value.length > 100) { // Simple check for non-empty base64
                     el.src = value;
                     el.style.display = 'block';
                 }
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-    
+
     // --- Load Initial Data ---
     async function loadInitialData() {
         if (!slipId) {
@@ -44,10 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
             await new Promise(resolve => setTimeout(resolve, 500)); // Prevent aggressive refetching
             const response = await fetch(`/api?action=getDutySlipById&id=${slipId}`);
             if (!response.ok) {
-                 throw new Error(`Server responded with status: ${response.status}`);
+                throw new Error(`Server responded with status: ${response.status}`);
             }
             const data = await response.json();
-            
+
             if (data.error || !data.slip) {
                 throw new Error(data.error || 'Slip data not found.');
             }
@@ -65,13 +65,21 @@ document.addEventListener('DOMContentLoaded', () => {
             populateField('driver-number', slip.Driver_Mobile);
             populateField('vehicle-type', slip.Vehicle_Type);
             populateField('vehicle-no', slip.Vehicle_No);
-            populateField('km-out', slip.Driver_Km_Out);
-            populateField('km-in', slip.Driver_Km_In);
-            populateField('total-kms', slip.Driver_Total_Kms);
-            populateField('total-hrs', slip.Driver_Total_Hrs);
-            populateField('driver-signature-link', slip.Auth_Signature_Link);
+            populateField('km-out', slip.Km_Out);
+            populateField('km-in', slip.Km_In);
+
+            // Calculate customer total KMs on the fly if not stored
+            const custKmOut = parseFloat(slip.Km_Out) || 0;
+            const custKmIn = parseFloat(slip.Km_In) || 0;
+            if (custKmIn > custKmOut) {
+                populateField('total-kms', `${(custKmIn - custKmOut).toFixed(1)} Kms`);
+            } else {
+                populateField('total-kms', slip.Driver_Total_Kms); // Fallback to driver total if no customer data
+            }
+
+            populateField('total-hrs', slip.Driver_Total_Hrs); // Total hours is usually the same
             populateField('auth-signature-link', slip.Auth_Signature_Link);
-            
+
             // Show the content
             loader.style.display = 'none';
             mainContent.style.display = 'block';
@@ -93,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         saveButton.disabled = true;
         saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
-        
+
         // This gets the signature as a base64 data URL string
         const guestSignatureDataURL = signaturePad.toDataURL("image/png");
 
@@ -129,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     form.addEventListener('submit', handleClientSave);
-    
+
     // Initialize the page load
     loadInitialData();
 

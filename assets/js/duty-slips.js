@@ -54,7 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderTable() {
         const guestFilter = searchGuestInput.value.toLowerCase();
         const dsNoFilter = searchDsNoInput.value.toLowerCase();
-        const rowLimit = parseInt(rowLimitSelect.value) || allSlips.length;
+        const limitValue = rowLimitSelect.value;
+        const rowLimit = limitValue === 'all' ? allSlips.length : (parseInt(limitValue) || allSlips.length);
 
         // 1. Filter the master list
         let filteredSlips = allSlips.filter(slip => {

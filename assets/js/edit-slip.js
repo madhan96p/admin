@@ -68,43 +68,31 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(`/api?action=getDutySlipById&id=${slipId}`);
             const data = await response.json();
-            if (data.error || !data.slip) throw new Error(data.error);
+            if (data.error || !data.slip) throw new Error(data.error || "Slip data not found.");
 
-            const slip = data.slip; // The object with all your data
+            const slip = data.slip;
 
-            // --- Explicitly set the value for each input field ---
-            // This is the most reliable method and easiest to debug.
-            document.getElementById('ds-no').value = slip.DS_No || '';
-            document.getElementById('booking-id').value = slip.Booking_ID || '';
-            document.getElementById('date').value = slip.Date || '';
-            document.getElementById('organisation').value = slip.Organisation || '';
-            document.getElementById('guest-name').value = slip.Guest_Name || '';
-            document.getElementById('guest-mobile').value = slip.Guest_Mobile || '';
-            document.getElementById('booked-by').value = slip.Booked_By || '';
-            document.getElementById('reporting-time').value = slip.Reporting_Time || ''; // This uses the corrected ID
-            document.getElementById('reporting-address').value = slip.Reporting_Address || '';
-            document.getElementById('driver-name').value = slip.Driver_Name || '';
-            document.getElementById('driver-mobile').value = slip.Driver_Mobile || '';
-            document.getElementById('vehicle-type').value = slip.Vehicle_Type || '';
-            document.getElementById('vehicle-no').value = slip.Vehicle_No || '';
+            // This loop automatically populates all fields by matching keys to element IDs
+            for (const key in slip) {
+                const inputId = key.toLowerCase().replace(/_/g, '-');
+                const inputElement = document.getElementById(inputId);
 
-            // Continue this pattern for all other fields...
-            document.getElementById('driver-km-out').value = slip.Driver_Km_Out || '';
-            document.getElementById('driver-km-in').value = slip.Driver_Km_In || '';
-            // etc.
-
-            // --- For signature images ---
-            const authSignatureImg = document.getElementById('auth-signature-link');
-            if (slip.Auth_Signature_Link && slip.Auth_Signature_Link.length > 100) {
-                authSignatureImg.src = slip.Auth_Signature_Link;
-                authSignatureImg.style.display = 'block';
+                if (inputElement) {
+                    if (inputElement.tagName === 'IMG') {
+                        const signatureData = slip[key];
+                        if (signatureData && signatureData.length > 100) {
+                            inputElement.src = signatureData;
+                            inputElement.style.display = 'block';
+                            const placeholder = document.getElementById(inputId.replace('-link', '-sig-placeholder'));
+                            if (placeholder) placeholder.style.display = 'none';
+                        }
+                    } else {
+                        inputElement.value = slip[key] || '';
+                    }
+                }
             }
-
-            const guestSignatureImg = document.getElementById('guest-signature-link');
-            if (slip.Guest_Signature_Link && slip.Guest_Signature_Link.length > 100) {
-                guestSignatureImg.src = slip.Guest_Signature_Link;
-                guestSignatureImg.style.display = 'block';
-            }
+            // After populating, run calculations to fill in total fields
+            calculateTotals();
 
         } catch (error) {
             alert(`Failed to load duty slip data: ${error.message}`);
