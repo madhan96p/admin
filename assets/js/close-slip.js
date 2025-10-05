@@ -31,12 +31,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const slip = data.slip; // Get the slip object
 
-            // --- FIX: Directly populate fields using exact keys from the API ---
-            document.getElementById('guest-name').value = slip.Guest_Name || '';
-            document.getElementById('driver-name').value = slip.Driver_Name || '';
-            document.getElementById('vehicle-no').value = slip.Vehicle_No || '';
-            document.getElementById('driver-km-out').value = slip.Driver_Km_Out || '';
-            document.getElementById('km-out').value = slip.Km_Out || '';
+            // Populate all form fields from the slip data
+            for (const key in slip) {
+                const inputId = key.toLowerCase().replace(/_/g, '-');
+                const inputElement = document.getElementById(inputId);
+                if (inputElement) {
+                    if (inputElement.tagName === 'IMG') {
+                        const signatureData = slip[key];
+                        if (signatureData && !signatureData.endsWith('/') && signatureData.length > 100) {
+                            inputElement.src = signatureData;
+                            inputElement.style.display = 'block';
+                            const placeholder = document.getElementById(inputId.replace('-link', '-placeholder'));
+                            if (placeholder) placeholder.style.display = 'none';
+                        }
+                    } else {
+                        inputElement.value = slip[key] || '';
+                    }
+                }
+            }
+
+            calculateTotals(); // From common.js
 
         } catch (error) {
             alert(`Failed to load duty slip data: ${error.message}`);
@@ -53,13 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const slipId = new URLSearchParams(window.location.search).get('id');
 
         // Only send the fields a driver can change
+        const guestSigImg = document.getElementById('guest-signature-link');
         const dataToUpdate = {
             DS_No: slipId,
             Driver_Time_In: document.getElementById('driver-time-in').value,
             Driver_Km_In: document.getElementById('driver-km-in').value,
             Time_In: document.getElementById('time-in').value,
             Km_In: document.getElementById('km-in').value,
-            Guest_Signature_Link: document.getElementById('guest-signature-link').src,
+            Guest_Signature_Link: guestSigImg && guestSigImg.src ? guestSigImg.src : '',
             Status: 'Closed by Driver'
         };
 
