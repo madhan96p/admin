@@ -249,6 +249,14 @@ function setupGlobalEventListeners() {
             layout.classList.remove('sidebar-open');
             sidebarToggleBtn.setAttribute('aria-expanded', 'false');
         }
+
+        if (target.closest('#fab-main-toggle')) {
+            const fabContainer = target.closest('.action-buttons-container');
+            if (fabContainer) {
+                fabContainer.classList.toggle('open');
+            }
+        }
+        
     });
 }
 function initializeTheme() {
