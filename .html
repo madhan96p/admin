@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <title>${title}</title>
+    </head>
+    <body style="margin: 0; padding: 0; font-family: 'Inter', Arial, sans-serif; background-color: #f0f2f5;">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f0f2f5;">
+            <tr>
+                <td align="center" style="padding: 20px;">
+                    <table width="600" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; width: 100%;">
+                        <!-- Logo Header -->
+                        <tr>
+                            <td align="center" style="padding: 20px 0;">
+                                <a href="https://www.shrishgroup.com">
+                                    <img src="https://travels.shrishgroup.com/assets/images/sh1.webp" alt="Shrish Group Logo" style="display:block; max-width: 150px; background-color: #ffffff; padding: 10px; border-radius: 100px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                                </a>
+                            </td>
+                        </tr>
+                        <!-- Main Content Card -->
+                        <tr>
+                            <td style="background-color: #ffffff; padding: 40px 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                                ${contentHtml}
+                            </td>
+                        </tr>
+                        <!-- Footer -->
+                        <tr>
+                            <td align="center">
+                                ${generateEmailFooter()}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>
