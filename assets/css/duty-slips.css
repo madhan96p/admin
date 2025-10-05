@@ -141,8 +141,48 @@ tbody tr:hover { background-color: #f8f9fa; }
 tr.is-loading { opacity: 0; transform: translateY(20px); }
 tr { transition: opacity 0.5s ease-out, transform 0.5s ease-out; transition-delay: calc(var(--delay-index, 0) * 50ms); }
 .loader { /* Styles from manager-hub.css */ }
+/* ... (All the styles from section 1-5 are the same as before) ... */
 
 /* --- 6. Mobile Responsiveness --- */
-@media (max-width: 768px) {
-    /* (The mobile card view styles from the old duty-slips.css go here, they are still valid) */
+@media (max-width: 900px) {
+    /* Hide the table header on mobile */
+    .table-container thead {
+        display: none;
+    }
+    /* Make table elements behave like blocks */
+    .table-container table, .table-container tbody, .table-container tr, .table-container td {
+        display: block;
+        width: 100%;
+    }
+    .table-container tr {
+        margin-bottom: 1rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius-md);
+        overflow: hidden;
+        border-left: 5px solid var(--color-border); /* Placeholder for status color */
+    }
+    .table-container td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    .table-container td:last-child {
+        border-bottom: none;
+    }
+    /* Add labels before the content */
+    .table-container td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--color-text-muted);
+    }
+    .actions-cell {
+        justify-content: center; /* Center the action buttons on mobile */
+        background-color: #f9fafb;
+        padding: 0.5rem;
+    }
+    .actions-cell::before {
+        display: none; /* No label for the actions cell */
+    }
 }
