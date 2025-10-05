@@ -216,8 +216,19 @@ function setupGlobalEventListeners() {
     const layout = document.querySelector('.admin-layout');
 
     if (sidebarToggle && sidebar && layout) {
-        sidebarToggle.addEventListener('click', () => {
+        sidebarToggle.addEventListener('click', (event) => {
+            event.stopPropagation();
             layout.classList.toggle('sidebar-collapsed');
+        });
+
+        document.addEventListener('click', (event) => {
+            const isClickInsideSidebar = sidebar.contains(event.target);
+            const isClickOnToggleButton = sidebarToggle.contains(event.target);
+            const isSidebarOpen = !layout.classList.contains('sidebar-collapsed');
+
+            if (isSidebarOpen && !isClickInsideSidebar && !isClickOnToggleButton) {
+                layout.classList.add('sidebar-collapsed');
+            }
         });
     }
 
