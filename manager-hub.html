@@ -4,17 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manager Hub | Shrish Admin</title>
-    <link rel="stylesheet" href="/assets/css/common.css">
+
     <link rel="stylesheet" href="/assets/css/admin.css">
     <link rel="stylesheet" href="/assets/css/manager-hub.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+
     <script src="/assets/js/auth.js"></script>
+
     <div class="admin-layout">
         <div id="admin-sidebar"></div>
+
         <main class="admin-main-content">
             <div id="admin-header"></div>
+
             <div class="page-content">
                 <div class="page-title-bar">
                     <h1>Manager Hub</h1>
@@ -22,7 +26,7 @@
 
                 <div class="content-card">
                     <h2>Find a Duty Slip</h2>
-                    <div class="filter-controls">
+                    <form id="search-form" class="filter-controls">
                         <div class="search-group">
                             <label for="search-ds-no">Find D.S. No:</label>
                             <input type="text" id="search-ds-no" placeholder="Enter D.S. No...">
@@ -35,16 +39,31 @@
                             <label for="search-date">Filter by Date:</label>
                             <input type="date" id="search-date">
                         </div>
-                        <button id="find-slip-btn" class="btn-primary" style="margin-left: auto;">Find Slips</button>
-                    </div>
+                        <button type="submit" id="find-slip-btn" class="btn-primary">Find Slips</button>
+                    </form>
                 </div>
 
-                <div id="results-container"></div>
+                <div id="results-container">
+                    </div>
 
             </div>
+
             <div id="admin-footer"></div>
         </main>
     </div>
+
+    <div id="image-modal">
+        <div id="modal-overlay"></div>
+        <div class="modal-content">
+            <img id="modal-img" src="" alt="Full Signature View">
+            <div class="modal-actions">
+                <a id="modal-download-btn" href="#" download="signature.png" class="action-link"><i class="fas fa-download"></i> Download</a>
+                <button id="modal-copy-btn" class="action-link"><i class="fas fa-copy"></i> Copy Link</button>
+                <button id="modal-close-btn" class="action-link close-btn"><i class="fas fa-times"></i> Close</button>
+            </div>
+        </div>
+    </div>
+
     <script src="/assets/js/common.js"></script>
     <script src="/assets/js/manager-hub.js"></script>
 </body>
