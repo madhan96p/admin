@@ -224,10 +224,10 @@ function setupGlobalEventListeners() {
         document.addEventListener('click', (event) => {
             const isClickInsideSidebar = sidebar.contains(event.target);
             const isClickOnToggleButton = sidebarToggle.contains(event.target);
-            const isSidebarOpen = !layout.classList.contains('sidebar-collapsed');
+            const isSidebarOpen = layout.classList.contains('sidebar-collapsed');
 
             if (isSidebarOpen && !isClickInsideSidebar && !isClickOnToggleButton) {
-                layout.classList.add('sidebar-collapsed');
+                layout.classList.remove('sidebar-collapsed');
             }
         });
     }
