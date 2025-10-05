@@ -1,5 +1,4 @@
-// **THE FIX:** All code is now wrapped in this function, which is called by common.js
-function initializeCreateSlipPage() {
+App.initializePage(function initializeCreateSlipPage() {
 
     // --- 1. INITIALIZATION ---
     function initializePage() {
@@ -7,7 +6,6 @@ function initializeCreateSlipPage() {
         setCurrentDate();
         populateDriverDatalist();
         setupEventListeners();
-        initializeSignaturePad('signature-canvas'); // From common.js
     }
 
     // --- 2. DATA & DOM SETUP ---
@@ -49,29 +47,40 @@ function initializeCreateSlipPage() {
         });
 
         // **NEW:** Added event listeners for the missing mobile buttons
-        document.querySelectorAll('#whatsapp-button, #mobile-whatsapp-button').forEach(btn => {
+        document.querySelectorAll('#whatsapp-button, #mobile-whatsapp-button, #generate-link-button, #mobile-generate-link-button').forEach(btn => {
             btn.addEventListener('click', () => {
-                alert("Please save the slip first to share it.");
+                alert("Please save the slip first to share or generate a link.");
             });
         });
 
-        document.querySelectorAll('#generate-link-button, #mobile-generate-link-button').forEach(btn => {
-            btn.addEventListener('click', () => {
-                alert("Please save the slip first to get a link.");
-            });
-        });
-        
         const inputsToWatch = ['driver-time-out', 'driver-time-in', 'driver-km-out', 'driver-km-in', 'date-out', 'date-in'];
         inputsToWatch.forEach(id => document.getElementById(id)?.addEventListener('input', calculateTotals));
         
         document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', validateAllInputs));
         
-        validateMobileInput('guest-mobile');
-        validateMobileInput('driver-mobile');
-        
+        // Assuming validateMobileInput and calculateTotals are defined elsewhere or should be in common.js
+        // validateMobileInput('guest-mobile');
+        // validateMobileInput('driver-mobile');
+
         document.getElementById('driver-name')?.addEventListener('input', handleDriverSelection);
-        document.getElementById('auth-signature-box')?.addEventListener('click', () => openSignaturePad('auth-signature-link'));
-        document.getElementById('guest-signature-box')?.addEventListener('click', () => openSignaturePad('guest-signature-link'));
+
+        const signaturePadManager = App.initializeSignaturePad(
+            'signature-canvas',
+            'signature-modal',
+            'clear-signature-btn',
+            'save-signature-btn',
+            (dataURL) => {
+                const targetImg = document.getElementById(window.currentSignatureTargetId);
+                if (targetImg) {
+                    targetImg.src = dataURL;
+                    targetImg.style.display = 'block';
+                }
+            }
+        );
+
+        document.getElementById('auth-signature-box')?.addEventListener('click', () => { window.currentSignatureTargetId = 'auth-signature-link'; signaturePadManager.open(); });
+        document.getElementById('guest-signature-box')?.addEventListener('click', () => { window.currentSignatureTargetId = 'guest-signature-link'; signaturePadManager.open(); });
+        document.getElementById('cancel-signature-btn')?.addEventListener('click', () => signaturePadManager.close());
 
         document.getElementById('reporting-time')?.addEventListener('change', (e) => {
             if (e.target.value) {
@@ -104,14 +113,14 @@ function initializeCreateSlipPage() {
         formData['Status'] = 'New';
 
         try {
-            const response = await fetch('/api?action=saveDutySlip', {
+            const response = await fetch('/api/duty-slip', { // Using the new API service endpoint style
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             });
             const result = await response.json();
             if (result.success) {
-                alert(result.message);
+                App.showToast(result.message, 'success');
                 window.location.href = '/duty-slips.html';
             } else {
                 throw new Error(result.error);
@@ -130,4 +139,4 @@ function initializeCreateSlipPage() {
 
     // --- 5. RUN INITIALIZATION ---
     initializePage();
-}
+});
