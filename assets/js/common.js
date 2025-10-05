@@ -210,7 +210,7 @@ function setupGlobalEventListeners() {
             }
         });
     }
-    // ADD THIS LOGIC
+    
     const sidebarToggle = document.getElementById('sidebar-toggle-btn');
     const sidebar = document.getElementById('admin-sidebar');
     const layout = document.querySelector('.admin-layout');
@@ -218,6 +218,16 @@ function setupGlobalEventListeners() {
     if (sidebarToggle && sidebar && layout) {
         sidebarToggle.addEventListener('click', () => {
             layout.classList.toggle('sidebar-collapsed');
+        });
+    }
+
+    const fabContainer = document.querySelector('.action-buttons-container');
+    const fabToggle = document.getElementById('fab-main-toggle');
+
+    if (fabContainer && fabToggle) {
+        fabToggle.addEventListener('click', () => {
+            // This toggles the 'is-open' class on the container
+            fabContainer.classList.toggle('is-open');
         });
     }
 }
