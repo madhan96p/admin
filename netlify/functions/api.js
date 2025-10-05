@@ -126,144 +126,211 @@ async function sendEmail(subject, htmlBody) {
     }
 }
 
-// --- 4. HTML Email Templates (NEW & IMPROVED) ---
+/**
+ * Professional HTML Email Template Generators
+ *
+ * This script provides functions to generate professional, responsive HTML emails
+ * for various stages of a booking process (creation, updates, closure).
+ * The UI has been enhanced for a premium look and feel.
+ *
+ * @version 2.0.0
+ * @author Pragadeesh S (Original Logic), Gemini (UI/UX Refinement)
+ */
 
-// Helper function to generate rich WhatsApp message links
+// --- 1. Helper Functions ---
+
+/**
+ * Generates a rich WhatsApp message link.
+ * @param {string} mobile The recipient's mobile number.
+ * @param {string} message The message to be pre-filled.
+ * @returns {string} The formatted WhatsApp URL.
+ */
 function generateWhatsappLink(mobile, message) {
     const cleanMobile = (mobile || '').replace(/\D/g, '');
-    if (!cleanMobile) return '#'; // Return a dead link if no number is available
+    // Returns a non-functional link if the mobile number is invalid.
+    if (!cleanMobile) return '#';
     return `https://wa.me/91${cleanMobile}?text=${encodeURIComponent(message.trim())}`;
 }
 
-// Generates the action buttons for the email body
+/**
+ * Generates the action buttons section for the email body with a professional design.
+ * @param {object} data The data object for the current slip.
+ * @returns {string} The HTML string for the action buttons.
+ */
 function generateActionButtons(data) {
-    // New, more detailed signature for guest messages
+    // Contact signatures for different message contexts
     const guestSignature = `\n\nFor bookings, please contact:\n📞 ‪‪+91 8883451668‬‬ / ‪‪+91 9176500207‬‬\n📧 info@shrishgroup.com\n🌐 ‪www.shrishgroup.com/contact`;
     const driverSignature = `\n\nRegards Shrish Group\nContact +91 8883451668 / 9176500207\n- Sent via Shrish Travels`;
 
-    // 1. Updated message for Driver based on your new template
-    const driverMessage = `Booking: DS#${data.Booking_ID}\nPassenger: ${data.Guest_Name} ( +91${data.Guest_Mobile} )\nVehicle: ${data.Vehicle_Type} (${data.Vehicle_No})\nDate: ${data.Date}\nReporting time: ${data.Reporting_Time}\nReporting address: ${data.Reporting_Address}\nClose link: https://admin.shrishgroup.com/close-slip.html?id=${data.DS_No}${driverSignature}`;
+    // 1. Message for the Driver with trip details
+    const driverMessage = `Booking: DS#${data.Booking_ID}\nPassenger: ${data.Guest_Name} (${data.Guest_Mobile})\nVehicle: ${data.Vehicle_Type} (${data.Vehicle_No})\nDate: ${data.Date}\nReporting time: ${data.Reporting_Time}\nReporting address: ${data.Reporting_Address}\nClose link: https://admin.shrishgroup.com/close-slip.html?id=${data.DS_No}${driverSignature}`;
     const driverLink = generateWhatsappLink(data.Driver_Mobile, driverMessage);
 
-    // 2. Updated message with Chauffeur Info for Guest
-    const guestInfoMessage = `Dear Sir/Madam,\nPlease find below the driver and vehicle details for your trip:\n\nDriver Name : ${data.Driver_Name} ( +91${data.Driver_Mobile})\nVehicle : ${data.Vehicle_Type} (${data.Vehicle_No})\n\nThe driver will arrive on time at the pickup location.\nFor any assistance, feel free to contact us.\n\nThank you for choosing Shrish Travels.${guestSignature}`;
+    // 2. Message for the Guest with chauffeur information
+    const guestInfoMessage = `Dear Sir/Madam,\nPlease find below the driver and vehicle details for your trip:\n\nDriver Name : ${data.Driver_Name} (+91 ${data.Driver_Mobile})\nVehicle : ${data.Vehicle_Type} (${data.Vehicle_No})\n\nThe driver will arrive on time at the pickup location.\nFor any assistance, feel free to contact us.\n\nThank you for choosing Shrish Travels.${guestSignature}`;
     const guestInfoLink = generateWhatsappLink(data.Guest_Mobile, guestInfoMessage);
 
-    // 3. Message asking Guest to sign/close (Unchanged, but uses new signature)
+    // 3. Message asking the Guest to sign and close the trip
     const guestCloseMessage = `Dear ${data.Guest_Name},\n\nThank you for travelling with us. Please confirm your trip details by signing via the secure link below.\n\n🔗 *Confirm Your Trip:* https://admin.shrishgroup.com/client-close.html?id=${data.DS_No}${guestSignature}`;
     const guestCloseLink = generateWhatsappLink(data.Guest_Mobile, guestCloseMessage);
 
-    // 4. Thank You & Review Message (Unchanged, but uses new signature)
+    // 4. Thank You message with a Google Review link
     const thankYouMessage = `Dear ${data.Guest_Name},\n\nWe hope you had a pleasant journey. If you have a moment, please consider leaving us a review on Google.\n\n⭐ *Leave a Review:* https://g.page/r/CaYoGVSEfXMNEBM/review\n\nWe look forward to serving you again.\n- Shrish Travels${guestSignature}`;
     const thankYouLink = generateWhatsappLink(data.Guest_Mobile, thankYouMessage);
 
     return `
-        <div style="margin: 30px 0; padding-top: 20px; border-top: 1px solid #eee;">
-            <h3 style="color: #3730A3; text-align: center; margin-bottom: 20px;">QUICK ACTIONS</h3>
+        <div style="margin: 40px 0 0 0; padding-top: 30px; border-top: 1px solid #e5e7eb;">
+            <h3 style="color: #111827; text-align: center; margin: 0 0 25px 0; font-size: 18px; font-weight: 600; letter-spacing: 0.5px;">QUICK ACTIONS</h3>
             <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 14px;">
                 <tr>
-                    <td style="padding: 5px;"><a href="https://admin.shrishgroup.com/view.html?id=${data.DS_No}" style="background-color: #4F46E5; color: white; padding: 12px; text-decoration: none; border-radius: 8px; font-weight: bold; display: block;">View/Print</a></td>
-                    <td style="padding: 5px;"><a href="https://admin.shrishgroup.com/edit-slip.html?id=${data.DS_No}" style="background-color: #111827; color: white; padding: 12px; text-decoration: none; border-radius: 8px; font-weight: bold; display: block;">Edit Slip</a></td>
+                    <td style="padding: 6px;"><a href="https://admin.shrishgroup.com/view.html?id=${data.DS_No}" style="background-color: #4338CA; color: white; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: 600; display: block; letter-spacing: 0.5px;">View / Print</a></td>
+                    <td style="padding: 6px;"><a href="https://admin.shrishgroup.com/edit-slip.html?id=${data.DS_No}" style="background-color: #374151; color: white; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: 600; display: block; letter-spacing: 0.5px;">Edit Slip</a></td>
                 </tr>
                 <tr>
-                    <td style="padding: 5px;"><a href="${driverLink}" style="background-color: #25D366; color: white; padding: 12px; text-decoration: none; border-radius: 8px; font-weight: bold; display: block;">Share Close Link to Driver</a></td>
-                    <td style="padding: 5px;"><a href="${guestInfoLink}" style="background-color: #0D9488; color: white; padding: 12px; text-decoration: none; border-radius: 8px; font-weight: bold; display: block;">Send Chauffeur Info to Guest</a></td>
+                    <td style="padding: 6px;"><a href="${driverLink}" style="background-color: #25D366; color: white; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: 600; display: block; letter-spacing: 0.5px;">Share to Driver</a></td>
+                    <td style="padding: 6px;"><a href="${guestInfoLink}" style="background-color: #0D9488; color: white; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: 600; display: block; letter-spacing: 0.5px;">Share to Guest</a></td>
                 </tr>
-                 <tr>
-                    <td style="padding: 5px;"><a href="${guestCloseLink}" style="background-color: #6d28d9; color: white; padding: 12px; text-decoration: none; border-radius: 8px; font-weight: bold; display: block;">Ask Guest to Sign/Close</a></td>
-                    <td style="padding: 5px;"><a href="${thankYouLink}" style="background-color: #be123c; color: white; padding: 12px; text-decoration: none; border-radius: 8px; font-weight: bold; display: block;">Send Thank You & Review Link</a></td>
+                <tr>
+                    <td style="padding: 6px;"><a href="${guestCloseLink}" style="background-color: #6d28d9; color: white; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: 600; display: block; letter-spacing: 0.5px;">Ask Guest to Sign</a></td>
+                    <td style="padding: 6px;"><a href="${thankYouLink}" style="background-color: #be123c; color: white; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: 600; display: block; letter-spacing: 0.5px;">Send Review Link</a></td>
                 </tr>
             </table>
-            <div style="text-align:center; margin-top: 20px;"><a href="https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/edit">Open Google Sheet</a></div>
+            <div style="text-align:center; margin-top: 25px; font-size: 14px;">
+                <a href="https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/edit" style="color: #4338CA; text-decoration: none; font-weight: 500;">Open Google Sheet</a>
+            </div>
         </div>`;
 }
 
-// Updated footer with developer contact information
+/**
+ * Generates a standard, professional footer for all emails.
+ * @returns {string} The HTML string for the email footer.
+ */
 function generateEmailFooter() {
     return `
-        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #999;">
-            <p>Shrish Group | Shrish Travels</p>
-            <p>For assistance, contact <a href="mailto:travels@shrishgroup.com" style="color: #999;">travels@shrishgroup.com</a> or call +91 8883451668</p>
-            <p style="color: #aaa; font-size: 10px; margin-top: 15px;">
-                Developer: <a href="https://pragadeeshfolio.netlify.app/" style="color: #aaa;">Pragadeesh S</a> | <a href="tel:+918903558066" style="color: #aaa;">Call Him</a>
+        <div style="text-align: center; padding: 30px 20px; font-size: 12px; color: #6b7280; line-height: 1.5;">
+            <p style="margin: 0 0 5px 0;">Shrish Group | Shrish Travels</p>
+            <p style="margin: 0;">For assistance, contact <a href="mailto:travels@shrishgroup.com" style="color: #4338CA; text-decoration: none;">travels@shrishgroup.com</a> or call +91 8883451668</p>
+            <p style="color: #9ca3af; font-size: 11px; margin: 20px 0 0 0;">
+                Developer: <a href="https://pragadeeshfolio.netlify.app/" style="color: #6b7280; text-decoration: none;">Pragadeesh S</a> | <a href="tel:+918903558066" style="color: #6b7280; text-decoration: none;">Contact</a>
             </p>
         </div>
     `;
 }
 
-// (The email template functions below remain the same, they will just use the new buttons and footer automatically)
+/**
+ * Generates the main HTML structure for a professional-looking email.
+ * @param {string} title The title of the email.
+ * @param {string} contentHtml The main content HTML specific to the email type.
+ * @returns {string} The full HTML email body.
+ */
+function generateEmailBase(title, contentHtml) {
+    return `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <title>${title}</title>
+    </head>
+    <body style="margin: 0; padding: 0; font-family: 'Inter', Arial, sans-serif; background-color: #f0f2f5;">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f0f2f5;">
+            <tr>
+                <td align="center" style="padding: 20px;">
+                    <table width="600" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; width: 100%;">
+                        <!-- Logo Header -->
+                        <tr>
+                            <td align="center" style="padding: 20px 0;">
+                                <a href="https://www.shrishgroup.com">
+                                    <img src="https://travels.shrishgroup.com/assets/images/sh1.webp" alt="Shrish Group Logo" style="display:block; max-width: 150px;">
+                                </a>
+                            </td>
+                        </tr>
+                        <!-- Main Content Card -->
+                        <tr>
+                            <td style="background-color: #ffffff; padding: 40px 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                                ${contentHtml}
+                            </td>
+                        </tr>
+                        <!-- Footer -->
+                        <tr>
+                            <td align="center">
+                                ${generateEmailFooter()}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>`;
+}
+
+// --- 2. Main Email Sending Functions ---
 
 function sendNewSlipEmail(data) {
     const subject = `📝 New Duty Slip Created: #${data.DS_No} for ${data.Guest_Name || 'N/A'}`;
-    const htmlBody = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
-            <a href="https://www.shrishgroup.com"><img src="https://travels.shrishgroup.com/assets/images/sh1.webp" alt="Shrish Group Logo" style="display:block; margin: 0 auto 20px; max-width: 150px;"></a>
-            <h2 style="color: #4F46E5; text-align: center;">New Duty Slip Created</h2>
-            <p style="color: #333; text-align: center; font-size: 18px;">D.S. No: <strong>#${data.DS_No}</strong></p>
-            <div style="background-color: #f9f9f9; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: left;">
-                <p><strong>Guest:</strong> ${data.Guest_Name || 'N/A'} ( +91${data.Guest_Mobile || 'N/A'})</p>
-                <p><strong>Reporting Time:</strong> ${data.Reporting_Time || 'N/A'}</p>
-                <p><strong>Reporting Address:</strong> ${data.Reporting_Address || 'N/A'}</p>
-                <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
-                <p><strong>Driver:</strong> ${data.Driver_Name || 'N/A'} ( +91${data.Driver_Mobile || 'N/A'})</p>
-                <p><strong>Vehicle:</strong> ${data.Vehicle_Type || 'N/A'} (${data.Vehicle_No || 'N/A'})</p>
-            </div>
-            ${generateActionButtons(data)}
-            ${generateEmailFooter()}
-        </div>`;
+    const content = `
+        <h2 style="color: #111827; text-align: center; margin-top: 0; margin-bottom: 10px; font-size: 24px; font-weight: 700;">New Duty Slip Created</h2>
+        <p style="color: #4b5563; text-align: center; font-size: 20px; margin-top: 0; margin-bottom: 30px;">D.S. No: <strong>#${data.DS_No}</strong></p>
+        <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; padding: 20px; border-radius: 8px; margin-top: 20px; text-align: left; font-size: 16px; line-height: 1.6;">
+            <p style="margin: 0 0 12px 0;"><strong>Guest:</strong> ${data.Guest_Name || 'N/A'} (+91${data.Guest_Mobile || 'N/A'})</p>
+            <p style="margin: 0 0 12px 0;"><strong>Reporting Time:</strong> ${data.Reporting_Time || 'N/A'}</p>
+            <p style="margin: 0;"><strong>Reporting Address:</strong> ${data.Reporting_Address || 'N/A'}</p>
+            <div style="height: 1px; background-color: #e5e7eb; margin: 20px 0;"></div>
+            <p style="margin: 0 0 12px 0;"><strong>Driver:</strong> ${data.Driver_Name || 'N/A'} (+91${data.Driver_Mobile || 'N/A'})</p>
+            <p style="margin: 0;"><strong>Vehicle:</strong> ${data.Vehicle_Type || 'N/A'} (${data.Vehicle_No || 'N/A'})</p>
+        </div>
+        ${generateActionButtons(data)}
+    `;
+    const htmlBody = generateEmailBase(subject, content);
     return sendEmail(subject, htmlBody);
 }
 
 function sendManagerUpdatedEmail(data) {
     const subject = `✏️ Duty Slip Updated: #${data.DS_No} for ${data.Guest_Name || 'N/A'}`;
-    const htmlBody = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
-            <a href="https://www.shrishgroup.com"><img src="https://travels.shrishgroup.com/assets/images/sh1.webp" alt="Shrish Group Logo" style="display:block; margin: 0 auto 20px; max-width: 150px;"></a>
-            <h2 style="color: #4F46E5; text-align: center;">Duty Slip #${data.DS_No} Updated</h2>
-            <p style="color: #666; text-align: center;">A manager has made changes to this duty slip. Please review the latest details.</p>
-             <div style="background-color: #f9f9f9; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: left;">
-                <p><strong>Guest:</strong> ${data.Guest_Name || 'N/A'}</p>
-                <p><strong>Driver:</strong> ${data.Driver_Name || 'N/A'}</p>
-                <p><strong>Status:</strong> ${data.Status || 'N/A'}</p>
-            </div>
-            ${generateActionButtons(data)}
-            ${generateEmailFooter()}
-        </div>`;
+    const content = `
+        <h2 style="color: #111827; text-align: center; margin-top: 0; margin-bottom: 10px; font-size: 24px; font-weight: 700;">Duty Slip Updated</h2>
+        <p style="color: #4b5563; text-align: center; font-size: 16px; margin-top: 0; margin-bottom: 30px;">A manager has updated Duty Slip <strong>#${data.DS_No}</strong>. Please review the details.</p>
+        <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; padding: 20px; border-radius: 8px; margin-top: 20px; text-align: left; font-size: 16px; line-height: 1.6;">
+            <p style="margin: 0 0 12px 0;"><strong>Guest:</strong> ${data.Guest_Name || 'N/A'}</p>
+            <p style="margin: 0 0 12px 0;"><strong>Driver:</strong> ${data.Driver_Name || 'N/A'}</p>
+            <p style="margin: 0;"><strong>Status:</strong> <span style="font-weight: 600; color: #4338CA;">${data.Status || 'N/A'}</span></p>
+        </div>
+        ${generateActionButtons(data)}
+    `;
+    const htmlBody = generateEmailBase(subject, content);
     return sendEmail(subject, htmlBody);
 }
 
 function sendDriverClosedEmail(data) {
     const subject = `✅ Driver Closed Trip: #${data.DS_No} | Ready for Review`;
-    const htmlBody = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
-            <a href="https://www.shrishgroup.com"><img src="https://travels.shrishgroup.com/assets/images/sh1.webp" alt="Shrish Group Logo" style="display:block; margin: 0 auto 20px; max-width: 150px;"></a>
-            <h2 style="color: #0D9488; text-align: center;">Trip Closed by Driver</h2>
-            <p style="color: #333; text-align: center; font-size: 18px;">D.S. No: <strong>#${data.DS_No}</strong></p>
-            <p style="color: #666; text-align: center;">The driver has submitted their closing details. Please verify and take further action.</p>
-            <div style="background-color: #f9f9f9; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: left;">
-                <p><strong>Driver Total KMs:</strong> ${data.Driver_Total_Kms || 'N/A'}</p>
-                <p><strong>Driver Total Hours:</strong> ${data.Driver_Total_Hrs || 'N/A'}</p>
-            </div>
-            ${generateActionButtons(data)}
-            ${generateEmailFooter()}
-        </div>`;
+    const content = `
+        <h2 style="color: #059669; text-align: center; margin-top: 0; margin-bottom: 10px; font-size: 24px; font-weight: 700;">Trip Closed by Driver</h2>
+        <p style="color: #4b5563; text-align: center; font-size: 16px; margin-top: 0; margin-bottom: 30px;">The driver has submitted closing details for trip <strong>#${data.DS_No}</strong>. Please verify.</p>
+        <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; padding: 20px; border-radius: 8px; margin-top: 20px; text-align: left; font-size: 16px; line-height: 1.6;">
+            <p style="margin: 0 0 12px 0;"><strong>Driver Total KMs:</strong> ${data.Driver_Total_Kms || 'N/A'}</p>
+            <p style="margin: 0;"><strong>Driver Total Hours:</strong> ${data.Driver_Total_Hrs || 'N/A'}</p>
+        </div>
+        ${generateActionButtons(data)}
+    `;
+    const htmlBody = generateEmailBase(subject, content);
     return sendEmail(subject, htmlBody);
 }
 
 function sendClientClosedEmail(data) {
     const subject = `✍️ Guest Confirmed Trip: #${data.DS_No} | Finalized`;
-    const htmlBody = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
-            <a href="https://www.shrishgroup.com"><img src="https://travels.shrishgroup.com/assets/images/sh1.webp" alt="Shrish Group Logo" style="display:block; margin: 0 auto 20px; max-width: 150px;"></a>
-            <h2 style="color: #0D9488; text-align: center;">Trip Confirmed by Guest</h2>
-            <p style="color: #333; text-align: center; font-size: 18px;">D.S. No: <strong>#${data.DS_No}</strong></p>
-            <p style="color: #666; text-align: center;">The guest has confirmed their trip details and provided their signature. This slip is finalized.</p>
-            <div style="background-color: #f9f9f9; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: center;">
-                <p><strong>Guest Signature:</strong></p>
-                <img src="${data.Guest_Signature_Link || ''}" alt="Guest Signature" style="max-width: 200px; height: auto; border: 1px solid #ccc;"/>
-            </div>
-            ${generateActionButtons(data)}
-            ${generateEmailFooter()}
-        </div>`;
+    const content = `
+        <h2 style="color: #059669; text-align: center; margin-top: 0; margin-bottom: 10px; font-size: 24px; font-weight: 700;">Trip Confirmed by Guest</h2>
+        <p style="color: #4b5563; text-align: center; font-size: 16px; margin-top: 0; margin-bottom: 30px;">The guest has signed and finalized trip <strong>#${data.DS_No}</strong>.</p>
+        <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; padding: 20px; border-radius: 8px; margin-top: 20px; text-align: center;">
+            <p style="font-size: 16px; margin: 0 0 10px 0; color: #111827;"><strong>Guest Signature:</strong></p>
+            <img src="${data.Guest_Signature_Link || 'https://placehold.co/200x80/e5e7eb/4b5563?text=No+Signature'}" alt="Guest Signature" style="max-width: 200px; height: auto; border: 1px solid #ccc; border-radius: 4px;"/>
+        </div>
+        ${generateActionButtons(data)}
+    `;
+    const htmlBody = generateEmailBase(subject, content);
     return sendEmail(subject, htmlBody);
 }
