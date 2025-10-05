@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+function initializeEditSlipPage() {
 
     // --- 1. INITIALIZATION ---
     function initializePage() {
@@ -150,4 +150,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 4. RUN INITIALIZATION ---
     initializePage();
-});
+}

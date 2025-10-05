@@ -218,4 +218,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadComponents();
     setActiveNavLink();
     setupGlobalEventListeners();
+
+    // ** THE FIX **
+    // After all common components are loaded, check if page-specific logic exists and run it.
+    if (typeof initializeEditSlipPage === 'function') {
+        initializeEditSlipPage();
+    }
+    if (typeof initializeCreateSlipPage === 'function') { // You should do this for create-slip.js too!
+        initializeCreateSlipPage();
+    }
 });
