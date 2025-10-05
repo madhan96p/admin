@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <td data-label="Date">${slip['Date']}</td>
     <td data-label="Guest Name">${slip['Guest_Name']}</td>
     <td data-label="Driver Name">${slip['Driver_Name']}</td>
-    <td data-label="Routing">${slip['Routing']}</td>
+    <td data-label="Reporting Address">${slip['Reporting_Address']}</td>
     <td class="actions-cell">
         <button class="action-button-sm view-btn" data-id="${slip['DS_No']}"><i class="fas fa-eye"></i> View</button>
         <button class="action-button-sm edit-btn" data-id="${slip['DS_No']}"><i class="fas fa-pen"></i> Edit</button>
