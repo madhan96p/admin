@@ -98,6 +98,63 @@ function initializeEditSlipPage() {
             alert(`Failed to load duty slip data: ${error.message}`);
         }
     }
+    // ... inside initializeEditSlipPage function, after loadSlipDataForEditing ...
+
+    // --- 5. SHARING & UTILITY FUNCTIONS ---
+    function handleWhatsAppShare() {
+        // Gather data from the form fields
+        const bookingId = document.getElementById('booking-id').value;
+        const guestName = document.getElementById('guest-name').value;
+        const guestMobile = document.getElementById('guest-mobile').value;
+        const vehicleType = document.getElementById('vehicle-type').value;
+        const vehicleNo = document.getElementById('vehicle-no').value;
+        const date = document.getElementById('date').value;
+        const reportingTime = document.getElementById('reporting-time').value;
+        const reportingAddress = document.getElementById('reporting-address').value;
+        const driverMobile = document.getElementById('driver-mobile').value;
+        const dsNo = document.getElementById('ds-no').value;
+
+        // Ensure a driver mobile number is present
+        if (!driverMobile || driverMobile.length < 10) {
+            return alert('Please enter a valid 10-digit driver mobile number before sharing.');
+        }
+
+        // Construct the message
+        const message = `
+Booking: DS#${bookingId}
+Passenger: ${guestName} (${guestMobile})
+Vehicle: ${vehicleType} (${vehicleNo})
+Date: ${date}
+Reporting time: ${reportingTime}
+Reporting address: ${reportingAddress}
+Close link: https://admin.shrishgroup.com/close-slip.html?id=${dsNo}
+
+Regards Shrish Group
+Contact +91 8883451668 / 9176500207
+- Sent via Shrish Travels
+        `;
+
+        // Generate and open the WhatsApp link
+        const whatsappUrl = `https://wa.me/91${driverMobile}?text=${encodeURIComponent(message.trim())}`;
+        window.open(whatsappUrl, '_blank');
+    }
+
+    function handleGenerateLink() {
+        const dsNo = document.getElementById('ds-no').value;
+        if (!dsNo) {
+            return alert('Cannot generate a link for an unsaved slip.');
+        }
+
+        const viewUrl = `${window.location.origin}/view.html?id=${dsNo}`;
+
+        // Use the Clipboard API to copy the link
+        navigator.clipboard.writeText(viewUrl).then(() => {
+            alert('View link copied to clipboard!');
+        }).catch(err => {
+            console.error('Failed to copy link: ', err);
+            alert('Failed to copy link. Please copy it manually.');
+        });
+    }
 
     // --- 3. CORE UPDATE HANDLER ---
     async function updateDutySlip(event) {
