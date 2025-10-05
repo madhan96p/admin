@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Stat card count elements
     const statTotal = document.getElementById('stat-total-count');
     const statNew = document.getElementById('stat-new-count');
-    const statPending = document.getElementById('stat-pending-count');
     const statCompleted = document.getElementById('stat-completed-count');
 
     // --- 2. STATE MANAGEMENT ---
@@ -149,7 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateStatCards() {
         statTotal.textContent = state.allSlips.length;
         statNew.textContent = state.allSlips.filter(s => (s.Status || 'New') === 'New').length;
-        statPending.textContent = state.allSlips.filter(s => s.Status === 'Closed by Driver').length;
         statCompleted.textContent = state.allSlips.filter(s => s.Status === 'Closed by Client').length;
     }
 
@@ -178,28 +176,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Use event delegation for actions inside the table body
         tableBody.addEventListener('click', e => {
             const quickViewBtn = e.target.closest('.quick-view-btn');
-            const kebabBtn = e.target.closest('.kebab-btn');
-
             if (quickViewBtn) {
                 const slipId = quickViewBtn.dataset.id;
                 const slip = state.allSlips.find(s => s.DS_No == slipId);
                 openQuickViewModal(slip, quickViewBtn);
             }
-            if (kebabBtn) {
-                const menu = kebabBtn.closest('.quick-actions-menu');
-                // Close other menus before opening a new one
-                document.querySelectorAll('.quick-actions-menu.active').forEach(m => {
-                    if (m !== menu) m.classList.remove('active');
-                });
-                menu.classList.toggle('active');
-            }
-        });
-
-        // Global click to close dropdowns
-        document.addEventListener('click', e => {
-            if (!e.target.closest('.quick-actions-menu')) {
-                document.querySelectorAll('.quick-actions-menu.active').forEach(menu => menu.classList.remove('active'));
-            }
+            
         });
 
         // Modal closing events
