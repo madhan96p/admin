@@ -34,18 +34,13 @@ exports.handler = async function (event, context) {
 
             case 'getAllDutySlips':
                 const allRows = await sheet.getRows();
+                const headers = sheet.headerValues;
                 const slips = allRows.map(row => {
-                    return {
-                        Timestamp: row.Timestamp, DS_No: row.DS_No, Booking_ID: row.Booking_ID, Date: row.Date, Organisation: row.Organisation,
-                        Guest_Name: row.Guest_Name, Guest_Mobile: row.Guest_Mobile, Booked_By: row.Booked_By, Reporting_Time: row.Reporting_Time,
-                        Reporting_Address: row.Reporting_Address, Spl_Instruction: row.Spl_Instruction, Vehicle_Type: row.Vehicle_Type,
-                        Vehicle_No: row.Vehicle_No, Driver_Name: row.Driver_Name, Driver_Mobile: row.Driver_Mobile, Assignment: row.Assignment,
-                        Routing: row.Routing, Date_Out: row.Date_Out, Date_In: row.Date_In, Total_Days: row.Total_Days, Time_Out: row.Time_Out,
-                        Time_In: row.Time_In, Km_Out: row.Km_Out, Km_In: row.Km_In, Driver_Time_Out: row.Driver_Time_Out, Driver_Time_In: row.Driver_Time_In,
-                        Driver_Km_Out: row.Driver_Km_Out, Driver_Km_In: row.Driver_Km_In, Driver_Total_Hrs: row.Driver_Total_Hrs,
-                        Driver_Total_Kms: row.Driver_Total_Kms, Auth_Signature_Link: row.Auth_Signature_Link,
-                        Guest_Signature_Link: row.Guest_Signature_Link, Status: row.Status
-                    };
+                    const slipObject = {};
+                    headers.forEach(header => {
+                        slipObject[header] = row[header];
+                    });
+                    return slipObject;
                 });
                 responseData = { slips: slips };
                 break;
@@ -56,14 +51,12 @@ exports.handler = async function (event, context) {
                 const foundRow = slipRows.find(row => String(row.DS_No) === slipId);
 
                 if (foundRow) {
-                    // FIX STARTS HERE: Create a proper key-value object
-                    const headers = sheet.headerValues; // Get all column headers
+                    const slipHeaders = sheet.headerValues; // Get all column headers
                     const slipObject = {};
-                    headers.forEach((header, index) => {
+                    slipHeaders.forEach(header => {
                         slipObject[header] = foundRow[header]; // Use the named property from the row
                     });
                     responseData = { slip: slipObject };
-                    // FIX ENDS HERE
                 }
                 else {
                     responseData = { error: `Duty Slip with ID ${slipId} not found.` };

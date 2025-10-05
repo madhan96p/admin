@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let results = allSlips.filter(slip => {
             const dsNoMatch = dsNoQuery ? (slip['DS_No'] || '').toLowerCase().includes(dsNoQuery) : true;
-            const guestMatch = guestQuery ? (slip['Guest Name'] || '').toLowerCase().includes(guestQuery) : true;
+            const guestMatch = guestQuery ? (slip['Guest_Name'] || '').toLowerCase().includes(guestQuery) : true;
             const dateMatch = dateQuery ? (slip['Date'] === dateQuery) : true;
             return dsNoMatch && guestMatch && dateMatch;
         });
@@ -157,4 +157,3 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 6. INITIALIZE ---
     loadAllSlips();
 });
-
