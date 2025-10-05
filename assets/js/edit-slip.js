@@ -1,4 +1,17 @@
 function initializeEditSlipPage() {
+    // ADD THIS NEW HELPER FUNCTION HERE
+    function formatDateForInput(dateString) {
+        if (!dateString) return ''; // Return empty if no date is provided
+        const date = new Date(dateString);
+        // Check if the date is valid. If not, return empty.
+        if (isNaN(date.getTime())) {
+            return '';
+        }
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
 
     // --- 1. INITIALIZATION ---
     function initializePage() {
@@ -63,7 +76,14 @@ function initializeEditSlipPage() {
 
     async function loadSlipDataForEditing() {
         const slipId = new URLSearchParams(window.location.search).get('id');
-        if (!slipId) return alert('Error: No Duty Slip ID provided.');
+        if (!slipId) {
+            // On the create page, there's no ID, so we just stop.
+            // On the edit page, we should show an error.
+            if (window.location.pathname.includes('edit-slip.html')) {
+                alert('Error: No Duty Slip ID provided.');
+            }
+            return;
+        }
 
         try {
             const response = await fetch(`/api?action=getDutySlipById&id=${slipId}`);
@@ -72,20 +92,27 @@ function initializeEditSlipPage() {
 
             const slip = data.slip;
 
-            // This loop automatically populates all fields by matching keys to element IDs
+            // This enhanced loop now handles all data types correctly
             for (const key in slip) {
                 const inputId = key.toLowerCase().replace(/_/g, '-');
                 const inputElement = document.getElementById(inputId);
 
                 if (inputElement) {
+                    // LOGIC FOR SIGNATURES
                     if (inputElement.tagName === 'IMG') {
                         const signatureData = slip[key];
-                        if (signatureData && signatureData.length > 100) {
+                        // FIX: Accept long base64 strings OR standard http links
+                        if ((signatureData && signatureData.length > 100) || (signatureData && signatureData.startsWith('http'))) {
                             inputElement.src = signatureData;
                             inputElement.style.display = 'block';
                             const placeholder = document.getElementById(inputId.replace('-link', '-sig-placeholder'));
                             if (placeholder) placeholder.style.display = 'none';
                         }
+                        // LOGIC FOR DATES
+                    } else if (inputElement.type === 'date') {
+                        // FIX: Use our new helper function to format the date correctly
+                        inputElement.value = formatDateForInput(slip[key]);
+                        // LOGIC FOR ALL OTHER INPUTS
                     } else {
                         inputElement.value = slip[key] || '';
                     }
