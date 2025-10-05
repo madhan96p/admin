@@ -100,21 +100,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderTable(slips) {
-        const fragment = document.createDocumentFragment();
+    const fragment = document.createDocumentFragment();
 
-        slips.forEach((slip, index) => {
-            const status = slip.Status || 'New';
-            const statusClass = status.toLowerCase().replace(/ /g, '-');
-            const row = document.createElement('tr');
-            row.className = `status-${statusClass} is-entering`; // Add class for animation
-            row.style.setProperty('--delay-index', index); // Set custom property for stagger
+    slips.forEach((slip, index) => {
+        const status = slip.Status || 'New';
+        const statusClass = status.toLowerCase().replace(/ /g, '-');
+        const row = document.createElement('tr');
+        row.className = `status-${statusClass} is-entering`;
+        row.style.setProperty('--delay-index', index);
+        
+        // --- ADD THESE TWO LINES ---
+        row.setAttribute('data-ds-no', slip.DS_No);
+        row.setAttribute('data-status', status);
+        // -------------------------
 
-            row.innerHTML = `
-                <td data-label="Status"><span class="status-badge status-${statusClass}">${status}</span></td>
-                <td data-label="D.S. No"><div class="cell-primary">#${slip.DS_No}</div></td>
-                <td data-label="Guest & Date"><div class="cell-primary">${slip.Guest_Name || 'N/A'}</div><div class="cell-secondary">${slip.Date || 'N/A'}</div></td>
-                <td data-label="Driver & Vehicle"><div class="cell-primary">${slip.Driver_Name || 'N/A'}</div><div class="cell-secondary">${slip.Vehicle_No || 'N/A'}</div></td>
-                <td class="actions-cell" data-label="Actions">
+        // **IMPORTANT**: Wrap the content of the actions cell in a div
+        // for better flexbox control on mobile.
+        row.innerHTML = `
+            <td data-label="Status"><span class="status-badge status-${statusClass}">${status}</span></td>
+            <td data-label="D.S. No"><div class="cell-primary">#${slip.DS_No}</div></td>
+            <td data-label="Guest & Date"><div class="cell-primary">${slip.Guest_Name || 'N/A'}</div><div class="cell-secondary">${slip.Date || 'N/A'}</div></td>
+            <td data-label="Driver & Vehicle"><div class="cell-primary">${slip.Driver_Name || 'N/A'}</div><div class="cell-secondary">${slip.Vehicle_No || 'N/A'}</div></td>
+            <td class="actions-cell" data-label="Actions">
+                <div class="actions-cell-content">
                     <button class="action-btn quick-view-btn" data-id="${slip.DS_No}" title="Quick View" aria-label="Quick View for slip #${slip.DS_No}"><i class="fas fa-eye"></i></button>
                     <div class="quick-actions-menu">
                         <button class="action-btn kebab-btn" title="More Actions" aria-label="More actions for slip #${slip.DS_No}"><i class="fas fa-ellipsis-v"></i></button>
@@ -123,9 +131,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             <a href="/view.html?id=${slip.DS_No}" target="_blank" class="dropdown-item"><i class="fas fa-print"></i> View/Print</a>
                         </div>
                     </div>
-                </td>`;
-            fragment.appendChild(row);
-        });
+                </div>
+            </td>`;
+        fragment.appendChild(row);
+    });
         
         tableBody.innerHTML = ''; // Clear previous results
         tableBody.appendChild(fragment);
