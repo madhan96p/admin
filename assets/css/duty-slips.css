@@ -20,7 +20,7 @@
     background-color: var(--color-bg-card);
     border-radius: var(--border-radius-md);
     border: 1px solid var(--color-border);
-    cursor: pointer;
+    cursor: default;
     transition: all var(--transition-speed);
     border-left: 5px solid var(--color-border);
 }
@@ -126,15 +126,55 @@ tbody tr:hover { background-color: #f8f9fa; }
 /* Signature Thumbnail from Manager Hub */
 .signature-thumbnail { width: 36px; height: 36px; /* ... rest of styles are the same as manager-hub.css ... */ }
 
-/* --- 4. Quick View Modal --- */
-#quick-view-modal { position: fixed; /* ... rest of modal styles are same as image-modal in manager-hub.css ... */ }
-.modal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--color-border); }
-.modal-header h3 { margin: 0; }
-.modal-close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--color-text-muted); }
-.modal-body p { margin: 0.5rem 0; }
-.modal-body hr { border: 0; border-top: 1px solid var(--color-border); margin: 1rem 0; }
-.modal-footer { margin-top: 1.5rem; text-align: right; }
+/* --- 4. NEW: States (Loading, Empty, Error) --- */
+.empty-state, .error-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--color-text-muted);
+}
+.empty-state i, .error-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #d1d5db; /* A light gray */
+}
+.error-state i {
+    color: #ef4444; /* Red for error */
+}
+.error-state h3 {
+    color: var(--color-text-dark);
+}
+.empty-state h3 {
+    margin: 0.5rem 0;
+    color: var(--color-text-dark);
+}
 
+.skeleton-loader {
+    padding: 1rem;
+}
+.skeleton-row {
+    height: 40px;
+    background-color: #f3f4f6;
+    border-radius: var(--border-radius-md);
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+.skeleton-row::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 150%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    100% {
+        left: 150%;
+    }
+}
 /* --- 5. Animations --- */
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .results-container.fading-out > * { opacity: 0; transition: opacity 0.3s ease-out; }
@@ -143,13 +183,11 @@ tr { transition: opacity 0.5s ease-out, transform 0.5s ease-out; transition-dela
 .loader { /* Styles from manager-hub.css */ }
 /* ... (All the styles from section 1-5 are the same as before) ... */
 
-/* --- 6. Mobile Responsiveness --- */
+/* --- 6. Mobile Responsiveness (Enhanced) --- */
 @media (max-width: 900px) {
-    /* Hide the table header on mobile */
     .table-container thead {
         display: none;
     }
-    /* Make table elements behave like blocks */
     .table-container table, .table-container tbody, .table-container tr, .table-container td {
         display: block;
         width: 100%;
@@ -159,8 +197,15 @@ tr { transition: opacity 0.5s ease-out, transform 0.5s ease-out; transition-dela
         border: 1px solid var(--color-border);
         border-radius: var(--border-radius-md);
         overflow: hidden;
-        border-left: 5px solid var(--color-border); /* Placeholder for status color */
+        /* NEW: Dynamic border color based on status will be set via inline style by JS */
+        border-left: 5px solid var(--color-border); 
     }
+    /* NEW: Add specific border colors for status on mobile */
+    .table-container tr.status-new { border-left-color: #1e40af; }
+    .table-container tr.status-closed-by-driver { border-left-color: #854d0e; }
+    .table-container tr.status-closed-by-client { border-left-color: #166534; }
+    .table-container tr.status-updated-by-manager { border-left-color: #3730a3; }
+    
     .table-container td {
         display: flex;
         justify-content: space-between;
@@ -168,21 +213,17 @@ tr { transition: opacity 0.5s ease-out, transform 0.5s ease-out; transition-dela
         padding: 0.75rem 1rem;
         border-bottom: 1px solid #f3f4f6;
     }
-    .table-container td:last-child {
-        border-bottom: none;
-    }
-    /* Add labels before the content */
+    .table-container td:last-child { border-bottom: none; }
     .table-container td::before {
         content: attr(data-label);
         font-weight: 600;
         color: var(--color-text-muted);
+        padding-right: 1rem;
     }
     .actions-cell {
-        justify-content: center; /* Center the action buttons on mobile */
+        justify-content: center;
         background-color: #f9fafb;
         padding: 0.5rem;
     }
-    .actions-cell::before {
-        display: none; /* No label for the actions cell */
-    }
+    .actions-cell::before { display: none; }
 }
