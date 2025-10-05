@@ -70,26 +70,42 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             if (data.error || !data.slip) throw new Error(data.error);
 
-            for (const key in data.slip) {
-                const inputId = key.toLowerCase().replace(/_/g, '-');
-                const inputElement = document.getElementById(inputId);
-                if (inputElement) {
-                    if (inputElement.tagName === 'IMG') {
-                        const signatureData = data.slip[key];
-                        if (signatureData && !signatureData.endsWith('/')) {
-                            inputElement.src = signatureData;
-                            inputElement.style.display = 'block';
-                            if (inputElement.previousElementSibling) {
-                                inputElement.previousElementSibling.style.display = 'none';
-                            }
-                        }
-                    } else {
-                        inputElement.value = data.slip[key];
-                    }
-                }
+            const slip = data.slip; // The object with all your data
+
+            // --- Explicitly set the value for each input field ---
+            // This is the most reliable method and easiest to debug.
+            document.getElementById('ds-no').value = slip.DS_No || '';
+            document.getElementById('booking-id').value = slip.Booking_ID || '';
+            document.getElementById('date').value = slip.Date || '';
+            document.getElementById('organisation').value = slip.Organisation || '';
+            document.getElementById('guest-name').value = slip.Guest_Name || '';
+            document.getElementById('guest-mobile').value = slip.Guest_Mobile || '';
+            document.getElementById('booked-by').value = slip.Booked_By || '';
+            document.getElementById('reporting-time').value = slip.Reporting_Time || ''; // This uses the corrected ID
+            document.getElementById('reporting-address').value = slip.Reporting_Address || '';
+            document.getElementById('driver-name').value = slip.Driver_Name || '';
+            document.getElementById('driver-mobile').value = slip.Driver_Mobile || '';
+            document.getElementById('vehicle-type').value = slip.Vehicle_Type || '';
+            document.getElementById('vehicle-no').value = slip.Vehicle_No || '';
+
+            // Continue this pattern for all other fields...
+            document.getElementById('driver-km-out').value = slip.Driver_Km_Out || '';
+            document.getElementById('driver-km-in').value = slip.Driver_Km_In || '';
+            // etc.
+
+            // --- For signature images ---
+            const authSignatureImg = document.getElementById('auth-signature-link');
+            if (slip.Auth_Signature_Link && slip.Auth_Signature_Link.length > 100) {
+                authSignatureImg.src = slip.Auth_Signature_Link;
+                authSignatureImg.style.display = 'block';
             }
-            calculateTotals(); // From common.js
-            validateAllInputs(); // From common.js
+
+            const guestSignatureImg = document.getElementById('guest-signature-link');
+            if (slip.Guest_Signature_Link && slip.Guest_Signature_Link.length > 100) {
+                guestSignatureImg.src = slip.Guest_Signature_Link;
+                guestSignatureImg.style.display = 'block';
+            }
+
         } catch (error) {
             alert(`Failed to load duty slip data: ${error.message}`);
         }
