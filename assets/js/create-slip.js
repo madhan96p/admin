@@ -1,13 +1,16 @@
-document.addEventListener('DOMContentLoaded', () => {
+// **THE FIX:** All code is now wrapped in this function, which is called by common.js
+function initializeCreateSlipPage() {
 
+    // --- 1. INITIALIZATION ---
     function initializePage() {
         fetchNextDutySlipId();
         setCurrentDate();
         populateDriverDatalist();
         setupEventListeners();
-        initializeSignaturePad('signature-canvas');
+        initializeSignaturePad('signature-canvas'); // From common.js
     }
 
+    // --- 2. DATA & DOM SETUP ---
     async function fetchNextDutySlipId() {
         try {
             const response = await fetch('/api?action=getNextDutySlipId');
@@ -25,6 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function populateDriverDatalist() {
         const datalist = document.getElementById('driver-list');
+        // Ensure datalist is empty before populating to avoid duplicates
+        datalist.innerHTML = '';
         Object.keys(driverData).forEach(name => {
             const option = document.createElement('option');
             option.value = name;
@@ -32,18 +37,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- 3. EVENT LISTENERS ---
     function setupEventListeners() {
+        // This now correctly selects BOTH desktop and mobile buttons
         document.querySelectorAll('#save-slip-button, #mobile-save-slip-button').forEach(btn => btn.addEventListener('click', handleSave));
         
         document.querySelectorAll('#download-pdf-button, #mobile-download-pdf-button').forEach(btn => {
             btn.addEventListener('click', () => {
-                const dsNo = document.getElementById('ds-no').value;
-                if (dsNo) {
-                    const printWindow = window.open(`${window.location.origin}/view.html?id=${dsNo}`, '_blank');
-                    printWindow.onload = () => printWindow.print();
-                } else {
-                    alert("Please save the slip first to generate a PDF.");
-                }
+                alert("Please save the slip first to generate a PDF.");
+            });
+        });
+
+        // **NEW:** Added event listeners for the missing mobile buttons
+        document.querySelectorAll('#whatsapp-button, #mobile-whatsapp-button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                alert("Please save the slip first to share it.");
+            });
+        });
+
+        document.querySelectorAll('#generate-link-button, #mobile-generate-link-button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                alert("Please save the slip first to get a link.");
             });
         });
         
@@ -69,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- 4. CORE SAVE HANDLER ---
     async function handleSave(event) {
         event.preventDefault();
         if (!validateAllInputs()) {
@@ -104,9 +119,15 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             alert(`Save failed: ${error.message}`);
             button.disabled = false;
-            button.innerHTML = '<i class="fas fa-save"></i> Save & Generate Link';
+            // Restore original icon and text based on which button was clicked
+            if (button.id.includes('mobile')) {
+                 button.innerHTML = '<span class="icon" style="color:black"><i class="fas fa-save"></i></span>';
+            } else {
+                 button.innerHTML = '<i class="fas fa-save"></i> Save & Generate Link';
+            }
         }
     }
 
+    // --- 5. RUN INITIALIZATION ---
     initializePage();
-});
+}
