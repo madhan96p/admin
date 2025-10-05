@@ -136,7 +136,7 @@ function validateAllInputs() {
             isValid = false;
         }
     };
-    
+
     Object.values(fields).forEach(el => el ? el.classList.remove('input-error') : null);
 
     const createDateTime = (d, t) => (d.value && t.value) ? new Date(`${d.value}T${t.value}`) : null;
@@ -156,7 +156,7 @@ function validateAllInputs() {
     if (customerEnd && driverEnd && customerEnd > driverEnd) setError(fields.customerTimeIn);
     if (custKmOut > 0 && custKmOut < drKmOut) setError(fields.customerKmOut);
     if (custKmIn > 0 && custKmIn > drKmIn) setError(fields.customerKmIn);
-    
+
     return isValid;
 }
 
@@ -208,6 +208,16 @@ function setupGlobalEventListeners() {
                 sessionStorage.removeItem('shrish-admin-auth');
                 window.location.href = '/login.html'; // Assuming you have a login page
             }
+        });
+    }
+    // ADD THIS LOGIC
+    const sidebarToggle = document.getElementById('sidebar-toggle-btn');
+    const sidebar = document.getElementById('admin-sidebar');
+    const layout = document.querySelector('.admin-layout');
+
+    if (sidebarToggle && sidebar && layout) {
+        sidebarToggle.addEventListener('click', () => {
+            layout.classList.toggle('sidebar-collapsed');
         });
     }
 }

@@ -1,20 +1,27 @@
-/* --- Main Admin Layout --- */
 :root {
     --sidebar-width: 260px;
     --header-height: 70px;
-    --bg-main: #f4f7fa; /* Light grey background */
-    --bg-sidebar: #111827; /* Dark sidebar */
-    --text-light: #f9fafb;
-    --text-dark: #374151;
-    --border-color: #e5e7eb;
-    --primary-accent: #3b82f6;
+    --color-bg-main: #f8f9fa;
+    --color-bg-sidebar: #1f2937;
+    --color-bg-card: #ffffff;
+    --color-primary: #4f46e5;
+    --color-primary-hover: #4338ca;
+    --color-text-light: #f9fafb;
+    --color-text-dark: #111827;
+    --color-text-muted: #6b7280;
+    --color-border: #e5e7eb;
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --transition-speed: 0.2s ease-in-out;
 }
 
 body {
     background-color: var(--bg-main);
     color: var(--text-dark);
     margin: 0;
-    font-family: 'Inter', sans-serif; /* A clean, modern font */
+    font-family: 'Inter', sans-serif;
+    /* A clean, modern font */
 }
 
 .admin-layout {
@@ -41,7 +48,8 @@ body {
 
 .page-content {
     padding: 2rem;
-    flex-grow: 1; /* Makes sure footer stays at the bottom */
+    flex-grow: 1;
+    /* Makes sure footer stays at the bottom */
 }
 
 /* --- Sidebar Styling --- */
@@ -78,17 +86,17 @@ body {
     align-items: center;
     gap: 1rem;
     padding: 0.9rem 1.5rem;
-    color: #d1d5db; /* Lighter grey for text */
+    color: #d1d5db;
+    /* Lighter grey for text */
     text-decoration: none;
     transition: all 0.2s ease;
 }
 
 .nav-links a:hover,
-.nav-links a.active { /* For showing the current page */
-    background-color: rgba(59, 130, 246, 0.2);
-    color: var(--text-light);
-    border-left: 3px solid var(--primary-accent);
-    padding-left: calc(1.5rem - 3px);
+.nav-links a.active {
+    background-color: var(--color-primary);
+    color: var(--color-text-light);
+    font-weight: 500;
 }
 
 .nav-links a i {
@@ -106,6 +114,10 @@ body {
     padding: 0 2rem;
     background-color: #ffffff;
     border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+    /* Add a subtle shadow */
+    z-index: 500;
+    /* Keep it above other content */
 }
 
 .header-title {
@@ -125,7 +137,8 @@ body {
 }
 
 .logout-btn:hover {
-    background-color: #2563eb; /* Darker blue */
+    background-color: #2563eb;
+    /* Darker blue */
 }
 
 /* --- Footer Styling --- */
@@ -168,15 +181,18 @@ body {
 }
 
 .btn-primary:hover {
-    background-color: #2563eb; /* Darker blue */
+    background-color: #2563eb;
+    /* Darker blue */
 }
 
 .content-card {
-    background-color: #ffffff;
+    background-color: var(--color-bg-card);
     padding: 2rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border-radius: var(--border-radius-md);
+    /* Use our new variable */
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-md);
+    /* Use our new variable */
 }
 
 .content-card h2 {
@@ -189,7 +205,8 @@ body {
 /* --- Table Styling --- */
 .table-container {
     width: 100%;
-    overflow-x: auto; /* Allows horizontal scrolling on small screens */
+    overflow-x: auto;
+    /* Allows horizontal scrolling on small screens */
 }
 
 table {
@@ -198,7 +215,8 @@ table {
     text-align: left;
 }
 
-th, td {
+th,
+td {
     padding: 12px 15px;
     border-bottom: 1px solid var(--border-color);
 }
@@ -265,12 +283,14 @@ tbody tr:hover {
     border-radius: 6px;
     font-size: 0.9rem;
 }
+
 /* --- Animation for table rows --- */
 @keyframes fadeIn {
     from {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -280,15 +300,19 @@ tbody tr:hover {
 #slips-table-body tr {
     animation: fadeIn 0.5s ease-out forwards;
 }
+
 /* --- Updated Manager Hub Slip Card Styling --- */
 .slip-card {
-    cursor: pointer; /* Indicates the whole card is clickable */
+    cursor: pointer;
+    /* Indicates the whole card is clickable */
     transition: all 0.2s ease-out;
 }
+
 .slip-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.07);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.07);
 }
+
 .slip-details-grid {
     display: flex;
     justify-content: space-between;
@@ -297,44 +321,93 @@ tbody tr:hover {
     padding-bottom: 1rem;
     margin-bottom: 1rem;
 }
+
 .slip-info p {
     margin: 4px 0;
     color: #6b7280;
 }
-.slip-info h3, .slip-info p strong {
+
+.slip-info h3,
+.slip-info p strong {
     color: var(--text-dark);
 }
+
 .slip-status {
     text-align: center;
 }
+
 .slip-status p {
     font-size: 0.8rem;
     color: #6b7280;
     margin-bottom: 0.5rem;
 }
+
 .signature-icon {
     width: 60px;
     height: 60px;
-    border-radius: 50%; /* Makes it a circle */
+    border-radius: 50%;
+    /* Makes it a circle */
     overflow: hidden;
     background-color: #f4f7fa;
     border: 2px solid var(--border-color);
 }
+
 .signature-icon img {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Ensures signature fits inside the circle */
+    object-fit: contain;
+    /* Ensures signature fits inside the circle */
 }
 
 /* --- Manager Hub Results Styling --- */
-.slip-card { margin-top: 2rem; }
-.slip-summary { border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem; }
-.slip-summary h3 { margin-top: 0; }
-.slip-summary p { margin-bottom: 0; }
-.slip-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
-.action-link { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: var(--text-dark); background-color: var(--bg-main); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); transition: all 0.2s ease; }
-.action-link:hover { background-color: var(--primary-accent); color: white; border-color: var(--primary-accent); }
-.no-results { text-align: center; padding: 2rem; }
+.slip-card {
+    margin-top: 2rem;
+}
+
+.slip-summary {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.slip-summary h3 {
+    margin-top: 0;
+}
+
+.slip-summary p {
+    margin-bottom: 0;
+}
+
+.slip-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.action-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--text-dark);
+    background-color: var(--bg-main);
+    padding: 0.75rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.action-link:hover {
+    background-color: var(--primary-accent);
+    color: white;
+    border-color: var(--primary-accent);
+}
+
+.no-results {
+    text-align: center;
+    padding: 2rem;
+}
+
 /* --- Add this to your existing admin.css file --- */
 
 /* Sidebar Active Link Highlight */
@@ -346,10 +419,83 @@ tbody tr:hover {
 
 /* Input Error "Blink" Animation */
 @keyframes blink-error {
-    50% { border-color: #ef4444; }
+    50% {
+        border-color: #ef4444;
+    }
 }
 
 .input-error {
     border-color: #f87171 !important;
     animation: blink-error 1s ease-in-out;
+}
+
+/* --- Mobile Responsiveness --- */
+
+/* Add a button for the hamburger menu */
+.sidebar-toggle {
+    display: none;
+    /* Hidden on desktop */
+    background: none;
+    border: none;
+    color: var(--color-text-dark);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* This is our media query for tablets and phones */
+@media (max-width: 992px) {
+    #admin-sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100%;
+        transform: translateX(-100%);
+        /* Start off-screen */
+        transition: transform var(--transition-speed);
+        z-index: 1000;
+        /* Ensure it appears above the main content */
+    }
+
+    .admin-main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .sidebar-toggle {
+        display: block;
+        /* Show the hamburger button */
+    }
+
+    /* When the sidebar is toggled, it slides in */
+    .admin-layout.sidebar-collapsed #admin-sidebar {
+        transform: translateX(0);
+    }
+}
+
+/* --- Universal Input & Button Styling --- */
+.btn-primary, .logout-btn, .search-group input, .search-group select {
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--color-border);
+    transition: all var(--transition-speed);
+    font-size: 0.95rem;
+}
+
+/* Add a focus state for better accessibility */
+.btn-primary:focus, .logout-btn:focus, .search-group input:focus, .search-group select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); /* Indigo ring */
+}
+
+/* Update button colors to use new variables */
+.btn-primary, .logout-btn {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn-primary:hover, .logout-btn:hover {
+    background-color: var(--color-primary-hover);
 }
