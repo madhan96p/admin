@@ -245,24 +245,38 @@ tbody tr.is-entering {
     text-align: right !important;
 }
 .actions-cell-content {
-    display: flex; gap: var(--spacing-sm); justify-content: flex-end; align-items: center;
+    display: flex;
+    gap: 0.5rem; /* 8px space between buttons */
+    justify-content: center; /* Align to the right on desktop */
+    align-items: center;
+    width: 100%;
 }
 .action-btn {
-    background: none;
-    border: none;
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    cursor: pointer;
-    color: var(--color-text-muted);
-    transition: all var(--transition-speed);
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    background-color: transparent;
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all var(--transition-speed);
 }
-.action-btn:hover {
-    background-color: #e5e7eb;
-    color: var(--color-text-dark);
+.action-btn.view:hover {
+    background-color: #eff6ff; /* light blue */
+    color: #2563eb;
+}
+.action-btn.edit:hover {
+    background-color: #f0fdf4; /* light green */
+    color: #16a34a;
+}
+.action-btn.print:hover {
+    background-color: #f1f5f9; /* light gray */
+    color: #334152;
 }
 .quick-actions-menu {
     position: relative;

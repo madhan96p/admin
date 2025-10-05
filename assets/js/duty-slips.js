@@ -100,42 +100,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderTable(slips) {
-    const fragment = document.createDocumentFragment();
+        const fragment = document.createDocumentFragment();
 
-    slips.forEach((slip, index) => {
-        const status = slip.Status || 'New';
-        const statusClass = status.toLowerCase().replace(/ /g, '-');
-        const row = document.createElement('tr');
-        row.className = `status-${statusClass} is-entering`;
-        row.style.setProperty('--delay-index', index);
-        
-        // --- ADD THESE TWO LINES ---
-        row.setAttribute('data-ds-no', slip.DS_No);
-        row.setAttribute('data-status', status);
-        // -------------------------
+        slips.forEach((slip, index) => {
+            const status = slip.Status || 'New';
+            const statusClass = status.toLowerCase().replace(/ /g, '-');
+            const row = document.createElement('tr');
+            row.className = `status-${statusClass} is-entering`;
+            row.style.setProperty('--delay-index', index);
 
-        // **IMPORTANT**: Wrap the content of the actions cell in a div
-        // for better flexbox control on mobile.
-        row.innerHTML = `
+            // --- ADD THESE TWO LINES ---
+            row.setAttribute('data-ds-no', slip.DS_No);
+            row.setAttribute('data-status', status);
+            // -------------------------
+
+            // **IMPORTANT**: Wrap the content of the actions cell in a div
+            // for better flexbox control on mobile.
+            // Replace the existing row.innerHTML with this:
+            row.innerHTML = `
             <td data-label="Status"><span class="status-badge status-${statusClass}">${status}</span></td>
             <td data-label="D.S. No"><div class="cell-primary">#${slip.DS_No}</div></td>
             <td data-label="Guest & Date"><div class="cell-primary">${slip.Guest_Name || 'N/A'}</div><div class="cell-secondary">${slip.Date || 'N/A'}</div></td>
             <td data-label="Driver & Vehicle"><div class="cell-primary">${slip.Driver_Name || 'N/A'}</div><div class="cell-secondary">${slip.Vehicle_No || 'N/A'}</div></td>
             <td class="actions-cell" data-label="Actions">
                 <div class="actions-cell-content">
-                    <button class="action-btn quick-view-btn" data-id="${slip.DS_No}" title="Quick View" aria-label="Quick View for slip #${slip.DS_No}"><i class="fas fa-eye"></i></button>
-                    <div class="quick-actions-menu">
-                        <button class="action-btn kebab-btn" title="More Actions" aria-label="More actions for slip #${slip.DS_No}"><i class="fas fa-ellipsis-v"></i></button>
-                        <div class="dropdown-menu">
-                            <a href="/edit-slip.html?id=${slip.DS_No}" class="dropdown-item"><i class="fas fa-edit"></i> Edit Full Slip</a>
-                            <a href="/view.html?id=${slip.DS_No}" target="_blank" class="dropdown-item"><i class="fas fa-print"></i> View/Print</a>
-                        </div>
-                    </div>
+                    <button class="action-btn view" data-id="${slip.DS_No}" title="Quick View" aria-label="Quick View for slip #${slip.DS_No}">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <a href="/edit-slip.html?id=${slip.DS_No}" class="action-btn edit" title="Edit Full Slip" aria-label="Edit full slip for #${slip.DS_No}">
+                        <i class="fas fa-pencil-alt"></i>
+                    </a>
+                    <a href="/view.html?id=${slip.DS_No}" target="_blank" class="action-btn print" title="View/Print" aria-label="View or Print slip #${slip.DS_No}">
+                        <i class="fas fa-print"></i>
+                    </a>
                 </div>
             </td>`;
-        fragment.appendChild(row);
-    });
-        
+            fragment.appendChild(row);
+        });
+
         tableBody.innerHTML = ''; // Clear previous results
         tableBody.appendChild(fragment);
 
@@ -146,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
-    
+
     function updateStatCards() {
         statTotal.textContent = state.allSlips.length;
         statNew.textContent = state.allSlips.filter(s => (s.Status || 'New') === 'New').length;
@@ -167,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 render();
             }
         });
-        
+
         searchInput.addEventListener('input', () => {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
@@ -202,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.querySelectorAll('.quick-actions-menu.active').forEach(menu => menu.classList.remove('active'));
             }
         });
-        
+
         // Modal closing events
         quickViewModal.addEventListener('click', e => {
             if (e.target === quickViewModal || e.target.matches('.modal-overlay')) {
@@ -216,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-        
+
     function openQuickViewModal(slip, triggerElement) {
         if (!slip) return;
         lastFocusedElement = triggerElement; // Store what to focus on close
@@ -234,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         quickViewModal.classList.add('visible');
         modalEditLink.focus(); // Accessibility: Move focus into the modal
     }
-    
+
     function closeQuickViewModal() {
         quickViewModal.classList.remove('visible');
         if (lastFocusedElement) {
@@ -247,6 +249,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setupEventListeners();
         loadDutySlips();
     }
-    
+
     init();
 });
