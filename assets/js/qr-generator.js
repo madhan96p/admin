@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
             data: data,
             dotsOptions: { ...dotsOptions, type: elements.dotsType.value },
             cornersSquareOptions: { ...cornersSquareOptions, type: elements.cornerSquareType.value },
-            cornersDotOptions: { type: elements.cornerDotType.value }, // Note: Library doesn't support gradient on corner dots
+            cornersDotOptions: { type: elements.cornerDotType.value },
             backgroundOptions: { color: elements.bgColor.value },
             qrOptions: { errorCorrectionLevel: elements.errorCorrectionLevel.value },
             image: logoImage,
@@ -194,13 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     };
     
-    // --- 5. Validation & Navigation ---
-    
-    // (Validation and navigation functions are largely unchanged but included for completeness)
-    const validateUpiId = () => { /* ... */ return true; };
-    const validateWebLink = () => { /* ... */ return true; };
-    // ... [Include your existing validation and goToStep functions here] ...
-    
+    // --- 5. Navigation ---
     const goToStep = (stepNumber) => {
         currentStep = stepNumber;
         elements.steps.forEach(step => step.classList.toggle('active', parseInt(step.dataset.step) <= currentStep));
@@ -208,7 +202,6 @@ document.addEventListener('DOMContentLoaded', function () {
         elements.prevStepBtn.style.display = currentStep > 1 ? 'inline-flex' : 'none';
         elements.nextStepBtn.style.display = currentStep < 4 ? 'inline-flex' : 'none';
     };
-
 
     /**
      * Resets the entire form and QR code to the default state.
@@ -240,17 +233,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     
     // --- 6. Event Listeners ---
-
-    // Stepper Navigation
     elements.nextStepBtn.addEventListener('click', () => { if (currentStep < 4) goToStep(currentStep + 1); });
     elements.prevStepBtn.addEventListener('click', () => { if (currentStep > 1) goToStep(currentStep - 1); });
     
-    // Preset Buttons
     elements.presetButtons.forEach(button => {
         button.addEventListener('click', () => applyPreset(button.dataset.preset));
     });
 
-    // All inputs that should trigger a live QR code update
     const inputsToWatch = [
         elements.upiIdInput, elements.payeeNameInput, elements.amountInput, elements.webLinkInput,
         elements.dotsType, elements.cornerSquareType, elements.cornerDotType,
@@ -260,11 +249,9 @@ document.addEventListener('DOMContentLoaded', function () {
     ];
     inputsToWatch.forEach(input => input.addEventListener('input', updateQRCode));
 
-    // Inputs that only affect the frame
     const frameInputs = [elements.frameToggle, elements.frameText, elements.frameColor, elements.frameTextColor];
     frameInputs.forEach(input => input.addEventListener('input', updateFrame));
 
-    // Special handlers
     elements.qrTypeButtons.forEach(button => {
         button.addEventListener('click', () => {
             elements.qrTypeButtons.forEach(btn => btn.classList.remove('active'));

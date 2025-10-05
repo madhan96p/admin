@@ -4,11 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Generator | Shrish Group Admin</title>
-    
+    <title>Premium QR Code Generator | Shrish Group Admin</title>
+
     <link rel="stylesheet" href="assets/css/common.css">
     <link rel="stylesheet" href="assets/css/admin.css">
-    
     <link rel="stylesheet" href="assets/css/qr-generator.css">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -40,7 +39,7 @@
                             </div>
                             <div class="step" data-step="3">
                                 <div class="step__icon">3</div>
-                                <div class="step__label">Logo</div>
+                                <div class="step__label">Logo & Frame</div>
                             </div>
                             <div class="step" data-step="4">
                                 <div class="step__icon"><i class="fas fa-check"></i></div>
@@ -85,44 +84,25 @@
 
                         <div class="step-content" data-step-content="2">
                             <h2 class="step-title">Customize Design</h2>
+
                             <div class="control-group">
-                                <label class="control-label">Colors</label>
-                                <div class="color-picker-group">
-                                    <div class="color-picker-wrapper">
-                                        <input type="color" id="qrColor" value="#0d1117">
-                                        <span>Foreground</span>
-                                    </div>
-                                    <div class="color-picker-wrapper">
-                                        <input type="color" id="bgColor" value="#ffffff">
-                                        <span>Background</span>
-                                    </div>
+                                <label class="control-label">Style Presets</label>
+                                <div class="preset-group">
+                                    <button class="preset-btn" data-preset="default">Default</button>
+                                    <button class="preset-btn" data-preset="oceanic">Oceanic</button>
+                                    <button class="preset-btn" data-preset="mono-dark">Mono Dark</button>
+                                    <button class="preset-btn" data-preset="soft-mint">Soft Mint</button>
                                 </div>
                             </div>
-                            <div class="control-group">
-                                <label class="control-label">Foreground Gradient <span class="optional">(Optional)</span></label>
-                                <div class="color-picker-group">
-                                    <div class="color-picker-wrapper">
-                                        <input type="color" id="gradientColor1" value="#e6e8eb">
-                                        <span>Start</span>
-                                    </div>
-                                    <div class="color-picker-wrapper">
-                                        <input type="color" id="gradientColor2" value="#0d1117">
-                                        <span>End</span>
-                                    </div>
-                                    <select id="gradientType" class="form-input-select" style="flex-grow: 1;">
-                                        <option value="none">No Gradient</option>
-                                        <option value="linear">Linear</option>
-                                        <option value="radial">Radial</option>
-                                    </select>
-                                </div>
-                            </div>
+
+                            <h3 class="sub-step-title">Dots & Corners</h3>
                             <div class="control-group">
                                 <label class="control-label">Dot Style</label>
                                 <select id="dotsType" class="form-input">
-                                    <option value="rounded" selected>Rounded</option>
+                                    <option value="rounded">Rounded</option>
                                     <option value="dots">Dots</option>
                                     <option value="classy">Classy</option>
-                                    <option value="classy-rounded">Classy Rounded</option>
+                                    <option value="classy-rounded" selected>Classy Rounded</option>
                                     <option value="square">Square</option>
                                     <option value="extra-rounded">Extra Rounded</option>
                                 </select>
@@ -144,33 +124,111 @@
                                     </select>
                                 </div>
                             </div>
+                            
+                            <h3 class="sub-step-title">Color Scheme</h3>
+                             <div class="control-group">
+                                <label class="control-label">Background Color</label>
+                                <div class="color-picker-group">
+                                    <div class="color-picker-wrapper">
+                                        <input type="color" id="bgColor" value="#ffffff">
+                                        <span>Solid Color</span>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="control-group">
-                                <label for="errorCorrectionLevel" class="control-label">Error Correction</label>
-                                <select id="errorCorrectionLevel" class="form-input">
-                                    <option value="L">Low</option>
-                                    <option value="M">Medium</option>
-                                    <option value="Q">Quartile</option>
-                                    <option value="H" selected>High (Recommended)</option>
-                                </select>
+                                <label class="control-label">QR Code Dots Color</label>
+                                <div class="color-picker-group">
+                                    <div class="color-picker-wrapper">
+                                        <input type="color" id="dotsColor1" value="#0d1117">
+                                        <span id="dotsColor1-label">Color</span>
+                                    </div>
+                                    <div class="color-picker-wrapper">
+                                        <input type="color" id="dotsColor2" value="#0052cc">
+                                        <span>Gradient End</span>
+                                    </div>
+                                    <select id="dotsGradientType" class="form-input-select" style="flex-grow: 1;">
+                                        <option value="none">Solid Color</option>
+                                        <option value="linear">Linear</option>
+                                        <option value="radial" selected>Radial Gradient</option>
+                                    </select>
+                                </div>
+                            </div>
+                             <div class="control-group">
+                                <label class="control-label">Corner Squares Color <span class="optional">(Accents)</span></label>
+                                <div class="color-picker-group">
+                                    <div class="color-picker-wrapper">
+                                        <input type="color" id="cornersColor1" value="#0d1117">
+                                        <span id="cornersColor1-label">Color</span>
+                                    </div>
+                                    <div class="color-picker-wrapper">
+                                        <input type="color" id="cornersColor2" value="#0052cc">
+                                        <span>Gradient End</span>
+                                    </div>
+                                    <select id="cornersGradientType" class="form-input-select" style="flex-grow: 1;">
+                                        <option value="none">Solid Color</option>
+                                        <option value="linear">Linear</option>
+                                        <option value="radial">Radial Gradient</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
                         <div class="step-content" data-step-content="3">
-                            <h2 class="step-title">Add Your Logo</h2>
+                            <h2 class="step-title">Logo & Frame</h2>
+                            
+                            <h3 class="sub-step-title">Brand Logo</h3>
                             <div class="control-group">
-                                <label for="logoInput" class="control-label">Upload Logo <span class="optional">(Optional)</span></label> 
+                                <label for="logoInput" class="control-label">Upload Logo <span class="optional">(Optional)</span></label>
                                 <input type="file" id="logoInput" class="form-input-file" accept="image/*">
-                                <button id="removeLogoBtn" class="btn btn--secondary btn--small" style="display: none;">Remove Logo</button>
+                                <button id="removeLogoBtn" class="btn btn--secondary btn--small" style="display:none;">Remove Logo</button>
                             </div>
-                            <div class="control-group">
+                             <div class="control-group">
                                 <label for="logoSize" class="control-label">Logo Size</label>
                                 <input type="range" id="logoSize" class="slider" min="0.1" max="0.4" step="0.05" value="0.25">
+                            </div>
+
+                            <h3 class="sub-step-title">Frame</h3>
+                             <div class="control-group toggle-group">
+                                 <label for="frameToggle" class="control-label">Enable Frame</label>
+                                 <label class="switch">
+                                     <input type="checkbox" id="frameToggle">
+                                     <span class="slider round"></span>
+                                 </label>
+                             </div>
+
+                            <div id="frame-options" class="hidden-options">
+                                <div class="control-group">
+                                    <label for="frameText" class="control-label">Frame Text</label>
+                                    <input type="text" id="frameText" class="form-input" value="SCAN ME">
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Frame Colors</label>
+                                    <div class="color-picker-group">
+                                        <div class="color-picker-wrapper">
+                                            <input type="color" id="frameColor" value="#0d1117">
+                                            <span>Background</span>
+                                        </div>
+                                        <div class="color-picker-wrapper">
+                                            <input type="color" id="frameTextColor" value="#ffffff">
+                                            <span>Text</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <div class="step-content" data-step-content="4">
                             <h2 class="step-title">Download Your QR Code</h2>
                             <p class="step-description">Your QR code is ready! Download it in your preferred format.</p>
+                             <div class="control-group">
+                                <label for="errorCorrectionLevel" class="control-label">Scan Reliability (Error Correction)</label>
+                                <select id="errorCorrectionLevel" class="form-input">
+                                    <option value="L">Low</option>
+                                    <option value="M">Medium</option>
+                                    <option value="Q">Quartile</option>
+                                    <option value="H" selected>High (Recommended for logos)</option>
+                                </select>
+                            </div>
                             <div class="control-group">
                                 <label for="filename" class="control-label">Filename</label>
                                 <input type="text" id="filename" class="form-input" value="shrish-qr-code">
@@ -179,7 +237,7 @@
                                 <button id="downloadPngBtn" class="btn btn--primary"><i class="fas fa-download"></i> Download PNG</button>
                                 <button id="downloadSvgBtn" class="btn btn--secondary"><i class="fas fa-file-code"></i> Download SVG</button>
                             </div>
-                            <div id="download-error" style="margin-top: 15px; padding: 10px; background-color: #fff5f5; color: #c53030; border-radius: 5px; display: none; align-items: center; gap: 10px;">
+                             <div id="download-error" style="display: none;" class="error-box">
                                 <i class="fas fa-exclamation-triangle"></i>
                                 <p>Please fill in all required fields with valid information before downloading.</p>
                             </div>
@@ -194,6 +252,7 @@
                     <div class="preview-panel">
                         <div class="preview-card">
                             <div id="qr-code-container" class="qr-code-wrapper"></div>
+                            
                             <div id="live-link-container" class="live-link-preview" style="display: none;">
                                 <span id="live-link-text" class="live-link-preview__text"></span>
                                 <button id="copyLinkBtn" class="live-link-preview__copy-btn">
@@ -201,23 +260,18 @@
                                     <span>COPY</span>
                                 </button>
                             </div>
-                            <div class="preview-card__footer">
-                                <p id="preview-text">Scan Me</p>
-                            </div>
                         </div>
                         <button id="resetBtn" class="btn btn--tertiary mt-1"><i class="fas fa-redo"></i> Reset All Options</button>
                     </div>
                 </div>
             </div>
-            
+
             <div id="admin-footer"></div>
         </main>
     </div>
 
     <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
-
     <script src="assets/js/qr-generator.js"></script>
-    
     <script src="assets/js/common.js"></script>
 </body>
 
