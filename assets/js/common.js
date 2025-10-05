@@ -180,57 +180,98 @@ async function loadComponents() {
         { id: 'admin-footer', path: '/components/_footer.html' }
     ];
 
-    for (const { id, path } of components) {
-        const element = document.getElementById(id);
-        if (element) {
-            try {
-                const response = await fetch(path);
-                if (response.ok) element.innerHTML = await response.text();
-            } catch (error) { console.error(`Error loading ${path}:`, error); }
-        }
-    }
+    // Create a list of fetch promises
+    const promises = components.map(component =>
+        fetch(component.path)
+            .then(response => {
+                if (!response.ok) throw new Error(`Failed to load ${component.path}`);
+                return response.text();
+            })
+            .then(html => {
+                const element = document.getElementById(component.id);
+                if (element) element.innerHTML = html;
+            })
+            .catch(error => console.error(error))
+    );
+
+    // Wait for all components to load before proceeding
+    await Promise.all(promises);
 }
 
 function setActiveNavLink() {
     const currentPath = window.location.pathname;
+    // Use a more robust selector to avoid errors if the nav hasn't loaded
     document.querySelectorAll('.sidebar-nav .nav-links a').forEach(link => {
-        if (link.pathname === currentPath) {
+        if (link.getAttribute('href') === currentPath) {
             link.classList.add('active');
         }
     });
 }
 
-function setupGlobalEventListeners() {
-    const header = document.getElementById('admin-header');
-    if (header) {
-        header.addEventListener('click', (event) => {
-            if (event.target.classList.contains('logout-btn')) {
-                sessionStorage.removeItem('shrish-admin-auth');
-                window.location.href = '/login.html'; // Assuming you have a login page
-            }
-        });
-    }
-    
-    const sidebarToggle = document.getElementById('sidebar-toggle-btn');
-    const sidebar = document.getElementById('admin-sidebar');
-    const layout = document.querySelector('.admin-layout');
-
-    if (sidebarToggle && sidebar && layout) {
-        sidebarToggle.addEventListener('click', () => {
-            layout.classList.toggle('sidebar-collapsed');
-        });
-    }
-
-    const fabContainer = document.querySelector('.action-buttons-container');
-    const fabToggle = document.getElementById('fab-main-toggle');
-
-    if (fabContainer && fabToggle) {
-        fabToggle.addEventListener('click', () => {
-            // This toggles the 'is-open' class on the container
-            fabContainer.classList.toggle('is-open');
-        });
+function updateHeaderTitle() {
+    const headerTitleEl = document.getElementById('header-title');
+    if (headerTitleEl) {
+        // Use the page's main title for context
+        const pageTitle = document.title.split('|')[0].trim();
+        headerTitleEl.textContent = pageTitle || 'Dashboard';
     }
 }
+
+function updateCopyrightYear() {
+    const yearSpan = document.getElementById('current-year');
+    if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear();
+    }
+}
+
+function setupGlobalEventListeners() {
+    document.body.addEventListener('click', (event) => {
+        const target = event.target;
+
+        // --- Logout Button ---
+        if (target.closest('.logout-btn')) {
+            sessionStorage.removeItem('shrish-admin-auth');
+            window.location.href = '/login.html';
+        }
+
+        // --- Mobile Sidebar Logic ---
+        const layout = document.querySelector('.admin-layout');
+        const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+
+        // Open sidebar
+        if (target.closest('#sidebar-toggle-btn')) {
+            layout.classList.add('sidebar-open');
+            sidebarToggleBtn.setAttribute('aria-expanded', 'true');
+        }
+
+        // Close sidebar (via close button, or overlay click)
+        if (target.closest('#sidebar-close-btn') || target.classList.contains('sidebar-overlay')) {
+            layout.classList.remove('sidebar-open');
+            sidebarToggleBtn.setAttribute('aria-expanded', 'false');
+        }
+    });
+}
+function initializeTheme() {
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    const storedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (storedTheme) {
+        document.body.classList.toggle('dark-theme', storedTheme === 'dark');
+    } else if (prefersDark) {
+        document.body.classList.add('dark-theme');
+    }
+
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', toggleTheme);
+    }
+}
+
+function toggleTheme() {
+    const isDark = document.body.classList.toggle('dark-theme');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
 
 // --- 3. DOMCONTENTLOADED ---
 // This is the main entry point for all pages.
