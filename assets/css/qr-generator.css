@@ -1,0 +1,604 @@
+/*
+Modern & Professional Redesign for Shrish QR Generator
+Author: Gemini
+Date: 2024-08-08
+*/
+
+/* 1. CSS Variables & Base Styles
+-------------------------------------------------- */
+:root {
+    --primary-color: #0052cc;
+    --primary-hover: #0041a3;
+    --secondary-color: #e6e8eb;
+    --secondary-hover: #d1d5db;
+    --text-color: #0d1117;
+    --text-light: #57606a;
+    --bg-color: #f6f8fa;
+    --white: #ffffff;
+    --border-color: #d0d7de;
+    --success-color: #1f883d;
+    --error-color: #cf222e;
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --container-width: 1200px;
+    --border-radius: 8px;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --transition: all 0.2s ease-in-out;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 2. Header
+-------------------------------------------------- */
+.header {
+    background-color: var(--white);
+    border-bottom: 1px solid var(--border-color);
+    padding: 15px 0;
+    /* --- ADDED FOR STICKY BEHAVIOR --- */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.header__container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header__logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+.header__logo-img {
+    height: 32px;
+    width: 32px;
+    margin-right: 12px;
+}
+
+.header__logo-text {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.header__nav a {
+    color: var(--text-light);
+    text-decoration: none;
+    margin-left: 25px;
+    font-size: 16px;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.header__nav a:hover {
+    color: var(--primary-color);
+}
+
+/* 3. Main Content & App Layout
+-------------------------------------------------- */
+.main-content {
+    padding: 40px 0;
+}
+
+.app-container {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+/* 4. Controls Panel (Left)
+-------------------------------------------------- */
+.controls-panel {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    padding: 30px;
+}
+
+.stepper {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.stepper::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--border-color);
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    background-color: var(--white);
+    padding: 0 10px;
+}
+
+.step__icon {
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+    background-color: var(--secondary-color);
+    color: var(--text-light);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    transition: var(--transition);
+    border: 2px solid var(--border-color);
+}
+
+.step__label {
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-light);
+}
+
+.step.active .step__icon {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+}
+
+.step.active .step__label {
+    color: var(--primary-color);
+}
+
+.step-content {
+    display: none;
+}
+
+.step-content.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.step-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.step-description {
+    color: var(--text-light);
+    margin-bottom: 20px;
+}
+
+.control-group {
+    margin-bottom: 25px;
+}
+
+.control-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.control-label .required {
+    color: var(--error-color);
+}
+
+.control-label .optional {
+    color: var(--text-light);
+    font-weight: 400;
+}
+
+/* 5. Form Elements & Buttons
+-------------------------------------------------- */
+.form-input,
+.form-input-file,
+.form-input-select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 16px;
+    transition: var(--transition);
+    background-color: var(--white);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.2);
+}
+
+.form-input-file {
+    padding: 8px 15px;
+}
+
+.button-group {
+    display: flex;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.button-group__btn {
+    flex-grow: 1;
+    padding: 12px;
+    border: none;
+    background-color: var(--white);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: var(--transition);
+    color: var(--text-light);
+}
+
+.button-group__btn:not(:last-child) {
+    border-right: 1px solid var(--border-color);
+}
+
+.button-group__btn.active {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.button-group__btn i {
+    margin-right: 8px;
+}
+
+.color-picker-group {
+    display: flex;
+    gap: 20px;
+}
+
+.color-picker-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+input[type="color"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+}
+
+input[type="color"]::-moz-color-swatch {
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+}
+
+.slider {
+    width: 100%;
+}
+
+.btn {
+    padding: 12px 20px;
+    border-radius: var(--border-radius);
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn--primary {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.btn--primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn--secondary {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.btn--secondary:hover {
+    background-color: var(--secondary-hover);
+}
+
+.btn--tertiary {
+    background: none;
+    color: var(--text-light);
+    border: none;
+}
+
+.btn--tertiary:hover {
+    color: var(--primary-color);
+}
+
+.btn--small {
+    padding: 6px 12px;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.error-message {
+    color: var(--error-color);
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.step-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+}
+
+.download-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+/* 6. Preview Panel (Right)
+-------------------------------------------------- */
+.preview-panel {
+    position: sticky;
+    top: 40px;
+    text-align: center;
+}
+
+.preview-card {
+    background-color: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    padding: 25px;
+    box-shadow: var(--shadow);
+    padding: 20px 15px;
+}
+
+.qr-code-wrapper {
+    width: 100%;
+    /* This is the key fix: ensures it fits its parent */
+    max-width: 320px;
+    /* It can be up to 320px, but no wider */
+    height: auto;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.qr-code-wrapper canvas,
+.qr-code-wrapper svg {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.preview-card__footer {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-light);
+
+}
+
+.mt-1 {
+    margin-top: 1rem;
+}
+ 
+.live-link-preview {
+    display: grid; /* Use Grid instead of Flexbox */
+    grid-template-columns: 1fr auto; /* Text gets flexible space, button gets auto space */
+    align-items: center;
+    gap: 10px; /* Use gap for spacing instead of margins */
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 8px 8px 8px 15px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    transition: var(--transition);
+    overflow: hidden;
+}
+
+.live-link-preview__text {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    color: var(--text-light);
+    white-space: normal; /* Allow wrapping */
+    overflow-wrap: break-word; /* Break long words */
+    word-break: break-all; /* Fallback */
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.live-link-preview__copy-btn {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--transition);
+}
+
+.live-link-preview__copy-btn:hover {
+    background-color: var(--secondary-hover);
+}
+
+.live-link-preview__copy-btn.copied {
+    background-color: var(--success-color);
+    color: var(--white);
+}
+
+/* 7. Footer
+-------------------------------------------------- */
+.footer {
+    text-align: center;
+    padding: 30px 0;
+    margin-top: 40px;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-light);
+    font-size: 14px;
+}
+
+.nav-toggle-btn {
+    display: none;
+}
+
+/* 8. Responsive Design
+-------------------------------------------------- */
+@media (max-width: 992px) {
+    .app-container {
+        grid-template-columns: 1fr;
+    }
+
+    .preview-panel {
+        position: static;
+        margin-top: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header__nav {
+        position: fixed;
+        top: 63px;
+        /* Match header height */
+        left: 0;
+        right: 0;
+        width: 100%;
+        background-color: var(--white);
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 25px;
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: var(--shadow);
+
+        /* --- HIDE BY DEFAULT --- */
+        opacity: 0;
+        transform: translateY(-20px);
+        pointer-events: none;
+        transition: var(--transition);
+    }
+
+    .header__nav.is-open {
+        /* --- SHOW WHEN ACTIVE --- */
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    .header__nav a {
+        margin-left: 0;
+        font-size: 18px;
+        padding: 10px;
+    }
+
+    .nav-toggle-btn {
+        display: flex;
+        /* Show the button */
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--text-color);
+    }
+
+    .controls-panel {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .step {
+        padding: 0 5px;
+    }
+
+    .step__label {
+        font-size: 12px;
+    }
+
+    .download-buttons {
+        flex-direction: column;
+    }
+
+    .step-navigation {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .step-navigation #prevStepBtn {
+        order: 2;
+    }
+
+    .preview-card {
+        padding: 20px 15px;
+    }
+ 
+    .preview-panel .btn--tertiary {
+        width: 100%;
+        background-color: var(--secondary-color);
+        padding: 12px;
+        margin-top: 1.5rem;
+    }
+}
