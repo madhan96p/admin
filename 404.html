@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | Shrish Group</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #374151;
+            --bg-dark: #111827;
+            --bg-light: #1f2937;
+            --text-light: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            perspective: 1000px;
+            /* For the 3D parallax effect */
+        }
+
+        .error-container {
+            background-color: var(--bg-light);
+            padding: 3rem 4rem;
+            border-radius: 1rem;
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            /* Keeps the animated background contained */
+        }
+
+        /* This is the giant, floating 404 in the background */
+        .error-container::before {
+            content: '';
+            /* MUST be empty for a background-image to show */
+            background-image: url('assets/images/logo.webp');
+            /* The path to your logo */
+            background-size: contain;
+            /* Ensures the whole logo is visible */
+            background-repeat: no-repeat;
+            background-position: center;
+
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            opacity: 0.1;
+
+            z-index: 0;
+            animation: float 8s ease-in-out infinite;
+
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(-50%, -52%);
+            }
+
+            50% {
+                transform: translate(-50%, -48%);
+            }
+
+            100% {
+                transform: translate(-50%, -52%);
+            }
+        }
+
+        .error-content {
+            position: relative;
+            z-index: 1;
+            /* Ensures content is on top of the background animation */
+            transition: transform 0.1s linear;
+            /* For the JS parallax effect */
+        }
+
+        .error-code {
+            font-size: 6rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 15px rgba(79, 70, 229, 0.5);
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2.5rem;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .error-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            /* Allows buttons to stack on small screens */
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #6366f1;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(55, 65, 81, 0.4);
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="error-container">
+        <div class="error-content">
+            <div class="error-code">404</div>
+            <h2>Oops! You're Lost in Space</h2>
+            <p>The page you are looking for might have been moved, renamed, or is temporarily unavailable. Let's get you
+                back on track.</p>
+            <div class="error-actions">
+                <a href="https://travels.shrishgroup.com" class="btn btn-primary">
+                    <i class="fas fa-car"></i> Visit Shrish Travels
+                </a>
+                <a href="https://associates.shrishgroup.com" class="btn btn-secondary">
+                    <i class="fas fa-briefcase"></i> Visit Shrish Associates
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const errorContent = document.querySelector('.error-content');
+
+            // Only run the parallax effect if the element exists
+            if (errorContent) {
+                document.body.addEventListener('mousemove', (e) => {
+                    // Get mouse position from the center of the screen
+                    const x = (window.innerWidth / 2 - e.pageX) / 25; // Divide to reduce the effect
+                    const y = (window.innerHeight / 2 - e.pageY) / 25;
+
+                    // Apply a 3D rotation to the content card
+                    errorContent.style.transform = `rotateY(${x * -1}deg) rotateX(${y}deg)`;
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>

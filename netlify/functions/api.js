@@ -237,7 +237,7 @@ function generateEmailBase(title, contentHtml) {
                         <tr>
                             <td align="center" style="padding: 20px 0;">
                                 <a href="https://www.shrishgroup.com">
-                                    <img src="https://travels.shrishgroup.com/assets/images/sh1.webp" alt="Shrish Group Logo" style="display:block; max-width: 150px; background-color: #ffffff; padding: 10px; border-radius: 100px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                                    <img src="https://admin.shrishgroup.com/assets/images/w-logo.webp" alt="Shrish Group Logo" style="display:block; max-width: 150px; background-color: #ffffff; padding: 10px; border-radius: 100px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                                 </a>
                             </td>
                         </tr>
