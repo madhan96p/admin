@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 2. PAGE-SPECIFIC SETUP ---
     function setupEventListeners() {
         document.getElementById('save-slip-button')?.addEventListener('click', handleDriverClose);
-        
+
         // Use common functions for calculations and signature
         const inputsToWatch = ['driver-time-in', 'driver-km-in', 'time-in', 'km-in'];
         inputsToWatch.forEach(id => {
@@ -29,13 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             if (data.error || !data.slip) throw new Error(data.error);
 
-            // Populate only the necessary read-only fields for the driver
-            const fieldsToPopulate = ['guest-name', 'driver-name', 'vehicle-no', 'driver-km-out', 'km-out'];
-            fieldsToPopulate.forEach(id => {
-                const key = id.replace(/-/g, '_').replace(/(?:^|\s)\S/g, a => a.toUpperCase());
-                const el = document.getElementById(id);
-                if(el) el.value = data.slip[key] || '';
-            });
+            const slip = data.slip; // Get the slip object
+
+            // --- FIX: Directly populate fields using exact keys from the API ---
+            document.getElementById('guest-name').value = slip.Guest_Name || '';
+            document.getElementById('driver-name').value = slip.Driver_Name || '';
+            document.getElementById('vehicle-no').value = slip.Vehicle_No || '';
+            document.getElementById('driver-km-out').value = slip.Driver_Km_Out || '';
+            document.getElementById('km-out').value = slip.Km_Out || '';
 
         } catch (error) {
             alert(`Failed to load duty slip data: ${error.message}`);
