@@ -76,17 +76,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 const row = document.createElement('tr');
                 // --- ADD THIS LINE ---
                 row.style.animationDelay = `${index * 0.05}s`;
+                //... inside the limitedSlips.forEach loop
                 row.innerHTML = `
-                    <td>${slip['DS_No']}</td>
-                    <td>${slip['Date']}</td>
-                    <td>${slip['Guest_Name']}</td>
-                    <td>${slip['Driver_Name']}</td>
-                    <td>${slip['Routing']}</td>
-                    <td>
-                        <button class="action-button-sm view-btn" data-id="${slip['DS_No']}">View</button>
-                        <button class="action-button-sm edit-btn" data-id="${slip['DS_No']}">Edit</button>
-                    </td>
-                `;
+    <td data-label="D.S. No">${slip['DS_No']}</td>
+    <td data-label="Date">${slip['Date']}</td>
+    <td data-label="Guest Name">${slip['Guest_Name']}</td>
+    <td data-label="Driver Name">${slip['Driver_Name']}</td>
+    <td data-label="Routing">${slip['Routing']}</td>
+    <td class="actions-cell">
+        <button class="action-button-sm view-btn" data-id="${slip['DS_No']}"><i class="fas fa-eye"></i> View</button>
+        <button class="action-button-sm edit-btn" data-id="${slip['DS_No']}"><i class="fas fa-pen"></i> Edit</button>
+    </td>
+`;
+                //...
                 tableBody.appendChild(row);
             });
         } else {

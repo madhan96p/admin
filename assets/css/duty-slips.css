@@ -1,0 +1,170 @@
+/**
+ * Shrish Admin Panel - Duty Slips Page Styles
+ * This file contains styles for a responsive, card-based table view.
+ */
+
+/* --- 1. Enhanced Filter Bar --- */
+.filter-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background-color: #f9fafb; /* Light background to separate it */
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--color-border);
+    margin-bottom: 2rem;
+}
+
+.search-group {
+    position: relative;
+}
+
+.search-group i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-muted);
+}
+
+.search-group input {
+    padding: 10px 12px 10px 35px; /* Add padding for the icon */
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--color-border);
+    transition: all var(--transition-speed);
+}
+
+.search-group input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+/* --- 2. Enhanced Desktop Table Styling --- */
+.table-container {
+    background-color: var(--color-bg-card);
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--color-border);
+    overflow: hidden; /* This is key for the rounded corners */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+}
+
+thead {
+    background-color: #f9fafb;
+}
+
+th {
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+tbody tr {
+    transition: background-color var(--transition-speed);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.actions-cell {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-button-sm {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    background-color: white;
+    color: var(--color-text-dark);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+
+.action-button-sm.view-btn:hover {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+}
+
+.action-button-sm.edit-btn:hover {
+    background-color: var(--color-text-muted);
+    border-color: var(--color-text-muted);
+    color: white;
+}
+
+/* --- 3. Mobile Card View (The Magic) --- */
+@media (max-width: 768px) {
+    .table-container {
+        border: none;
+        background-color: transparent;
+    }
+    
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+
+    thead {
+        display: none; /* Hide table headers */
+    }
+
+    tr {
+        background-color: var(--color-bg-card);
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: var(--shadow-md);
+        margin-bottom: 1rem;
+        padding: 1rem;
+    }
+
+    td {
+        display: flex;
+        justify-content: space-between; /* Align label and value */
+        align-items: center;
+        padding: 0.75rem 0.5rem;
+        border-bottom: 1px solid var(--color-border);
+        font-size: 0.9rem;
+    }
+
+    td:last-child {
+        border-bottom: none;
+    }
+
+    /* Add the column titles back as labels */
+    td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--color-text-muted);
+    }
+    
+    .actions-cell {
+        padding-top: 1rem;
+    }
+    
+    .action-button-sm {
+        flex-grow: 1; /* Make buttons take full width */
+        justify-content: center;
+    }
+}

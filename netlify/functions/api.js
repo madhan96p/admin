@@ -156,7 +156,7 @@ function generateActionButtons(data) {
     const driverSignature = `\n\nRegards Shrish Group\nContact +91 8883451668 / 9176500207\n- Sent via Shrish Travels`;
 
     // 1. Message for the Driver with trip details
-    const driverMessage = `Booking: DS#${data.Booking_ID}\nPassenger: ${data.Guest_Name} (${data.Guest_Mobile})\nVehicle: ${data.Vehicle_Type} (${data.Vehicle_No})\nDate: ${data.Date}\nReporting time: ${data.Reporting_Time}\nReporting address: ${data.Reporting_Address}\nClose link: https://admin.shrishgroup.com/close-slip.html?id=${data.DS_No}${driverSignature}`;
+    const driverMessage = `Booking: DS#${data.Booking_ID}\nPassenger: ${data.Guest_Name} (${data.Guest_Mobile})\nVehicle: ${data.Vehicle_Type} (${data.Vehicle_No})\nDate: ${data.Date}\nReporting time: ${data.Reporting_Time}\nReporting address: ${data.Reporting_Address}\nClose link: https://admin.shrishgroup.com/edit-slip.html?id=${data.DS_No}${driverSignature}`;
     const driverLink = generateWhatsappLink(data.Driver_Mobile, driverMessage);
 
     // 2. Message for the Guest with chauffeur information

@@ -154,7 +154,7 @@ Vehicle: ${vehicleType} (${vehicleNo})
 Date: ${date}
 Reporting time: ${reportingTime}
 Reporting address: ${reportingAddress}
-Close link: https://admin.shrishgroup.com/close-slip.html?id=${dsNo}
+Close link: https://admin.shrishgroup.com/edit-slip.html?id=${dsNo}
 
 Regards Shrish Group
 Contact +91 8883451668 / 9176500207

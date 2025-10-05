@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function shareWithDriver(slip) {
         const mobile = slip.Driver_Mobile?.replace(/\D/g, '');
         if (!mobile) return alert('Driver mobile not found.');
-        const link = `${window.location.origin}/close-slip.html?id=${slip.DS_No}`;
+        const link = `${window.location.origin}/edit-slip.html?id=${slip.DS_No}`;
         const message = `*Duty Slip: #${slip.DS_No}*\n\n👤 Guest: ${slip.Guest_Name}\n⏰ Time: ${slip.Reporting_Time}\n📍 Address: ${slip.Reporting_Address}\n\n🔗 *Close Link:* ${link}\n\n- Shrish Travels`;
         window.open(`https://wa.me/91${mobile}?text=${encodeURIComponent(message.trim())}`, '_blank');
     }
