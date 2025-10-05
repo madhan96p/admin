@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
     // --- 1. DOM Element Cache ---
-    // Caching all necessary DOM elements for quick access.
     const elements = {
         // Steps
         steps: document.querySelectorAll('.step'),
@@ -55,7 +54,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- 2. State Management ---
     let currentStep = 1;
     let qrCode;
-    let logoImage = null;
+    // UPDATED: Define the default logo URL
+    const DEFAULT_LOGO_URL = 'https://admin.shrishgroup.com/assets/images/logo.webp';
+    let logoImage = DEFAULT_LOGO_URL; // Initialize with the default logo
 
     // --- 3. Presets & Default Configuration ---
     const stylePresets = {
@@ -203,6 +204,7 @@ document.addEventListener('DOMContentLoaded', function () {
         elements.nextStepBtn.style.display = currentStep < 4 ? 'inline-flex' : 'none';
     };
 
+
     /**
      * Resets the entire form and QR code to the default state.
      */
@@ -215,10 +217,10 @@ document.addEventListener('DOMContentLoaded', function () {
         elements.filenameInput.value = 'shrish-qr-code';
         elements.errorCorrectionLevel.value = 'H';
         
-        // Remove logo
-        logoImage = null;
-        elements.logoInput.value = '';
-        elements.removeLogoBtn.style.display = 'none';
+        // UPDATED: Set default logo instead of removing
+        logoImage = DEFAULT_LOGO_URL;
+        elements.logoInput.value = ''; // Clear file input
+        elements.removeLogoBtn.style.display = 'inline-block'; // Show remove button
         elements.logoSizeSlider.value = 0.25;
 
         // Reset QR Type
@@ -292,12 +294,12 @@ document.addEventListener('DOMContentLoaded', function () {
         height: 300,
         type: 'svg',
         data: 'https://shrishgroup.com/',
-        image: null,
+        image: null, // Image is set dynamically by resetAll -> updateQRCode
         dotsOptions: {},
         backgroundOptions: {},
         qrOptions: { errorCorrectionLevel: 'H' }
     });
 
     qrCode.append(elements.qrCodeContainer);
-    resetAll(); // Initialize the page with default settings
+    resetAll(); // Initialize the page with default settings, including the logo
 });
