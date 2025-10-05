@@ -124,9 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <td data-label="Driver & Vehicle"><div class="cell-primary">${slip.Driver_Name || 'N/A'}</div><div class="cell-secondary">${slip.Vehicle_No || 'N/A'}</div></td>
             <td class="actions-cell" data-label="Actions">
                 <div class="actions-cell-content">
-                    <button class="action-btn view" data-id="${slip.DS_No}" title="Quick View" aria-label="Quick View for slip #${slip.DS_No}">
-                        <i class="fas fa-eye"></i>
-                    </button>
                     <a href="/edit-slip.html?id=${slip.DS_No}" class="action-btn edit" title="Edit Full Slip" aria-label="Edit full slip for #${slip.DS_No}">
                         <i class="fas fa-pencil-alt"></i>
                     </a>
