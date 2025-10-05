@@ -1,7 +1,7 @@
 /**
- * Shrish Admin Panel - Duty Slips Dashboard Styles (V3.0)
+ * Shrish Admin Panel - Duty Slips Dashboard Styles (V3.1 - Enhanced)
  * This file styles the stat cards, tabs, responsive table, quick actions,
- * and quick view modal for the main dashboard.
+ * and quick view modal for the main dashboard with enhanced animations.
  */
 
 /* --- 1. Stat Card Dashboard --- */
@@ -21,7 +21,8 @@
     border-radius: var(--border-radius-md);
     border: 1px solid var(--color-border);
     cursor: default;
-    transition: all var(--transition-speed);
+    /* NEW: Smoother transition for border color */
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed), border-left-color var(--transition-speed);
     border-left: 5px solid var(--color-border);
 }
 
@@ -44,15 +45,8 @@
     justify-content: center;
 }
 
-.stat-info h3 {
-    margin: 0;
-    font-size: 1.75rem;
-}
-
-.stat-info p {
-    margin: 0;
-    color: var(--color-text-muted);
-}
+.stat-info h3 { margin: 0; font-size: 1.75rem; }
+.stat-info p { margin: 0; color: var(--color-text-muted); }
 
 /* --- 2. Tabs & Filters --- */
 .tabs-and-filters {
@@ -67,7 +61,6 @@
 }
 
 .tabs { display: flex; gap: 0.5rem; }
-
 .tab-btn {
     padding: 0.6rem 1rem;
     border: none;
@@ -79,13 +72,8 @@
     border-radius: var(--border-radius-md);
     transition: all var(--transition-speed);
 }
-
 .tab-btn:hover { background-color: #f3f4f6; }
-
-.tab-btn.active {
-    background-color: var(--color-primary);
-    color: white;
-}
+.tab-btn.active { background-color: var(--color-primary); color: white; }
 
 .filter-controls .search-group { position: relative; }
 .filter-controls .search-group i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted); }
@@ -93,14 +81,26 @@
 
 /* --- 3. Enhanced Desktop Table --- */
 .table-container { overflow-x: auto; }
-
 table { width: 100%; border-collapse: collapse; }
 th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--color-border); vertical-align: middle; }
 thead { background-color: #f9fafb; }
 th { font-weight: 600; color: var(--color-text-muted); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
 tbody tr:last-child td { border-bottom: none; }
-tbody tr { transition: background-color var(--transition-speed); }
+
+/* NEW: Base transition for table rows for smooth filtering */
+tbody tr { 
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out; 
+}
 tbody tr:hover { background-color: #f8f9fa; }
+
+/* NEW: Entrance animation for rows */
+tbody tr.is-entering {
+    opacity: 0;
+    transform: translateY(20px);
+    /* Staggered delay is set by JS via --delay-index */
+    transition-delay: calc(var(--delay-index, 0) * 40ms);
+}
+
 
 .cell-primary { font-weight: 500; color: var(--color-text-dark); }
 .cell-secondary { font-size: 0.85rem; color: var(--color-text-muted); }
@@ -116,17 +116,37 @@ tbody tr:hover { background-color: #f8f9fa; }
 .action-btn { background: none; border: 1px solid transparent; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; color: var(--color-text-muted); transition: all var(--transition-speed); }
 .action-btn:hover { background-color: #e5e7eb; color: var(--color-text-dark); }
 .quick-actions-menu { position: relative; }
-.dropdown-menu { position: absolute; top: 110%; right: 0; background: white; border-radius: var(--border-radius-md); border: 1px solid var(--color-border); box-shadow: var(--shadow-md); list-style: none; padding: 0.5rem 0; width: 180px; z-index: 10; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all var(--transition-speed); }
-.quick-actions-menu.active .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+/* NEW: Animated dropdown menu */
+.dropdown-menu { 
+    position: absolute; 
+    top: 110%; 
+    right: 0; 
+    background: white; 
+    border-radius: var(--border-radius-md); 
+    border: 1px solid var(--color-border); 
+    box-shadow: var(--shadow-md); 
+    list-style: none; 
+    padding: 0.5rem 0; 
+    width: 180px; 
+    z-index: 10; 
+    opacity: 0; 
+    visibility: hidden; 
+    transform: translateY(-10px) scale(0.95);
+    transition: all 0.2s ease-out; /* Smooth transition */
+}
+.quick-actions-menu.active .dropdown-menu { 
+    opacity: 1; 
+    visibility: visible; 
+    transform: translateY(0) scale(1); 
+}
 .dropdown-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 1rem; color: var(--color-text-dark); background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-size: 0.9rem; }
 .dropdown-item:hover { background-color: #f3f4f6; }
 .dropdown-item i { width: 16px; text-align: center; color: var(--color-text-muted); }
 .dropdown-divider { height: 1px; background-color: var(--color-border); margin: 0.5rem 0; }
 
-/* Signature Thumbnail from Manager Hub */
-.signature-thumbnail { width: 36px; height: 36px; /* ... rest of styles are the same as manager-hub.css ... */ }
+.signature-thumbnail { width: 36px; height: 36px; /* ... */ }
 
-/* --- 4. NEW: States (Loading, Empty, Error) --- */
+/* --- 4. States (Loading, Empty, Error) --- */
 .empty-state, .error-state {
     text-align: center;
     padding: 3rem 1rem;
@@ -135,22 +155,15 @@ tbody tr:hover { background-color: #f8f9fa; }
 .empty-state i, .error-state i {
     font-size: 3rem;
     margin-bottom: 1rem;
-    color: #d1d5db; /* A light gray */
+    color: #d1d5db;
 }
-.error-state i {
-    color: #ef4444; /* Red for error */
-}
-.error-state h3 {
-    color: var(--color-text-dark);
-}
-.empty-state h3 {
+.error-state i { color: #ef4444; }
+.error-state h3, .empty-state h3 {
     margin: 0.5rem 0;
     color: var(--color-text-dark);
 }
 
-.skeleton-loader {
-    padding: 1rem;
-}
+.skeleton-loader { padding: 1rem; }
 .skeleton-row {
     height: 40px;
     background-color: #f3f4f6;
@@ -170,60 +183,73 @@ tbody tr:hover { background-color: #f8f9fa; }
     animation: shimmer 1.5s infinite;
 }
 
-@keyframes shimmer {
-    100% {
-        left: 150%;
-    }
-}
-/* --- 5. Animations --- */
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.results-container.fading-out > * { opacity: 0; transition: opacity 0.3s ease-out; }
-tr.is-loading { opacity: 0; transform: translateY(20px); }
-tr { transition: opacity 0.5s ease-out, transform 0.5s ease-out; transition-delay: calc(var(--delay-index, 0) * 50ms); }
-.loader { /* Styles from manager-hub.css */ }
-/* ... (All the styles from section 1-5 are the same as before) ... */
+@keyframes shimmer { 100% { left: 150%; } }
 
-/* --- 6. Mobile Responsiveness (Enhanced) --- */
+/* --- 5. Modal Styling & Animations --- */
+.modal-wrapper {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    /* NEW: Animation setup */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.modal-wrapper.visible {
+    opacity: 1;
+    visibility: visible;
+}
+.modal-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(17, 24, 39, 0.6);
+}
+.modal-content {
+    background-color: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-xl);
+    width: 100%;
+    max-width: 600px;
+    position: relative;
+    /* NEW: Animation setup */
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+.modal-wrapper.visible .modal-content {
+    transform: scale(1);
+}
+
+/* Modal header, body, footer styles remain the same from your original files */
+.modal-header { padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); }
+.modal-header h3 { margin: 0; }
+.modal-close-btn { background: none; border: none; font-size: 1.25rem; color: var(--color-text-muted); cursor: pointer; }
+.modal-body { padding: 1.5rem; max-height: 60vh; overflow-y: auto; }
+.modal-footer { padding: 1rem 1.5rem; display: flex; justify-content: flex-end; background-color: #f9fafb; border-top: 1px solid var(--color-border); border-bottom-left-radius: var(--border-radius-lg); border-bottom-right-radius: var(--border-radius-lg); }
+
+
+/* --- 6. Mobile Responsiveness --- */
 @media (max-width: 900px) {
-    .table-container thead {
-        display: none;
-    }
-    .table-container table, .table-container tbody, .table-container tr, .table-container td {
-        display: block;
-        width: 100%;
-    }
+    .table-container thead { display: none; }
+    .table-container table, .table-container tbody, .table-container tr, .table-container td { display: block; width: 100%; }
     .table-container tr {
         margin-bottom: 1rem;
         border: 1px solid var(--color-border);
         border-radius: var(--border-radius-md);
         overflow: hidden;
-        /* NEW: Dynamic border color based on status will be set via inline style by JS */
         border-left: 5px solid var(--color-border); 
     }
-    /* NEW: Add specific border colors for status on mobile */
     .table-container tr.status-new { border-left-color: #1e40af; }
     .table-container tr.status-closed-by-driver { border-left-color: #854d0e; }
     .table-container tr.status-closed-by-client { border-left-color: #166534; }
     .table-container tr.status-updated-by-manager { border-left-color: #3730a3; }
     
-    .table-container td {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.75rem 1rem;
-        border-bottom: 1px solid #f3f4f6;
-    }
+    .table-container td { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; border-bottom: 1px solid #f3f4f6; }
     .table-container td:last-child { border-bottom: none; }
-    .table-container td::before {
-        content: attr(data-label);
-        font-weight: 600;
-        color: var(--color-text-muted);
-        padding-right: 1rem;
-    }
-    .actions-cell {
-        justify-content: center;
-        background-color: #f9fafb;
-        padding: 0.5rem;
-    }
+    .table-container td::before { content: attr(data-label); font-weight: 600; color: var(--color-text-muted); padding-right: 1rem; }
+    .actions-cell { justify-content: center; background-color: #f9fafb; padding: 0.5rem; }
     .actions-cell::before { display: none; }
 }

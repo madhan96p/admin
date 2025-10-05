@@ -74,8 +74,8 @@
                         </div>
                     </div>
 
-                    <div id="results-container">
-                        <div class="table-container">
+                    <div id="results-container" aria-live="polite">
+                        <div class="table-container" style="display: none;">
                             <table>
                                 <thead>
                                     <tr>
@@ -90,8 +90,8 @@
                                     </tbody>
                             </table>
                         </div>
-
-                        <div id="skeleton-loader" class="skeleton-loader" style="display: none;">
+                        
+                        <div id="skeleton-loader" class="skeleton-loader">
                             <div class="skeleton-row"></div>
                             <div class="skeleton-row"></div>
                             <div class="skeleton-row"></div>
@@ -107,7 +107,10 @@
                         <div id="error-state" class="error-state" style="display: none;">
                              <i class="fas fa-exclamation-triangle"></i>
                              <h3>Could Not Load Data</h3>
-                             <p>Something went wrong while fetching the duty slips. Please try again later.</p>
+                             <p>Something went wrong while fetching the duty slips. Please try again.</p>
+                             <button id="retry-fetch-btn" class="btn-secondary" style="margin-top: 1rem;">
+                                <i class="fas fa-redo"></i> Retry
+                             </button>
                         </div>
                     </div>
                 </div>
