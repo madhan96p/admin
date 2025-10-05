@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('auth-signature-box')?.addEventListener('click', () => openSignaturePad('auth-signature-link'));
         document.getElementById('guest-signature-box')?.addEventListener('click', () => openSignaturePad('guest-signature-link'));
 
-        document.getElementById('rep-time')?.addEventListener('change', (e) => {
+        document.getElementById('reporting-time')?.addEventListener('change', (e) => {
             if (e.target.value) {
                 const [h, m] = e.target.value.split(':');
                 const date = new Date();

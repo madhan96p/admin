@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
             populateField('km-in', slip.Driver_Km_In);
             populateField('total-kms', slip.Driver_Total_Kms);
             populateField('total-hrs', slip.Driver_Total_Hrs);
-            populateField('driver-signature-link', slip.Driver_Signature_Link);
+            populateField('driver-signature-link', slip.Auth_Signature_Link);
             populateField('auth-signature-link', slip.Auth_Signature_Link);
             
             // Show the content
