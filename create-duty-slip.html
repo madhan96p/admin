@@ -186,13 +186,13 @@
             <p>Please sign in the box below</p>
             <canvas id="signature-canvas"></canvas>
             <div class="modal-buttons">
-                <button id="clear-signature-btn" class="btn-clear">Clear</button>
-                <button id="cancel-signature-btn" class="btn-cancel">Cancel</button>
-                <button id="save-signature-btn" class="btn-save">Save Signature</button>
+                <button class="btn-clear" onclick="clearSignature()">Clear</button>
+                <button class="btn-cancel" onclick="closeSignaturePad()">Cancel</button>
+                <button class="btn-save" onclick="saveSignature()">Save Signature</button>
             </div>
         </div>
     </div>
-    <script src="/assets/js/signature_pad.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     <script src="/assets/js/common.js"></script>
     <script src="/assets/js/create-slip.js"></script>
 </body>

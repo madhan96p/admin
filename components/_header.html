@@ -1,28 +1,10 @@
-<!-- =================================================================
-     == UPGRADED HEADER (V3.0)                                      ==
-     == Changes:                                                    ==
-     == 1. Gave header title an ID for dynamic updates via JS.      ==
-     == 2. Added a theme toggle button placeholder.                 ==
-     == 3. Added ARIA attributes for better accessibility.          ==
-     ================================================================= -->
 <header class="admin-header">
-    <!-- UPDATED: Added ARIA attributes for accessibility -->
-    <button id="sidebar-toggle-btn" class="sidebar-toggle" aria-controls="admin-sidebar" aria-expanded="false">
+    <button id="sidebar-toggle-btn" class="sidebar-toggle">
         <i class="fas fa-bars"></i>
     </button>
 
-    <!-- UPDATED: Added ID to make title dynamic -->
-    <h1 id="header-title" class="header-title">Dashboard</h1>
-
+    <h1 class="header-title">Dashboard</h1>
     <div class="header-actions">
-        <!-- NEW: Theme toggle button -->
-        <button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle dark mode">
-            <i class="fas fa-moon theme-icon-dark"></i>
-            <i class="fas fa-sun theme-icon-light"></i>
-        </button>
-        <button class="logout-btn">
-            <i class="fas fa-sign-out-alt"></i>
-            <span class="logout-text">Log Out</span>
-        </button>
+        <button class="logout-btn">Log Out</button>
     </div>
 </header>

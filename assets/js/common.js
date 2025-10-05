@@ -1,160 +1,250 @@
 /**
- * =================================================================
- * Shrish Travels - Common JavaScript (V1.0)
- * =================================================================
- * This file contains shared utilities, API services, and UI components
- * used across the admin panel.
+ * ====================================================================
+ * Shrish Travels - Common Logic (V3.0 - Fully Integrated)
+ * ====================================================================
+ * This file contains all shared logic for the entire admin panel.
  *
- * Sections:
- * 1. Constants
- * 2. Utility Functions
- * 3. UI Helper Functions
- * 4. API Service
- * 5. Signature Pad Component
- * =================================================================
+ * - Component Loading (Sidebar, Header, Footer)
+ * - Global Event Handling (Logout, Active Links)
+ * - Duty Slip Form Logic (Calculations, Validation, Sharing, etc.)
+ * ====================================================================
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+// --- 1. DUTY SLIP FORM - SHARED DATA & FUNCTIONS ---
 
-    // --- 1. Constants ---
-    const API_BASE_URL = '/api';
+const driverData = {
+    "AjithKumar": { mobile: "9047382896", signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/Ajithkumar.jpg" },
+    "Raja": { mobile: "8838750975", signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/Raja.jpg" },
+    "Jeganraj": { mobile: "8883451668", signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/jeganraj.jpg" },
+};
 
-    // --- 2. Utility Functions ---
+let signaturePad;
+let currentSignatureTarget;
 
-    /**
-     * Gets a URL parameter by name.
-     * @param {string} name The name of the parameter.
-     * @returns {string|null} The value of the parameter or null if not found.
-     */
-    function getUrlParameter(name) {
-        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-        const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-        const results = regex.exec(location.search);
-        return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, ' '));
+function initializeSignaturePad(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    if (canvas) {
+        signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgb(255, 255, 255)' });
     }
+}
 
-    // --- 3. UI Helper Functions ---
-
-    /**
-     * Displays a toast notification.
-     * @param {string} message The message to display.
-     * @param {string} type The type of toast ('success', 'error', 'info').
-     */
-    function showToast(message, type = 'info') {
-        // Assuming you have a toast library like Toastify or a custom implementation
-        console.log(`Toast (${type}): ${message}`);
-        // Example with a library:
-        // Toastify({ text: message, className: type, ... }).showToast();
+function openSignaturePad(targetImageId) {
+    currentSignatureTarget = document.getElementById(targetImageId);
+    const sigModal = document.getElementById("signature-modal");
+    const sigCanvas = document.getElementById("signature-canvas");
+    if (sigModal && sigCanvas && signaturePad) {
+        sigModal.style.display = "flex";
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        sigCanvas.width = sigCanvas.offsetWidth * ratio;
+        sigCanvas.height = sigCanvas.offsetHeight * ratio;
+        sigCanvas.getContext("2d").scale(ratio, ratio);
+        signaturePad.clear();
     }
+}
 
-    /**
-     * Shows a loading spinner and hides the main content.
-     * @param {string} loaderId - The ID of the loader element.
-     * @param {string} contentId - The ID of the content element to hide.
-     */
-    function showLoader(loaderId, contentId) {
-        const loader = document.getElementById(loaderId);
-        const content = document.getElementById(contentId);
-        if (loader) loader.style.display = 'flex';
-        if (content) content.style.display = 'none';
+function closeSignaturePad() {
+    document.getElementById("signature-modal").style.display = "none";
+}
+
+function clearSignature() {
+    if (signaturePad) signaturePad.clear();
+}
+
+function saveSignature() {
+    if (signaturePad && signaturePad.isEmpty()) {
+        return alert("Please provide a signature first.");
     }
-
-    /**
-     * Hides a loading spinner and shows the main content.
-     * @param {string} loaderId - The ID of the loader element.
-     * @param {string} contentId - The ID of the content element to show.
-     */
-    function hideLoader(loaderId, contentId) {
-        const loader = document.getElementById(loaderId);
-        const content = document.getElementById(contentId);
-        if (loader) loader.style.display = 'none';
-        if (content) content.style.display = 'block';
-    }
-
-
-    // --- 4. API Service ---
-
-    /**
-     * A generic fetch-based API service.
-     * @param {string} endpoint - The API endpoint (e.g., '/duty-slip').
-     * @param {string} method - The HTTP method ('GET', 'POST', 'PUT').
-     * @param {object} [body=null] - The request body for POST/PUT requests.
-     * @returns {Promise<object>} The JSON response from the API.
-     */
-    async function apiService(endpoint, method, body = null) {
-        const options = {
-            method,
-            headers: { 'Content-Type': 'application/json' },
-        };
-        if (body) {
-            options.body = JSON.stringify(body);
-        }
-
-        try {
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ message: 'An unknown error occurred' }));
-                throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-            }
-            return await response.json();
-        } catch (error) {
-            console.error('API Service Error:', error);
-            showToast(error.message, 'error');
-            throw error;
+    const dataURL = signaturePad.toDataURL("image/png");
+    if (currentSignatureTarget) {
+        currentSignatureTarget.src = dataURL;
+        currentSignatureTarget.style.display = 'block';
+        if (currentSignatureTarget.previousElementSibling) {
+            currentSignatureTarget.previousElementSibling.style.display = 'none';
         }
     }
+    closeSignaturePad();
+}
 
-    // --- 5. Signature Pad Component ---
-
-    function initializeSignaturePad(canvasId, modalId, clearBtnId, saveBtnId, callback) {
-        const canvas = document.getElementById(canvasId);
-        const signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgb(255, 255, 255)' });
-        const modal = document.getElementById(modalId);
-
-        document.getElementById(clearBtnId).addEventListener('click', () => signaturePad.clear());
-        document.getElementById(saveBtnId).addEventListener('click', () => {
-            if (signaturePad.isEmpty()) {
-                return alert("Please provide a signature first.");
-            }
-            const dataURL = signaturePad.toDataURL('image/png');
-            callback(dataURL);
-            modal.style.display = 'none';
-        });
-
-        return {
-            open: () => {
-                modal.style.display = 'flex';
-                const ratio = Math.max(window.devicePixelRatio || 1, 1);
-                canvas.width = canvas.offsetWidth * ratio;
-                canvas.height = canvas.offsetHeight * ratio;
-                canvas.getContext("2d").scale(ratio, ratio);
-                signaturePad.clear();
-            },
-            close: () => modal.style.display = 'none',
-            getSignaturePad: () => signaturePad
-        };
-    }
-
-    /**
-     * Registers and runs the main function for a specific page.
-     * Ensures that the page-specific code runs after the DOM is ready.
-     * @param {Function} pageInitFunction - The function to run for the page.
-     */
-    function initializePage(pageInitFunction) {
-        if (typeof pageInitFunction === 'function') {
-            pageInitFunction();
+function calculateTotals() {
+    const dateOutVal = document.getElementById('date-out').value;
+    const dateInVal = document.getElementById('date-in').value;
+    if (dateOutVal && dateInVal) {
+        const dateOut = new Date(dateOutVal);
+        const dateIn = new Date(dateInVal);
+        if (dateIn >= dateOut) {
+            const diffTime = Math.abs(dateIn - dateOut);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            document.getElementById('total-days').value = diffDays;
+        } else {
+            document.getElementById('total-days').value = '';
         }
+    } else {
+        document.getElementById('total-days').value = '';
     }
 
-    // Expose functions to the global window object to be accessible by other scripts
-    window.App = {
-        ...window.App,
-        getUrlParameter,
-        showToast,
-        showLoader,
-        hideLoader,
-        apiService,
-        initializeSignaturePad,
-        initializePage,
+    const timeOutVal = document.getElementById('driver-time-out').value;
+    const timeInVal = document.getElementById('driver-time-in').value;
+    if (timeOutVal && timeInVal) {
+        const timeOut = new Date(`1970-01-01T${timeOutVal}`);
+        let timeIn = new Date(`1970-01-01T${timeInVal}`);
+        if (timeIn < timeOut) timeIn.setDate(timeIn.getDate() + 1);
+        const diffMs = timeIn - timeOut;
+        const diffHrs = Math.floor(diffMs / 3600000);
+        const diffMins = Math.round((diffMs % 3600000) / 60000);
+        document.getElementById('driver-total-hrs').value = `${diffHrs} hrs ${diffMins} mins`;
+    } else {
+        document.getElementById('driver-total-hrs').value = '';
+    }
+
+    const kmOut = parseFloat(document.getElementById('driver-km-out').value) || 0;
+    const kmIn = parseFloat(document.getElementById('driver-km-in').value) || 0;
+    if (kmIn > kmOut) {
+        document.getElementById('driver-total-kms').value = `${(kmIn - kmOut).toFixed(1)} Kms`;
+    } else {
+        document.getElementById('driver-total-kms').value = '';
+    }
+}
+
+function validateMobileInput(inputId) {
+    const mobileInput = document.getElementById(inputId);
+    if (!mobileInput) return;
+    mobileInput.addEventListener('input', function () {
+        this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10);
+    });
+}
+
+function validateAllInputs() {
+    let isValid = true;
+    const fields = {
+        dateOut: document.getElementById('date-out'),
+        dateIn: document.getElementById('date-in'),
+        driverTimeOut: document.getElementById('driver-time-out'),
+        driverTimeIn: document.getElementById('driver-time-in'),
+        driverKmOut: document.getElementById('driver-km-out'),
+        driverKmIn: document.getElementById('driver-km-in'),
+        customerTimeOut: document.getElementById('time-out'),
+        customerTimeIn: document.getElementById('time-in'),
+        customerKmOut: document.getElementById('km-out'),
+        customerKmIn: document.getElementById('km-in')
     };
+
+    const setError = (el, message) => {
+        if (el) {
+            el.classList.remove('input-error');
+            void el.offsetWidth;
+            el.classList.add('input-error');
+            isValid = false;
+        }
+    };
+
+    Object.values(fields).forEach(el => el ? el.classList.remove('input-error') : null);
+
+    const createDateTime = (d, t) => (d.value && t.value) ? new Date(`${d.value}T${t.value}`) : null;
+    const driverStart = createDateTime(fields.dateOut, fields.driverTimeOut);
+    const driverEnd = createDateTime(fields.dateIn, fields.driverTimeIn);
+    const customerStart = createDateTime(fields.dateOut, fields.customerTimeOut);
+    const customerEnd = createDateTime(fields.dateIn, fields.customerTimeIn);
+    const drKmOut = parseFloat(fields.driverKmOut.value) || 0;
+    const drKmIn = parseFloat(fields.driverKmIn.value) || 0;
+    const custKmOut = parseFloat(fields.customerKmOut.value) || 0;
+    const custKmIn = parseFloat(fields.customerKmIn.value) || 0;
+
+    if (driverEnd && driverStart && driverEnd < driverStart) setError(fields.driverTimeIn);
+    if (drKmIn > 0 && drKmIn < drKmOut) setError(fields.driverKmIn);
+    if (custKmIn > 0 && custKmIn < custKmOut) setError(fields.customerKmIn);
+    if (customerStart && driverStart && customerStart < driverStart) setError(fields.customerTimeOut);
+    if (customerEnd && driverEnd && customerEnd > driverEnd) setError(fields.customerTimeIn);
+    if (custKmOut > 0 && custKmOut < drKmOut) setError(fields.customerKmOut);
+    if (custKmIn > 0 && custKmIn > drKmIn) setError(fields.customerKmIn);
+
+    return isValid;
+}
+
+function handleDriverSelection() {
+    const selected = driverData[this.value];
+    if (selected) {
+        document.getElementById('driver-mobile').value = selected.mobile;
+        const img = document.getElementById('auth-signature-link');
+        img.src = selected.signatureUrl;
+        img.style.display = 'block';
+        document.getElementById('auth-sig-placeholder').style.display = 'none';
+    }
+}
+
+// --- 2. GLOBAL COMPONENT & EVENT MANAGEMENT ---
+
+async function loadComponents() {
+    const components = [
+        { id: 'admin-sidebar', path: '/components/_sidebar.html' },
+        { id: 'admin-header', path: '/components/_header.html' },
+        { id: 'admin-footer', path: '/components/_footer.html' }
+    ];
+
+    for (const { id, path } of components) {
+        const element = document.getElementById(id);
+        if (element) {
+            try {
+                const response = await fetch(path);
+                if (response.ok) element.innerHTML = await response.text();
+            } catch (error) { console.error(`Error loading ${path}:`, error); }
+        }
+    }
+}
+
+function setActiveNavLink() {
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('.sidebar-nav .nav-links a').forEach(link => {
+        if (link.pathname === currentPath) {
+            link.classList.add('active');
+        }
+    });
+}
+
+function setupGlobalEventListeners() {
+    const header = document.getElementById('admin-header');
+    if (header) {
+        header.addEventListener('click', (event) => {
+            if (event.target.classList.contains('logout-btn')) {
+                sessionStorage.removeItem('shrish-admin-auth');
+                window.location.href = '/login.html'; // Assuming you have a login page
+            }
+        });
+    }
+    
+    const sidebarToggle = document.getElementById('sidebar-toggle-btn');
+    const sidebar = document.getElementById('admin-sidebar');
+    const layout = document.querySelector('.admin-layout');
+
+    if (sidebarToggle && sidebar && layout) {
+        sidebarToggle.addEventListener('click', () => {
+            layout.classList.toggle('sidebar-collapsed');
+        });
+    }
+
+    const fabContainer = document.querySelector('.action-buttons-container');
+    const fabToggle = document.getElementById('fab-main-toggle');
+
+    if (fabContainer && fabToggle) {
+        fabToggle.addEventListener('click', () => {
+            // This toggles the 'is-open' class on the container
+            fabContainer.classList.toggle('is-open');
+        });
+    }
+}
+
+// --- 3. DOMCONTENTLOADED ---
+// This is the main entry point for all pages.
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadComponents();
+    setActiveNavLink();
+    setupGlobalEventListeners();
+
+    // ** THE FIX **
+    // After all common components are loaded, check if page-specific logic exists and run it.
+    if (typeof initializeEditSlipPage === 'function') {
+        initializeEditSlipPage();
+    }
+    if (typeof initializeCreateSlipPage === 'function') { // You should do this for create-slip.js too!
+        initializeCreateSlipPage();
+    }
 });

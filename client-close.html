@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Close Duty Slip | Shrish Travels</title>
     <!-- CSS -->
-    <link rel="stylesheet" href="/assets/css/common.css">
     <link rel="stylesheet" href="/assets/css/client-close.css">
     <!-- FONT AWESOME -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -142,16 +141,15 @@
             <p>Please sign in the box below</p>
             <canvas id="signature-canvas"></canvas>
             <div class="modal-buttons">
-                <button id="clear-signature-btn" class="btn-clear">Clear</button>
-                <button id="save-signature-btn" class="btn-save">Save Signature</button>
-                <button id="cancel-signature-btn" class="btn-cancel" style="margin-right: auto;">Cancel</button>
+                <button class="btn-clear" onclick="clearSignature()">Clear</button>
+                <button class="btn-save" onclick="saveSignature()">Save Signature</button>
+                <button class="btn-cancel" style="margin-right: auto;" onclick="closeSignaturePad()">Cancel</button>
             </div>
         </div>
     </div>
 
     <!-- SCRIPTS -->
-    <script src="/assets/js/signature_pad.min.js"></script>
-    <script src="/assets/js/common.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     <script src="/assets/js/client-close.js"></script>
 </body>
 

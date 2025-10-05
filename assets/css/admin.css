@@ -1,10 +1,6 @@
 /**
- * ====================================================================
- * Shrish Admin Panel - Main Stylesheet (V3.0 - UI/UX Upgrade)
- * ====================================================================
- * This file contains all layout and component styles for the admin panel,
- * including a new dark theme, enhanced mobile sidebar, and accessibility improvements.
- * ====================================================================
+ * Shrish Admin Panel - Main Stylesheet (V2.0 - Premium & Responsive)
+ * This file contains all layout and component styles for the admin panel.
  */
 
 /* --- 1. Global Foundation: Variables, Resets, and Typography --- */
@@ -12,7 +8,7 @@
     --sidebar-width: 260px;
     --header-height: 70px;
     
-    /* Light Theme Color Palette (Default) */
+    /* Color Palette */
     --color-bg-main: #f8f9fa;
     --color-bg-sidebar: #1f2937;
     --color-bg-card: #ffffff;
@@ -29,19 +25,6 @@
     --transition-speed: 0.3s ease;
 }
 
-/* NEW: Dark Theme Color Palette */
-body.dark-theme {
-    --color-bg-main: #111827;
-    --color-bg-sidebar: #1f2937; /* Sidebar is the same color in both themes */
-    --color-bg-card: #1f2937;
-    --color-primary: #6366f1;
-    --color-primary-hover: #4f46e5;
-    --color-text-light: #f9fafb;
-    --color-text-dark: #f9fafb; /* Inverted for dark mode */
-    --color-text-muted: #9ca3af;
-    --color-border: #374151;
-}
-
 *, *::before, *::after {
     box-sizing: border-box;
 }
@@ -53,21 +36,11 @@ body {
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-size: 16px;
     line-height: 1.6;
-    transition: background-color var(--transition-speed), color var(--transition-speed);
 }
-
-/* NEW: Accessibility focus state */
-:is(a, button, input, select, textarea):focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-    border-radius: 4px;
-}
-
 
 /* --- 2. Main Layout Structure --- */
 .admin-layout {
     display: flex;
-    position: relative; /* Needed for the overlay */
 }
 
 #admin-sidebar {
@@ -78,7 +51,6 @@ body {
     height: 100vh;
     background-color: var(--color-bg-sidebar);
     transition: transform var(--transition-speed);
-    z-index: 1000;
 }
 
 .admin-main-content {
@@ -95,15 +67,6 @@ body {
     flex-grow: 1;
 }
 
-/* NEW: Sidebar overlay for mobile */
-.sidebar-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-}
-
 /* --- 3. Component Styling: Sidebar --- */
 .sidebar-nav {
     display: flex;
@@ -114,46 +77,24 @@ body {
 
 .sidebar-header {
     padding: 1.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    text-align: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.sidebar-logo-link {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    text-decoration: none;
-    color: var(--color-text-light);
-    flex-grow: 1;
-}
-
 .sidebar-logo {
-    max-width: 40px;
+    max-width: 60px;
+    margin-bottom: 0.5rem;
 }
 
-.sidebar-title {
+.sidebar-header h3 {
     margin: 0;
     font-weight: 600;
-    font-size: 1.2rem;
-}
-
-/* NEW: Sidebar close button (visible only on mobile) */
-.sidebar-close-btn {
-    display: none;
-    background: none;
-    border: none;
-    color: var(--color-text-muted);
-    font-size: 1.5rem;
-    cursor: pointer;
 }
 
 .nav-links {
     list-style: none;
     padding: 1rem 0;
     margin: 0;
-    flex-grow: 1; /* Pushes footer to the bottom */
 }
 
 .nav-links a {
@@ -169,7 +110,7 @@ body {
 }
 
 .nav-links a:hover {
-    background-color: rgba(99, 102, 241, 0.2);
+    background-color: rgba(79, 70, 229, 0.2); /* Faded primary color */
     color: var(--color-text-light);
 }
 
@@ -186,24 +127,6 @@ body {
     font-size: 1.1rem;
 }
 
-/* NEW: Sidebar footer styling */
-.sidebar-footer {
-    padding: 1.5rem;
-    text-align: center;
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-.sidebar-footer a {
-    color: var(--color-primary);
-    text-decoration: none;
-    font-weight: 600;
-}
-.sidebar-footer a:hover {
-    text-decoration: underline;
-}
-
-
 /* --- 4. Component Styling: Header & Footer --- */
 .admin-header {
     height: var(--header-height);
@@ -215,19 +138,12 @@ body {
     position: sticky;
     top: 0;
     z-index: 900;
-    transition: background-color var(--transition-speed), border-bottom var(--transition-speed);
 }
 
 .header-title {
     font-size: 1.5rem;
     margin: 0;
     flex-grow: 1;
-}
-
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
 }
 
 .admin-footer {
@@ -237,7 +153,6 @@ body {
     border-top: 1px solid var(--color-border);
     font-size: 0.9rem;
     color: var(--color-text-muted);
-    transition: background-color var(--transition-speed), border-top var(--transition-speed);
 }
 
 /* --- 5. Content Styling: Cards, Titles, etc. --- */
@@ -259,11 +174,10 @@ body {
     border-radius: var(--border-radius-md);
     border: 1px solid var(--color-border);
     box-shadow: var(--shadow-md);
-    transition: background-color var(--transition-speed), border var(--transition-speed);
 }
 
-/* --- 6. Utility & Element Styling (Buttons, Toggles) --- */
-.btn-primary {
+/* --- 6. Utility & Form Element Styling --- */
+.btn-primary, .logout-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -278,53 +192,13 @@ body {
     color: white;
 }
 
-.btn-primary:hover {
+.btn-primary:hover, .logout-btn:hover {
     background-color: var(--color-primary-hover);
     box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
     transform: translateY(-2px);
 }
 
-.logout-btn {
-    background: none;
-    border: 1px solid var(--color-border);
-    color: var(--color-text-muted);
-    padding: 0.6rem 1rem;
-    cursor: pointer;
-    border-radius: var(--border-radius-md);
-    transition: all var(--transition-speed);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-.logout-btn:hover {
-    background-color: var(--color-bg-main);
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-}
-
-/* NEW: Theme Toggle Button styling */
-.theme-toggle-btn {
-    background: none;
-    border: 1px solid var(--color-border);
-    color: var(--color-text-muted);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    transition: all var(--transition-speed);
-}
-.theme-toggle-btn:hover {
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-}
-.theme-icon-light { display: none; }
-.dark-theme .theme-icon-dark { display: none; }
-.dark-theme .theme-icon-light { display: block; }
-
+/* --- 7. Mobile Responsiveness --- */
 .sidebar-toggle {
     display: none; /* Hidden on desktop */
     background: none;
@@ -335,15 +209,14 @@ body {
     margin-right: 1.5rem;
 }
 
-
-/* --- 7. Mobile Responsiveness --- */
 @media (max-width: 992px) {
     .sidebar-toggle {
         display: block; /* Show hamburger button */
     }
 
     #admin-sidebar {
-        transform: translateX(-100%); /* Hide sidebar off-screen by default */
+        transform: translateX(-100%); /* Hide sidebar off-screen */
+        z-index: 1000;
     }
 
     .admin-main-content {
@@ -351,29 +224,19 @@ body {
         width: 100%;
     }
     
-    /* UPDATED: Use .sidebar-open for more explicit control */
-    .admin-layout.sidebar-open #admin-sidebar {
+    .admin-layout.sidebar-collapsed #admin-sidebar {
         transform: translateX(0); /* Show sidebar when class is applied */
     }
-    
-    .admin-layout.sidebar-open .sidebar-overlay {
-        display: block; /* Show overlay */
-    }
 
-    .sidebar-close-btn {
-        display: block; /* Show the X button on mobile */
-    }
-    .logout-text {
-        display: none; /* Hide the "Log Out" text on mobile */
-    }
-    .header-actions .logout-btn {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        padding: 0;
-        justify-content: center;
-    }
-    .page-content {
-        padding: 1.5rem;
+    /* Optional: Add an overlay for better focus on mobile */
+    .admin-layout.sidebar-collapsed::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
     }
 }

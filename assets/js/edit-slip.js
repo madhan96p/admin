@@ -1,4 +1,4 @@
-App.initializePage(function initializeEditSlipPage() {
+function initializeEditSlipPage() {
     // ADD THIS NEW HELPER FUNCTION HERE
     function formatDateForInput(dateString) {
         if (!dateString) return ''; // Return empty if no date is provided
@@ -18,6 +18,7 @@ App.initializePage(function initializeEditSlipPage() {
         populateDriverDatalist();
         setupEventListeners();
         loadSlipDataForEditing();
+        initializeSignaturePad('signature-canvas'); // From common.js
     }
 
     // --- 2. PAGE-SPECIFIC SETUP ---
@@ -35,38 +36,23 @@ App.initializePage(function initializeEditSlipPage() {
         document.querySelectorAll('#whatsapp-button, #mobile-whatsapp-button').forEach(btn => btn.addEventListener('click', handleWhatsAppShare));
         document.querySelectorAll('#generate-link-button, #mobile-generate-link-button').forEach(btn => btn.addEventListener('click', handleGenerateLink));
 
-        // Assuming these functions are defined elsewhere or should be in common.js
         const inputsToWatch = [
             'driver-time-out', 'driver-time-in', 'driver-km-out', 'driver-km-in', 'date', 'date-out', 'date-in', 'time-out', 'time-in', 'km-out', 'km-in'
         ];
-        // inputsToWatch.forEach(id => {
-        //     const el = document.getElementById(id);
-        //     if (el) {
-        //         el.addEventListener('input', calculateTotals);
-        //         el.addEventListener('input', validateAllInputs);
-        //     }
-        // });
-        // validateMobileInput('guest-mobile');
-        // validateMobileInput('driver-mobile');
-
-        const signaturePadManager = App.initializeSignaturePad(
-            'signature-canvas',
-            'signature-modal',
-            'clear-signature-btn',
-            'save-signature-btn',
-            (dataURL) => {
-                const targetImg = document.getElementById(window.currentSignatureTargetId);
-                if (targetImg) {
-                    targetImg.src = dataURL;
-                    targetImg.style.display = 'block';
-                }
+        inputsToWatch.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', calculateTotals);
+                el.addEventListener('input', validateAllInputs);
             }
-        );
+        });
+
+        validateMobileInput('guest-mobile');
+        validateMobileInput('driver-mobile');
 
         document.getElementById('driver-name')?.addEventListener('input', handleDriverSelection);
-        document.getElementById('auth-signature-box')?.addEventListener('click', () => { window.currentSignatureTargetId = 'auth-signature-link'; signaturePadManager.open(); });
-        document.getElementById('guest-signature-box')?.addEventListener('click', () => { window.currentSignatureTargetId = 'guest-signature-link'; signaturePadManager.open(); });
-        document.getElementById('cancel-signature-btn')?.addEventListener('click', () => signaturePadManager.close());
+        document.getElementById('auth-signature-box')?.addEventListener('click', () => openSignaturePad('auth-signature-link'));
+        document.getElementById('guest-signature-box')?.addEventListener('click', () => openSignaturePad('guest-signature-link'));
         // NEW LOGIC: PDF Download Button
         const pdfButtons = document.querySelectorAll('#download-pdf-button, #mobile-download-pdf-button');
         pdfButtons.forEach(btn => {
@@ -82,23 +68,29 @@ App.initializePage(function initializeEditSlipPage() {
                         printWindow.print();
                     };
                 } else {
-                    App.showToast("Please save the duty slip first to generate a PDF.", "info");
+                    alert("Please save the duty slip first to generate a PDF.");
                 }
             });
         });
     }
 
     async function loadSlipDataForEditing() {
-        const slipId = App.getUrlParameter('id');
+        const slipId = new URLSearchParams(window.location.search).get('id');
         if (!slipId) {
+            // On the create page, there's no ID, so we just stop.
+            // On the edit page, we should show an error.
             if (window.location.pathname.includes('edit-slip.html')) {
-                App.showToast('Error: No Duty Slip ID provided.', 'error');
+                alert('Error: No Duty Slip ID provided.');
             }
             return;
         }
 
         try {
-            const slip = await App.apiService(`/duty-slip/${slipId}`, 'GET');
+            const response = await fetch(`/api?action=getDutySlipById&id=${slipId}`);
+            const data = await response.json();
+            if (data.error || !data.slip) throw new Error(data.error || "Slip data not found.");
+
+            const slip = data.slip;
 
             // This enhanced loop now handles all data types correctly
             for (const key in slip) {
@@ -127,10 +119,10 @@ App.initializePage(function initializeEditSlipPage() {
                 }
             }
             // After populating, run calculations to fill in total fields
-            // calculateTotals();
+            calculateTotals();
 
         } catch (error) {
-            App.showToast(`Failed to load duty slip data: ${error.message}`, 'error');
+            alert(`Failed to load duty slip data: ${error.message}`);
         }
     }
     // ... inside initializeEditSlipPage function, after loadSlipDataForEditing ...
@@ -151,7 +143,7 @@ App.initializePage(function initializeEditSlipPage() {
 
         // Ensure a driver mobile number is present
         if (!driverMobile || driverMobile.length < 10) {
-            return App.showToast('Please enter a valid 10-digit driver mobile number before sharing.', 'error');
+            return alert('Please enter a valid 10-digit driver mobile number before sharing.');
         }
 
         // Construct the message
@@ -177,17 +169,17 @@ Contact +91 8883451668 / 9176500207
     function handleGenerateLink() {
         const dsNo = document.getElementById('ds-no').value;
         if (!dsNo) {
-            return App.showToast('Cannot generate a link for an unsaved slip.', 'info');
+            return alert('Cannot generate a link for an unsaved slip.');
         }
 
         const viewUrl = `${window.location.origin}/view.html?id=${dsNo}`;
 
         // Use the Clipboard API to copy the link
         navigator.clipboard.writeText(viewUrl).then(() => {
-            App.showToast('View link copied to clipboard!', 'success');
+            alert('View link copied to clipboard!');
         }).catch(err => {
             console.error('Failed to copy link: ', err);
-            App.showToast('Failed to copy link. Please copy it manually.', 'error');
+            alert('Failed to copy link. Please copy it manually.');
         });
     }
 
@@ -195,11 +187,10 @@ Contact +91 8883451668 / 9176500207
     async function updateDutySlip(event) {
         event.preventDefault();
 
-        // Assuming validateAllInputs() is defined elsewhere
-        // if (!validateAllInputs()) {
-        //     App.showToast('Please fix the validation errors before saving.', 'error');
-        //     return;
-        // }
+        if (!validateAllInputs()) {
+            alert('Please fix the validation errors before saving.');
+            return;
+        }
 
         const button = event.currentTarget;
         button.disabled = true;
@@ -220,19 +211,22 @@ Contact +91 8883451668 / 9176500207
         formData['Status'] = 'Updated by Manager';
 
         try {
-            const slipId = formData['DS_No'];
-            const result = await App.apiService(`/duty-slip/${slipId}`, 'PUT', formData);
+            const response = await fetch('/api?action=updateDutySlip', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
+            const result = await response.json();
 
             if (result.success) {
-                App.showToast(result.message, 'success');
+                alert(result.message);
                 window.location.href = '/duty-slips.html';
             } else {
                 throw new Error(result.error || 'Unknown error during update.');
             }
         } catch (error) {
             console.error("Update failed:", error);
-            App.showToast(`Error: Could not update the duty slip. ${error.message}`, 'error');
-        } finally {
+            alert(`Error: Could not update the duty slip. ${error.message}`);
             button.disabled = false;
             button.innerHTML = '<i class="fas fa-save"></i> Update Duty Slip';
         }
@@ -240,4 +234,4 @@ Contact +91 8883451668 / 9176500207
 
     // --- 4. RUN INITIALIZATION ---
     initializePage();
-});
+}
