@@ -10,10 +10,18 @@
   to = "/.netlify/functions/api/:splat"
   status = 200
 
-# --- Custom 404 Page Rule (ADD THIS PART) ---
-# This rule tells Netlify to show your custom 404.html page
-# whenever a user tries to visit a page that doesn't exist.
 [[redirects]]
   from = "/*"
   to = "/404.html"
   status = 404
+
+[build.processing]
+  skip_processing = false
+[build.processing.css]
+  bundle = true
+  minify = true
+[build.processing.js]
+  bundle = true
+  minify = true
+[build.processing.images]
+  compress = true
