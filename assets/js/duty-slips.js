@@ -121,10 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
         slips.forEach(slip => {
             const status = slip.Status || 'New';
             const statusClass = status.toLowerCase().replace(/ /g, '-');
-            const signatureIcon = slip.Guest_Signature_Link 
-                ? `<img src="${slip.Guest_Signature_Link}" alt="Guest Signature">` 
-                : `<i class="fas fa-signature" style="opacity: 0.3;"></i>`;
-
             const row = document.createElement('tr');
             row.className = `status-${statusClass}`; 
             
@@ -134,19 +130,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td data-label="Guest & Date"><div class="cell-primary">${slip.Guest_Name || 'N/A'}</div><div class="cell-secondary">${slip.Date || 'N/A'}</div></td>
                 <td data-label="Driver & Vehicle"><div class="cell-primary">${slip.Driver_Name || 'N/A'}</div><div class="cell-secondary">${slip.Vehicle_No || 'N/A'}</div></td>
                 <td class="actions-cell" data-label="Actions">
-                    <div class="signature-thumbnail" data-id="${slip.DS_No}" title="View Guest Signature">${signatureIcon}</div>
+                    <div class="signature-thumbnail" data-id="${slip.DS_No}" </div>
                     <button class="action-btn quick-view-btn" data-id="${slip.DS_No}" title="Quick View" aria-label="Quick View"><i class="fas fa-eye"></i></button>
                     <div class="quick-actions-menu">
                         <button class="action-btn kebab-btn" title="More Actions" aria-label="More Actions"><i class="fas fa-ellipsis-v"></i></button>
                         <div class="dropdown-menu">
                             <a href="/edit-slip.html?id=${slip.DS_No}" class="dropdown-item"><i class="fas fa-edit"></i> Edit Full Slip</a>
                             <a href="/view.html?id=${slip.DS_No}" target="_blank" class="dropdown-item"><i class="fas fa-print"></i> View/Print</a>
-                            <div class="dropdown-divider"></div>
-                            <button class="dropdown-item" data-action="share-driver" data-id="${slip.DS_No}"><i class="fab fa-whatsapp"></i> Share to Driver</button>
-                            <button class="dropdown-item" data-action="ask-guest" data-id="${slip.DS_No}"><i class="fas fa-signature"></i> Ask Guest to Sign</button>
-                            <button class="dropdown-item" data-action="copy-link" data-id="${slip.DS_No}"><i class="fas fa-copy"></i> Copy Link</button>
                         </div>
-                    </div>
                 </td>`;
             fragment.appendChild(row);
         });
@@ -186,35 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 300); // Debounce input
         });
 
-        tableBody.addEventListener('click', e => {
-            const button = e.target.closest('button, a, .signature-thumbnail');
-            if (!button) return;
-
-            const row = e.target.closest('tr');
-            if (!row) return;
-
-            const slipId = button.dataset.id || button.closest('[data-id]')?.dataset.id;
-            const slipData = state.allSlips.find(s => s.DS_No == slipId);
-
-            if (button.matches('.kebab-btn')) {
-                // Close other menus before opening a new one
-                document.querySelectorAll('.quick-actions-menu.active').forEach(menu => {
-                    if (menu !== button.parentElement) {
-                        menu.classList.remove('active');
-                    }
-                });
-                button.parentElement.classList.toggle('active');
-            } else if (button.matches('.quick-view-btn')) {
-                openQuickViewModal(slipData);
-            } else if (button.matches('.signature-thumbnail')) {
-                if (slipData?.Guest_Signature_Link) {
-                   window.open(slipData.Guest_Signature_Link, '_blank');
-                }
-            } else if (button.matches('.dropdown-item')) {
-                handleQuickAction(button.dataset.action, slipData);
-            }
-        });
-
         document.body.addEventListener('click', e => {
             if (!e.target.closest('.quick-actions-menu')) {
                 document.querySelectorAll('.quick-actions-menu.active').forEach(menu => menu.classList.remove('active'));
@@ -228,31 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    function handleQuickAction(action, slip) {
-        if (!slip) return;
-        switch (action) {
-            case 'share-driver':
-                // Assuming you have a function for this, perhaps in common.js
-                console.log('Sharing with driver:', slip);
-                alert(`Sharing slip #${slip.DS_No} with driver.`);
-                break;
-            case 'ask-guest':
-                // Assuming you have a function for this
-                console.log('Asking guest to sign:', slip);
-                alert(`Sending signature request for slip #${slip.DS_No}.`);
-                break;
-            case 'copy-link': 
-                const viewLink = `${window.location.origin}/view.html?id=${slip.DS_No}`;
-                navigator.clipboard.writeText(viewLink)
-                    .then(() => alert('View link copied to clipboard!'))
-                    .catch(err => {
-                        console.error('Failed to copy link: ', err);
-                        alert('Could not copy link.');
-                    });
-                break;
-        }
-    }
-    
+        
     function openQuickViewModal(slip) {
         if (!slip) return;
         modalBody.innerHTML = `
