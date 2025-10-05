@@ -1,20 +1,11 @@
 # This is the main configuration file for Netlify
 
+# --- Build & Function Settings ---
 [build]
-  # This tells Netlify where our serverless functions are located.
-  functions = "netlify/functions/"
+  # This tells Netlify where our serverless functions are located.
+  functions = "netlify/functions/"
 
-[[redirects]]
-  # This is a rewrite rule for your API function.
-  from = "/api/*"
-  to = "/.netlify/functions/api/:splat"
-  status = 200
-
-[[redirects]]
-  from = "/*"
-  to = "/404.html"
-  status = 404
-
+# --- Asset Optimization Settings ---
 [build.processing]
   skip_processing = false
 [build.processing.css]
@@ -25,3 +16,17 @@
   minify = true
 [build.processing.images]
   compress = true
+
+# --- Redirect & Rewrite Rules ---
+
+[[redirects]]
+  # This is a rewrite rule for your API function.
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+[[redirects]]
+  # Custom 404 page rule. This must be the last rule.
+  from = "/*"
+  to = "/404.html"
+  status = 404
