@@ -91,6 +91,7 @@ function initializeEditSlipPage() {
             if (data.error || !data.slip) throw new Error(data.error || "Slip data not found.");
 
             const slip = data.slip;
+            console.log("Data received for this slip:", slip);
 
             // This enhanced loop now handles all data types correctly
             for (const key in slip) {
@@ -105,7 +106,9 @@ function initializeEditSlipPage() {
                         if ((signatureData && signatureData.length > 100) || (signatureData && signatureData.startsWith('http'))) {
                             inputElement.src = signatureData;
                             inputElement.style.display = 'block';
-                            const placeholder = document.getElementById(inputId.replace('-link', '-sig-placeholder'));
+                            // FIX: Correctly finds both 'auth-sig-placeholder' and 'guest-sig-placeholder'
+                            const placeholderId = inputId.replace('signature-link', 'sig-placeholder');
+                            const placeholder = document.getElementById(placeholderId);
                             if (placeholder) placeholder.style.display = 'none';
                         }
                         // LOGIC FOR DATES
