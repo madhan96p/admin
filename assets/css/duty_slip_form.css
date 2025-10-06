@@ -165,7 +165,7 @@
 .signature-box {
     border: 2px dashed var(--gray-200);
     border-radius: var(--radius-lg);
-    height: 150px;
+    height: 120px;
     margin-top: 0.5rem;
     cursor: pointer;
     display: flex;
@@ -182,7 +182,7 @@
 .action-buttons-desktop {
     display: none; /* Hidden on mobile */
 }
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
     .action-buttons-desktop {
         display: flex;
         justify-content: flex-end;
