@@ -187,7 +187,7 @@
 .action-buttons-desktop {
     display: none; /* Hidden on mobile */
 }
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
     .action-buttons-desktop {
         display: flex;
         justify-content: flex-end;
