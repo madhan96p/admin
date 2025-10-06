@@ -161,11 +161,16 @@
     flex-direction: column;
     gap: var(--space-6);
 }
-.signature-area { width: 100%; text-align: center; }
+.signature-area {
+    width: 100%;
+    max-width: 450px; /* Add this to prevent it from getting too wide */
+    margin: 0 auto;   /* Add this to center it within the footer */
+    text-align: center;
+}
 .signature-box {
     border: 2px dashed var(--gray-200);
     border-radius: var(--radius-lg);
-    height: 120px;
+    height: 150px;
     margin-top: 0.5rem;
     cursor: pointer;
     display: flex;
