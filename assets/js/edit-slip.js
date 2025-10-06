@@ -160,15 +160,16 @@ function initializeEditSlipPage() {
         // Construct the message
         const message = `
 Booking: DS#${bookingId}
-Passenger: ${guestName} (${guestMobile})
+Passenger: *${guestName}* ( +91 ${guestMobile})
 Vehicle: ${vehicleType} (${vehicleNo})
 Date: ${date}
 Reporting time: ${reportingTime}
 Reporting address: ${reportingAddress}
+
 Close link: https://admin.shrishgroup.com/edit-slip.html?id=${dsNo}
 
 Regards Shrish Group
-Contact +91 8883451668 / 9176500207
+Contact +91 8883451668 / +91 9176500207
 - Sent via Shrish Travels
         `;
 

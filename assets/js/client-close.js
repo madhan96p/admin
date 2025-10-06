@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             populateField('total-hrs', slip.Driver_Total_Hrs); // Total hours is usually the same
-            populateField('auth-signature-link', slip.Auth_Signature_Link);
+            populateField('driver-signature-link', slip.Auth_Signature_Link);
 
             // Show the content
             loader.style.display = 'none';
