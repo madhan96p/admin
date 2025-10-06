@@ -94,28 +94,36 @@ function initializeEditSlipPage() {
             console.log("Data received for this slip:", slip);
 
             // This enhanced loop now handles all data types correctly
+            // This enhanced loop now handles all data types correctly
             for (const key in slip) {
                 const inputId = key.toLowerCase().replace(/_/g, '-');
                 const inputElement = document.getElementById(inputId);
 
                 if (inputElement) {
-                    // LOGIC FOR SIGNATURES
+                    // Handles signatures
                     if (inputElement.tagName === 'IMG') {
                         const signatureData = slip[key];
-                        // FIX: Accept long base64 strings OR standard http links
                         if ((signatureData && signatureData.length > 100) || (signatureData && signatureData.startsWith('http'))) {
                             inputElement.src = signatureData;
                             inputElement.style.display = 'block';
-                            // FIX: Correctly finds both 'auth-sig-placeholder' and 'guest-sig-placeholder'
                             const placeholderId = inputId.replace('signature-link', 'sig-placeholder');
                             const placeholder = document.getElementById(placeholderId);
                             if (placeholder) placeholder.style.display = 'none';
                         }
-                        // LOGIC FOR DATES
+                        // Handles dates
                     } else if (inputElement.type === 'date') {
-                        // FIX: Use our new helper function to format the date correctly
                         inputElement.value = formatDateForInput(slip[key]);
-                        // LOGIC FOR ALL OTHER INPUTS
+                        // NEW FIX: Handles time inputs by ensuring HH:mm format
+                    } else if (inputElement.type === 'time') {
+                        const timeValue = slip[key];
+                        if (timeValue && timeValue.includes(':')) {
+                            let [hour, minute] = timeValue.split(':');
+                            // Ensure both hour and minute have two digits (e.g., 6:30 -> 06:30)
+                            inputElement.value = `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}`;
+                        } else {
+                            inputElement.value = '';
+                        }
+                        // Handles all other inputs
                     } else {
                         inputElement.value = slip[key] || '';
                     }
