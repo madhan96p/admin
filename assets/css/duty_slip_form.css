@@ -214,7 +214,7 @@
 
 /* --- FAB Menu (Mobile) --- */
 .action-buttons-container { display: none; }
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
     .action-buttons-container {
         display: block;
         position: fixed;
