@@ -89,35 +89,12 @@ exports.handler = async function (event, context) {
                     responseData = { success: true, message: `Duty Slip ${slipToUpdateId} updated.` };
                 } else { responseData = { error: `Could not find Duty Slip ${slipToUpdateId}` }; }
                 break;
-// --- NEW: Salary Slip Cases ---
-
+// --- CORRECTED: Salary Slip Cases ---
             case 'createSalarySlip':
                 const salaryData = JSON.parse(event.body);
-                const dateGenerated = new Date().toISOString();
-
-                // This object's keys MUST match your Google Sheet headers exactly
-                await salarySheet.addRow({
-                    PayPeriod: salaryData.payPeriod,
-                    EmployeeName: salaryData.employeeName,
-                    EmployeeID: salaryData.employeeId,
-                    Designation: salaryData.designation,
-                    MonthlySalary: salaryData.monthlySalary,
-                    PayableDays: salaryData.payableDays,
-                    OutstationTotal: salaryData.outstationTotal,
-                    ExtraDutyTotal: salaryData.extraDutyTotal,
-                    TotalEarnings: salaryData.totalEarnings,
-                    AdvanceDeduction: salaryData.advanceDeduction,
-                    LOPDeduction: salaryData.lopDeduction,
-                    TotalDeductions: salaryData.totalDeductions,
-                    NetPayableAmount: salaryData.netPayableAmount,
-                    DateGenerated: dateGenerated,
-                    // The following are optional but good to have if you expand later
-                    AuthSignature: salaryData.authSignature,
-                    EmployeeSignature: salaryData.employeeSignature,
-                    ShareCode: salaryData.shareCode
-                });
-                
-                responseData = { success: true, message: `Salary slip for ${salaryData.employeeName} created successfully.` };
+                salaryData.DateGenerated = new Date().toISOString();
+                await salarySheet.addRow(salaryData);
+                responseData = { success: true, message: `Salary slip for ${salaryData.EmployeeName} created.` };
                 break;
 
             case 'getAllSalarySlips':
@@ -125,14 +102,56 @@ exports.handler = async function (event, context) {
                 const salaryHeaders = salarySheet.headerValues;
                 const allSalarySlips = salaryRows.map(row => {
                     const slipObject = {};
-                    salaryHeaders.forEach(header => {
-                        slipObject[header] = row[header];
-                    });
+                    salaryHeaders.forEach(header => slipObject[header] = row[header]);
                     return slipObject;
                 });
                 responseData = { slips: allSalarySlips };
                 break;
+
+            case 'getSalarySlipById':
+                // ✅ Use a unique variable name to avoid conflict
+                const salarySlipId = event.queryStringParameters.id;
+                if (!salarySlipId) return { statusCode: 400, body: JSON.stringify({ error: 'Slip ID is required.' }) };
                 
+                const [employeeId, payPeriod] = salarySlipId.split('_'); // Use underscore for safer splitting
+                const allSlips = await salarySheet.getRows();
+                
+                const foundSlipRow = allSlips.find(row => row.EmployeeID === employeeId && row.PayPeriod === payPeriod);
+
+                if (foundSlipRow) {
+                    const headers = salarySheet.headerValues;
+                    const slipObject = {};
+                    headers.forEach(header => slipObject[header] = foundSlipRow[header]);
+                    responseData = { slip: slipObject };
+                } else {
+                    responseData = { error: `Salary Slip with ID ${salarySlipId} not found.` };
+                }
+                break;
+
+            case 'updateSalarySlip':
+                const updatedSlipData = JSON.parse(event.body);
+                // ✅ Use a unique variable name here as well
+                const salarySlipToUpdateId = updatedSlipData.slipId;
+                if (!salarySlipToUpdateId) return { statusCode: 400, body: JSON.stringify({ error: 'Slip ID is required for an update.' }) };
+
+                const [empIdToUpdate, periodToUpdate] = salarySlipToUpdateId.split('_'); // Use underscore
+                const slipsToSearch = await salarySheet.getRows();
+                
+                const salaryRowToUpdate = slipsToSearch.find(row => row.EmployeeID === empIdToUpdate && row.PayPeriod === periodToUpdate);
+
+                if (salaryRowToUpdate) {
+                    for (const header in updatedSlipData) {
+                        if (updatedSlipData[header] !== undefined) {
+                            salaryRowToUpdate[header] = updatedSlipData[header];
+                        }
+                    }
+                    await salaryRowToUpdate.save();
+                    responseData = { success: true, message: `Salary Slip ${salarySlipToUpdateId} updated.` };
+                } else {
+                    responseData = { error: `Could not find Salary Slip ${salarySlipToUpdateId} to update.` };
+                }
+                break;
+
             default:
                 responseData = { error: 'Invalid action.' };
         }

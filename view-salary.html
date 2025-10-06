@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Slip | Shrish Travels</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #e9ebee;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem 1rem;
+            margin: 0;
+            font-family: 'Roboto', Arial, sans-serif;
+            font-size: 10pt;
+            color: #333;
+        }
+        .salary-slip-print {
+            width: 210mm;
+            min-height: 297mm;
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 15mm;
+            box-sizing: border-box;
+        }
+        .print-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 15px; }
+        .logo-print { max-height: 70px; margin-bottom: 10px; }
+        .company-details h1 { margin: 0; font-size: 1.8em; }
+        .company-details p { margin: 2px 0; font-size: 0.9em; }
+        .slip-title { text-align: center; margin: 20px 0; background-color: #f3f4f6; padding: 10px; border: 1px solid #ddd; }
+        .slip-title h2 { margin: 0; font-size: 1.2em; }
+        .employee-info-table, .main-salary-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .employee-info-table td { padding: 8px; border: 1px solid #ccc; width: 50%; }
+        .main-salary-table th, .main-salary-table td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        .main-salary-table th { background-color: #f3f4f6; font-weight: 700; }
+        .main-salary-table .amount { text-align: right; }
+        .net-payable-section { border: 2px solid #000; padding: 15px; margin-top: 20px; }
+        .net-payable-amount { display: flex; justify-content: space-between; font-size: 1.2em; font-weight: 700; margin-bottom: 10px; }
+        .net-payable-words { font-style: italic; color: #555; }
+        .print-footer { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccc; }
+        .print-signature-box { width: 45%; text-align: center; }
+        .print-signature-box p { margin-top: 5px; border-top: 1px solid #555; padding-top: 5px; }
+        .signature-display { display: block; margin: 0 auto 5px auto; height: 50px; object-fit: contain; }
+        #employee-signature-section { margin-top: 30px; }
+        .signature-box { border: 2px dashed #ccc; border-radius: 8px; height: 120px; margin: 10px 0; cursor: pointer; display: flex; justify-content: center; align-items: center; color: #999; }
+        .signature-image { max-width: 100%; max-height: 100%; }
+        .form-group { margin-top: 15px; }
+        .form-group label { font-weight: 700; display: block; margin-bottom: 5px; }
+        .form-group textarea { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; font-family: inherit; }
+        .btn-primary { background-color: #16a34a; color: white; border: none; padding: 12px 20px; font-size: 1.1em; border-radius: 5px; cursor: pointer; font-weight: 700; }
+        /* #signature-modal { Styles for modal from salary-form.html } */
+    </style>
+</head>
+<body>
+
+    <div class="salary-slip-print">
+        <header class="print-header">
+            <img src="assets/images/sh1.png" alt="Shrish Travels Logo" class="logo-print">
+            <div class="company-details">
+                <h1>SHRISH TRAVELS</h1>
+                <p>Plot No.5, Door No.G1, 1st Main Road, Gangai Nagar, Velachery, Chennai - 600042</p>
+                <p><strong>Email:</strong> travels@shrishgroup.com | <strong>Mobile:</strong> +91 8883451668</p>
+            </div>
+        </header>
+
+        <div class="slip-title">
+            <h2>Salary Slip for the Month of - <span id="print-pay-period"></span></h2>
+        </div>
+
+        <table class="employee-info-table">
+            <tr>
+                <td><strong>Employee Name:</strong> <span id="print-employee-name"></span></td>
+                <td><strong>Employee ID:</strong> <span id="print-employee-id"></span></td>
+            </tr>
+            <tr>
+                <td><strong>Designation:</strong> <span id="print-designation"></span></td>
+                <td><strong>Payable Days:</strong> <span id="print-payable-days"></span></td>
+            </tr>
+        </table>
+
+        <table class="main-salary-table">
+            <thead>
+                <tr>
+                    <th>Earnings</th>
+                    <th class="amount">Amount (₹)</th>
+                    <th>Deductions</th>
+                    <th class="amount">Amount (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Monthly Salary</td>
+                    <td id="print-monthly-salary" class="amount"></td>
+                    <td>Loss of Pay (LOP)</td>
+                    <td id="print-lop-deduction" class="amount"></td>
+                </tr>
+                <tr>
+                    <td>Outstation Allowance</td>
+                    <td id="print-outstation-total" class="amount"></td>
+                    <td>Advance</td>
+                    <td id="print-advance-deduction" class="amount"></td>
+                </tr>
+                <tr>
+                    <td>Extra Duty Allowance</td>
+                    <td id="print-extraduty-total" class="amount"></td>
+                    <td></td>
+                    <td class="amount"></td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Total Earnings (A)</th>
+                    <th id="print-total-earnings" class="amount"></th>
+                    <th>Total Deductions (B)</th>
+                    <th id="print-total-deductions" class="amount"></th>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="net-payable-section">
+            <div class="net-payable-amount">
+                <span>Net Payable Salary (A - B)</span>
+                <strong id="print-net-payable"></strong>
+            </div>
+            <div class="net-payable-words" id="print-net-payable-words"></div>
+        </div>
+        
+        <div id="employee-signature-section">
+            
+            <div id="signature-pending-view">
+                <hr style="margin: 20px 0;">
+                <h3 style="text-align:center;">Please Review and Sign to Finalize</h3>
+                <div class="signature-box" id="employee-signature-box">
+                    <span class="placeholder" id="employee-sig-placeholder">Tap to Sign</span>
+                    <img id="employee-signature-image" class="signature-image" alt="Employee Signature">
+                </div>
+                <div class="form-group">
+                    <label for="employee-notes">Add a Note (Optional)</label>
+                    <textarea id="employee-notes" rows="3" placeholder="If you have any questions, please add a note here..."></textarea>
+                </div>
+                <div style="text-align:center; margin-top: 20px;">
+                    <button id="finalize-slip-btn" class="btn-primary"><i class="fas fa-check-circle"></i> Confirm & Accept Salary Slip</button>
+                </div>
+            </div>
+
+            <div id="signature-complete-view" style="display:none;">
+                <hr style="margin: 20px 0;">
+                <h3 style="text-align:center; color: #16a34a;"><i class="fas fa-check-circle"></i> This Salary Slip has been Finalized.</h3>
+            </div>
+
+        </div>
+
+
+        <footer class="print-footer">
+            <div class="print-signature-box">
+                <img id="print-auth-signature-image" class="signature-display" alt="Auth Signature">
+                <p>Authorised Signatory</p>
+            </div>
+            <div class="print-signature-box">
+                <img id="print-employee-signature-image" class="signature-display" alt="Employee Signature">
+                <p>Employee's Signature</p>
+            </div>
+        </footer>
+    </div>
+
+    <div id="signature-modal">
+        <div id="signature-modal-content">
+            <p>Please sign in the box below</p>
+            <canvas id="signature-canvas"></canvas>
+            <div class="modal-buttons">
+                <button class="btn-clear" onclick="clearSignature()">Clear</button>
+                <button class="btn-cancel" onclick="closeSignaturePad()">Cancel</button>
+                <button class="btn-save" onclick="saveSignature()">Save Signature</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/view-salary.js"></script>
+</body>
+</html>
