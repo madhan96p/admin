@@ -185,28 +185,38 @@
 
 /* --- Action Buttons (Desktop) --- */
 .action-buttons-desktop {
-        display: flex !important;
+    display: none; /* Hide by default on mobile */
+}
+
+.action-buttons-desktop .action-button {
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--white);
+    background-color: var(--primary-blue);
+}
+.action-buttons-desktop .whatsapp-button { background-color: var(--whatsapp-color); }
+.action-buttons-desktop .generate-link-button { background-color: var(--secondary-teal); }
+
+/* --- Responsive Breakpoint Logic --- */
+@media (min-width: 1024px) {
+    .action-buttons-desktop {
+        display: flex; /* Show desktop buttons on large screens */
         justify-content: flex-end;
         gap: 0.75rem;
         margin-bottom: 1.5rem;
     }
-    .action-buttons-desktop .action-button {
-        padding: 0.75rem 1.25rem;
-        border: none;
-        border-radius: var(--radius-lg);
-        font-weight: 600;
-        cursor: pointer;
-        transition: all var(--transition-fast);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: var(--white);
-        background-color: var(--primary-blue);
-    }
-    .action-buttons-desktop .whatsapp-button { background-color: var(--whatsapp-color); }
-    .action-buttons-desktop .generate-link-button { background-color: var(--secondary-teal); }
-    .action-buttons-desktop .download-button { background-color: var(--danger-color); }
 
+    .action-buttons-container {
+        display: none; /* Hide mobile FAB on large screens */
+    }
+}
 
 /* --- FAB Menu (Mobile) --- */
 .action-buttons-container { display: none; }
