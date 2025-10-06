@@ -3,39 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salary Slips | Shrish Admin</title>
+    <title>Salary Slips Dashboard | Shrish Admin</title>
     <link rel="stylesheet" href="assets/css/common.css">
     <link rel="stylesheet" href="assets/css/admin.css">
-    <style>
-        #salary-generator-container {
-            background-color: #fff;
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-        .net-payable-box {
-            background-color: #f3f4f6;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            text-align: center;
-            margin-top: 1.5rem;
-        }
-        .net-payable-box h4 {
-            margin: 0 0 0.5rem 0;
-            color: #4b5563;
-            font-weight: 500;
-        }
-        #net-payable-display {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #16a34a;
-        }
-    </style>
 </head>
 <body>
 
@@ -48,104 +18,49 @@
             <div id="admin-header"></div>
 
             <div class="page-content">
-                <div id="salary-generator-container">
-                    <form id="salary-generator-form">
-                        <h2 class="section-title">Generate New Salary Slip</h2>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="driver-select">Select Driver</label>
-                                <select id="driver-select" required></select>
-                            </div>
-                            <div class="form-group">
-                                <label for="pay-period">Pay Period</label>
-                                <input type="month" id="pay-period" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="monthly-salary">Monthly Salary (₹)</label>
-                                <input type="number" id="monthly-salary" placeholder="e.g., 21000" required>
-                            </div>
-                             <div class="form-group">
-                                <label for="total-month-days">Days in Month</label>
-                                <input type="number" id="total-month-days" readonly>
-                            </div>
-                             <div class="form-group">
-                                <label for="lop-days">Loss of Pay (Days)</label>
-                                <input type="number" id="lop-days" placeholder="0">
-                            </div>
-                            <div class="form-group">
-                                <label for="advance-deduction">Advance Deduction (₹)</label>
-                                <input type="number" id="advance-deduction" placeholder="0">
-                            </div>
-                            <div class="form-group">
-                                <label for="outstation-qty">Outstation (Qty)</label>
-                                <input type="number" id="outstation-qty" placeholder="0">
-                            </div>
-                             <div class="form-group">
-                                <label for="outstation-rate">Outstation (Rate)</label>
-                                <input type="number" id="outstation-rate" value="300">
-                            </div>
-                             <div class="form-group">
-                                <label for="extraduty-qty">Extra Duty (Qty)</label>
-                                <input type="number" id="extraduty-qty" placeholder="0">
-                            </div>
-                             <div class="form-group">
-                                <label for="extraduty-rate">Extra Duty (Rate)</label>
-                                <input type="number" id="extraduty-rate" value="100">
-                            </div>
+                <div class="page-header">
+                    <h1 class="page-title">Salary Slips Dashboard</h1>
+                    <div class="header-actions">
+                        <div class="search-bar">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="search-input" placeholder="Search by name or pay period...">
                         </div>
-                        <div class="net-payable-box">
-                            <h4>Calculated Net Payable Amount</h4>
-                            <p id="net-payable-display">₹ 0.00</p>
-                        </div>
-                        <button type="submit" class="btn-primary" id="generate-slip-btn" style="margin-top: 1.5rem;">
-                            <i class="fas fa-cogs"></i> Generate & Save Slip
-                        </button>
-                    </form>
+                        <a href="salary-form.html" class="btn-primary">
+                            <i class="fas fa-plus"></i> Create New Slip
+                        </a>
+                    </div>
                 </div>
 
-                <hr style="margin: 2rem 0;">
+                <div id="results-container">
+                    <div id="skeleton-loader"></div>
 
-                <div id="salary-list-container">
-                    <div class="page-header">
-                        <h2 class="section-title">Previously Generated Slips</h2>
-                        <div class="header-actions">
-                            <div class="search-bar">
-                                <i class="fas fa-search"></i>
-                                <input type="text" id="search-input" placeholder="Search by name or pay period...">
-                            </div>
-                        </div>
+                    <div class="table-container" style="display:none;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Pay Period</th>
+                                    <th>Employee</th>
+                                    <th>Net Pay (₹)</th>
+                                    <th>Generated On</th>
+                                    <th class="actions-cell">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="slips-table-body"></tbody>
+                        </table>
                     </div>
 
-                    <div id="results-container">
-                        <div id="skeleton-loader"> </div>
+                    <div id="empty-state" class="empty-state" style="display:none;">
+                        <i class="fas fa-folder-open"></i>
+                        <h3>No Slips Found</h3>
+                        <p>No salary slips match your search criteria. Try creating one!</p>
+                    </div>
 
-                        <div class="table-container" style="display:none;">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Pay Period</th>
-                                        <th>Employee</th>
-                                        <th>Net Pay</th>
-                                        <th>Generated On</th>
-                                        <th class="actions-cell">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="slips-table-body"></tbody>
-                            </table>
-                        </div>
-
-                        <div id="empty-state" class="empty-state" style="display:none;">
-                            <i class="fas fa-folder-open"></i>
-                            <h3>No Slips Found</h3>
-                            <p>No salary slips match your search. Try a different name or pay period.</p>
-                        </div>
-
-                        <div id="error-state" class="error-state" style="display:none;">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <h3>Could Not Load Data</h3>
-                            <p>There was an error fetching the salary slips from the server.</p>
-                            <button id="retry-fetch-btn" class="btn-secondary">Try Again</button>
-                        </div>
+                    <div id="error-state" class="error-state" style="display:none;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Could Not Load Data</h3>
+                        <p>There was an error fetching the salary slips from the server.</p>
+                        <button id="retry-fetch-btn" class="btn-secondary">Try Again</button>
                     </div>
                 </div>
             </div>
