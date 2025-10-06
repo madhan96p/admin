@@ -185,7 +185,7 @@
 
 /* --- Action Buttons (Desktop) --- */
 .action-buttons-desktop {
-        display: flex;
+        display: flex !important;
         justify-content: flex-end;
         gap: 0.75rem;
         margin-bottom: 1.5rem;
