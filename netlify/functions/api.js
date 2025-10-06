@@ -15,6 +15,7 @@ exports.handler = async function (event, context) {
     await doc.useServiceAccountAuth(sheetAuth);
     await doc.loadInfo();
     const sheet = doc.sheetsByTitle['duty_slips'];
+    const salarySheet = doc.sheetsByTitle['salary_slips'];
     const { action } = event.queryStringParameters;
     let responseData = {};
 
@@ -88,7 +89,50 @@ exports.handler = async function (event, context) {
                     responseData = { success: true, message: `Duty Slip ${slipToUpdateId} updated.` };
                 } else { responseData = { error: `Could not find Duty Slip ${slipToUpdateId}` }; }
                 break;
+// --- NEW: Salary Slip Cases ---
 
+            case 'createSalarySlip':
+                const salaryData = JSON.parse(event.body);
+                const dateGenerated = new Date().toISOString();
+
+                // This object's keys MUST match your Google Sheet headers exactly
+                await salarySheet.addRow({
+                    PayPeriod: salaryData.payPeriod,
+                    EmployeeName: salaryData.employeeName,
+                    EmployeeID: salaryData.employeeId,
+                    Designation: salaryData.designation,
+                    MonthlySalary: salaryData.monthlySalary,
+                    PayableDays: salaryData.payableDays,
+                    OutstationTotal: salaryData.outstationTotal,
+                    ExtraDutyTotal: salaryData.extraDutyTotal,
+                    TotalEarnings: salaryData.totalEarnings,
+                    AdvanceDeduction: salaryData.advanceDeduction,
+                    LOPDeduction: salaryData.lopDeduction,
+                    TotalDeductions: salaryData.totalDeductions,
+                    NetPayableAmount: salaryData.netPayableAmount,
+                    DateGenerated: dateGenerated,
+                    // The following are optional but good to have if you expand later
+                    AuthSignature: salaryData.authSignature,
+                    EmployeeSignature: salaryData.employeeSignature,
+                    ShareCode: salaryData.shareCode
+                });
+                
+                responseData = { success: true, message: `Salary slip for ${salaryData.employeeName} created successfully.` };
+                break;
+
+            case 'getAllSalarySlips':
+                const salaryRows = await salarySheet.getRows();
+                const salaryHeaders = salarySheet.headerValues;
+                const allSalarySlips = salaryRows.map(row => {
+                    const slipObject = {};
+                    salaryHeaders.forEach(header => {
+                        slipObject[header] = row[header];
+                    });
+                    return slipObject;
+                });
+                responseData = { slips: allSalarySlips };
+                break;
+                
             default:
                 responseData = { error: 'Invalid action.' };
         }
