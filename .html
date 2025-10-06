@@ -1,41 +1,125 @@
 <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-        <title>${title}</title>
-    </head>
-    <body style="margin: 0; padding: 0; font-family: 'Inter', Arial, sans-serif; background-color: #f0f2f5;">
-        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f0f2f5;">
-            <tr>
-                <td align="center" style="padding: 20px;">
-                    <table width="600" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; width: 100%;">
-                        <!-- Logo Header -->
-                        <tr>
-                            <td align="center" style="padding: 20px 0;">
-                                <a href="https://www.shrishgroup.com">
-                                    <img src="https://travels.shrishgroup.com/assets/images/sh1.webp" alt="Shrish Group Logo" style="display:block; max-width: 150px; background-color: #ffffff; padding: 10px; border-radius: 100px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                                </a>
-                            </td>
-                        </tr>
-                        <!-- Main Content Card -->
-                        <tr>
-                            <td style="background-color: #ffffff; padding: 40px 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-                                ${contentHtml}
-                            </td>
-                        </tr>
-                        <!-- Footer -->
-                        <tr>
-                            <td align="center">
-                                ${generateEmailFooter()}
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
-    </body>
-    </html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - Missing Information</title>
+    <style>
+        /* Basic styling for the page */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        /* Container for the error message and buttons */
+        .error-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        /* Styling for the main error heading */
+        h1 {
+            font-size: 24px;
+            color: #d9534f; /* A shade of red for errors */
+            margin-bottom: 15px;
+        }
+
+        /* Styling for the explanatory paragraph */
+        p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        /* Container for the action buttons */
+        .button-container {
+            display: flex;
+            flex-direction: column; /* Stacks buttons on small screens */
+            gap: 15px;
+        }
+        
+        /* General button styling */
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #007bff; /* A professional blue */
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+        
+        /* Specific styles for secondary buttons */
+        .button.secondary {
+            background-color: #6c757d; /* A neutral gray */
+        }
+
+        .button.secondary:hover {
+            background-color: #5a6268;
+        }
+
+        /* Media query for wider screens */
+        @media (min-width: 500px) {
+            .button-container {
+                flex-direction: row; /* Puts buttons side-by-side on larger screens */
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="error-page-content" class="error-container">
+        <h1>⚠️ Action Required: Missing Information</h1>
+        <p>A Duty Slip ID was not provided in the URL. Please go back and try again, or select one of the options below.</p>
+        <div class="button-container">
+            <a href="https://admin.shrishgroup.com/" class="button">Back to Home</a>
+            <a href="https://shrishgroup.com/" class="button secondary">Visit Shrish Group</a>
+            <a href="https://pragadeeshfolio.netlify.app/" class="button secondary">Contact Developer</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const slipId = params.get('id');
+
+            // If a slipId IS provided, we assume the rest of the page loads normally.
+            // This script's only job is to show the error if the ID is missing.
+            if (slipId) {
+                // Hide the error message container if the ID exists
+                const errorContent = document.getElementById('error-page-content');
+                if (errorContent) {
+                    errorContent.style.display = 'none';
+                }
+                // At this point, your other scripts would load the duty slip details.
+                // For this example, we'll just log to the console.
+                console.log(`Duty Slip ID found: ${slipId}. Loading content...`);
+            }
+            
+            // If slipId is NOT provided, the HTML content defined above will remain visible,
+            // effectively acting as the error page.
+        });
+    </script>
+
+</body>
+</html>

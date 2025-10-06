@@ -3,7 +3,72 @@ document.addEventListener('DOMContentLoaded', () => {
     const slipId = params.get('id');
 
     if (!slipId) {
-        document.body.innerHTML = '<h1>Error: No Duty Slip ID provided.</h1>';
+        document.body.innerHTML = `
+            <div style="
+                font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                height: 100vh;
+                margin: 0;
+                background: linear-gradient(135deg, #f3f4f6, #ffffff);
+                color: #111827;
+                text-align: center;
+                padding: 20px;
+            ">
+                <div style="max-width: 500px;">
+                    <img src="https://travels.shrishgroup.com/assets/images/sh1.webp" alt="Shrish Group Logo" style="width: 100px; margin-bottom: 20px; opacity: 0.9;">
+                    <h1 style="font-size: 26px; color: #DC2626; margin-bottom: 10px;">Error: No Duty Slip ID Provided</h1>
+                    <p style="color: #6B7280; font-size: 16px; margin-bottom: 30px;">
+                        It seems this page was opened without a valid Duty Slip reference.  
+                        Please go back or contact support if you believe this is a mistake.
+                    </p>
+
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+                        <a href="https://admin.shrishgroup.com/" style="
+                            background-color: #4F46E5;
+                            color: white;
+                            text-decoration: none;
+                            padding: 12px 20px;
+                            border-radius: 8px;
+                            font-weight: bold;
+                            transition: 0.3s;
+                        " onmouseover="this.style.backgroundColor='#4338CA'" onmouseout="this.style.backgroundColor='#4F46E5'">
+                            ⬅️ Back to Admin Home
+                        </a>
+
+                        <a href="https://shrishgroup.com/" style="
+                            background-color: #0D9488;
+                            color: white;
+                            text-decoration: none;
+                            padding: 12px 20px;
+                            border-radius: 8px;
+                            font-weight: bold;
+                            transition: 0.3s;
+                        " onmouseover="this.style.backgroundColor='#0F766E'" onmouseout="this.style.backgroundColor='#0D9488'">
+                            🌐 Visit Shrish Group
+                        </a>
+
+                        <a href="https://pragadeeshfolio.netlify.app/" target="_blank" style="
+                            background-color: #111827;
+                            color: white;
+                            text-decoration: none;
+                            padding: 12px 20px;
+                            border-radius: 8px;
+                            font-weight: bold;
+                            transition: 0.3s;
+                        " onmouseover="this.style.backgroundColor='#000000'" onmouseout="this.style.backgroundColor='#111827'">
+                            👨‍💻 Contact Developer
+                        </a>
+                    </div>
+
+                    <footer style="margin-top: 40px; font-size: 13px; color: #9CA3AF;">
+                        © ${new Date().getFullYear()} Shrish Group. All Rights Reserved.
+                    </footer>
+                </div>
+            </div>
+        `;
         return;
     }
 
@@ -42,10 +107,11 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             // Helper to set image source for <img> elements
+            // Replace the old function with this new one in view-slip.js
             const setImg = (id, src) => {
                 const el = document.getElementById(id);
-                // Check for a valid src (not empty or just a placeholder)
-                if (el && src && src.length > 100) {
+                // NEW LOGIC: Check if the src is a data URL OR a standard web URL.
+                if (el && src && (src.startsWith('data:image') || src.startsWith('http'))) {
                     el.src = src;
                 }
             };
