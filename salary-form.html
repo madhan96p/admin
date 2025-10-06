@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Slip Form | Shrish Admin</title>
+    <link rel="stylesheet" href="assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+
+    <script src="assets/js/auth.js"></script>
+
+    <div class="admin-layout">
+        <div id="admin-sidebar"></div>
+
+        <main class="admin-main-content">
+            <div id="admin-header"></div>
+
+            <div class="page-content">
+                <div class="page-header">
+                    <h1 id="form-title" class="page-title">Create Salary Slip</h1>
+                    <div class="header-actions">
+                        <a href="salary-slips.html" class="btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+
+                <form id="salary-form" class="form-container">
+                    
+                    <div class="form-section">
+                        <h2 class="section-title">1. Employee & Pay Period</h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="driver-select">Employee Name</label>
+                                <select id="driver-select" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pay-period">Pay Period</label>
+                                <input type="month" id="pay-period" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="employee-id">Employee ID</label>
+                                <input type="text" id="employee-id" readonly placeholder="Auto-filled">
+                            </div>
+                             <div class="form-group">
+                                <label for="designation">Designation</label>
+                                <input type="text" id="designation" readonly placeholder="Auto-filled">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2 class="section-title">2. Earnings</h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="monthly-salary">Monthly Salary (₹)</label>
+                                <input type="number" id="monthly-salary" placeholder="e.g., 21000" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="outstation-qty">Outstation (Qty) x <span id="outstation-rate-display">300</span></label>
+                                <input type="number" id="outstation-qty" placeholder="0">
+                                <input type="hidden" id="outstation-rate" value="300">
+                            </div>
+                            <div class="form-group">
+                                <label for="extraduty-qty">Extra Duty (Qty) x <span id="extraduty-rate-display">100</span></label>
+                                <input type="number" id="extraduty-qty" placeholder="0">
+                                <input type="hidden" id="extraduty-rate" value="100">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2 class="section-title">3. Deductions</h2>
+                        <div class="form-grid">
+                             <div class="form-group">
+                                <label for="total-month-days">Days in Month</label>
+                                <input type="number" id="total-month-days" readonly>
+                            </div>
+                             <div class="form-group">
+                                <label for="lop-days">Loss of Pay (Days)</label>
+                                <input type="number" id="lop-days" placeholder="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="advance-deduction">Advance Deduction (₹)</label>
+                                <input type="number" id="advance-deduction" placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="founder-signature-section" class="form-section" style="display:none;">
+                        <h2 class="section-title">4. Founder's Approval</h2>
+                        <div class="signature-area">
+                            For <strong>SHRISH TRAVELS</strong>
+                            <div class="signature-box" id="auth-signature-box">
+                                <span class="placeholder" id="auth-sig-placeholder">Tap to sign</span>
+                                <img id="auth-signature-image" class="signature-image" alt="Authorised Signature">
+                            </div>
+                            Authorised Signatory
+                        </div>
+                    </div>
+
+                    <div id="approval-notes-section" class="form-section" style="display:none;">
+                         <div class="form-group">
+                            <label for="approval-notes">Approval Notes (Required)</label>
+                            <textarea id="approval-notes" rows="3" placeholder="e.g., Approved verbally by Founder on Oct 6, 2025"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-summary-actions">
+                        <div class="net-payable-box">
+                            <h4>Net Payable Amount</h4>
+                            <p id="net-payable-display">₹ 0.00</p>
+                        </div>
+                        <div id="actions-container" class="actions-container">
+                            <button type="submit" class="btn-primary" id="main-action-btn">
+                                <i class="fas fa-save"></i> Save Slip
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div id="admin-footer"></div>
+        </main>
+    </div>
+
+    <div id="signature-modal">
+        <div id="signature-modal-content">
+            <p>Please sign in the box below</p>
+            <canvas id="signature-canvas"></canvas>
+            <div class="modal-buttons">
+                <button class="btn-clear" onclick="clearSignature()">Clear</button>
+                <button class="btn-cancel" onclick="closeSignaturePad()">Cancel</button>
+                <button class="btn-save" onclick="saveSignature()">Save Signature</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/salary-form.js"></script> </body>
+</html>

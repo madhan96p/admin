@@ -12,10 +12,33 @@
 
 // --- 1. DUTY SLIP FORM - SHARED DATA & FUNCTIONS ---
 
+// NEW: Updated driverData object in common.js
 const driverData = {
-    "AjithKumar": { mobile: "9047382896", signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/Ajithkumar.jpg" },
-    "Raja": { mobile: "8838750975", signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/Raja.jpg" },
-    "Jeganraj": { mobile: "8883451668", signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/jeganraj.jpg" },
+    "AjithKumar": { 
+        id: "SH007", 
+        designation: "Senior Driver", 
+        monthlySalary: 21000, 
+        joinedDate: "25/09/2023", 
+        mobile: "9047382896", 
+        signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/Ajithkumar.jpg" 
+    },
+    "Raja": { 
+        id: "SH004", 
+        designation: "Driver", 
+        monthlySalary: 19000, 
+        joinedDate: "01/03/2024", 
+        mobile: "8838750975", 
+        signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/Raja.jpg" 
+    },
+    "Jeganraj": { 
+        id: "SH001", 
+        designation: "Manager", 
+        monthlySalary: 25000, 
+        joinedDate: "15/01/2022", 
+        mobile: "8883451668", 
+        signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/jeganraj.jpg" 
+    },
+    // Add any other drivers here in the same format
 };
 
 let signaturePad;
