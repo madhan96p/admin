@@ -185,10 +185,6 @@
 
 /* --- Action Buttons (Desktop) --- */
 .action-buttons-desktop {
-    display: none; /* Hidden on mobile */
-}
-@media (min-width: 1024px) {
-    .action-buttons-desktop {
         display: flex;
         justify-content: flex-end;
         gap: 0.75rem;
@@ -210,11 +206,14 @@
     .action-buttons-desktop .whatsapp-button { background-color: var(--whatsapp-color); }
     .action-buttons-desktop .generate-link-button { background-color: var(--secondary-teal); }
     .action-buttons-desktop .download-button { background-color: var(--danger-color); }
-}
+
 
 /* --- FAB Menu (Mobile) --- */
 .action-buttons-container { display: none; }
 @media (max-width: 1024px) {
+    .action-buttons-desktop {
+        display: none;
+    }
     .action-buttons-container {
         display: block;
         position: fixed;
