@@ -71,20 +71,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         founderSignatureSection.style.display = status === 'Pending Approval' ? 'block' : 'none';
-        
+
         if (status === 'Approved' || status === 'Finalized') {
             form.querySelectorAll('input, select').forEach(el => {
-                if(el.id !== 'driver-select' && el.id !== 'pay-period') el.readOnly = true;
+                if (el.id !== 'driver-select' && el.id !== 'pay-period') el.readOnly = true;
             });
         }
-        
+
         renderActionButtons(status);
     }
-    
+
     function renderActionButtons(status) {
         let buttonsHtml = '';
         if (!state.isEditMode) {
-             buttonsHtml = `<button type="button" id="create-btn" class="btn-primary"><i class="fas fa-paper-plane"></i> Save & Submit for Approval</button>`;
+            buttonsHtml = `<button type="button" id="create-btn" class="btn-primary"><i class="fas fa-paper-plane"></i> Save & Submit for Approval</button>`;
         } else {
             switch (status) {
                 case 'Pending Approval':
@@ -108,13 +108,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const slip = state.slipData;
         driverSelect.value = slip.EmployeeName;
         payPeriodInput.value = slip.PayPeriod;
-        handleDriverSelection(); // Auto-fill ID and Designation
+        handleDriverSelection();
         monthlySalaryInput.value = slip.MonthlySalary;
-        lopDaysInput.value = slip.LOPDeduction > 0 ? (slip.LOPDeduction / (slip.MonthlySalary / slip.PayableDays)).toFixed(0) : 0;
         advanceDeductionInput.value = slip.AdvanceDeduction;
-        outstationQtyInput.value = slip.OutstationTotal > 0 ? (slip.OutstationTotal / 300) : 0;
-        extraDutyQtyInput.value = slip.ExtraDutyTotal > 0 ? (slip.ExtraDutyTotal / 100) : 0;
-        
+        lopDaysInput.value = slip.LOPDays || 0;
+        outstationQtyInput.value = slip.OutstationQty || 0;
+        extraDutyQtyInput.value = slip.ExtraDutyQty || 0;
+
         if (slip.AuthSignature) {
             authSignatureImage.src = slip.AuthSignature;
             authSignatureImage.style.display = 'block';
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         calculateSalary();
     }
-    
+
     function populateDriverDropdown() {
         if (typeof driverData === 'undefined') return;
         driverSelect.innerHTML = '<option value="">-- Select Employee --</option>';
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         calculateSalary();
     }
-    
+
     function calculateSalary() {
         const monthlySalary = parseFloat(monthlySalaryInput.value) || 0;
         const outstationQty = parseFloat(outstationQtyInput.value) || 0;
@@ -189,11 +189,11 @@ document.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('input', (e) => {
             if (e.target.type === 'number' || e.target.type === 'month') calculateSalary();
         });
-        
+
         actionsContainer.addEventListener('click', (e) => {
             const target = e.target.closest('button');
             if (!target) return;
-            
+
             switch (target.id) {
                 case 'create-btn':
                     handleFormAction('create');
@@ -218,13 +218,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
             }
         });
-        
+
         founderSignatureSection.addEventListener('click', () => openSignaturePad('auth-signature-image'));
     }
 
     async function handleFormAction(actionType) {
         const button = actionsContainer.querySelector(`#${actionType}-btn`);
-        if(button) {
+        if (button) {
             button.disabled = true;
             button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
         }
@@ -245,10 +245,13 @@ document.addEventListener('DOMContentLoaded', () => {
             LOPDeduction: calcs.lopDeduction,
             TotalDeductions: calcs.totalDeductions,
             NetPayableAmount: calcs.netPayable,
+            LOPDays: lopDaysInput.value,
+            OutstationQty: outstationQtyInput.value,
+            ExtraDutyQty: extraDutyQtyInput.value,
         };
         let apiAction = '';
-        
-        switch(actionType) {
+
+        switch (actionType) {
             case 'create':
                 apiAction = 'createSalarySlip';
                 payload.Status = 'Pending Approval';
@@ -279,14 +282,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const result = await response.json();
             if (!result.success) throw new Error(result.error);
-            
+
             alert(`Success! ${result.message}`);
             window.location.href = 'salary-slips.html';
 
         } catch (error) {
             console.error(`Failed to ${actionType} slip:`, error);
             alert(`Error: ${error.message}`);
-            if(button) button.disabled = false;
+            if (button) button.disabled = false;
             renderActionButtons(state.slipData ? state.slipData.Status : 'Pending Approval'); // Restore buttons
         }
     }

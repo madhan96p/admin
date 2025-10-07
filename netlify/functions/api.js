@@ -89,7 +89,7 @@ exports.handler = async function (event, context) {
                     responseData = { success: true, message: `Duty Slip ${slipToUpdateId} updated.` };
                 } else { responseData = { error: `Could not find Duty Slip ${slipToUpdateId}` }; }
                 break;
-// --- CORRECTED: Salary Slip Cases ---
+            // --- CORRECTED: Salary Slip Cases ---
             case 'createSalarySlip':
                 const salaryData = JSON.parse(event.body);
                 salaryData.DateGenerated = new Date().toISOString();
@@ -112,10 +112,10 @@ exports.handler = async function (event, context) {
                 // ✅ Use a unique variable name to avoid conflict
                 const salarySlipId = event.queryStringParameters.id;
                 if (!salarySlipId) return { statusCode: 400, body: JSON.stringify({ error: 'Slip ID is required.' }) };
-                
+
                 const [employeeId, payPeriod] = salarySlipId.split('-'); // Use underscore for safer splitting
                 const allSlips = await salarySheet.getRows();
-                
+
                 const foundSlipRow = allSlips.find(row => row.EmployeeID === employeeId && row.PayPeriod === payPeriod);
 
                 if (foundSlipRow) {
@@ -136,7 +136,7 @@ exports.handler = async function (event, context) {
 
                 const [empIdToUpdate, periodToUpdate] = salarySlipToUpdateId.split('-'); // Use underscore
                 const slipsToSearch = await salarySheet.getRows();
-                
+
                 const salaryRowToUpdate = slipsToSearch.find(row => row.EmployeeID === empIdToUpdate && row.PayPeriod === periodToUpdate);
 
                 if (salaryRowToUpdate) {

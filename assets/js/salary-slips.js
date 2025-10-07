@@ -117,31 +117,43 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     function generateActionButtons(slip) {
         const status = slip.Status || 'Pending Approval';
+        const slipId = `${slip.EmployeeID}-${slip.PayPeriod}`;
         let actionsHtml = '';
 
         switch (status) {
             case 'Pending Approval':
-                actionsHtml = `
-                    <a href="salary-form.html?id=${slip.EmployeeID}-${slip.PayPeriod}" class="action-btn edit" title="Edit & Approve">
-                        <i class="fas fa-pencil-alt"></i>
-                    </a>`;
+                actionsHtml = `<a href="salary-form.html?id=${slipId}" class="action-btn edit" title="Edit & Approve"><i class="fas fa-pencil-alt"></i></a>`;
                 break;
             case 'Approved':
                  actionsHtml = `
-                    <a href="view-salary.html?id=${slip.EmployeeID}-${slip.PayPeriod}" target="_blank" class="action-btn print" title="View Slip">
-                        <i class="fas fa-eye"></i>
-                    </a>
-                    <button class="action-btn share" title="Share with Employee (Coming Soon)"><i class="fab fa-whatsapp"></i></button>`;
+                    <a href="view-salary.html?id=${slipId}" target="_blank" class="action-btn print" title="View Slip"><i class="fas fa-eye"></i></a>
+                    <button class="action-btn share share-btn" data-slip-id="${slipId}" data-employee-name="${slip.EmployeeName}" title="Share with Employee"><i class="fab fa-whatsapp"></i></button>`;
                 break;
             case 'Finalized':
-                actionsHtml = `
-                    <a href="view-salary.html?id=${slip.EmployeeID}-${slip.PayPeriod}" target="_blank" class="action-btn view-final" title="View Final Slip">
-                        <i class="fas fa-check-circle"></i>
-                    </a>`;
+                actionsHtml = `<a href="view-salary.html?id=${slipId}" target="_blank" class="action-btn view-final" title="View Final Slip"><i class="fas fa-check-circle"></i></a>`;
                 break;
         }
         return actionsHtml;
     }
+
+    function handleShareWithEmployee(button) {
+        const employeeName = button.dataset.employeeName;
+        const slipId = button.dataset.slipId;
+        
+        // Find the employee's mobile number from the global driverData object
+        const employee = Object.values(driverData).find(d => d.id === slipId.split('-')[0]);
+        if (!employee || !employee.mobile) {
+            return alert(`Could not find mobile number for ${employeeName} in common.js`);
+        }
+        
+        const mobile = employee.mobile;
+        const viewLink = `${window.location.origin}/view-salary.html?id=${slipId}`;
+        const message = `Dear ${employeeName},\n\nYour salary slip is ready for viewing. Please review and finalize it using the secure link below.\n\nLink: ${viewLink}\n\n- Shrish Travels`;
+        
+        window.open(`https://wa.me/91${mobile}?text=${encodeURIComponent(message.trim())}`, '_blank');
+    }
+
+
 
     // --- 5. EVENT LISTENERS ---
     function setupEventListeners() {
@@ -156,6 +168,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Retry button for network errors
         retryButton.addEventListener('click', loadSalarySlips);
+        tableBody.addEventListener('click', (e) => {
+            const shareButton = e.target.closest('.share-btn');
+            if (shareButton) {
+                handleShareWithEmployee(shareButton);
+            }
+        });
     }
 
     // --- 6. INITIALIZATION ---

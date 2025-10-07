@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         finalizeSlipBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Finalizing...';
 
         const payload = {
-            slipId: `${slip.EmployeeID}_${slip.PayPeriod}`, // Use the unique ID
+            slipId: `${slip.EmployeeID}-${slip.PayPeriod}`, // Use the unique ID
             Status: 'Finalized',
             EmployeeSignature: employeeSignatureImage.src,
             ENotes: employeeNotesInput.value
