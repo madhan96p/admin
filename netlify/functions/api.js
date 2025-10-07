@@ -116,9 +116,20 @@ exports.handler = async function (event, context) {
                 const [employeeId, payPeriod] = salarySlipId.split('-');
                 const allSlips = await salarySheet.getRows();
 
-                const foundSlipRow = allSlips.find(row => row.EmployeeID.trim() === employeeId.trim() && row.PayPeriod.trim() === payPeriod.trim());
+                const headers = salarySheet.headerValues;
+                const employeeIdHeader = headers.find(h => h.toLowerCase() === 'employeeid');
+                const payPeriodHeader = headers.find(h => h.toLowerCase() === 'payperiod');
+
+                if (!employeeIdHeader || !payPeriodHeader) {
+                    throw new Error('Could not find EmployeeID or PayPeriod columns in the Google Sheet.');
+                }
+
+                const foundSlipRow = allSlips.find(row =>
+                    row[employeeIdHeader].trim() === employeeId.trim() &&
+                    row[payPeriodHeader].trim() === payPeriod.trim()
+                );
+
                 if (foundSlipRow) {
-                    const headers = salarySheet.headerValues;
                     const slipObject = {};
                     headers.forEach(header => slipObject[header] = foundSlipRow[header]);
                     responseData = { slip: slipObject };
@@ -135,12 +146,25 @@ exports.handler = async function (event, context) {
                 const [empIdToUpdate, periodToUpdate] = salarySlipToUpdateId.split('-');
                 const slipsToSearch = await salarySheet.getRows();
 
-                const salaryRowToUpdate = slipsToSearch.find(row => row.EmployeeID.trim() === empIdToUpdate.trim() && row.PayPeriod.trim() === periodToUpdate.trim());
+                const headers = salarySheet.headerValues;
+                const employeeIdHeader = headers.find(h => h.toLowerCase() === 'employeeid');
+                const payPeriodHeader = headers.find(h => h.toLowerCase() === 'payperiod');
+
+                if (!employeeIdHeader || !payPeriodHeader) {
+                    throw new Error('Could not find EmployeeID or PayPeriod columns in the Google Sheet.');
+                }
+
+                const salaryRowToUpdate = slipsToSearch.find(row =>
+                    row[employeeIdHeader].trim() === empIdToUpdate.trim() &&
+                    row[payPeriodHeader].trim() === periodToUpdate.trim()
+                );
 
                 if (salaryRowToUpdate) {
                     for (const header in updatedSlipData) {
-                        if (updatedSlipData[header] !== undefined) {
-                            salaryRowToUpdate[header] = updatedSlipData[header];
+                        // Find the correct header case-insensitively before updating
+                        const correctHeader = headers.find(h => h.toLowerCase() === header.toLowerCase());
+                        if (correctHeader && updatedSlipData[header] !== undefined) {
+                            salaryRowToUpdate[correctHeader] = updatedSlipData[header];
                         }
                     }
                     await salaryRowToUpdate.save();
