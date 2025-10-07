@@ -113,7 +113,7 @@ exports.handler = async function (event, context) {
                 const salarySlipId = event.queryStringParameters.id;
                 if (!salarySlipId) return { statusCode: 400, body: JSON.stringify({ error: 'Slip ID is required.' }) };
                 
-                const [employeeId, payPeriod] = salarySlipId.split('_'); // Use underscore for safer splitting
+                const [employeeId, payPeriod] = salarySlipId.split('-'); // Use underscore for safer splitting
                 const allSlips = await salarySheet.getRows();
                 
                 const foundSlipRow = allSlips.find(row => row.EmployeeID === employeeId && row.PayPeriod === payPeriod);
@@ -134,7 +134,7 @@ exports.handler = async function (event, context) {
                 const salarySlipToUpdateId = updatedSlipData.slipId;
                 if (!salarySlipToUpdateId) return { statusCode: 400, body: JSON.stringify({ error: 'Slip ID is required for an update.' }) };
 
-                const [empIdToUpdate, periodToUpdate] = salarySlipToUpdateId.split('_'); // Use underscore
+                const [empIdToUpdate, periodToUpdate] = salarySlipToUpdateId.split('-'); // Use underscore
                 const slipsToSearch = await salarySheet.getRows();
                 
                 const salaryRowToUpdate = slipsToSearch.find(row => row.EmployeeID === empIdToUpdate && row.PayPeriod === periodToUpdate);

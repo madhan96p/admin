@@ -1,13 +1,8 @@
+// assets/js/salary-form.js - FINAL VERSION
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 1. STATE MANAGEMENT & ELEMENT REFERENCES ---
-    const state = {
-        slipData: null,
-        isEditMode: false,
-        slipId: null,
-        status: 'Pending Approval', // Default for new slips
-    };
+    // --- 1. STATE & ELEMENTS ---
+    const state = { slipData: null, isEditMode: false, slipId: null };
 
-    // Form Elements
     const form = document.getElementById('salary-form');
     const formTitle = document.getElementById('form-title');
     const driverSelect = document.getElementById('driver-select');
@@ -16,15 +11,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const designationInput = document.getElementById('designation');
     const monthlySalaryInput = document.getElementById('monthly-salary');
     const outstationQtyInput = document.getElementById('outstation-qty');
+    const extraDutyQtyInput = document.getElementById('extraduty-qty');
     const totalMonthDaysInput = document.getElementById('total-month-days');
     const lopDaysInput = document.getElementById('lop-days');
     const advanceDeductionInput = document.getElementById('advance-deduction');
     const netPayableDisplay = document.getElementById('net-payable-display');
     const approvalNotesSection = document.getElementById('approval-notes-section');
     const approvalNotesInput = document.getElementById('approval-notes');
-    
-    // Dynamic Sections
     const founderSignatureSection = document.getElementById('founder-signature-section');
+    const authSignatureImage = document.getElementById('auth-signature-image');
+    const authSigPlaceholder = document.getElementById('auth-sig-placeholder');
     const actionsContainer = document.getElementById('actions-container');
 
     // --- 2. INITIALIZATION ---
@@ -33,76 +29,100 @@ document.addEventListener('DOMContentLoaded', () => {
         state.slipId = params.get('id');
         state.isEditMode = !!state.slipId;
 
-        // Integrates with the signature pad logic from common.js
-        initializeSignaturePad('signature-canvas'); 
-        
+        initializeSignaturePad('signature-canvas');
         populateDriverDropdown();
         setupEventListeners();
 
         if (state.isEditMode) {
-            // We'll need a new API action to get a single salary slip
-            // For now, this structure is ready.
-            // loadSlipForEditing(); 
-            alert("Editing mode is not yet connected to the API.");
-            renderUIForState();
+            loadSlipForEditing(); // ✅ FIX: This function is now fully implemented
         } else {
             initializeCreateMode();
         }
     }
 
-    // --- 3. MODE-SPECIFIC & UI RENDERING ---
+    // --- 3. UI RENDERING & MODE SETUP ---
     function initializeCreateMode() {
         formTitle.textContent = 'Create New Salary Slip';
         setDefaultPayPeriod();
         renderUIForState();
     }
 
-    // This function will be the engine for our dynamic UI
+    async function loadSlipForEditing() {
+        try {
+            const response = await fetch(`/api?action=getSalarySlipById&id=${state.slipId}`);
+            const data = await response.json();
+            if (data.error) throw new Error(data.error);
+            state.slipData = data.slip;
+            populateForm();
+            renderUIForState();
+        } catch (error) {
+            console.error(error);
+            form.innerHTML = `<div class="error-state"><h3><i class="fas fa-exclamation-triangle"></i> Error Loading Slip</h3><p>${error.message}</p></div>`;
+        }
+    }
+
     function renderUIForState() {
-        // Lock key fields in edit mode to prevent changing the record's identity
+        const status = state.slipData ? (state.slipData.Status || 'Pending Approval') : 'Pending Approval';
+
         if (state.isEditMode) {
+            formTitle.textContent = `Reviewing Slip: ${state.slipData.EmployeeName} (${state.slipData.PayPeriod})`;
             driverSelect.disabled = true;
             payPeriodInput.disabled = true;
         }
 
-        // Show founder signature box only when awaiting approval
-        if (state.status === 'Pending Approval') {
-            founderSignatureSection.style.display = 'block';
-        } else {
-            founderSignatureSection.style.display = 'none';
+        founderSignatureSection.style.display = status === 'Pending Approval' ? 'block' : 'none';
+        
+        if (status === 'Approved' || status === 'Finalized') {
+            form.querySelectorAll('input, select').forEach(el => {
+                if(el.id !== 'driver-select' && el.id !== 'pay-period') el.readOnly = true;
+            });
         }
         
-        renderActionButtons();
+        renderActionButtons(status);
     }
-
-    function renderActionButtons() {
+    
+    function renderActionButtons(status) {
         let buttonsHtml = '';
-        switch (state.status) {
-            case 'Pending Approval':
-                if (state.isEditMode) {
-                    // Founder's view
+        if (!state.isEditMode) {
+             buttonsHtml = `<button type="button" id="create-btn" class="btn-primary"><i class="fas fa-paper-plane"></i> Save & Submit for Approval</button>`;
+        } else {
+            switch (status) {
+                case 'Pending Approval':
                     buttonsHtml = `
-                        <button type="button" id="approve-btn" class="btn-primary"><i class="fas fa-check"></i> Approve with Signature</button>
                         <button type="button" id="update-btn" class="btn-secondary"><i class="fas fa-save"></i> Update Details</button>
+                        <button type="button" id="override-approve-btn" class="btn-secondary"><i class="fas fa-user-shield"></i> Approve on Behalf</button>
+                        <button type="button" id="approve-btn" class="btn-primary"><i class="fas fa-check-double"></i> Founder Approve & Sign</button>
                     `;
-                } else {
-                    // Manager's create view
-                    buttonsHtml = `
-                        <button type="submit" id="submit-approval-btn" class="btn-primary"><i class="fas fa-paper-plane"></i> Save & Submit for Approval</button>
-                    `;
-                }
-                break;
-            case 'Approved':
-            case 'Finalized':
-                // No actions needed on a locked slip in this form
-                actionsContainer.innerHTML = '<p>This slip is locked and cannot be edited further.</p>';
-                break;
+                    break;
+                case 'Approved':
+                case 'Finalized':
+                    buttonsHtml = `<p class="form-locked-message"><i class="fas fa-lock"></i> This slip has been approved and is now locked.</p>`;
+                    break;
+            }
         }
         actionsContainer.innerHTML = buttonsHtml;
     }
 
-
-    // --- 4. FORM LOGIC & CALCULATIONS ---
+    // --- 4. FORM LOGIC & DATA POPULATION ---
+    function populateForm() {
+        const slip = state.slipData;
+        driverSelect.value = slip.EmployeeName;
+        payPeriodInput.value = slip.PayPeriod;
+        handleDriverSelection(); // Auto-fill ID and Designation
+        monthlySalaryInput.value = slip.MonthlySalary;
+        lopDaysInput.value = slip.LOPDeduction > 0 ? (slip.LOPDeduction / (slip.MonthlySalary / slip.PayableDays)).toFixed(0) : 0;
+        advanceDeductionInput.value = slip.AdvanceDeduction;
+        outstationQtyInput.value = slip.OutstationTotal > 0 ? (slip.OutstationTotal / 300) : 0;
+        extraDutyQtyInput.value = slip.ExtraDutyTotal > 0 ? (slip.ExtraDutyTotal / 100) : 0;
+        
+        if (slip.AuthSignature) {
+            authSignatureImage.src = slip.AuthSignature;
+            authSignatureImage.style.display = 'block';
+            authSigPlaceholder.style.display = 'none';
+        }
+        calculateSalary();
+    }
+    
     function populateDriverDropdown() {
         if (typeof driverData === 'undefined') return;
         driverSelect.innerHTML = '<option value="">-- Select Employee --</option>';
@@ -162,68 +182,95 @@ document.addEventListener('DOMContentLoaded', () => {
         return { totalEarnings, totalDeductions, netPayable, outstationTotal, extraDutyTotal, lopDeduction, advanceDeduction };
     }
 
-    // --- 5. EVENT HANDLERS & API CALLS ---
+    // --- 5. EVENT HANDLERS & API SUBMISSION ---
     function setupEventListeners() {
         driverSelect.addEventListener('change', handleDriverSelection);
         payPeriodInput.addEventListener('change', updateDaysInMonth);
-        // Recalculate salary on any relevant form input
         form.addEventListener('input', (e) => {
-            if (e.target.type === 'number' || e.target.type === 'month') {
-                calculateSalary();
-            }
+            if (e.target.type === 'number' || e.target.type === 'month') calculateSalary();
         });
         
-        // Use event delegation for the dynamic action buttons
         actionsContainer.addEventListener('click', (e) => {
             const target = e.target.closest('button');
             if (!target) return;
-
-            if (target.id === 'submit-approval-btn') {
-                handleFormSubmit('create');
+            
+            switch (target.id) {
+                case 'create-btn':
+                    handleFormAction('create');
+                    break;
+                case 'update-btn':
+                    handleFormAction('update');
+                    break;
+                case 'approve-btn':
+                    if (authSignatureImage.src.includes('data:image')) {
+                        handleFormAction('approve');
+                    } else {
+                        alert('Founder signature is required to approve.');
+                    }
+                    break;
+                case 'override-approve-btn':
+                    approvalNotesSection.style.display = 'block';
+                    const note = prompt("Please enter the reason for overriding (e.g., Verbal approval from Founder):");
+                    if (note && note.trim() !== '') {
+                        approvalNotesInput.value = note;
+                        handleFormAction('override');
+                    }
+                    break;
             }
-            // Add other button handlers here later (e.g., for update, approve)
         });
+        
+        founderSignatureSection.addEventListener('click', () => openSignaturePad('auth-signature-image'));
     }
 
-    async function handleFormSubmit(actionType) {
-        const driverName = driverSelect.value;
-        if (!driverName) {
-            alert('Please select an employee.');
-            return;
+    async function handleFormAction(actionType) {
+        const button = actionsContainer.querySelector(`#${actionType}-btn`);
+        if(button) {
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
         }
 
-        const button = actionsContainer.querySelector('button');
-        button.disabled = true;
-        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-        
         const calcs = calculateSalary();
-        const employee = driverData[driverName];
-        
-        // This payload matches our Google Sheet columns
-        const payload = {
-            payPeriod: payPeriodInput.value,
-            employeeName: driverName,
-            employeeId: employeeIdInput.value,
-            designation: designationInput.value,
-            monthlySalary: monthlySalaryInput.value,
-            payableDays: (parseFloat(totalMonthDaysInput.value) || 0) - (parseFloat(lopDaysInput.value) || 0),
-            outstationTotal: calcs.outstationTotal,
-            extraDutyTotal: calcs.extraDutyTotal,
-            totalEarnings: calcs.totalEarnings,
-            advanceDeduction: calcs.advanceDeduction,
-            lopDeduction: calcs.lopDeduction,
-            totalDeductions: calcs.totalDeductions,
-            netPayableAmount: calcs.netPayable,
-            Status: 'Pending Approval', // Set initial status
-            // ... signatures and notes will be added in the 'update' action
+        const employee = driverData[driverSelect.value];
+        let payload = {
+            PayPeriod: payPeriodInput.value,
+            EmployeeName: driverSelect.value,
+            EmployeeID: employeeIdInput.value,
+            Designation: designationInput.value,
+            MonthlySalary: monthlySalaryInput.value,
+            PayableDays: parseFloat(totalMonthDaysInput.value || 0) - parseFloat(lopDaysInput.value || 0),
+            OutstationTotal: calcs.outstationTotal,
+            ExtraDutyTotal: calcs.extraDutyTotal,
+            TotalEarnings: calcs.totalEarnings,
+            AdvanceDeduction: calcs.advanceDeduction,
+            LOPDeduction: calcs.lopDeduction,
+            TotalDeductions: calcs.totalDeductions,
+            NetPayableAmount: calcs.netPayable,
         };
-
         let apiAction = '';
-        if (actionType === 'create') {
-            apiAction = 'createSalarySlip';
-        } 
-        // We will add an 'updateSalarySlip' action later for editing
         
+        switch(actionType) {
+            case 'create':
+                apiAction = 'createSalarySlip';
+                payload.Status = 'Pending Approval';
+                break;
+            case 'update':
+                apiAction = 'updateSalarySlip';
+                payload.slipId = state.slipId;
+                break;
+            case 'approve':
+                apiAction = 'updateSalarySlip';
+                payload.slipId = state.slipId;
+                payload.Status = 'Approved';
+                payload.AuthSignature = authSignatureImage.src;
+                break;
+            case 'override':
+                apiAction = 'updateSalarySlip';
+                payload.slipId = state.slipId;
+                payload.Status = 'Approved';
+                payload.ApprovalNotes = approvalNotesInput.value;
+                break;
+        }
+
         try {
             const response = await fetch(`/api?action=${apiAction}`, {
                 method: 'POST',
@@ -233,28 +280,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
             if (!result.success) throw new Error(result.error);
             
-            alert('Success! Salary slip has been submitted for approval.');
-            window.location.href = 'salary-slips.html'; // Redirect back to the dashboard
+            alert(`Success! ${result.message}`);
+            window.location.href = 'salary-slips.html';
 
         } catch (error) {
-            console.error('Failed to process slip:', error);
+            console.error(`Failed to ${actionType} slip:`, error);
             alert(`Error: ${error.message}`);
-            button.disabled = false;
-            // Restore button text based on action
-            button.innerHTML = '<i class="fas fa-paper-plane"></i> Save & Submit for Approval';
+            if(button) button.disabled = false;
+            renderActionButtons(state.slipData ? state.slipData.Status : 'Pending Approval'); // Restore buttons
         }
     }
 
     function setDefaultPayPeriod() {
         const today = new Date();
-        // Default to the previous month for salary generation
         today.setMonth(today.getMonth() - 1);
         const month = String(today.getMonth() + 1).padStart(2, '0');
         const year = today.getFullYear();
         payPeriodInput.value = `${year}-${month}`;
         updateDaysInMonth();
     }
-    
-    // --- 6. INITIALIZE ---
+    // --- 6. INITIALIZATION ---
     init();
 });
