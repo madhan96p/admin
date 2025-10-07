@@ -1,0 +1,238 @@
+/**
+ * ====================================================================
+ * Shrish Admin - Salary Form Premium Styles
+ * ====================================================================
+ * - Professional, clean design for the salary slip generator form.
+ * - Fully responsive for an excellent experience on desktop and mobile.
+ * ====================================================================
+ */
+
+/* --- 1. VARIABLES (Copied for consistency) --- */
+:root {
+    --primary-color: #007bff;
+    --primary-hover-color: #0056b3;
+    --secondary-color: #6c757d;
+    --secondary-hover-color: #5a6268;
+    --success-color: #16a34a;
+    --text-color-dark: #212529;
+    --text-color-light: #6c757d;
+    --border-color: #dee2e6;
+    --background-light: #f8f9fa;
+    --background-white: #ffffff;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.07);
+}
+
+/* --- 2. FORM CONTAINER & LAYOUT --- */
+.form-container {
+    background-color: var(--background-white);
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+}
+
+.form-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color-dark);
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-left: 12px;
+}
+
+/* Adds a decorative accent to the section title */
+.section-title::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 5px;
+    bottom: 5px;
+    width: 4px;
+    background-color: var(--primary-color);
+    border-radius: 2px;
+}
+
+.form-grid {
+    display: grid;
+    /* Responsive grid: creates columns that are at least 250px wide */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.75rem;
+}
+
+/* --- 3. FORM ELEMENTS (LABELS, INPUTS) --- */
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: var(--text-color-dark);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="month"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--text-color-dark);
+    background-color: var(--background-white);
+    outline: none;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.form-group input[readonly] {
+    background-color: var(--background-light);
+    cursor: not-allowed;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+.form-group select {
+    /* Appearance for cross-browser consistency */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+}
+
+/* --- 4. SUMMARY & ACTIONS --- */
+.form-summary-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.net-payable-box {
+    background-color: var(--background-light);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    text-align: left;
+    flex-grow: 1;
+}
+
+.net-payable-box h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-color-light);
+    font-weight: 500;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#net-payable-display {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--success-color);
+    line-height: 1;
+}
+
+.actions-container {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.form-locked-message {
+    font-style: italic;
+    color: var(--text-color-light);
+    padding: 0.75rem 1rem;
+    background-color: var(--background-light);
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* --- 5. SIGNATURE AREA --- */
+.signature-area {
+    max-width: 350px;
+    color: var(--text-color-dark);
+}
+
+.signature-box {
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    height: 150px;
+    margin: 0.5rem 0;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-color-light);
+    background-color: var(--background-light);
+    transition: all 0.2s;
+}
+.signature-box:hover {
+    background-color: #e9ecef;
+    border-color: var(--primary-color);
+}
+.signature-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    padding: 5px;
+}
+.signature-box .placeholder {
+    font-style: italic;
+}
+
+/* --- 6. MOBILE RESPONSIVE STYLES --- */
+@media (max-width: 768px) {
+    .form-container {
+        padding: 1.5rem;
+    }
+
+    .form-summary-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .net-payable-box {
+        text-align: center;
+    }
+
+    .actions-container {
+        justify-content: center;
+    }
+    
+    .actions-container .btn-primary,
+    .actions-container .btn-secondary {
+        width: 100%;
+        justify-content: center; /* Center icon and text */
+    }
+}
