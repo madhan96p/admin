@@ -108,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const slip = state.slipData;
         driverSelect.value = slip.EmployeeName;
         payPeriodInput.value = slip.PayPeriod;
+        updateDaysInMonth();
         handleDriverSelection();
         monthlySalaryInput.value = slip.MonthlySalary;
         advanceDeductionInput.value = slip.AdvanceDeduction;
