@@ -108,16 +108,15 @@ exports.handler = async function (event, context) {
                 responseData = { slips: allSalarySlips };
                 break;
 
-            case 'getSalarySlipById':
+            case 'getSalarySlipById': {
                 // ✅ Use a unique variable name to avoid conflict
                 const salarySlipId = event.queryStringParameters.id;
                 if (!salarySlipId) return { statusCode: 400, body: JSON.stringify({ error: 'Slip ID is required.' }) };
 
-                const [employeeId, payPeriod] = salarySlipId.split('-'); // Use underscore for safer splitting
+                const [employeeId, payPeriod] = salarySlipId.split('-');
                 const allSlips = await salarySheet.getRows();
 
                 const foundSlipRow = allSlips.find(row => row.EmployeeID.trim() === employeeId.trim() && row.PayPeriod.trim() === payPeriod.trim());
-
                 if (foundSlipRow) {
                     const headers = salarySheet.headerValues;
                     const slipObject = {};
@@ -127,14 +126,13 @@ exports.handler = async function (event, context) {
                     responseData = { error: `Salary Slip with ID ${salarySlipId} not found.` };
                 }
                 break;
-
-            case 'updateSalarySlip':
+            }
+            case 'updateSalarySlip': {
                 const updatedSlipData = JSON.parse(event.body);
-                // ✅ Use a unique variable name here as well
                 const salarySlipToUpdateId = updatedSlipData.slipId;
                 if (!salarySlipToUpdateId) return { statusCode: 400, body: JSON.stringify({ error: 'Slip ID is required for an update.' }) };
 
-                const [empIdToUpdate, periodToUpdate] = salarySlipToUpdateId.split('-'); // Use underscore
+                const [empIdToUpdate, periodToUpdate] = salarySlipToUpdateId.split('-');
                 const slipsToSearch = await salarySheet.getRows();
 
                 const salaryRowToUpdate = slipsToSearch.find(row => row.EmployeeID.trim() === empIdToUpdate.trim() && row.PayPeriod.trim() === periodToUpdate.trim());
@@ -151,7 +149,7 @@ exports.handler = async function (event, context) {
                     responseData = { error: `Could not find Salary Slip ${salarySlipToUpdateId} to update.` };
                 }
                 break;
-
+            }
             default:
                 responseData = { error: 'Invalid action.' };
         }
