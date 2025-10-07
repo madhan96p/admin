@@ -94,8 +94,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Calculate and Format Gross Pay
-            const grossPay = parseFloat(slip.TotalEarnings || 0) + parseFloat(slip.AdvanceDeduction || 0);
+            const grossPay = parseFloat(slip.TotalEarnings || 0);
             const formattedGrossPay = grossPay.toLocaleString('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                minimumFractionDigits: 2,
+            });
+
+            // Format Total Deductions
+            const formattedTotalDeductions = parseFloat(slip.TotalDeductions || 0).toLocaleString('en-IN', {
                 style: 'currency',
                 currency: 'INR',
                 minimumFractionDigits: 2,
@@ -106,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td data-label="Pay Period"><div class="cell-primary">${formattedPeriod}</div></td>
                 <td data-label="Employee"><div class="cell-primary">${slip.EmployeeName}</div><div class="cell-secondary">${slip.EmployeeID}</div></td>
                 <td data-label="Gross Pay"><div class="cell-primary">${formattedGrossPay}</div></td>
-                <td data-label="Net Pay"><div class="cell-primary">${formattedNetPay}</div></td>
+                <td data-label="Net Pay"><div class="cell-primary">${formattedNetPay}</div><div class="cell-secondary">Deductions: ${formattedTotalDeductions}</div></td>
                 <td data-label="Generated On"><div class="cell-secondary">${new Date(slip.DateGenerated).toLocaleDateString('en-GB')}</div></td>
                 <td class="actions-cell" data-label="Actions">
                     <div class="actions-cell-content">
