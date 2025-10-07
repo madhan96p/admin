@@ -1,189 +1,215 @@
 /**
  * ====================================================================
- * Shrish Admin - Salary Slip Styles
+ * Shrish Admin - Salary Slips Premium Styles
  * ====================================================================
- * This file contains all specific styles for the salary slip workflow:
- * 1. Dashboard Styles (Status Badges)
- * 2. Form Styles (Generator Form Layout)
- * 3. View/Print Styles (Formal Document Layout)
+ * - Professional, clean design for desktop table view.
+ * - Fully responsive, mobile-first card layout for smaller screens.
  * ====================================================================
  */
 
-/* --- 1. Dashboard Styles (salary-slips.html) --- */
+/* --- 1. VARIABLES & GLOBAL STYLES --- */
+:root {
+    --primary-color: #007bff;
+    --primary-hover-color: #0056b3;
+    --text-color-dark: #212529;
+    --text-color-light: #6c757d;
+    --border-color: #dee2e6;
+    --background-light: #f8f9fa;
+    --background-white: #ffffff;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.07);
 
-/* Color-coded status badges for the workflow */
-.status-badge.status-pending-approval {
-    background-color: #fef3c7; /* Amber 100 */
-    color: #b45309; /* Amber 700 */
-    border: 1px solid #fde68a;
+    /* Status Colors */
+    --status-pending-bg: #fff8e1;
+    --status-pending-text: #f57c00;
+    --status-approved-bg: #e8f5e9;
+    --status-approved-text: #388e3c;
+    --status-finalized-bg: #e3f2fd;
+    --status-finalized-text: #1976d2;
 }
 
-.status-badge.status-approved {
-    background-color: #dbeafe; /* Blue 100 */
-    color: #1e40af; /* Blue 800 */
-    border: 1px solid #bfdbfe;
+/* --- 2. TABLE CONTAINER & UTILITIES --- */
+.table-container {
+    background-color: var(--background-white);
+    border-radius: 8px;
+    box-shadow: var(--shadow-md);
+    overflow: hidden; /* Ensures the border-radius clips the table */
 }
 
-.status-badge.status-finalized {
-    background-color: #dcfce7; /* Green 100 */
-    color: #166534; /* Green 800 */
-    border: 1px solid #bbf7d0;
+.cell-primary {
+    font-weight: 600;
+    color: var(--text-color-dark);
+    font-size: 0.95rem;
 }
 
-/* Action button icons on the dashboard */
-.data-table .action-btn.view-final {
-    color: #166534; /* Green */
-}
-.data-table .action-btn.share {
-    color: #2563eb; /* Blue */
+.cell-secondary {
+    font-size: 0.85rem;
+    color: var(--text-color-light);
 }
 
-
-/* --- 2. Form Styles (salary-form.html) --- */
-
-.form-container {
-    background-color: #ffffff;
-    padding: 2rem;
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+/* --- 3. STATUS BADGES --- */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    letter-spacing: 0.5px;
 }
 
-.form-section {
-    margin-bottom: 2.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
+.status-pending-approval {
+    background-color: var(--status-pending-bg);
+    color: var(--status-pending-text);
 }
 
-.form-section:last-of-type {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
+.status-approved {
+    background-color: var(--status-approved-bg);
+    color: var(--status-approved-text);
 }
 
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5rem;
+.status-finalized {
+    background-color: var(--status-finalized-bg);
+    color: var(--status-finalized-text);
 }
 
-.form-summary-actions {
+/* --- 4. ACTION BUTTONS --- */
+.actions-cell-content {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid #e5e7eb;
+    justify-content: flex-end; /* Align to the right on desktop */
+    gap: 8px;
 }
 
-.net-payable-box {
-    background-color: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
-    padding: 1rem 1.5rem;
-    text-align: center;
-    flex-grow: 1;
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: var(--background-light);
+    color: var(--text-color-light);
+    border: 1px solid var(--border-color);
+    border-radius: 50%; /* Makes them circular */
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
 }
 
-.net-payable-box h4 {
-    margin: 0 0 0.5rem 0;
-    color: #4b5563;
-    font-weight: 500;
-    font-size: 0.9rem;
+.action-btn:hover {
+    background-color: var(--primary-color);
+    color: var(--background-white);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Icon-specific colors on hover for clarity */
+.action-btn.share:hover { background-color: #25D366; border-color: #25D366; }
+.action-btn.edit:hover { background-color: #ffc107; border-color: #ffc107; }
+.action-btn.print:hover { background-color: #6c757d; border-color: #6c757d; }
+.action-btn.view-final:hover { background-color: #17a2b8; border-color: #17a2b8; }
+
+
+/* --- 5. DESKTOP TABLE STYLES --- */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.data-table thead {
+    background-color: var(--background-light);
+}
+
+.data-table th {
+    padding: 16px;
+    text-align: left;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-color-light);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
-#net-payable-display {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #16a34a; /* Green */
+.data-table tbody tr {
+    transition: background-color 0.15s ease-in-out;
 }
 
-.actions-container {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
+.data-table tbody tr:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
 }
 
-.signature-area {
-    max-width: 400px;
+.data-table tbody tr:hover {
+    background-color: #f1faff;
 }
 
-.signature-box {
-    border: 2px dashed #d1d5db;
-    border-radius: 0.5rem;
-    height: 150px;
-    margin: 0.5rem 0;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #9ca3af;
-    background-color: #f9fafb;
-    transition: background-color 0.2s;
-}
-.signature-box:hover {
-    background-color: #f3f4f6;
-}
-.signature-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
+.data-table td {
+    padding: 16px;
+    vertical-align: middle;
 }
 
-.form-locked-message {
-    font-style: italic;
-    color: #6b7280;
-    padding: 0.75rem;
-    background-color: #f3f4f6;
-    border-radius: 0.5rem;
-    border: 1px solid #e5e7eb;
-}
 
-/* --- 3. View/Print Styles (view-salary.html) --- */
+/* --- 6. MOBILE RESPONSIVE STYLES (CARD VIEW) --- */
+@media (max-width: 768px) {
+    .table-container {
+        box-shadow: none;
+        background-color: transparent;
+    }
 
-/* These styles are moved from the <style> block in view-salary.html */
-.salary-slip-print {
-    width: 210mm;
-    min-height: 297mm;
-    background-color: white;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    padding: 15mm;
-    box-sizing: border-box;
-}
-.print-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 15px; }
-.logo-print { max-height: 70px; margin-bottom: 10px; }
-.company-details h1 { margin: 0; font-size: 1.8em; }
-.company-details p { margin: 2px 0; font-size: 0.9em; }
-.slip-title { text-align: center; margin: 20px 0; background-color: #f3f4f6; padding: 10px; border: 1px solid #ddd; }
-.slip-title h2 { margin: 0; font-size: 1.2em; }
-.employee-info-table, .main-salary-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-.employee-info-table td { padding: 8px; border: 1px solid #ccc; width: 50%; }
-.main-salary-table th, .main-salary-table td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-.main-salary-table th { background-color: #f3f4f6; font-weight: 700; }
-.main-salary-table .amount { text-align: right; }
-.net-payable-section { border: 2px solid #000; padding: 15px; margin-top: 20px; }
-.net-payable-amount { display: flex; justify-content: space-between; font-size: 1.2em; font-weight: 700; margin-bottom: 10px; }
-.net-payable-words { font-style: italic; color: #555; }
-.print-footer { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccc; }
-.print-signature-box { width: 45%; text-align: center; }
-.print-signature-box p { margin-top: 5px; border-top: 1px solid #555; padding-top: 5px; }
-.signature-display { display: block; margin: 0 auto 5px auto; height: 50px; object-fit: contain; }
-#employee-signature-section { margin-top: 30px; }
+    .data-table thead {
+        display: none; /* Hide table headers on mobile */
+    }
 
-#finalize-slip-btn { 
-    background-color: #16a34a; 
-    color: white; 
-    border: none; 
-    padding: 12px 20px; 
-    font-size: 1.1em; 
-    border-radius: 5px; 
-    cursor: pointer; 
-    font-weight: 700;
-}
-#finalize-slip-btn:disabled {
-    background-color: #9ca3af;
-    cursor: not-allowed;
+    .data-table, .data-table tbody, .data-table tr, .data-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .data-table tr {
+        background-color: var(--background-white);
+        border-radius: 8px;
+        box-shadow: var(--shadow-md);
+        margin-bottom: 16px;
+        padding: 12px;
+        box-sizing: border-box;
+        position: relative; /* For positioning actions */
+    }
+
+    .data-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 4px;
+        border-bottom: 1px solid #f0f0f0;
+        text-align: right; /* Align cell content to the right */
+    }
+
+    .data-table tr td:last-child {
+        border-bottom: none;
+    }
+
+    /* Use data-label for mobile view headers */
+    .data-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--text-color-dark);
+        text-align: left;
+        margin-right: 16px;
+    }
+
+    /* Special handling for Actions cell */
+    .data-table .actions-cell {
+        padding: 0;
+        position: absolute;
+        top: 8px;
+        right: 8px;
+    }
+
+    .data-table .actions-cell::before {
+        display: none; /* Hide "Actions:" label */
+    }
+    
+    .actions-cell-content {
+        justify-content: flex-end;
+    }
 }
