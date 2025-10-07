@@ -89,6 +89,7 @@ exports.handler = async function (event, context) {
                     responseData = { success: true, message: `Duty Slip ${slipToUpdateId} updated.` };
                 } else { responseData = { error: `Could not find Duty Slip ${slipToUpdateId}` }; }
                 break;
+            
             // --- CORRECTED: Salary Slip Cases ---
             case 'createSalarySlip':
                 const salaryData = JSON.parse(event.body);
@@ -100,9 +101,20 @@ exports.handler = async function (event, context) {
             case 'getAllSalarySlips':
                 const salaryRows = await salarySheet.getRows();
                 const salaryHeaders = salarySheet.headerValues;
+                const numericHeaders = [
+                    'monthlysalary', 'payabledays', 'outstationqty', 'outstationtotal',
+                    'extradutyqty', 'extradutytotal', 'totalearnings', 'advancededuction',
+                    'lopdays', 'lopdeduction', 'totaldeductions', 'netpayableamount'
+                ];
                 const allSalarySlips = salaryRows.map(row => {
                     const slipObject = {};
-                    salaryHeaders.forEach(header => slipObject[header] = row[header]);
+                    salaryHeaders.forEach(header => {
+                        let value = row[header];
+                        if (numericHeaders.includes(header.toLowerCase()) && typeof value === 'string') {
+                            value = value.replace(/,/g, '');
+                        }
+                        slipObject[header] = value;
+                    });
                     return slipObject;
                 });
                 responseData = { slips: allSalarySlips };
@@ -133,7 +145,18 @@ exports.handler = async function (event, context) {
 
                 if (foundSlipRow) {
                     const slipObject = {};
-                    headers.forEach(header => slipObject[header] = foundSlipRow[header]);
+                    const numericHeaders = [
+                        'monthlysalary', 'payabledays', 'outstationqty', 'outstationtotal',
+                        'extradutyqty', 'extradutytotal', 'totalearnings', 'advancededuction',
+                        'lopdays', 'lopdeduction', 'totaldeductions', 'netpayableamount'
+                    ];
+                    headers.forEach(header => {
+                        let value = foundSlipRow[header];
+                        if (numericHeaders.includes(header.toLowerCase()) && typeof value === 'string') {
+                            value = value.replace(/,/g, '');
+                        }
+                        slipObject[header] = value;
+                    });
                     responseData = { slip: slipObject };
                 } else {
                     responseData = { error: `Salary Slip with ID ${salarySlipId} not found.` };
