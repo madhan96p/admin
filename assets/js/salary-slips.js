@@ -108,12 +108,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 minimumFractionDigits: 2,
             });
 
+            // Create deduction breakdown for tooltip
+            const formattedAdvance = parseFloat(slip.AdvanceDeduction || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
+            const formattedLOP = parseFloat(slip.LOPDeduction || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
+            const deductionTooltip = `Advance: ${formattedAdvance} | LOP: ${formattedLOP}`;
+
             row.innerHTML = `
                 <td data-label="Status"><span class="status-badge status-${statusClass}">${status}</span></td>
                 <td data-label="Pay Period"><div class="cell-primary">${formattedPeriod}</div></td>
                 <td data-label="Employee"><div class="cell-primary">${slip.EmployeeName}</div><div class="cell-secondary">${slip.EmployeeID}</div></td>
                 <td data-label="Gross Pay"><div class="cell-primary">${formattedGrossPay}</div></td>
-                <td data-label="Net Pay"><div class="cell-primary">${formattedNetPay}</div><div class="cell-secondary">Deductions: ${formattedTotalDeductions}</div></td>
+                <td data-label="Net Pay"><div class="cell-primary">${formattedNetPay}</div><div class="cell-secondary" title="${deductionTooltip}">Deductions: ${formattedTotalDeductions}</div></td>
                 <td data-label="Generated On"><div class="cell-secondary">${new Date(slip.DateGenerated).toLocaleDateString('en-GB')}</div></td>
                 <td class="actions-cell" data-label="Actions">
                     <div class="actions-cell-content">
