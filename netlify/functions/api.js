@@ -116,7 +116,7 @@ exports.handler = async function (event, context) {
                 const [employeeId, payPeriod] = salarySlipId.split('-'); // Use underscore for safer splitting
                 const allSlips = await salarySheet.getRows();
 
-                const foundSlipRow = allSlips.find(row => row.EmployeeID === employeeId && row.PayPeriod === payPeriod);
+                const foundSlipRow = allSlips.find(row => row.EmployeeID.trim() === employeeId.trim() && row.PayPeriod.trim() === payPeriod.trim());
 
                 if (foundSlipRow) {
                     const headers = salarySheet.headerValues;
@@ -137,7 +137,7 @@ exports.handler = async function (event, context) {
                 const [empIdToUpdate, periodToUpdate] = salarySlipToUpdateId.split('-'); // Use underscore
                 const slipsToSearch = await salarySheet.getRows();
 
-                const salaryRowToUpdate = slipsToSearch.find(row => row.EmployeeID === empIdToUpdate && row.PayPeriod === periodToUpdate);
+                const salaryRowToUpdate = slipsToSearch.find(row => row.EmployeeID.trim() === empIdToUpdate.trim() && row.PayPeriod.trim() === periodToUpdate.trim());
 
                 if (salaryRowToUpdate) {
                     for (const header in updatedSlipData) {
