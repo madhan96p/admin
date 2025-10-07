@@ -112,7 +112,9 @@ exports.handler = async function (event, context) {
                 const salarySlipId = event.queryStringParameters.id;
                 if (!salarySlipId) return { statusCode: 400, body: JSON.stringify({ error: 'Slip ID is required.' }) };
 
-                const [employeeId, payPeriod] = salarySlipId.split('-');
+                const slipIdParts = salarySlipId.split('-');
+                const employeeId = slipIdParts.shift();
+                const payPeriod = slipIdParts.join('-');
                 const allSlips = await salarySheet.getRows();
 
                 // This logic finds the correct headers and trims whitespace
@@ -143,7 +145,9 @@ exports.handler = async function (event, context) {
                 const salarySlipToUpdateId = updatedSlipData.slipId;
                 if (!salarySlipToUpdateId) return { statusCode: 400, body: JSON.stringify({ error: 'Slip ID is required for an update.' }) };
 
-                const [empIdToUpdate, periodToUpdate] = salarySlipToUpdateId.split('-');
+                const slipIdParts = salarySlipToUpdateId.split('-');
+                const empIdToUpdate = slipIdParts.shift();
+                const periodToUpdate = slipIdParts.join('-');
                 const slipsToSearch = await salarySheet.getRows();
 
                 const headers = salarySheet.headerValues;
