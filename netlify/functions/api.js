@@ -109,13 +109,13 @@ exports.handler = async function (event, context) {
                 break;
 
             case 'getSalarySlipById': {
-                // ✅ Use a unique variable name to avoid conflict
                 const salarySlipId = event.queryStringParameters.id;
                 if (!salarySlipId) return { statusCode: 400, body: JSON.stringify({ error: 'Slip ID is required.' }) };
 
                 const [employeeId, payPeriod] = salarySlipId.split('-');
                 const allSlips = await salarySheet.getRows();
 
+                // This logic finds the correct headers and trims whitespace
                 const headers = salarySheet.headerValues;
                 const employeeIdHeader = headers.find(h => h.toLowerCase() === 'employeeid');
                 const payPeriodHeader = headers.find(h => h.toLowerCase() === 'payperiod');
@@ -125,8 +125,8 @@ exports.handler = async function (event, context) {
                 }
 
                 const foundSlipRow = allSlips.find(row =>
-                    row[employeeIdHeader].trim() === employeeId.trim() &&
-                    row[payPeriodHeader].trim() === payPeriod.trim()
+                    row[employeeIdHeader] && row[employeeIdHeader].trim() === employeeId.trim() &&
+                    row[payPeriodHeader] && row[payPeriodHeader].trim() === payPeriod.trim()
                 );
 
                 if (foundSlipRow) {
@@ -155,8 +155,8 @@ exports.handler = async function (event, context) {
                 }
 
                 const salaryRowToUpdate = slipsToSearch.find(row =>
-                    row[employeeIdHeader].trim() === empIdToUpdate.trim() &&
-                    row[payPeriodHeader].trim() === periodToUpdate.trim()
+                    row[employeeIdHeader] && row[employeeIdHeader].trim() === empIdToUpdate.trim() &&
+                    row[payPeriodHeader] && row[payPeriodHeader].trim() === periodToUpdate.trim()
                 );
 
                 if (salaryRowToUpdate) {
