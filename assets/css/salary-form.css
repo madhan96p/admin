@@ -236,3 +236,113 @@
         justify-content: center; /* Center icon and text */
     }
 }
+
+/* ------------------------------------------------------------------- */
+
+/* --- NEW: SALARY FORM RECREATION STYLES --- */
+
+/* 1. Main Two-Column Layout */
+.salary-form-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px; /* Main content and a fixed-width sidebar */
+    gap: 2.5rem; /* Space between the form and the summary */
+    align-items: flex-start;
+}
+
+.form-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* 2. Enhanced Form Section "Cards" */
+.form-section {
+    background-color: var(--background-white);
+    padding: 2rem;
+    border-radius: 12px; /* A more modern border-radius */
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    margin-bottom: 0; /* Remove old margin */
+    padding-bottom: 2rem; /* Restore padding */
+}
+
+/* Overriding the old title style for a bolder look with an icon */
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* Space between icon and text */
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color-dark);
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    padding-left: 0; /* Remove old padding */
+    border-bottom: 1px solid var(--border-color); /* Add a separator line */
+    padding-bottom: 1rem;
+}
+.section-title::before {
+    display: none; /* Hide the old accent bar */
+}
+.section-title i {
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+/* 3. Sticky Summary Sidebar */
+.form-summary-sidebar {
+    position: sticky;
+    top: 100px; /* Adjust based on your header height */
+}
+
+.summary-card {
+    background-color: var(--background-white);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+}
+
+/* Replacing the old summary/actions container */
+.form-summary-actions {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+}
+.net-payable-box {
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    text-align: left;
+    margin-bottom: 1.5rem;
+}
+#net-payable-display {
+    font-size: 2.5rem; /* Make it even bigger! */
+}
+.actions-container {
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 0.75rem;
+}
+.actions-container button {
+    width: 100%;
+    justify-content: center; /* Center button text/icon */
+}
+
+
+/* 4. Responsive Design for Mobile */
+@media (max-width: 992px) {
+    .salary-form-layout {
+        /* Stack columns on smaller screens */
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .form-summary-sidebar {
+        position: static; /* Un-stick the sidebar */
+        top: auto;
+    }
+    
+    .summary-card {
+        /* Use a slightly different shadow on mobile */
+        box-shadow: var(--shadow-sm); 
+    }
+}
