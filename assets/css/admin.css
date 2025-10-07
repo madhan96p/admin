@@ -240,3 +240,56 @@ body {
         z-index: 999;
     }
 }
+
+/**
+ * ===================================
+ * Search Bar Component
+ * ===================================
+ */
+
+.search-bar {
+    position: relative;
+    width: 100%;
+    max-width: 320px; /* Adjust as needed */
+}
+
+.search-bar .fa-search {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    color: var(--text-color-light); /* Using variables from previous style */
+    font-size: 0.9rem;
+    pointer-events: none; /* Allows clicking through the icon to the input */
+    transition: color 0.2s ease-in-out;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 10px 15px 10px 40px; /* Left padding makes space for the icon */
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: var(--text-color-dark);
+    background-color: var(--background-white);
+    outline: none;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+/* Style for the placeholder text */
+.search-bar input::placeholder {
+    color: var(--text-color-light);
+    opacity: 0.8;
+}
+
+/* --- Focus State --- */
+/* When the input inside the search bar is focused */
+.search-bar input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+.search-bar input:focus + .fa-search,
+.search-bar:focus-within .fa-search {
+    color: var(--primary-color);
+}
