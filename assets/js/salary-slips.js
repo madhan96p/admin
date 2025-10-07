@@ -93,10 +93,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 minimumFractionDigits: 2,
             });
 
+            // Calculate and Format Gross Pay
+            const grossPay = parseFloat(slip.TotalEarnings || 0) + parseFloat(slip.AdvanceDeduction || 0);
+            const formattedGrossPay = grossPay.toLocaleString('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                minimumFractionDigits: 2,
+            });
+
             row.innerHTML = `
                 <td data-label="Status"><span class="status-badge status-${statusClass}">${status}</span></td>
                 <td data-label="Pay Period"><div class="cell-primary">${formattedPeriod}</div></td>
                 <td data-label="Employee"><div class="cell-primary">${slip.EmployeeName}</div><div class="cell-secondary">${slip.EmployeeID}</div></td>
+                <td data-label="Gross Pay"><div class="cell-primary">${formattedGrossPay}</div></td>
                 <td data-label="Net Pay"><div class="cell-primary">${formattedNetPay}</div></td>
                 <td data-label="Generated On"><div class="cell-secondary">${new Date(slip.DateGenerated).toLocaleDateString('en-GB')}</div></td>
                 <td class="actions-cell" data-label="Actions">
