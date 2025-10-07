@@ -1,5 +1,5 @@
-// assets/js/salary-form.js - FINAL VERSION
-document.addEventListener('DOMContentLoaded', () => {
+function initializeSalaryFormPage() {
+    // assets/js/salary-form.js - FINAL VERSION
     // --- 1. STATE & ELEMENTS ---
     const state = { slipData: null, isEditMode: false, slipId: null };
 
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const advanceDeductionInput = document.getElementById('advance-deduction');
     const netPayableDisplay = document.getElementById('net-payable-display');
     const approvalNotesSection = document.getElementById('approval-notes-section');
-    const approvalNotesInput = document.getElementById('approval-notes');
+    const approvalNotesInput = document('approval-notes');
     const founderSignatureSection = document.getElementById('founder-signature-section');
     const authSignatureImage = document.getElementById('auth-signature-image');
     const authSigPlaceholder = document.getElementById('auth-sig-placeholder');
@@ -305,4 +305,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // --- 6. INITIALIZATION ---
     init();
-});
+}

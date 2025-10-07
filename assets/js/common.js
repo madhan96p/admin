@@ -281,4 +281,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (typeof initializeCreateSlipPage === 'function') { // You should do this for create-slip.js too!
         initializeCreateSlipPage();
     }
+    if (typeof initializeSalaryFormPage === 'function') {
+        initializeSalaryFormPage();
+    }
+    if (typeof initializeViewSalaryPage === 'function') {
+        initializeViewSalaryPage();
+    }
 });
