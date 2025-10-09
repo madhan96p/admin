@@ -511,6 +511,7 @@
 }
 .header-center {
     text-align: center;
+    white-space: nowrap;
 }
 .header-contact {
     text-align: right;
