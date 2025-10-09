@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Dynamic view containers
     const signaturePendingView = document.getElementById('signature-pending-view');
     const signatureCompleteView = document.getElementById('signature-complete-view');
-    
+
     // Interactive elements
     const employeeSignatureBox = document.getElementById('employee-signature-box');
     const employeeNotesInput = document.getElementById('employee-notes');
@@ -63,6 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Header and Employee Info
         const payPeriodDate = new Date(`${slip.PayPeriod}-02`);
         setText('print-pay-period', payPeriodDate.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }));
+        if (slip.DateGenerated) {
+            setText('print-generated-date', new Date(slip.DateGenerated).toLocaleDateString('en-GB'));
+        }
         setText('print-employee-name', slip.EmployeeName);
         setText('print-employee-id', slip.EmployeeID);
         setText('print-designation', slip.Designation);
@@ -71,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Earnings
         setText('print-monthly-salary', formatCurrency(slip.MonthlySalary));
         setText('print-outstation-total', formatCurrency(slip.OutstationTotal));
-        setText('print-extraduty-total', formatCurrency(slip.ExtraDutyTotal)); 
+        setText('print-extraduty-total', formatCurrency(slip.ExtraDutyTotal));
         setText('print-total-earnings', formatCurrency(slip.TotalEarnings));
 
         // Deductions
@@ -83,11 +86,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const netPayable = parseFloat(slip.NetPayableAmount || 0);
         setText('print-net-payable', formatCurrency(netPayable));
         setText('print-net-payable-words', `(In Words: ${numberToWords(Math.round(netPayable))} Rupees Only)`);
-        
+
         // Signatures
         const authSigImg = document.getElementById('print-auth-signature-image');
         if (authSigImg && slip.AuthSignature) authSigImg.src = slip.AuthSignature;
-        
+
         const finalEmployeeSigImg = document.getElementById('print-employee-signature-image');
         if (finalEmployeeSigImg && slip.EmployeeSignature) finalEmployeeSigImg.src = slip.EmployeeSignature;
     }
@@ -107,11 +110,15 @@ document.addEventListener('DOMContentLoaded', () => {
             signatureCompleteView.style.display = 'none';
 
             // Attach event listeners for signing
-            employeeSignatureBox.addEventListener('click', () => openSignaturePad('employee-signature-image'));
-            finalizeSlipBtn.addEventListener('click', () => handleFinalizeSubmit(slip));
+            if (employeeSignatureBox) {
+                employeeSignatureBox.addEventListener('click', () => openSignaturePad('employee-signature-image'));
+            }
+            if (finalizeSlipBtn) {
+                finalizeSlipBtn.addEventListener('click', () => handleFinalizeSubmit(slip));
+            }
         }
     }
-    
+
     /**
      * Handles the final submission by the employee.
      */
@@ -151,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
             finalizeSlipBtn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm & Accept Salary Slip';
         }
     }
-    
+
     /**
      * Converts a number to its word representation (for the final amount).
      * Sourced from the original salary_slip.js file.
