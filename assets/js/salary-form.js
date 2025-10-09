@@ -223,7 +223,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        founderSignatureSection.addEventListener('click', () => openSignaturePad('auth-signature-image'));
+        const authSignatureBox = document.getElementById('auth-signature-box');
+        if (authSignatureBox) {
+            authSignatureBox.addEventListener('click', () => openSignaturePad('auth-signature-image'));
+        }
     }
 
     async function handleFormAction(actionType) {

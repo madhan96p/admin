@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Earnings
         setText('print-monthly-salary', formatCurrency(slip.MonthlySalary));
         setText('print-outstation-total', formatCurrency(slip.OutstationTotal));
-        setText('print-extraduty-total', format.Currency(slip.ExtraDutyTotal));
+        setText('print-extraduty-total', formatCurrency(slip.ExtraDutyTotal)); 
         setText('print-total-earnings', formatCurrency(slip.TotalEarnings));
 
         // Deductions
