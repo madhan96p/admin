@@ -480,78 +480,69 @@
     flex-wrap: wrap; /* Helps on small screens */
 }
 
-/* In file: assets/css/salary-styles.css */
-/* REPLACE your previous .print-header, .header-left, etc. rules with this block.
-*/
+
 
 .print-header {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    align-items: center; /* Vertically aligns all 3 columns */
     border-bottom: 2px solid #eee;
     padding-bottom: 15px;
     margin-bottom: 20px;
 }
 
-.header-left {
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
+.header-col {
+    padding: 0 10px; /* Adds a little breathing room */
 }
 
+/* --- Column Sizing --- */
+/* The logo and contact columns will each take up 25% of the width */
+.header-logo, .header-contact {
+    flex: 1; 
+}
+
+/* The center column will take up 50% of the width, twice as much as the others */
+.header-center {
+    flex: 2;
+}
+
+/* --- Text Alignment --- */
+.header-logo {
+    text-align: left;
+}
+.header-center {
+    text-align: center;
+}
+.header-contact {
+    text-align: right;
+}
+
+
+/* --- General Styling --- */
 .logo-print {
-    max-width: 80px;
+    max-width: 100px; /* You can adjust the logo size here */
     height: auto;
 }
-
-.company-details h1 {
+.header-center h1 {
     margin: 0 0 5px 0;
     font-size: 1.8em;
 }
-
-.company-details p {
+.header-center p {
     margin: 4px 0;
     font-size: 0.9em;
-    color: #333;
 }
-
-.header-right {
-    text-align: right;
+.header-contact {
     font-size: 0.9em;
     color: #555;
 }
-
-.header-right p {
+.header-contact p {
     margin: 4px 0;
 }
-
-/* --- Styling for all new clickable links --- */
-.company-details a,
-.header-right a {
-    color: #333; /* Keeps the text color consistent */
-    text-decoration: none; /* Removes the underline */
+.header-center a,
+.header-contact a {
+    color: inherit; /* Links will have the same color as the text */
+    text-decoration: none;
 }
-
-/* Optional: Add an underline when hovering over the links */
-.company-details a:hover,
-.header-right a:hover {
+.header-center a:hover,
+.header-contact a:hover {
     text-decoration: underline;
-}
-
-/* --- ADD THIS NEW RULE --- */
-.company-details {
-    text-align: center; /* This is the key change */
-}
-
-/* This rule should already exist */
-.company-details h1 {
-    margin: 0 0 5px 0;
-    font-size: 1.8em;
-}
-
-/* This rule should also exist */
-.company-details p {
-    margin: 4px 0;
-    font-size: 0.9em;
-    color: #333;
 }
