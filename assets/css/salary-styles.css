@@ -480,11 +480,13 @@
     flex-wrap: wrap; /* Helps on small screens */
 }
 
-/* UPDATE these rules in your stylesheet */
+/* In file: assets/css/salary-styles.css */
+/* REPLACE your previous .print-header, .header-left, etc. rules with this block.
+*/
 
 .print-header {
     display: flex;
-    justify-content: space-between; /* This is the key change */
+    justify-content: space-between;
     align-items: flex-start;
     border-bottom: 2px solid #eee;
     padding-bottom: 15px;
@@ -497,14 +499,41 @@
     gap: 15px;
 }
 
-.header-right .generated-date {
-    font-size: 0.9em;
-    color: #555;
-    text-align: right;
-    margin: 0;
-}
-
 .logo-print {
     max-width: 80px;
     height: auto;
+}
+
+.company-details h1 {
+    margin: 0 0 5px 0;
+    font-size: 1.8em;
+}
+
+.company-details p {
+    margin: 4px 0;
+    font-size: 0.9em;
+    color: #333;
+}
+
+.header-right {
+    text-align: right;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.header-right p {
+    margin: 4px 0;
+}
+
+/* --- Styling for all new clickable links --- */
+.company-details a,
+.header-right a {
+    color: #333; /* Keeps the text color consistent */
+    text-decoration: none; /* Removes the underline */
+}
+
+/* Optional: Add an underline when hovering over the links */
+.company-details a:hover,
+.header-right a:hover {
+    text-decoration: underline;
 }
