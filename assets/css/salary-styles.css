@@ -431,7 +431,7 @@
 
 /* --- Fix for "Net Payable in Words" Size --- */
 .net-payable-words {
-    font-size: 1em; /* Adjust font size */
+    font-size: 0.9em; /* Adjust font size */
     font-weight: 500;
     font-style: italic;
 }
@@ -478,4 +478,33 @@
     justify-content: center;
     gap: 10px;
     flex-wrap: wrap; /* Helps on small screens */
+}
+
+/* UPDATE these rules in your stylesheet */
+
+.print-header {
+    display: flex;
+    justify-content: space-between; /* This is the key change */
+    align-items: flex-start;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-right .generated-date {
+    font-size: 0.9em;
+    color: #555;
+    text-align: right;
+    margin: 0;
+}
+
+.logo-print {
+    max-width: 80px;
+    height: auto;
 }
