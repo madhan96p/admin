@@ -199,7 +199,7 @@ exports.handler = async function (event, context) {
                     await salaryRowToUpdate.save();
 
                     if (updatedSlipData.Status === 'Approved') {
-                        await sendSlipToEmployeeForSigning(salaryRowToUpdate); // Notify employee to sign
+                        await sendManagerApprovalConfirmationEmail(salaryRowToUpdate); // Notify employee to sign
                     } else if (updatedSlipData.Status === 'Finalized') {
                         await sendFinalConfirmationEmail(salaryRowToUpdate); // Notify manager of completion
                     }
