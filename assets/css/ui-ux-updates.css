@@ -142,3 +142,130 @@ input:disabled, select:disabled, input:read-only, textarea:read-only {
     font-weight: 600;
     cursor: pointer;
 }
+
+/* =================================================================== */
+/* ===         MOBILE RESPONSIVE STYLES (Add to end of file)       === */
+/* =================================================================== */
+
+@media (max-width: 768px) {
+
+    /* --- General Mobile Adjustments --- */
+    .page-content {
+        padding: 15px;
+    }
+
+    /* --- Responsive Dashboard (`salary-slips.html`) --- */
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    .page-header .header-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .search-bar input {
+        min-width: 100%;
+        width: 100%;
+    }
+    .btn-primary, .btn-secondary {
+        justify-content: center; /* Center button text/icons */
+    }
+
+    /* Converts the dashboard table to a card-based layout on mobile */
+    .data-table thead {
+        display: none; /* Hide table headers */
+    }
+    .data-table tr {
+        display: block;
+        margin-bottom: 15px;
+        border: 1px solid #e5e7eb;
+        border-radius: var(--border-radius);
+        padding: 10px;
+    }
+    .data-table td {
+        display: block;
+        text-align: right; /* Aligns cell content to the right */
+        padding: 8px 5px;
+        border-bottom: 1px dashed #f3f4f6;
+    }
+    .data-table td:last-child {
+        border-bottom: none;
+    }
+    .data-table td::before {
+        content: attr(data-label); /* Displays the data-label as the title */
+        float: left;
+        font-weight: 600;
+        color: #374151;
+    }
+    .data-table .actions-cell {
+        text-align: center;
+    }
+
+    /* --- Responsive Form (`salary-form.html`) --- */
+    .salary-form-layout {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .form-summary-sidebar {
+        width: 100%;
+        position: static;
+        order: -1; /* Moves summary to the top on mobile */
+    }
+    .form-grid {
+        grid-template-columns: 1fr; /* Stacks form fields vertically */
+    }
+
+    /* --- Responsive Slip View (`view-salary.html`) --- */
+    .print-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    .header-col {
+        flex: 1;
+        width: 100%;
+    }
+    .header-logo, .header-center, .header-contact {
+        text-align: center !important;
+    }
+    .employee-info-table td {
+        display: block;
+        width: 100%;
+    }
+    .main-salary-table {
+        display: block;
+    }
+    .main-salary-table thead, .main-salary-table tbody, .main-salary-table tfoot, .main-salary-table tr {
+        display: block;
+    }
+    .main-salary-table thead {
+        display: none;
+    }
+    .main-salary-table tr {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+    }
+    .main-salary-table td {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+    }
+    .main-salary-table td::before {
+        content: attr(data-label);
+        font-weight: 500;
+        padding-right: 15px;
+    }
+    .main-salary-table tfoot th {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.1em;
+    }
+
+    /* --- Responsive Modal --- */
+    .modal-buttons {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch; /* Makes buttons full-width */
+    }
+}

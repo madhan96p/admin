@@ -281,6 +281,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 payload.Status = 'Approved';
                 payload.ApprovalNotes = approvalNotesInput.value;
                 break;
+
+                const employee = driverData[driverSelect.value];
+                if (employee && employee.mobile) {
+                    payload.EmployeeMobile = employee.mobile;
+                }
         }
 
         try {

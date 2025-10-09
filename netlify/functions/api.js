@@ -89,12 +89,15 @@ exports.handler = async function (event, context) {
                     responseData = { success: true, message: `Duty Slip ${slipToUpdateId} updated.` };
                 } else { responseData = { error: `Could not find Duty Slip ${slipToUpdateId}` }; }
                 break;
-            
+
             // --- CORRECTED: Salary Slip Cases ---
             case 'createSalarySlip':
                 const salaryData = JSON.parse(event.body);
                 salaryData.DateGenerated = new Date().toISOString();
                 await salarySheet.addRow(salaryData);
+                await sendNewSalarySlipEmail(salaryData);
+
+
                 responseData = { success: true, message: `Salary slip for ${salaryData.EmployeeName} created.` };
                 break;
 
@@ -188,13 +191,18 @@ exports.handler = async function (event, context) {
 
                 if (salaryRowToUpdate) {
                     for (const header in updatedSlipData) {
-                        // Find the correct header case-insensitively before updating
                         const correctHeader = headers.find(h => h.toLowerCase() === header.toLowerCase());
                         if (correctHeader && updatedSlipData[header] !== undefined) {
                             salaryRowToUpdate[correctHeader] = updatedSlipData[header];
                         }
                     }
                     await salaryRowToUpdate.save();
+
+                    if (updatedSlipData.Status === 'Approved') {
+                        await sendSlipToEmployeeForSigning(salaryRowToUpdate); // Notify employee to sign
+                    } else if (updatedSlipData.Status === 'Finalized') {
+                        await sendFinalConfirmationEmail(salaryRowToUpdate); // Notify manager of completion
+                    }
                     responseData = { success: true, message: `Salary Slip ${salarySlipToUpdateId} updated.` };
                 } else {
                     responseData = { error: `Could not find Salary Slip ${salarySlipToUpdateId} to update.` };
@@ -435,6 +443,118 @@ function sendClientClosedEmail(data) {
             <img src="${data.Guest_Signature_Link || 'https://placehold.co/200x80/e5e7eb/4b5563?text=No+Signature'}" alt="Guest Signature" style="max-width: 200px; height: auto; border: 1px solid #ccc; border-radius: 4px;"/>
         </div>
         ${generateActionButtons(data)}
+    `;
+    const htmlBody = generateEmailBase(subject, content);
+    return sendEmail(subject, htmlBody);
+}
+
+function generateSalaryActionButtons(data) {
+    // Generate the unique slip ID
+    const slipId = `${data.EmployeeID}-${data.PayPeriod}`;
+
+    // 1. WhatsApp message for the Founder
+    const founderReviewLink = `https://admin.shrishgroup.com/salary-form.html?id=${slipId}`;
+    const founderMessage = `New Salary Slip for ${data.EmployeeName} (${data.PayPeriod}) is ready for review and approval.\n\nPlease approve here:\n${founderReviewLink}\n\n- Sent via Shrish Admin`;
+    const founderWhatsappLink = generateWhatsappLink('9176500207', founderMessage);
+
+    // 2. Direct link for the manager to approve
+    const managerReviewLink = `https://admin.shrishgroup.com/salary-form.html?id=${slipId}`;
+
+    return `
+        <div style="margin: 40px 0 0 0; padding-top: 30px; border-top: 1px solid #e5e7eb;">
+            <h3 style="color: #111827; text-align: center; margin: 0 0 25px 0; font-size: 18px;">QUICK ACTIONS</h3>
+            <table style="width: 100%; border-collapse: collapse; text-align: center;">
+                <tr>
+                    <td style="padding: 6px;"><a href="${managerReviewLink}" style="background-color: #4338CA; color: white; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: 600; display: block;">Review & Approve</a></td>
+                    <td style="padding: 6px;"><a href="${founderWhatsappLink}" style="background-color: #25D366; color: white; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: 600; display: block;">Share to Founder</a></td>
+                </tr>
+            </table>
+        </div>`;
+}
+
+function sendNewSalarySlipEmail(data) {
+    const subject = `💰 New Salary Slip Created for ${data.EmployeeName} (${data.PayPeriod})`;
+
+    // Helper to format numbers as currency
+    const formatCurrency = (num) => parseFloat(num || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
+
+    const content = `
+        <h2 style="color: #111827; text-align: center; margin-top: 0; font-size: 24px;">New Salary Slip Created</h2>
+        <p style="color: #4b5563; text-align: center; font-size: 16px; margin: 0 0 30px 0;">A new salary slip for <strong>${data.EmployeeName}</strong> is awaiting approval.</p>
+        <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; padding: 20px; border-radius: 8px; font-size: 16px;">
+            <p style="margin: 0 0 12px 0;"><strong>Pay Period:</strong> ${data.PayPeriod}</p>
+            <p style="margin: 0 0 12px 0;"><strong>Gross Earnings:</strong> ${formatCurrency(data.TotalEarnings)}</p>
+            <p style="margin: 0 0 12px 0;"><strong>Total Deductions:</strong> ${formatCurrency(data.TotalDeductions)}</p>
+            <div style="height: 1px; background-color: #e5e7eb; margin: 20px 0;"></div>
+            <p style="margin: 0; font-size: 18px; font-weight: 700;"><strong>Net Payable: ${formatCurrency(data.NetPayableAmount)}</strong></p>
+        </div>
+        ${generateSalaryActionButtons(data)}
+    `;
+    const htmlBody = generateEmailBase(subject, content);
+    return sendEmail(subject, htmlBody); // Your existing sendEmail function will handle the rest
+}
+
+// Add this function with your other email functions in api.js
+
+/**
+ * Sends an email to the employee after the manager has approved their salary slip.
+ */
+function sendManagerApprovalConfirmationEmail(data) {
+    const subject = `✅ Approved: Salary Slip for ${data.EmployeeName} (${data.PayPeriod})`;
+    const slipId = `${data.EmployeeID}-${data.PayPeriod}`;
+
+    // 1. Create the secure link for the employee to view their slip
+    const employeeViewLink = `https://admin.shrishgroup.com/view-salary.html?id=${slipId}`;
+
+    // 2. Create the pre-filled WhatsApp message for the employee
+    const employeeMessage = `Dear ${data.EmployeeName},\n\nYour salary slip is ready for viewing. Please review and finalize it using the secure link below.\n\nLink: ${employeeViewLink}\n\n- Shrish Travels`;
+    const employeeWhatsappLink = generateWhatsappLink(data.EmployeeMobile, employeeMessage);
+
+    const content = `
+        <h2 style="color: #16a34a; text-align: center; margin-top: 0; font-size: 24px;">Slip Approved!</h2>
+        <p style="color: #4b5563; text-align: center; font-size: 16px; margin: 0 0 30px 0;">
+            You have successfully approved the salary slip for <strong>${data.EmployeeName}</strong>.
+        </p>
+        <p style="color: #4b5563; text-align: center; font-size: 16px; margin: 0 0 30px 0;">
+            The next step is to share the slip with the employee for their final signature.
+        </p>
+        <div style="text-align: center; margin: 40px 0;">
+             <a href="${employeeWhatsappLink}" style="background-color: #25D366; color: white; padding: 16px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
+                <i class="fab fa-whatsapp"></i> Share Slip with Employee
+             </a>
+        </div>
+        <p style="color: #6b7280; text-align: center; font-size: 14px;">Clicking the button will open WhatsApp with a pre-filled message and link.</p>
+    `;
+    const htmlBody = generateEmailBase(subject, content);
+    return sendEmail(subject, htmlBody);
+}
+
+// Add this function with your other email functions in api.js
+
+/**
+ * Sends a final confirmation email to the manager after an employee signs.
+ */
+function sendFinalConfirmationEmail(data) {
+    const subject = `✅ Salary Slip Finalized by ${data.EmployeeName} for ${data.PayPeriod}`;
+    const slipId = `${data.EmployeeID}-${data.PayPeriod}`;
+    const finalViewLink = `https://admin.shrishgroup.com/view-salary.html?id=${slipId}`;
+
+    // Check if the employee added a note
+    const employeeNoteHtml = data.ENotes ? `
+        <div style="background-color: #FEFCE8; border: 1px solid #FDE047; padding: 20px; border-radius: 8px; margin-top: 20px; text-align: left; font-size: 16px;">
+            <p style="margin: 0 0 10px 0; font-weight: 700; color: #854D0E;"><strong>Note from ${data.EmployeeName}:</strong></p>
+            <p style="margin: 0; color: #854D0E;"><em>"${data.ENotes}"</em></p>
+        </div>` : '<p style="text-align:center; color:#6b7280;">No notes were added by the employee.</p>';
+
+    const content = `
+        <h2 style="color: #16a34a; text-align: center; margin-top: 0; font-size: 24px;">Process Complete!</h2>
+        <p style="color: #4b5563; text-align: center; font-size: 16px; margin: 0 0 30px 0;">
+            <strong>${data.EmployeeName}</strong> has signed and finalized their salary slip for <strong>${data.PayPeriod}</strong>.
+        </p>
+        ${employeeNoteHtml}
+        <div style="text-align: center; margin: 40px 0 0 0;">
+             <a href="${finalViewLink}" style="background-color: #374151; color: white; padding: 16px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">View Finalized Slip</a>
+        </div>
     `;
     const htmlBody = generateEmailBase(subject, content);
     return sendEmail(subject, htmlBody);

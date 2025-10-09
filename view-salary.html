@@ -65,26 +65,28 @@
                     <th class="amount">Amount (₹)</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td>Monthly Salary</td>
-                    <td id="print-monthly-salary" class="amount"></td>
-                    <td>Loss of Pay (LOP)</td>
-                    <td id="print-lop-deduction" class="amount"></td>
-                </tr>
-                <tr>
-                    <td>Outstation Allowance</td>
-                    <td id="print-outstation-total" class="amount"></td>
-                    <td>Advance</td>
-                    <td id="print-advance-deduction" class="amount"></td>
-                </tr>
-                <tr>
-                    <td>Extra Duty Allowance</td>
-                    <td id="print-extraduty-total" class="amount"></td>
-                    <td></td>
-                    <td class="amount"></td>
-                </tr>
-            </tbody>
+            <table class="main-salary-table">
+    <tbody>
+        <tr>
+            <td>Monthly Salary</td>
+            <td id="print-monthly-salary" class="amount"></td>
+            <td>Loss of Pay (LOP)</td>
+            <td id="print-lop-deduction" class="amount"></td>
+        </tr>
+        </tbody>
+    </table>
+
+<tbody>
+    <tr>
+        <td data-label="Monthly Salary" id="print-monthly-salary" class="amount"></td>
+        <td data-label="Outstation Allowance" id="print-outstation-total" class="amount"></td>
+        <td data-label="Extra Duty Allowance" id="print-extraduty-total" class="amount"></td>
+    </tr>
+    <tr>
+        <td data-label="Loss of Pay (LOP)" id="print-lop-deduction" class="amount"></td>
+        <td data-label="Advance" id="print-advance-deduction" class="amount"></td>
+    </tr>
+</tbody>
             <tfoot>
                 <tr>
                     <th>Total Earnings (A)</th>
