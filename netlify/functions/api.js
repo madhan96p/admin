@@ -347,7 +347,9 @@ function generateEmailBase(title, contentHtml) {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <title>${title}</title>
-    </head>
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon/favicon.ico">
+
+</head>
     <body style="margin: 0; padding: 0; font-family: 'Inter', Arial, sans-serif; background-color: #f0f2f5;">
         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f0f2f5;">
             <tr>
