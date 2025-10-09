@@ -92,9 +92,11 @@ document.addEventListener('DOMContentLoaded', () => {
             switch (status) {
                 case 'Pending Approval':
                     buttonsHtml = `
-                        <button type="button" id="update-btn" class="btn-secondary"><i class="fas fa-save"></i> Update Details</button>
-                        <button type="button" id="override-approve-btn" class="btn-secondary"><i class="fas fa-user-shield"></i> Approve on Behalf</button>
-                        <button type="button" id="approve-btn" class="btn-primary"><i class="fas fa-check-double"></i> Founder Approve & Sign</button>
+                        <div class="form-actions-group">
+                            <button type="button" id="update-btn" class="btn-secondary"><i class="fas fa-save"></i> Update Details</button>
+                            <button type="button" id="override-approve-btn" class="btn-secondary"><i class="fas fa-user-shield"></i> Approve on Behalf</button>
+                            <button type="button" id="approve-btn" class="btn-primary"><i class="fas fa-check-double"></i> Founder Approve & Sign</button>
+                        </div>
                     `;
                     break;
                 case 'Approved':
