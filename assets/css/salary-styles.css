@@ -537,3 +537,21 @@
 .header-right a:hover {
     text-decoration: underline;
 }
+
+/* --- ADD THIS NEW RULE --- */
+.company-details {
+    text-align: center; /* This is the key change */
+}
+
+/* This rule should already exist */
+.company-details h1 {
+    margin: 0 0 5px 0;
+    font-size: 1.8em;
+}
+
+/* This rule should also exist */
+.company-details p {
+    margin: 4px 0;
+    font-size: 0.9em;
+    color: #333;
+}
