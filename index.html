@@ -23,27 +23,27 @@
                 <h1>Admin Dashboard Overview</h1>
 
                 <div class="stat-cards-container">
-                    <div class="stat-card stat-critical">
+                    <a href="/duty-slips.html" class="stat-card stat-critical">
                         <i class="fas fa-exclamation-circle"></i>
                         <div class="stat-info">
                             <h3 id="stat-ds-needs-action">--</h3>
                             <p>Slips Needs Action</p>
                         </div>
-                    </div>
-                    <div class="stat-card stat-secondary">
+                    </a>
+                    <a href="/salary-slips.html" class="stat-card stat-secondary">
                         <i class="fas fa-hourglass-half"></i>
                         <div class="stat-info">
                             <h3 id="stat-salary-pending">--</h3>
                             <p>Salary Pending Finalization</p>
                         </div>
-                    </div>
-                    <div class="stat-card stat-success">
+                    </a>
+                    <a href="/duty-slips.html?filter=Closed by Client" class="stat-card stat-success">
                         <i class="fas fa-road"></i>
                         <div class="stat-info">
                             <h3 id="stat-total-completed">--</h3>
                             <p>Trips Completed (Last 30 Days)</p>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
                 <div class="content-card quick-actions-card">
@@ -76,4 +76,5 @@
     <script src="assets/js/common.js"></script>
     <script src="assets/js/dashboard.js"></script>
 </body>
+
 </html>
