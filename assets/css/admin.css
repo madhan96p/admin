@@ -349,6 +349,21 @@ body {
     display: flex;
     align-items: center;
     gap: 1rem;
+    text-decoration: none; /* Remove underline */
+    color: var(--color-text-dark); /* Inherit text color */
+    display: flex; /* Ensure the flex layout remains */
+}
+
+.stat-card:hover {
+    transform: translateY(-3px); /* LIFTING effect on hover */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    /* Increase border color opacity slightly for a premium feel */
+    border-left-width: 8px; /* Slight increase for visual impact */
+}
+
+/* Ensure children colors are maintained on hover */
+.stat-card:hover .stat-info p {
+    color: var(--color-text-dark);
 }
 
 .stat-card i {

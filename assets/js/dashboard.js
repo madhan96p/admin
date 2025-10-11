@@ -1,8 +1,40 @@
-/**
- * Shrish Admin - Dashboard Logic
- * Handles fetching critical stats and displaying upcoming trips.
- */
+// Add this new function to dashboard.js
 
+async function fetchSalarySlipsData() {
+    try {
+        const response = await fetch('/.netlify/functions/api?action=getAllSalarySlips');
+        if (!response.ok) throw new Error('Network response was not ok.');
+        const data = await response.json();
+        return data.slips || [];
+    } catch (error) {
+        console.error('Error fetching salary slips:', error);
+        return [];
+    }
+}
+
+function displaySalaryStats(slips) {
+    // Assuming 'Finalized' means the process is complete.
+    // 'Pending Finalization' means the status is anything other than Finalized (e.g., Draft, Approved).
+    const pendingSlips = slips.filter(slip => 
+        slip.Status !== 'Finalized' 
+    ).length;
+
+    document.getElementById('stat-salary-pending').innerText = pendingSlips;
+}
+
+// Update the main initialization function in dashboard.js
+
+async function initializeDashboard() {
+    // ... existing loading message ...
+
+    const allSlips = await fetchDutySlipsData();
+    filterAndDisplayUpcomingTrips(allSlips);
+    displayCriticalStats(allSlips);
+
+    // NEW: Fetch and display salary stats
+    const allSalarySlips = await fetchSalarySlipsData();
+    displaySalaryStats(allSalarySlips);
+}
 // Function to fetch data from the Netlify API
 async function fetchDutySlipsData() {
     try {
