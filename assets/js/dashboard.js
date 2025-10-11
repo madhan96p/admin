@@ -106,7 +106,7 @@ function filterAndDisplayUpcomingTrips(slips) {
                         <i class="fas fa-car"></i> ${slip.Driver_Name || 'N/A'} (${slip.Vehicle_No || 'N/A'})
                     </p>
                 </div>
-                <a href="/edit-slip.html?id=${slip.DS_No}" class="btn-sm btn-primary-outline">View</a>
+                <a href="/edit-slip.html?id=${slip.DS_No}" class="btn-sm btn-primary-outline">Update</a>
             </div>
         `;
     }).join('');
