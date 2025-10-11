@@ -293,3 +293,126 @@ body {
 .search-bar:focus-within .fa-search {
     color: var(--primary-color);
 }
+
+/* ... [Existing Styles for .admin-layout, #admin-sidebar, etc.] ... */
+
+/* --- 3. Component Styling: Sidebar (ADDITIONS) --- */
+.sidebar-header .app-version {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #4f46e5; /* Primary color highlight */
+    font-weight: 500;
+}
+
+.sidebar-footer {
+    margin-top: auto; /* Push to the bottom */
+    padding: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-logout-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    color: #fca5a5; /* Light red/danger color */
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    border-radius: var(--border-radius-md);
+    transition: background-color 0.2s ease;
+}
+
+.nav-logout-btn:hover {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #ef4444; /* Stronger red */
+}
+
+
+/* --- 5. Content Styling: Cards, Titles, etc. (ADDITIONS FOR DASHBOARD) --- */
+
+.stat-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background-color: var(--color-bg-card);
+    padding: 1.5rem;
+    border-radius: var(--border-radius-md);
+    border-left: 5px solid var(--color-border); /* Subtle accent */
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stat-card i {
+    font-size: 2rem;
+    color: var(--color-primary);
+}
+
+.stat-card .stat-info h3 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.stat-card .stat-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+/* Custom colors for stats */
+.stat-critical { border-left-color: #ef4444; }
+.stat-critical i { color: #ef4444; }
+.stat-secondary { border-left-color: #facc15; }
+.stat-secondary i { color: #facc15; }
+.stat-success { border-left-color: #10b981; }
+.stat-success i { color: #10b981; }
+
+/* Quick Actions Card */
+.quick-actions-card {
+    margin-top: 2rem;
+}
+
+.action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 1rem;
+    text-decoration: none;
+    background-color: var(--color-bg-main);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    color: var(--color-text-dark);
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+    background-color: rgba(79, 70, 229, 0.1);
+    border-color: var(--color-primary);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+}
+
+.action-btn i {
+    font-size: 2rem;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+}

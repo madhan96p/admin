@@ -235,7 +235,7 @@ function setupGlobalEventListeners() {
         header.addEventListener('click', (event) => {
             if (event.target.classList.contains('logout-btn')) {
                 sessionStorage.removeItem('shrish-admin-auth');
-                window.location.href = '/login.html'; // Assuming you have a login page
+                window.location.href = '/login.html'; 
             }
         });
     }

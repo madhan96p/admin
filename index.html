@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,21 +9,68 @@
     <link rel="stylesheet" href="assets/css/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-<link rel="icon" type="image/x-icon" href="assets/images/favicon/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon/favicon.ico">
 
 </head>
+
 <body>
-
     <script src="assets/js/auth.js"></script>
-
     <div class="admin-layout">
-        <div id="admin-sidebar"></div> <main class="admin-main-content">
-            <div id="admin-header"></div> <div class="page-content">
-                <h1>Welcome to the Admin Dashboard</h1>
-                <p>Select a tool from the sidebar to get started.</p>
+        <div id="admin-sidebar"></div>
+        <main class="admin-main-content">
+            <div id="admin-header"></div>
+            <div class="page-content">
+                <h1>Admin Dashboard Overview</h1>
+
+                <div class="stat-cards-container">
+                    <div class="stat-card stat-critical">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <div class="stat-info">
+                            <h3 id="stat-ds-needs-action">--</h3>
+                            <p>Slips Needs Action</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-secondary">
+                        <i class="fas fa-hourglass-half"></i>
+                        <div class="stat-info">
+                            <h3 id="stat-salary-pending">--</h3>
+                            <p>Salary Pending Finalization</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-success">
+                        <i class="fas fa-road"></i>
+                        <div class="stat-info">
+                            <h3 id="stat-total-completed">--</h3>
+                            <p>Trips Completed (Last 30 Days)</p>
+                        </div>
+                    </div>
                 </div>
-            
-            <div id="admin-footer"></div> </main>
+
+                <div class="content-card quick-actions-card">
+                    <h2>Quick Actions</h2>
+                    <div class="action-grid">
+                        <a href="/create-duty-slip.html" class="action-btn">
+                            <i class="fas fa-plus-circle"></i> Create New Duty Slip
+                        </a>
+                        <a href="/salary-form.html" class="action-btn">
+                            <i class="fas fa-money-bill-wave"></i> Generate Salary Slip
+                        </a>
+                        <a href="/manager-hub.html" class="action-btn">
+                            <i class="fas fa-search"></i> Find Slip by D.S. No
+                        </a>
+                    </div>
+                </div>
+
+                <div class="content-card mt-4">
+                    <h2>Upcoming Trips (Next 7 Days)</h2>
+                    <div id="upcoming-trips-list">
+                        <p class="text-muted"><i class="fas fa-spinner fa-spin"></i> Loading upcoming assignments...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="admin-footer"></div>
+        </main>
     </div>
 
     <script src="assets/js/common.js"></script>
