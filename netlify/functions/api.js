@@ -462,7 +462,7 @@ exports.handler = async function (event, context) {
                 const dataToSave = JSON.parse(event.body);
                 dataToSave.Timestamp = new Date().toISOString();
                 // 🚗 Modification 1a: Convert Vehicle_No to uppercase before saving
-                if (dataToSave.Vehicle_No) {
+                if (dataToSave.Vehicle_No && typeof dataToSave.Vehicle_No === 'string') {
                     dataToSave.Vehicle_No = dataToSave.Vehicle_No.toUpperCase();
                 }
                 const newRow = await sheet.addRow(dataToSave);
@@ -474,7 +474,7 @@ exports.handler = async function (event, context) {
                 const updatedData = JSON.parse(event.body);
                 const slipToUpdateId = String(updatedData.DS_No);
                 // 🚗 Modification 1b: Convert Vehicle_No to uppercase before updating
-                if (updatedData.Vehicle_No) {
+                if (updatedData.Vehicle_No && typeof updatedData.Vehicle_No === 'string') {
                     updatedData.Vehicle_No = updatedData.Vehicle_No.toUpperCase();
                 }
                 const updateRows = await sheet.getRows();
