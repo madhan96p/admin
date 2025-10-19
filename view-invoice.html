@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice - Shrish Travels</title>
+    <link rel="stylesheet" href="/assets/css/common.css">
+    <link rel="stylesheet" href="/assets/css/invoice.css">
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div class="invoice-container">
+        
+        <header class="invoice-header">
+            <div class="header-logo">
+                <img src="/assets/images/sh1.webp" alt="Shrish Group Logo">
+            </div>
+            <div class="header-title">
+                <h1>ShRiSH Travels</h1>
+                <p>Your Journey, Our Responsibility</p>
+            </div>
+            <div class="header-contact">
+                <p><i class="fas fa-phone-alt"></i> +91 88834 51668</p>
+                <p><i class="fas fa-phone-alt"></i> +91 91765 00207</p>
+                <p><i class="fas fa-envelope"></i> info@shrishgroup.com</p>
+                <p><i class="fas fa-globe"></i> www.shrishgroup.com</p>
+            </div>
+        </header>
+
+        <section class="invoice-meta">
+            <div class="bill-to">
+                <h3>Bill To:</h3>
+                <p id="guest-name">Loading...</p>
+                <p id="guest-mobile">Loading...</p>
+            </div>
+            <div class="invoice-details">
+                <h2>INVOICE</h2>
+                <p><strong>Invoice #:</strong> <span id="invoice-id">Loading...</span></p>
+                <p><strong>Invoice Date:</strong> <span id="invoice-date">Loading...</span></p>
+                <p><strong>Due Date:</strong> Due Upon Receipt</p>
+            </div>
+        </section>
+
+        <section class="invoice-section">
+            <h3>Trip Summary</h3>
+            <table class="summary-table">
+                <tr>
+                    <td><strong>Vehicle:</strong></td>
+                    <td id="trip-vehicle">Loading...</td>
+                </tr>
+                <tr>
+                    <td><strong>Trip Dates:</strong></td>
+                    <td id="trip-dates">Loading...</td>
+                </tr>
+                <tr>
+                    <td><strong>Total KMs:</strong></td>
+                    <td id="trip-total-kms">Loading...</td>
+                </tr>
+                <tr>
+                    <td><strong>Total Duration:</strong></td>
+                    <td id="trip-total-duration">Loading...</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="invoice-section">
+            <h3>Itemized Charges</h3>
+            <table class="charges-table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Details</th>
+                        <th>Rate (₹)</th>
+                        <th>Amount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody id="charges-tbody">
+                    <tr>
+                        <td colspan="4" style="text-align: center;">Loading charges...</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td colspan="3" class="total-label">Grand Total</td>
+                        <td class="total-amount" id="grand-total">₹ --.--</td>
+                    </tr>
+                </tfoot>
+            </table>
+            <p class="amount-in-words" id="amount-in-words">Loading...</p>
+        </section>
+
+        <section class="invoice-footer">
+            <div class="payment-section">
+                <h3>Pay Your Bill</h3>
+                <p>Choose your preferred method to pay <strong><span id="total-due-amount">₹ --.--</span></strong></p>
+                <div class="payment-options">
+                    <div class="pay-option">
+                        <h4>1. Scan to Pay</h4>
+                        <img src="/assets/images/your-qr-code.png" alt="Scan UPI QR Code" class="qr-code">
+                        <p>Scan with any UPI app</p>
+                    </div>
+                    <div class="pay-option">
+                        <h4>2. Click to Pay</h4>
+                        <a href="https://your-payment-link.com" class="btn btn-success" id="payment-link">Pay Securely Now</a>
+                        <p>Uses Razorpay/Stripe/etc.</p>
+                    </div>
+                    <div class="pay-option">
+                        <h4>3. Copy UPI ID</h4>
+                        <input type="text" value="payments@shrish" id="upi-id-input" readonly>
+                        <button class="btn" id="copy-upi-btn">Copy UPI ID</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="terms-section">
+                <h3>Terms & Conditions</h3>
+                <ol>
+                    <li>All charges (Kilometers & Time) are calculated on a "shed-to-shed" basis.</li>
+                    <li>Billing is based on 12-hour slabs. Any usage into the next slab will be billed as a full slab.</li>
+                    <li>Toll, parking, and state permit charges are as per actuals.</li>
+                    <li>Full payment is due upon receipt of this invoice.</li>
+                    <li>Thank you for your business!</li>
+                </ol>
+            </div>
+        </section>
+        
+        <footer class="invoice-print-footer">
+            <p>This is a system-generated invoice. | Shrish Travels | www.shrishgroup.com</p>
+        </footer>
+
+    </div> <div class="invoice-actions no-print">
+        <button class="btn btn-primary" onclick="window.print()">
+            <i class="fas fa-print"></i> Print / Save as PDF
+        </button>
+        <button class="btn" onclick="window.close()">
+            <i class="fas fa-times"></i> Close
+        </button>
+    </div>
+
+    <script src="/assets/js/view-invoice.js"></script>
+
+</body>
+</html>
