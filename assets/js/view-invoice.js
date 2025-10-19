@@ -1,110 +1,83 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. DOM ELEMENT CACHE ---
-    // Store all frequently used elements in one object for easy access.
-    const elements = {
-        bookingIdInput: document.getElementById('bookingIdInput'),
-        loadTripButton: document.getElementById('loadTripButton'),
-        loader: document.getElementById('loader'),
-        tripSummary: document.getElementById('tripSummary'),
-        billingForm: document.getElementById('billingForm'),
-        
-        // Calculation display fields
-        calcTotalHours: document.getElementById('calcTotalHours'),
-        calcTotalKms: document.getElementById('calcTotalKms'),
-        calcBillingSlabs: document.getElementById('calcBillingSlabs'),
+    // --- 1. GET DATA FROM URL ---
+    // URLSearchParams is the modern way to read query parameters from the URL.
+    const params = new URLSearchParams(window.location.search);
+    
+    // Get the Booking ID
+    const bookingId = params.get('id');
 
-        // Rate & expense input fields
-        baseRate: document.getElementById('baseRate'),
-        includedKms: document.getElementById('includedKms'),
-        extraKmRate: document.getElementById('extraKmRate'),
-        battaRate: document.getElementById('battaRate'),
-        tolls: document.getElementById('tolls'),
-        permits: document.getElementById('permits'),
-
-        // Link generation fields
-        generateLinkButton: document.getElementById('generateLinkButton'),
-        generatedLinkContainer: document.getElementById('generatedLinkContainer'),
-        generatedLink: document.getElementById('generatedLink'),
-        copyLinkButton: document.getElementById('copyLinkButton'),
+    // Get all the rates and expenses set by the manager
+    const rates = {
+        baseRate: parseFloat(params.get('baseRate') || 0),
+        includedKms: parseFloat(params.get('includedKms') || 0),
+        extraKmRate: parseFloat(params.get('extraKmRate') || 0),
+        battaRate: parseFloat(params.get('battaRate') || 0),
+        tolls: parseFloat(params.get('tolls') || 0),
+        permits: parseFloat(params.get('permits') || 0),
     };
 
-    // --- 2. STATE MANAGEMENT ---
-    // Store the fetched trip data globally within this script's scope.
-    let currentTripData = null;
+    if (!bookingId) {
+        document.body.innerHTML = '<h1>Error: No Booking ID provided.</h1>';
+        return;
+    }
 
-    // --- 3. CORE LOGIC FUNCTIONS ---
+    // --- 2. HELPER FUNCTIONS ---
 
-    /**
-     * Fetches trip data from the API and triggers UI updates.
-     */
-    async function handleLoadTrip() {
-        const bookingId = elements.bookingIdInput.value.trim();
-        if (!bookingId) {
-            alert('Please enter a Booking ID (DS_No) to load.');
-            return;
+    // Formats a number as Indian Rupees (e.g., ₹ 1,200.00)
+    const formatCurrency = (num) => {
+        return num.toLocaleString('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            minimumFractionDigits: 2,
+        });
+    };
+
+    // Helper to securely set text content
+    const setText = (id, text) => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.textContent = text;
         }
+    };
 
-        // Reset UI to loading state
-        elements.loader.style.display = 'block';
-        elements.tripSummary.style.display = 'none';
-        elements.billingForm.style.display = 'none';
-        elements.generatedLinkContainer.style.display = 'none';
-        elements.loadTripButton.disabled = true;
-        currentTripData = null;
+    // --- 3. CORE CALCULATION & FETCH LOGIC ---
 
+    async function loadAndRenderInvoice() {
         try {
-            // Your existing API can be used here.
+            // Step 1: Fetch the raw trip data
             const response = await fetch(`/.netlify/functions/api?action=getDutySlipById&id=${bookingId}`);
-            if (!response.ok) {
-                throw new Error(`Network response was not ok (Status: ${response.status})`);
-            }
-            const data = await response.json();
-
-            if (data.error || !data.slip) {
-                throw new Error(data.error || 'Trip data not found in the response.');
-            }
-
-            currentTripData = data.slip;
-            displayTripSummary(currentTripData);
-            calculateAndDisplayTotals(currentTripData);
+            if (!response.ok) throw new Error('Failed to fetch trip data.');
             
-            // Show the next steps
-            elements.tripSummary.style.display = 'block';
-            elements.billingForm.style.display = 'block';
+            const data = await response.json();
+            if (data.error || !data.slip) throw new Error(data.error || 'Trip data not found.');
+
+            const slip = data.slip;
+
+            // Step 2: Perform all calculations
+            const calculations = calculateTotals(slip, rates);
+
+            // Step 3: Populate the invoice HTML
+            populateMeta(slip);
+            populateSummary(slip, calculations);
+            populateCharges(rates, calculations);
 
         } catch (error) {
-            alert(`Error loading trip data: ${error.message}`);
-            console.error('Fetch error:', error);
-        } finally {
-            // Always clean up the UI
-            elements.loader.style.display = 'none';
-            elements.loadTripButton.disabled = false;
+            document.body.innerHTML = `<h1>Error loading invoice: ${error.message}</h1>`;
+            console.error(error);
         }
     }
 
     /**
-     * Displays a summary of the loaded trip.
-     * @param {object} slip - The duty slip data object.
+     * Performs all financial calculations
+     * @param {object} slip - The raw trip data
+     * @param {object} rates - The manager-defined rates
+     * @returns {object} - An object with all calculated totals
      */
-    function displayTripSummary(slip) {
-        elements.tripSummary.innerHTML = `
-            <h4>Trip Details for DS #${slip.DS_No}</h4>
-            <p><strong>Guest:</strong> ${slip.Guest_Name || 'N/A'}</p>
-            <p><strong>Driver:</strong> ${slip.Driver_Name || 'N/A'} (${slip.Vehicle_No || 'N/A'})</p>
-            <p><strong>Date:</strong> ${slip.Date || 'N/A'}</p>
-        `;
-    }
-
-    /**
-     * Calculates and displays totals for KMs, Hours, and Billing Slabs.
-     * @param {object} slip - The duty slip data object.
-     */
-    function calculateAndDisplayTotals(slip) {
-        // Helper to parse date and time together
+    function calculateTotals(slip, rates) {
+        // --- Core Trip Stats ---
         const parseDateTime = (dateStr, timeStr) => {
             if (!dateStr || !timeStr) return null;
-            // Assuming date is 'dd/mm/yyyy' from your API
             const [day, month, year] = dateStr.split('/');
             return new Date(`${year}-${month}-${day}T${timeStr}`);
         };
@@ -121,66 +94,142 @@ document.addEventListener('DOMContentLoaded', () => {
         const endKm = parseFloat(slip.Driver_Km_In) || 0;
         const totalKms = endKm > startKm ? (endKm - startKm) : 0;
         
-        // The core logic: Calculate billing slabs based on 12-hour intervals
+        // --- Billing Logic ---
         const billingSlabs = totalHours > 0 ? Math.ceil(totalHours / 12) : 0;
+        const totalIncludedKms = billingSlabs * rates.includedKms;
+        const extraKms = totalKms > totalIncludedKms ? (totalKms - totalIncludedKms) : 0;
 
-        // Update the UI
-        elements.calcTotalHours.textContent = `${totalHours.toFixed(2)} Hrs`;
-        elements.calcTotalKms.textContent = `${totalKms.toFixed(1)} Kms`;
-        elements.calcBillingSlabs.textContent = billingSlabs;
+        // --- Final Costs ---
+        const packageCost = billingSlabs * rates.baseRate;
+        const extraKmCost = extraKms * rates.extraKmRate;
+        const battaCost = billingSlabs * rates.battaRate;
+        const totalExpenses = rates.tolls + rates.permits;
+
+        const grandTotal = packageCost + extraKmCost + battaCost + totalExpenses;
+
+        return {
+            totalHours,
+            totalKms,
+            billingSlabs,
+            extraKms,
+            packageCost,
+            extraKmCost,
+            battaCost,
+            totalExpenses,
+            grandTotal,
+        };
+    }
+
+    // --- 4. POPULATION FUNCTIONS ---
+
+    /**
+     * Populates the "Bill To" and "Invoice Details" section
+     */
+    function populateMeta(slip) {
+        setText('guest-name', slip.Guest_Name || 'N/A');
+        setText('guest-mobile', slip.Guest_Mobile || 'N/A');
+        setText('invoice-id', `ST-${slip.DS_No}`);
+        setText('invoice-date', new Date().toLocaleDateString('en-GB')); // e.g., 19/10/2025
     }
 
     /**
-     * Generates the final invoice link with all data encoded in the URL.
+     * Populates the "Trip Summary" table
      */
-    function handleGenerateLink() {
-        if (!currentTripData) {
-            alert('Please load a trip before generating a link.');
-            return;
+    function populateSummary(slip, calculations) {
+        setText('trip-vehicle', `${slip.Vehicle_Type || 'N/A'} (${slip.Vehicle_No || 'N/A'})`);
+        
+        const startDate = slip.Date_Out || slip.Date;
+        const endDate = slip.Date_In || slip.Date;
+        setText('trip-dates', startDate === endDate ? startDate : `${startDate} to ${endDate}`);
+        
+        setText('trip-total-kms', `${calculations.totalKms.toFixed(1)} Kms`);
+        setText('trip-total-duration', `${calculations.totalHours.toFixed(2)} Hrs (${calculations.billingSlabs} Slab/s)`);
+    }
+
+    /**
+     * Populates the "Itemized Charges" table
+     */
+    function populateCharges(rates, calculations) {
+        const tbody = document.getElementById('charges-tbody');
+        tbody.innerHTML = ''; // Clear "Loading..."
+        
+        let rows = '';
+
+        // 1. Package Cost Row
+        rows += `
+            <tr>
+                <td>Outstation Package</td>
+                <td>${calculations.billingSlabs} Slab/s (${rates.includedKms} Kms/Slab)</td>
+                <td>${formatCurrency(rates.baseRate)} / Slab</td>
+                <td>${formatCurrency(calculations.packageCost)}</td>
+            </tr>
+        `;
+
+        // 2. Extra KMs Row (only if there are extra KMs)
+        if (calculations.extraKms > 0) {
+            rows += `
+                <tr>
+                    <td>Extra Kilometer Charge</td>
+                    <td>${calculations.extraKms.toFixed(1)} Kms</td>
+                    <td>${formatCurrency(rates.extraKmRate)} / Km</td>
+                    <td>${formatCurrency(calculations.extraKmCost)}</td>
+                </tr>
+            `;
         }
 
-        // Use URLSearchParams for safe and easy URL query string construction
-        const params = new URLSearchParams();
+        // 3. Driver Batta Row
+        rows += `
+            <tr>
+                <td>Driver Batta</td>
+                <td>${calculations.billingSlabs} Slab/s</td>
+                <td>${formatCurrency(rates.battaRate)} / Slab</td>
+                <td>${formatCurrency(calculations.battaCost)}</td>
+            </tr>
+        `;
 
-        // Add essential trip data
-        params.append('id', currentTripData.DS_No);
+        // 4. Expenses Row (only if there are expenses)
+        if (calculations.totalExpenses > 0) {
+            rows += `
+                <tr>
+                    <td>Tolls, Parking & Permits</td>
+                    <td>Charged as per actuals</td>
+                    <td>-</td>
+                    <td>${formatCurrency(calculations.totalExpenses)}</td>
+                </tr>
+            `;
+        }
 
-        // Add all manager-defined rates and expenses
-        params.append('baseRate', elements.baseRate.value || '0');
-        params.append('includedKms', elements.includedKms.value || '0');
-        params.append('extraKmRate', elements.extraKmRate.value || '0');
-        params.append('battaRate', elements.battaRate.value || '0');
-        params.append('tolls', elements.tolls.value || '0');
-        params.append('permits', elements.permits.value || '0');
+        tbody.innerHTML = rows;
+
+        // 5. Populate Totals
+        setText('grand-total', formatCurrency(calculations.grandTotal));
+        setText('total-due-amount', formatCurrency(calculations.grandTotal));
         
-        // Construct the full URL
-        const baseUrl = `${window.location.origin}/view-invoice.html`;
-        const finalUrl = `${baseUrl}?${params.toString()}`;
-
-        // Display the link to the manager
-        elements.generatedLink.value = finalUrl;
-        elements.generatedLinkContainer.style.display = 'block';
+        // This is a complex step, so we'll just use a placeholder for now
+        // A full library would be needed for a perfect conversion.
+        setText('amount-in-words', `Rupees ${calculations.grandTotal.toFixed(0)} Only`); 
     }
 
-    /**
-     * Copies the generated link to the clipboard.
-     */
-    function handleCopyLink() {
-        elements.generatedLink.select();
-        navigator.clipboard.writeText(elements.generatedLink.value).then(() => {
-            const originalText = elements.copyLinkButton.textContent;
-            elements.copyLinkButton.textContent = 'Copied!';
-            setTimeout(() => {
-                elements.copyLinkButton.textContent = originalText;
-            }, 2000);
-        }).catch(err => {
-            alert('Failed to copy link.');
-            console.error('Copy error:', err);
+    // --- 5. EVENT LISTENERS ---
+
+    // Add click listener for the "Copy UPI" button
+    const copyUpiBtn = document.getElementById('copy-upi-btn');
+    const upiIdInput = document.getElementById('upi-id-input');
+    if (copyUpiBtn && upiIdInput) {
+        copyUpiBtn.addEventListener('click', () => {
+            upiIdInput.select();
+            navigator.clipboard.writeText(upiIdInput.value).then(() => {
+                const originalText = copyUpiBtn.textContent;
+                copyUpiBtn.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyUpiBtn.textContent = originalText;
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy UPI ID.');
+            });
         });
     }
 
-    // --- 4. EVENT LISTENERS ---
-    elements.loadTripButton.addEventListener('click', handleLoadTrip);
-    elements.generateLinkButton.addEventListener('click', handleGenerateLink);
-    elements.copyLinkButton.addEventListener('click', handleCopyLink);
+    // --- 6. INITIALIZE ---
+    loadAndRenderInvoice();
 });
