@@ -4,10 +4,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const elements = {
         bookingIdInput: document.getElementById('bookingIdInput'),
         loadTripButton: document.getElementById('loadTripButton'),
-        manualEntryButton: document.getElementById('manualEntryButton'),
+        manualEntryButton: document.getElementById('manualEntryButton'), // New button
         loader: document.getElementById('loader'),
         tripSummary: document.getElementById('tripSummary'),
         
+        // Manual entry fields
         manualEntryFields: document.getElementById('manualEntryFields'),
         manualGuestName: document.getElementById('manualGuestName'),
         manualGuestMobile: document.getElementById('manualGuestMobile'),
@@ -52,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 2. STATE MANAGEMENT ---
     let currentTripData = null;
-    let isManualFlow = false;
+    let isManualFlow = false; // New state variable
     let currentStep = 1;
     let currentCalculations = {};
 
@@ -73,9 +74,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         elements.prevStepBtn.style.display = (stepNumber > 1) ? 'inline-flex' : 'none';
-        elements.nextStepBtn.style.display = (stepNumber < 4 && stepNumber > 1) ? 'inline-flex' : 'none';
+        elements.nextStepBtn.style.display = (stepNumber < 4 && stepNumber > 1) ? 'inline-flex' : 'none'; // Modified
         elements.saveInvoiceBtn.style.display = (stepNumber === 4) ? 'inline-flex' : 'none';
         
+        // Hide "Next" on step 1
         if (stepNumber === 1) {
             elements.nextStepBtn.style.display = 'none';
         }
@@ -97,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const billingSlabs = totalHours > 0 ? Math.ceil(totalHours / 12) : 0;
         elements.calcBillingSlabs.value = billingSlabs;
     }
-// --- 4. CORE DATA LOGIC ---
 
     // --- NEW HELPER FUNCTION ---
     /**
@@ -146,11 +147,12 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.totalHrsContext.textContent = '--';
     }
     
+    // MODIFIED: handleLoadTrip
     async function handleLoadTrip() {
         const bookingId = elements.bookingIdInput.value.trim();
         if (!bookingId) return alert('Please enter a Booking ID (DS_No) to load.');
 
-        isManualFlow = false;
+        isManualFlow = false; // Set flow type
         elements.loader.style.display = 'block';
         elements.loadTripButton.disabled = true;
         elements.manualEntryButton.disabled = true;
@@ -159,17 +161,19 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(`/.netlify/functions/api?action=getDutySlipById&id=${bookingId}`);
             if (!response.ok) throw new Error(`Network response error (Status: ${response.status})`);
+            
             const data = await response.json();
             if (data.error || !data.slip) throw new Error(data.error || 'Trip data not found.');
 
             currentTripData = data.slip;
             
+            // Populate and show/hide fields
             displayTripSummary(currentTripData);
             calculateAndDisplayTotals(currentTripData); // This will now populate context
             elements.tripSummary.style.display = 'block';
             elements.manualEntryFields.style.display = 'none';
             
-            goToStep(2); 
+            goToStep(2); // Go to next step on success
 
         } catch (error) {
             alert(`Error loading trip data: ${error.message}`);
@@ -180,13 +184,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // NEW: handleManualEntry
     function handleManualEntry() {
         const bookingId = elements.bookingIdInput.value.trim();
         if (!bookingId) return alert('Please enter a unique Booking ID (e.g., "MANUAL-101") first.');
 
-        isManualFlow = true;
-        currentTripData = null; 
+        isManualFlow = true; // Set flow type
+        currentTripData = null; // No loaded data
 
+        // Show/hide fields
         elements.tripSummary.style.display = 'none';
         elements.manualEntryFields.style.display = 'block';
         
@@ -203,8 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    // --- MODIFIED: To populate context spans ---
-   // --- This is the NEW, FIXED code ---
+    // --- MODIFIED: To populate context spans & use new parser ---
     function calculateAndDisplayTotals(slip) {
         
         // --- THIS IS THE FIX ---
@@ -290,6 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${baseUrl}?id=${bookingId}`;
     }
 
+    // MODIFIED: handleSaveInvoice
     async function handleSaveInvoice() {
         elements.saveLoader.style.display = 'block';
         elements.saveInvoiceBtn.disabled = true;
@@ -309,14 +315,26 @@ document.addEventListener('DOMContentLoaded', () => {
         } = currentCalculations;
 
         if (!rates) {
-            alert('Error: Calculations are missing. Please go back to Step 3.');
-            elements.saveLoader.style.display = 'none';
-            elements.saveInvoiceBtn.disabled = false;
-            return;
+            // This case might happen if user skips steps, let's re-calculate
+             calculateAndShowSummary();
+             // Re-assign after calculation
+             const {
+                totalHours, totalKms, billingSlabs, extraKms,
+                packageCost, extraKmCost, battaCost, totalExpenses, grandTotal,
+                rates
+            } = currentCalculations;
+             
+             if (!rates) {
+                alert('Error: Calculations are missing. Please go back to Step 3.');
+                elements.saveLoader.style.display = 'none';
+                elements.saveInvoiceBtn.disabled = false;
+                return;
+             }
         }
 
         const shareableLink = generateShareableLink(bookingId);
         
+        // This object is now built dynamically
         let invoiceData = {
             Invoice_ID: `ST-${bookingId}`,
             Booking_ID: bookingId,
@@ -342,7 +360,9 @@ document.addEventListener('DOMContentLoaded', () => {
             UPI_ID: elements.upiId.value || 'drumsjega5466-1@okhdfcbank',
         };
 
+        // Add data from the correct source
         if (isManualFlow) {
+            // Get data from manual fields
             invoiceData.Guest_Name = elements.manualGuestName.value;
             invoiceData.Guest_Mobile = elements.manualGuestMobile.value;
             invoiceData.Vehicle_Type = elements.manualVehicleType.value;
@@ -350,6 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
             invoiceData.Trip_Start_Date = elements.manualStartDate.value;
             invoiceData.Trip_End_Date = elements.manualEndDate.value;
         } else if (currentTripData) {
+            // Get data from loaded trip
             invoiceData.Guest_Name = currentTripData.Guest_Name;
             invoiceData.Guest_Mobile = currentTripData.Guest_Mobile;
             invoiceData.Vehicle_Type = currentTripData.Vehicle_Type;
@@ -363,6 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Save to Google Sheet
         try {
             const response = await fetch('/.netlify/functions/api?action=saveInvoice', {
                 method: 'POST',
@@ -396,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 5. EVENT LISTENERS ---
     elements.loadTripButton.addEventListener('click', handleLoadTrip);
-    elements.manualEntryButton.addEventListener('click', handleManualEntry);
+    elements.manualEntryButton.addEventListener('click', handleManualEntry); // New
     elements.saveInvoiceBtn.addEventListener('click', handleSaveInvoice);
     elements.copyLinkButton.addEventListener('click', handleCopyLink);
     
