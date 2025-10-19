@@ -7,12 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
         loader: document.getElementById('loader'),
         tripSummary: document.getElementById('tripSummary'),
         
-        // Calculation display fields
         calcTotalHours: document.getElementById('calcTotalHours'),
         calcTotalKms: document.getElementById('calcTotalKms'),
         calcBillingSlabs: document.getElementById('calcBillingSlabs'),
 
-        // Rate & expense input fields
         baseRate: document.getElementById('baseRate'),
         includedKms: document.getElementById('includedKms'),
         extraKmRate: document.getElementById('extraKmRate'),
@@ -20,13 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
         tolls: document.getElementById('tolls'),
         permits: document.getElementById('permits'),
 
-        // Link generation fields
         generatedLinkContainer: document.getElementById('generatedLinkContainer'),
         generatedLink: document.getElementById('generatedLink'),
         copyLinkButton: document.getElementById('copyLinkButton'),
         saveLoader: document.getElementById('save-loader'),
 
-        // Stepper UI
         steps: document.querySelectorAll('.step'),
         stepContents: document.querySelectorAll('.step-content'),
         prevStepBtn: document.getElementById('prevStepBtn'),
@@ -44,39 +40,31 @@ document.addEventListener('DOMContentLoaded', () => {
     function goToStep(stepNumber) {
         currentStep = stepNumber;
 
-        // Update step content
         elements.stepContents.forEach(content => {
             content.classList.toggle('active', parseInt(content.dataset.stepContent) === stepNumber);
         });
 
-        // Update step indicators
         elements.steps.forEach(step => {
             const stepNum = parseInt(step.dataset.step);
             step.classList.toggle('active', stepNum === stepNumber);
             step.classList.toggle('done', stepNum < stepNumber);
         });
 
-        // Update navigation buttons
         elements.prevStepBtn.style.display = (stepNumber > 1) ? 'inline-flex' : 'none';
         elements.nextStepBtn.style.display = (stepNumber < 4) ? 'inline-flex' : 'none';
         elements.saveInvoiceBtn.style.display = (stepNumber === 4) ? 'inline-flex' : 'none';
 
-        // Disable "Next" on step 1 until trip is loaded
         if (stepNumber === 1) {
             elements.nextStepBtn.style.display = 'none';
         }
     }
 
     elements.nextStepBtn.addEventListener('click', () => {
-        if (currentStep < 4) {
-            goToStep(currentStep + 1);
-        }
+        if (currentStep < 4) goToStep(currentStep + 1);
     });
 
     elements.prevStepBtn.addEventListener('click', () => {
-        if (currentStep > 1) {
-            goToStep(currentStep - 1);
-        }
+        if (currentStep > 1) goToStep(currentStep - 1);
     });
 
     // --- 4. CORE DATA LOGIC ---
@@ -100,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
             displayTripSummary(currentTripData);
             calculateAndDisplayTotals(currentTripData);
             
-            elements.nextStepBtn.style.display = 'inline-flex'; // Show "Next" button
+            elements.nextStepBtn.style.display = 'inline-flex';
 
         } catch (error) {
             alert(`Error loading trip data: ${error.message}`);
@@ -140,36 +128,33 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const billingSlabs = totalHours > 0 ? Math.ceil(totalHours / 12) : 0;
 
-        // Save calculations for later
         currentCalculations = { totalHours, totalKms, billingSlabs };
 
-        // Update the UI
         elements.calcTotalHours.textContent = `${totalHours.toFixed(2)} Hrs`;
         elements.calcTotalKms.textContent = `${totalKms.toFixed(1)} Kms`;
         elements.calcBillingSlabs.textContent = `${billingSlabs} Slab/s`;
     }
 
+    /**
+     * MODIFIED FUNCTION
+     * Generates the new, simple shareable link.
+     */
     function generateShareableLink() {
-        const params = new URLSearchParams();
-        params.append('id', currentTripData.DS_No);
-        params.append('baseRate', elements.baseRate.value || '0');
-        params.append('includedKms', elements.includedKms.value || '0');
-        params.append('extraKmRate', elements.extraKmRate.value || '0');
-        params.append('battaRate', elements.battaRate.value || '0');
-        params.append('tolls', elements.tolls.value || '0');
-        params.append('permits', elements.permits.value || '0');
-        
         const baseUrl = `${window.location.origin}/view-invoice.html`;
-        return `${baseUrl}?${params.toString()}`;
+        // The new link only contains the Booking ID (DS_No)
+        return `${baseUrl}?id=${currentTripData.DS_No}`;
     }
 
+    /**
+     * MODIFIED FUNCTION
+     * Saves all necessary invoice data to the 'invoices' sheet.
+     */
     async function handleSaveInvoice() {
         if (!currentTripData) return alert('Trip data is missing. Please go back.');
 
         elements.saveLoader.style.display = 'block';
         elements.saveInvoiceBtn.disabled = true;
 
-        // --- 1. Get all rates ---
         const rates = {
             baseRate: parseFloat(elements.baseRate.value || 0),
             includedKms: parseFloat(elements.includedKms.value || 0),
@@ -179,7 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
             permits: parseFloat(elements.permits.value || 0),
         };
 
-        // --- 2. Recalculate final costs ---
         const { totalHours, totalKms, billingSlabs } = currentCalculations;
         const totalIncludedKms = billingSlabs * rates.includedKms;
         const extraKms = totalKms > totalIncludedKms ? (totalKms - totalIncludedKms) : 0;
@@ -190,20 +174,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalExpenses = rates.tolls + rates.permits;
         const grandTotal = packageCost + extraKmCost + battaCost + totalExpenses;
 
-        // --- 3. Generate Shareable Link ---
         const shareableLink = generateShareableLink();
         
-        // --- 4. Prepare data for Google Sheet ---
+        // This object now contains ALL data needed for the final invoice
         const invoiceData = {
             Invoice_ID: `ST-${currentTripData.DS_No}`,
             Booking_ID: currentTripData.DS_No,
-            Invoice_Date: new Date().toLocaleDateString('en-GB'), // dd/mm/yyyy
+            Invoice_Date: new Date().toLocaleDateString('en-GB'),
             Guest_Name: currentTripData.Guest_Name,
+            Guest_Mobile: currentTripData.Guest_Mobile, // NEW
+            Vehicle_Type: currentTripData.Vehicle_Type, // NEW
+            Vehicle_No: currentTripData.Vehicle_No,     // NEW
+            Trip_Start_Date: currentTripData.Date_Out || currentTripData.Date, // NEW
+            Trip_End_Date: currentTripData.Date_In || currentTripData.Date,     // NEW
             Total_KMs: totalKms.toFixed(1),
             Total_Hours: totalHours.toFixed(2),
             Billing_Slabs: billingSlabs,
             Base_Rate: rates.baseRate,
+            Included_KMs_per_Slab: rates.includedKms, // NEW
             Extra_KM_Rate: rates.extraKmRate,
+            Calculated_Extra_KMs: extraKms.toFixed(1), // NEW
             Batta_Rate: rates.battaRate,
             Total_Tolls: rates.tolls,
             Total_Permits: rates.permits,
@@ -216,7 +206,6 @@ document.addEventListener('DOMContentLoaded', () => {
             Shareable_Link: shareableLink,
         };
 
-        // --- 5. Send to API ---
         try {
             const response = await fetch('/.netlify/functions/api?action=saveInvoice', {
                 method: 'POST',
@@ -248,11 +237,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 5. EVENT LISTENERS ---
     elements.loadTripButton.addEventListener('click', handleLoadTrip);
     elements.saveInvoiceBtn.addEventListener('click', handleSaveInvoice);
     elements.copyLinkButton.addEventListener('click', handleCopyLink);
     
-    // Initialize the first step
     goToStep(1);
 });

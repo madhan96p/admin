@@ -624,6 +624,36 @@ exports.handler = async function (event, context) {
                 responseData = { success: true, message: 'Invoice saved successfully.' };
                 break;
             }   
+
+            case 'getInvoiceById': {
+                const bookingId = event.queryStringParameters.id;
+                if (!bookingId) {
+                    return { statusCode: 400, body: JSON.stringify({ error: 'Booking ID is required.' }) };
+                }
+                
+                const invoiceSheet = doc.sheetsByTitle['invoices'];
+                if (!invoiceSheet) {
+                    throw new Error('"invoices" sheet not found in Google Spreadsheet.');
+                }
+                
+                await invoiceSheet.loadHeaderRow(); // Ensure headers are loaded
+                const invoiceHeaders = invoiceSheet.headerValues;
+                const invoiceRows = await invoiceSheet.getRows();
+
+                // Find the row by Booking_ID
+                const foundRow = invoiceRows.find(row => String(row.Booking_ID) === String(bookingId));
+
+                if (foundRow) {
+                    const invoiceObject = {};
+                    invoiceHeaders.forEach(header => {
+                        invoiceObject[header] = foundRow[header];
+                    });
+                    responseData = { invoice: invoiceObject };
+                } else {
+                    responseData = { error: `Invoice with Booking ID ${bookingId} not found.` };
+                }
+                break;
+            }
             default:
                 responseData = { error: 'Invalid action.' };
         }
