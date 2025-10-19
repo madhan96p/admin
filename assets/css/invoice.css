@@ -181,6 +181,7 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0;
 }
 input[type=number] {
+  appearance: textfield; /* Standard property for compatibility */
   -moz-appearance: textfield; /* Firefox */
 }
 
@@ -330,75 +331,458 @@ h4.section-divider {
 }
 
 
+/* ==========================================================================
+   2. View Invoice Page Styles (view-invoice.html) - Modern UI
+   ========================================================================== */
 
-/* --- 2. STYLES FOR: view-invoice.html (Client's Page) --- */
+/* --- Base & Container --- */
+body {
+    background-color: #f3f4f6; /* Light gray page background */
+}
 
-/* --- 4. PRINT STYLES (Most Important) --- */
+.invoice-container {
+    width: 100%; /* Full width on mobile */
+    max-width: var(--invoice-width, 840px); /* Max width constraint */
+    margin: 1rem auto; /* Vertical margin for spacing */
+    padding: var(--invoice-padding-mobile, 1.25rem);
+    background: var(--invoice-bg, #ffffff);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    border-radius: 0.5rem; /* Soft rounded corners */
+    border: 1px solid var(--border-color, #e5e7eb);
+}
 
-/* --- 4. PRINT STYLES (Most Important) --- */
+/* --- Invoice Header --- */
+.invoice-header {
+    display: flex;
+    flex-direction: column; /* Stack on mobile */
+    align-items: center;
+    text-align: center;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--primary-color, #4F46E5);
+    margin-bottom: 1.5rem;
+}
+.header-logo img {
+    width: 70px; /* Slightly smaller logo */
+    height: auto;
+    margin-bottom: 0.75rem;
+}
+.header-title {
+    margin-bottom: 0.75rem;
+}
+.header-title h1 {
+    font-size: 1.6rem; /* Adjusted size */
+    font-weight: 700;
+    color: var(--text-color, #111827);
+    margin: 0 0 0.1rem 0;
+}
+.header-title p {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--text-muted, #6B7280);
+    margin: 0;
+}
+.header-contact {
+    font-size: 0.75rem; /* Smaller contact details */
+    line-height: 1.5;
+    color: var(--text-muted, #6B7280);
+}
+.header-contact p {
+    margin: 1px 0;
+    display: flex; /* Align icon and text */
+    align-items: center;
+    justify-content: center; /* Center on mobile */
+}
+.header-contact i {
+    width: 12px; /* Smaller icon */
+    margin-right: 5px;
+    color: var(--primary-color, #4F46E5);
+    text-align: center;
+}
+
+/* --- Invoice Meta (Bill To / Details) --- */
+.invoice-meta {
+    display: flex;
+    flex-direction: column; /* Stack on mobile */
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.85rem; /* Smaller base font */
+}
+.bill-to h3 {
+    font-size: 0.75rem; /* Small heading */
+    font-weight: 600;
+    color: var(--text-muted, #6B7280);
+    margin: 0 0 0.4rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.bill-to p {
+    margin: 0.1rem 0;
+    font-weight: 500; /* Slightly less bold */
+    color: var(--text-color, #111827);
+    line-height: 1.5;
+}
+.invoice-details {
+    text-align: left; /* Keep left on mobile */
+}
+.invoice-details h2 {
+    font-size: 1.4rem; /* Smaller invoice title */
+    font-weight: 700;
+    color: var(--text-color, #111827);
+    margin: 0 0 0.5rem 0;
+    text-align: right; /* Align right on mobile */
+}
+.invoice-details p {
+    margin: 0.2rem 0;
+    text-align: right; /* Align right on mobile */
+}
+.invoice-details strong {
+    color: var(--text-muted, #6B7280);
+    font-weight: 500;
+}
+
+/* --- Invoice Section General --- */
+.invoice-section {
+    margin-bottom: 2rem;
+}
+.invoice-section h3 {
+    font-size: 1rem; /* Smaller section headings */
+    font-weight: 600;
+    color: var(--primary-color, #4F46E5);
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    padding-bottom: 0.4rem;
+    margin: 0 0 1rem 0;
+}
+
+/* --- Summary Table --- */
+.summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+.summary-table td {
+    padding: 0.4rem 0;
+    border-bottom: 1px dashed var(--border-color, #e5e7eb);
+}
+.summary-table tr:last-child td {
+    border-bottom: none;
+}
+.summary-table td:first-child {
+    font-weight: 500; /* Medium weight */
+    color: var(--label-color, #374151);
+    width: 90px; /* Fixed width */
+    padding-right: 0.75rem;
+}
+.summary-table td:last-child {
+    color: var(--text-color, #111827);
+    font-weight: 500;
+}
+
+/* --- Charges Table --- */
+.charges-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: 0.85rem; /* Smaller table font */
+}
+.charges-table th,
+.charges-table td {
+    padding: 0.6rem 0.5rem; /* Adjusted padding */
+    text-align: left;
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    vertical-align: top; /* Align content top */
+}
+.charges-table th {
+    background-color: var(--subtle-bg, #f9fafb);
+    font-weight: 600; /* Bold headers */
+    color: var(--label-color, #374151);
+    font-size: 0.75rem; /* Smaller header font */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+/* Align Rate and Amount right */
+.charges-table th:nth-child(3), .charges-table td:nth-child(3),
+.charges-table th:nth-child(4), .charges-table td:nth-child(4) {
+    text-align: right;
+    white-space: nowrap; /* Prevent wrapping */
+}
+.charges-table tbody td:nth-child(2) { /* Details column */
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+.charges-table tbody tr:last-child td {
+    border-bottom: none; /* Remove border on last data row */
+}
+
+/* Charges Table Footer (Totals) */
+.charges-table tfoot .total-row td {
+    border-bottom: none;
+    font-size: 1.1rem; /* Slightly smaller total */
+    font-weight: 700;
+    padding-top: 0.75rem;
+    border-top: 2px solid var(--text-color, #111827);
+}
+.charges-table tfoot .total-label {
+    text-align: right;
+    color: var(--text-color, #111827);
+}
+.charges-table tfoot .total-amount {
+    color: var(--success-color, #10B981);
+    text-align: right;
+    white-space: nowrap;
+}
+.amount-in-words {
+    text-align: right;
+    font-weight: 500; /* Medium weight */
+    font-style: italic;
+    margin-top: 0.5rem;
+    color: var(--text-muted, #6B7280);
+    font-size: 0.8rem; /* Smaller text */
+}
+
+/* --- Invoice Footer (Payment & Terms) --- */
+.invoice-footer {
+    display: grid;
+    grid-template-columns: 1fr; /* Stack on mobile */
+    gap: 2rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color, #e5e7eb);
+}
+.payment-section h3, .terms-section h3 {
+    font-size: 1rem; /* Smaller footer headings */
+    font-weight: 600;
+    color: var(--primary-color, #4F46E5);
+    margin: 0 0 1rem 0;
+}
+.payment-section > p { /* Target the intro paragraph only */
+    margin: 0 0 1rem 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+.payment-section strong {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+/* Payment Options Grid */
+.payment-options {
+    display: grid;
+    grid-template-columns: 1fr; /* Stack options on mobile */
+    gap: 1.25rem;
+    text-align: center;
+}
+.pay-option {
+    background-color: var(--subtle-bg, #f9fafb); /* Add subtle background */
+    padding: 1rem 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color, #e5e7eb);
+}
+.pay-option h4 {
+    font-size: 0.85rem; /* Smaller option titles */
+    font-weight: 600;
+    color: var(--label-color);
+    margin: 0 0 0.75rem 0;
+}
+.pay-option p {
+    font-size: 0.75rem; /* Tiny helper text */
+    color: var(--text-muted);
+    margin: 0.5rem 0 0 0;
+    line-height: 1.4;
+}
+.qr-code {
+    width: 100%;
+    max-width: 100px; /* Smaller QR code */
+    height: auto;
+    border: none; /* Remove default border */
+    border-radius: 4px;
+    margin: 0 auto 0.5rem auto;
+    display: block;
+}
+#qr-code-canvas { display: flex; justify-content: center; align-items: center; } /* Center canvas content */
+
+#upi-id-input {
+    width: 100%;
+    text-align: center;
+    background-color: #ffffff; /* White background */
+    margin-bottom: 0.5rem;
+    padding: 0.5rem; /* Smaller padding */
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 4px;
+    font-size: 0.8rem; /* Smaller font */
+    color: var(--text-muted);
+}
+#copy-upi-btn {
+    font-size: 0.75rem; /* Smaller copy button */
+    padding: 0.4rem 0.8rem;
+    background-color: #ffffff;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+#copy-upi-btn:hover {
+    background-color: var(--primary-color-light, #eef2ff);
+}
+
+.pay-option .btn#payment-link { /* Style the UPI payment button */
+    font-size: 0.85rem;
+    padding: 0.6rem 1rem;
+}
+
+/* Terms Section */
+.terms-section ol {
+    padding-left: 1.1rem; /* Adjust list padding */
+    line-height: 1.6;
+    font-size: 0.8rem; /* Smaller terms text */
+    color: var(--text-muted, #6B7280);
+    margin: 0;
+}
+.terms-section li {
+    margin-bottom: 0.4rem;
+}
+.terms-section a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+.terms-section a:hover {
+    text-decoration: underline;
+}
+
+/* --- Final Print Footer --- */
+.invoice-print-footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color, #e5e7eb);
+    font-size: 0.7rem; /* Tiny footer text */
+    color: #9ca3af; /* Lighter gray */
+}
+
+/* --- Action Bar (Web Only) --- */
+.invoice-actions {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 0.75rem var(--invoice-padding-mobile, 1.25rem);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    z-index: 100;
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    border-top: 1px solid var(--border-color, #e5e7eb);
+}
+.invoice-actions .btn {
+    font-size: 0.85rem; /* Smaller action buttons */
+    padding: 0.6rem 1rem;
+}
+.invoice-actions .btn i {
+    margin-right: 0.4rem;
+}
+
+/* --- Desktop Styles --- */
+@media (min-width: 768px) {
+    .invoice-container {
+        margin: 2rem auto;
+        padding: var(--invoice-padding-desktop, 2rem);
+        border-radius: 0.75rem;
+    }
+    .invoice-header {
+        flex-direction: row;
+        align-items: flex-start;
+        text-align: left;
+        padding-bottom: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .header-logo img { width: 85px; margin-bottom: 0; }
+    .header-title { text-align: center; margin: 0 auto; padding: 0 1rem; }
+    .header-title h1 { font-size: 2rem; }
+    .header-title p { font-size: 0.9rem; }
+    .header-contact { text-align: right; font-size: 0.85rem; }
+    .header-contact p { justify-content: flex-end; }
+    .invoice-meta {
+        flex-direction: row;
+        font-size: 0.9rem;
+    }
+    .invoice-details { text-align: right; }
+    .invoice-details h2 { font-size: 1.8rem; }
+    .invoice-section h3 { font-size: 1.1rem; }
+    .summary-table { width: 65%; font-size: 0.9rem; }
+    .summary-table td:first-child { width: 120px; }
+    .charges-table { font-size: 0.9rem; }
+    .charges-table th, .charges-table td { padding: 0.7rem 0.8rem; }
+    .charges-table th { font-size: 0.8rem; }
+    .charges-table tbody td:nth-child(2) { font-size: 0.85rem; }
+    .charges-table tfoot .total-row td { font-size: 1.2rem; }
+    .amount-in-words { font-size: 0.9rem; }
+    .invoice-footer {
+        grid-template-columns: 1.75fr 1fr; /* Adjust ratio */
+        gap: 3rem;
+        margin-top: 2.5rem;
+        padding-top: 2rem;
+    }
+    .payment-options { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .pay-option h4 { font-size: 0.9rem; }
+    .pay-option p { font-size: 0.8rem; }
+    .qr-code { max-width: 110px; }
+    #upi-id-input { font-size: 0.85rem; }
+    .terms-section ol { font-size: 0.85rem; }
+    .invoice-print-footer { font-size: 0.8rem; }
+    .invoice-actions { padding: 1rem var(--invoice-padding-desktop, 2rem); }
+    .invoice-actions .btn { font-size: 0.9rem; }
+}
+
+
+/* ==========================================================================
+   4. Print Styles (Modernized)
+   ========================================================================== */
 @media print {
     body {
-        background-color: var(--invoice-bg) !important;
+        background-color: #ffffff !important; /* Force white background */
         margin: 0;
         padding: 0;
+        font-size: 10pt; /* Standard print size */
+        -webkit-print-color-adjust: exact !important; /* Chrome, Safari */
+        print-color-adjust: exact !important; /* Firefox, Edge */
     }
-    
-    /* Hide the action bar when printing */
-    .no-print,
-    .invoice-actions {
+    /* Hide non-print elements */
+    .no-print, .invoice-actions, .sidebar-nav, .admin-header, .admin-footer /* Add other non-print IDs/classes if needed */ {
         display: none !important;
     }
-
-    /* Remove shadows and margins from the main container */
+    /* Reset page layout */
+    .page-container { padding: 0 !important; }
+    .main-content { margin: 0 !important; padding: 0 !important; }
+    /* Full width invoice */
     .invoice-container {
         width: 100% !important;
         max-width: 100% !important;
         margin: 0 !important;
-        padding: 0 !important;
+        padding: 0 !important; /* No padding */
         box-shadow: none !important;
+        border-radius: 0 !important;
+        border: none !important;
     }
-
-    /* Ensure footer sections don't break across pages */
-    .invoice-footer,
-    .invoice-section {
-        page-break-inside: avoid;
+    /* Ensure colors print */
+    .invoice-header { border-color: var(--primary-color, #4F46E5) !important; }
+    .header-contact i, .invoice-section h3, .terms-section a { color: var(--primary-color, #4F46E5) !important; }
+    .charges-table th { background-color: var(--subtle-bg, #f9fafb) !important; }
+    .charges-table tfoot .total-row td { border-top: 2px solid var(--text-color, #111827) !important; }
+    .charges-table tfoot .total-amount { color: var(--success-color, #10B981) !important; }
+    /* Prevent elements breaking across pages */
+    .invoice-header, .invoice-meta, .invoice-section, .invoice-footer,
+    .charges-table thead, .charges-table tfoot, .summary-table tr, .charges-table tbody tr {
+        page-break-inside: avoid !important;
     }
-
-    /* Force the header to use all available width */
-    .invoice-header {
-        width: 100%;
-    }
+    /* Simplify payment options for print */
+    .payment-options { grid-template-columns: 1fr; gap: 0.5rem; text-align: left;} /* Stack payment options */
+    .pay-option { background: none; border: none; padding: 0.2rem 0; }
+    .pay-option h4 { font-size: 0.8rem; margin-bottom: 0.2rem; text-align: left;}
+    .qr-code, #qr-code-canvas { max-width: 80px; margin: 0 0 0.5rem 0; } /* Smaller QR, align left */
+    .pay-option p, .pay-option .btn, #upi-id-input, #copy-upi-btn { display: none; } /* Hide buttons and extra text */
+    /* Ensure links are visible */
+    .terms-section a { text-decoration: none !important; }
+    /* Show print footer */
+    .invoice-print-footer { display: block !important; margin-top: 1.5rem; padding-top: 0.5rem;}
 }
-
-/* --- 5. STYLES FOR MANUAL INVOICE FLOW --- */
-
-.step1-actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 1.5rem;
-}
-
-.or-divider {
-    font-weight: 600;
-    color: var(--text-muted);
-}
-
-.btn-secondary {
-    background-color: #6b7280;
-    color: #ffffff;
-}
-.btn-secondary:hover {
-    background-color: #4b5563;
-}
-
-h4.section-divider {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text-color);
-    margin-top: 2rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
