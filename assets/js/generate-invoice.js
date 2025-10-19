@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         battaRate: document.getElementById('battaRate'),
         tolls: document.getElementById('tolls'),
         permits: document.getElementById('permits'),
+        upiId: document.getElementById('upiId'),
 
         generatedLinkContainer: document.getElementById('generatedLinkContainer'),
         generatedLink: document.getElementById('generatedLink'),

@@ -102,6 +102,11 @@ function populateQrCode(invoice) {
     const qrCanvas = document.getElementById("qr-code-canvas");
     qrCanvas.innerHTML = ''; // Clear it first
     qrCode.append(qrCanvas);
+
+    const paymentLinkButton = document.getElementById("payment-link");
+    if (paymentLinkButton) {
+        paymentLinkButton.href = upiString; // Set link to the same UPI string
+    }
 }
 
 
