@@ -58,10 +58,19 @@
                         <h2>Step 2: Verify Calculations</h2>
                         <div id="tripSummary" class="trip-summary-box">
                             </div>
-                        <div class="calc-grid">
-                            <div><strong>Total Hours:</strong> <span id="calcTotalHours">--</span></div>
-                            <div><strong>Total KMs:</strong> <span id="calcTotalKms">--</span></div>
-                            <div><strong>Billing Slabs:</strong> <span id="calcBillingSlabs">--</span></div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="calcTotalHours">Total Hours (Editable)</label>
+                                <input type="number" id="calcTotalHours" step="0.01" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="calcTotalKms">Total KMs (Editable)</label>
+                                <input type="number" id="calcTotalKms" step="0.1" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="calcBillingSlabs">Billing Slabs (Editable)</label>
+                                <input type="number" id="calcBillingSlabs" step="1" class="form-control">
+                            </div>
                         </div>
                         <div class="help-text">
                             <i class="fas fa-info-circle"></i>

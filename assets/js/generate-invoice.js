@@ -130,9 +130,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentCalculations = { totalHours, totalKms, billingSlabs };
 
-        elements.calcTotalHours.textContent = `${totalHours.toFixed(2)} Hrs`;
-        elements.calcTotalKms.textContent = `${totalKms.toFixed(1)} Kms`;
-        elements.calcBillingSlabs.textContent = `${billingSlabs} Slab/s`;
+        elements.calcTotalHours.value = totalHours.toFixed(2);
+        elements.calcTotalKms.value = totalKms.toFixed(1);
+        elements.calcBillingSlabs.value = billingSlabs;
     }
 
     /**
@@ -164,7 +164,9 @@ document.addEventListener('DOMContentLoaded', () => {
             permits: parseFloat(elements.permits.value || 0),
         };
 
-        const { totalHours, totalKms, billingSlabs } = currentCalculations;
+        const totalHours = parseFloat(elements.calcTotalHours.value) || 0;
+        const totalKms = parseFloat(elements.calcTotalKms.value) || 0;
+        const billingSlabs = parseInt(elements.calcBillingSlabs.value) || 0;
         const totalIncludedKms = billingSlabs * rates.includedKms;
         const extraKms = totalKms > totalIncludedKms ? (totalKms - totalIncludedKms) : 0;
 
