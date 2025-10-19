@@ -155,8 +155,13 @@
                     </div>
 
                     <div class="step-content" data-step-content="4">
-                        <h2>Step 4: Generate & Save</h2>
-                        <p>A shareable link will be created and the invoice data will be saved to the database.</p>
+                        <h2>Step 4: Review & Generate</h2>
+                        <p>Please review the final invoice summary below before saving and generating the link.</p>
+                        
+                        <div id="finalInvoiceSummary" class="invoice-summary-preview">
+                            <div class="loader"></div>
+                        </div>
+
                         <div id="generatedLinkContainer" class="form-group" style="display: none;">
                             <label>Shareable Invoice Link:</label>
                             <input type="text" id="generatedLink" readonly>
