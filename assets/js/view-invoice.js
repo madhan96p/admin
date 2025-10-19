@@ -48,12 +48,62 @@ document.addEventListener('DOMContentLoaded', () => {
             populateMeta(invoice);
             populateSummary(invoice);
             populateCharges(invoice);
+            populateQrCode(invoice);
 
         } catch (error) {
             document.body.innerHTML = `<h1>Error loading invoice: ${error.message}</h1>`;
             console.error(error);
         }
     }
+   // --- 1. ADD THIS NEW FUNCTION somewhere in the file ---
+
+/**
+ * Generates a dynamic, styled QR code
+ * @param {object} invoice - The fetched invoice data object
+ */
+function populateQrCode(invoice) {
+    // 1. Get the dynamic data
+    const upiId = invoice.UPI_ID;
+    const amount = parseFloat(invoice.Grand_Total).toFixed(2);
+    const transactionNote = `From D.S #${invoice.Booking_ID}`; // Your new format
+    const payeeName = "Shrish Travels";
+
+    // 2. Build the UPI intent string
+    const upiString = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
+
+    // 3. Create the QR code with your exact style requirements
+    const qrCode = new QRCodeStyling({
+        width: 120,  // Matches your .qr-code class max-width
+        height: 120, // Matches your .qr-code class max-width
+        type: "svg",
+        data: upiString,
+        image: "assets/images/logo.webp", // Your logo
+        dotsOptions: {
+            type: "classy-rounded", // Your "Classy Rounded" style
+            gradient: {
+                type: "radial", // Your "Radial Gradient"
+                colorStops: [
+                    { offset: 0, color: "#ffffff" }, // Center white
+                    { offset: 1, color: "#000000" }  // Ends black
+                ]
+            }
+        },
+        backgroundOptions: {
+            color: "#ffffff", // Standard white background
+        },
+        imageOptions: {
+            crossOrigin: "anonymous",
+            margin: 4,
+            imageSize: 0.3
+        }
+    });
+
+    // 4. Find the placeholder div and display the QR code
+    const qrCanvas = document.getElementById("qr-code-canvas");
+    qrCanvas.innerHTML = ''; // Clear it first
+    qrCode.append(qrCanvas);
+}
+
 
     // --- 4. POPULATION FUNCTIONS ---
 

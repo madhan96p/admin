@@ -67,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentStep > 1) goToStep(currentStep - 1);
     });
 
+ 
     // --- 4. CORE DATA LOGIC ---
 
     async function handleLoadTrip() {
@@ -206,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
             Grand_Total: grandTotal,
             Status: "Generated",
             Shareable_Link: shareableLink,
+            UPI_ID: elements.upiId.value || 'drumsjega5466-1@okhdfcbank',
         };
 
         try {

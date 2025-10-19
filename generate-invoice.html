@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,9 @@
     <link rel="stylesheet" href="/assets/css/common.css">
     <link rel="stylesheet" href="/assets/css/invoice.css">
     <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
 </head>
+
 <body>
     <div class="page-container">
         <main class="main-content">
@@ -57,7 +60,7 @@
                     <div class="step-content" data-step-content="2">
                         <h2>Step 2: Verify Calculations</h2>
                         <div id="tripSummary" class="trip-summary-box">
-                            </div>
+                        </div>
                         <div class="form-grid">
                             <div class="form-group">
                                 <label for="calcTotalHours">Total Hours (Editable)</label>
@@ -71,10 +74,15 @@
                                 <label for="calcBillingSlabs">Billing Slabs (Editable)</label>
                                 <input type="number" id="calcBillingSlabs" step="1" class="form-control">
                             </div>
+                            <div class="form-group">
+                                <label for="upiId">UPI ID (for QR Code)</label>
+                                <input type="text" id="upiId" value="drumsjega5466-1@okhdfcbank" class="form-control">
+                            </div>
                         </div>
                         <div class="help-text">
                             <i class="fas fa-info-circle"></i>
-                            <strong>What is a "Slab"?</strong> A "Slab" is one 12-hour billing period. If a trip is 20 hours long, it falls into 2 slabs (1-12 hrs is 1 slab, 12-24 hrs is 2 slabs).
+                            <strong>What is a "Slab"?</strong> A "Slab" is one 12-hour billing period. If a trip is 20
+                            hours long, it falls into 2 slabs (1-12 hrs is 1 slab, 12-24 hrs is 2 slabs).
                         </div>
                     </div>
 
@@ -140,4 +148,5 @@
     <script src="/assets/js/common.js"></script>
     <script src="/assets/js/generate-invoice.js"></script>
 </body>
+
 </html>
