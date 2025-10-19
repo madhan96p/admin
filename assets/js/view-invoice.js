@@ -186,15 +186,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const qrCanvas = document.getElementById("qr-code-canvas");
         qrCanvas.innerHTML = ''; // Clear it first
         qrCode.append(qrCanvas);
-        const copyUpiHeading = document.querySelector('.pay-option:nth-child(3) h4');
-        if (copyUpiHeading) {
-            copyUpiHeading.setAttribute('data-upi-id', invoice.UPI_ID);
-        }
         // 5. Find the "Click to Pay" button and set its link
         const paymentLinkButton = document.getElementById("payment-link");
         if (paymentLinkButton) {
             paymentLinkButton.href = upiString; // Set link to the same UPI string
         }
+
+        // 6. Add UPI ID to the heading for print view
+        const copyUpiHeading = document.querySelector('.pay-option:nth-child(3) h4');
+        if (copyUpiHeading) {
+            copyUpiHeading.setAttribute('data-upi-id', invoice.UPI_ID); // Store ID in data attribute
+        }
+        // Set the input value explicitly too (for web view)
         const upiIdInput = document.getElementById('upi-id-input');
         if (upiIdInput) upiIdInput.value = invoice.UPI_ID;
     }
