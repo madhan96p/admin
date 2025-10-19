@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,11 +9,8 @@
     <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
 </head>
-
 <body>
-
     <div class="invoice-container">
-
         <header class="invoice-header">
             <div class="header-logo">
                 <img src="/assets/images/sh1.webp" alt="Shrish Group Logo">
@@ -104,10 +100,11 @@
                         <p>Scan with any UPI app</p>
                     </div>
                     <div class="pay-option">
-                        <h4>2. Click to Pay</h4>
-                        <a href="https://your-payment-link.com" class="btn btn-success" id="payment-link">Pay Securely
-                            Now</a>
-                        <p>Uses Razorpay/Stripe/etc.</p>
+                        <h4>2. Pay with UPI App</h4>
+                        <a href="#" class="btn btn-success" id="payment-link">
+                            Pay ₹<span id="total-due-amount-button">--.--</span> with UPI
+                        </a>
+                        <p>(For mobile users)</p>
                     </div>
                     <div class="pay-option">
                         <h4>3. Copy UPI ID</h4>
@@ -126,6 +123,12 @@
                     <li>Toll, parking, and state permit charges are as per actuals.</li>
                     <li>Full payment is due upon receipt of this invoice.</li>
                     <li>Thank you for your business!</li>
+                    <li>
+                        Enjoyed our service?
+                        <a href="https://g.page/r/CaYoGVSEfXMNEBM/review" target="_blank" rel="noopener">
+                            Please leave us a review on Google!
+                        </a>
+                    </li>
                 </ol>
             </div>
         </section>
@@ -133,8 +136,8 @@
         <footer class="invoice-print-footer">
             <p>This is a system-generated invoice. | Shrish Travels | www.shrishgroup.com</p>
         </footer>
-
     </div>
+    
     <div class="invoice-actions no-print">
         <button class="btn btn-primary" onclick="window.print()">
             <i class="fas fa-print"></i> Print / Save as PDF
@@ -145,7 +148,5 @@
     </div>
 
     <script src="/assets/js/view-invoice.js"></script>
-
 </body>
-
 </html>
