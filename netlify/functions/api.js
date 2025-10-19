@@ -611,6 +611,19 @@ exports.handler = async function (event, context) {
                 }
                 break;
             }
+            case 'saveInvoice': {
+                const invoiceData = JSON.parse(event.body);
+                const invoiceSheet = doc.sheetsByTitle['invoices']; // Get the new 'invoices' sheet
+                
+                if (!invoiceSheet) {
+                    throw new Error('"invoices" sheet not found in Google Spreadsheet.');
+                }
+                
+                await invoiceSheet.addRow(invoiceData);
+                
+                responseData = { success: true, message: 'Invoice saved successfully.' };
+                break;
+            }   
             default:
                 responseData = { error: 'Invalid action.' };
         }

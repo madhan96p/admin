@@ -17,31 +17,61 @@
             </div>
 
             <div class="card">
-                <div class="invoice-section">
-                    <h2>Step 1: Load Trip Data</h2>
-                    <div class="form-group-inline">
-                        <label for="bookingIdInput">Booking ID (DS_No):</label>
-                        <input type="text" id="bookingIdInput" placeholder="e.g., 5">
-                        <button id="loadTripButton" class="btn btn-primary">Load Trip</button>
+                <div class="stepper-container">
+                    <div class="step active" data-step="1">
+                        <div class="step-icon"><i class="fas fa-search"></i></div>
+                        <div class="step-label">Load Trip</div>
                     </div>
-                    <div id="loader" class="loader" style="display: none;"></div>
-                    <div id="tripSummary" class="trip-summary-box" style="display: none;">
-                        </div>
+                    <div class="step-divider"></div>
+                    <div class="step" data-step="2">
+                        <div class="step-icon"><i class="fas fa-calculator"></i></div>
+                        <div class="step-label">Verify</div>
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="step" data-step="3">
+                        <div class="step-icon"><i class="fas fa-tasks"></i></div>
+                        <div class="step-label">Set Rates</div>
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="step" data-step="4">
+                        <div class="step-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="step-label">Generate</div>
+                    </div>
                 </div>
 
-                <div id="billingForm" style="display: none;">
-                    
-                    <div class="invoice-section">
+                <div class="step-content-container">
+
+                    <div class="step-content active" data-step-content="1">
+                        <h2>Step 1: Load Trip Data</h2>
+                        <p>Enter the Booking ID (DS_No) from the completed duty slip.</p>
+                        <div class="form-group-inline">
+                            <label for="bookingIdInput">Booking ID (DS_No):</label>
+                            <input type="text" id="bookingIdInput" placeholder="e.g., 5">
+                            <button id="loadTripButton" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Load Trip
+                            </button>
+                        </div>
+                        <div id="loader" class="loader" style="display: none;"></div>
+                    </div>
+
+                    <div class="step-content" data-step-content="2">
                         <h2>Step 2: Verify Calculations</h2>
+                        <div id="tripSummary" class="trip-summary-box">
+                            </div>
                         <div class="calc-grid">
                             <div><strong>Total Hours:</strong> <span id="calcTotalHours">--</span></div>
                             <div><strong>Total KMs:</strong> <span id="calcTotalKms">--</span></div>
-                            <div><strong>Billing Slabs (12hr):</strong> <span id="calcBillingSlabs">--</span></div>
+                            <div><strong>Billing Slabs:</strong> <span id="calcBillingSlabs">--</span></div>
+                        </div>
+                        <div class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>What is a "Slab"?</strong> A "Slab" is one 12-hour billing period. If a trip is 20 hours long, it falls into 2 slabs (1-12 hrs is 1 slab, 12-24 hrs is 2 slabs).
                         </div>
                     </div>
 
-                    <div class="invoice-section">
+                    <div class="step-content" data-step-content="3">
                         <h2>Step 3: Enter Billing Rates & Expenses</h2>
+                        <p>These values are pre-filled, but you can adjust them as needed.</p>
                         <div class="form-grid">
                             <div class="form-group">
                                 <label for="baseRate">Base Rate per Slab (₹)</label>
@@ -69,16 +99,30 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="invoice-section actions">
-                        <button id="generateLinkButton" class="btn btn-success">Generate Invoice Link</button>
+
+                    <div class="step-content" data-step-content="4">
+                        <h2>Step 4: Generate & Save</h2>
+                        <p>A shareable link will be created and the invoice data will be saved to the database.</p>
+                        <div id="generatedLinkContainer" class="form-group" style="display: none;">
+                            <label>Shareable Invoice Link:</label>
+                            <input type="text" id="generatedLink" readonly>
+                            <button id="copyLinkButton" class="btn">Copy</button>
+                        </div>
+                        <div id="save-loader" class="loader" style="display: none;"></div>
                     </div>
 
-                    <div id="generatedLinkContainer" class="form-group" style="display: none;">
-                        <label>Shareable Invoice Link:</label>
-                        <input type="text" id="generatedLink" readonly>
-                        <button id="copyLinkButton" class="btn">Copy</button>
-                    </div>
+                </div>
+
+                <div class="step-navigation">
+                    <button id="prevStepBtn" class="btn" style="display: none;">
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                    <button id="nextStepBtn" class="btn btn-primary" style="display: none;">
+                        Next <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button id="saveInvoiceBtn" class="btn btn-success" style="display: none;">
+                        <i class="fas fa-save"></i> Save & Generate
+                    </button>
                 </div>
             </div>
         </main>
