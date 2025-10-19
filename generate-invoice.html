@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Invoice - Shrish Admin</title>
+    <link rel="stylesheet" href="/assets/css/common.css">
+    <link rel="stylesheet" href="/assets/css/invoice.css">
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="page-container">
+        <main class="main-content">
+            <div class="page-header">
+                <h1>Invoice Generator</h1>
+                <p>Create a new client invoice from a completed duty slip.</p>
+            </div>
+
+            <div class="card">
+                <div class="invoice-section">
+                    <h2>Step 1: Load Trip Data</h2>
+                    <div class="form-group-inline">
+                        <label for="bookingIdInput">Booking ID (DS_No):</label>
+                        <input type="text" id="bookingIdInput" placeholder="e.g., 5">
+                        <button id="loadTripButton" class="btn btn-primary">Load Trip</button>
+                    </div>
+                    <div id="loader" class="loader" style="display: none;"></div>
+                    <div id="tripSummary" class="trip-summary-box" style="display: none;">
+                        </div>
+                </div>
+
+                <div id="billingForm" style="display: none;">
+                    
+                    <div class="invoice-section">
+                        <h2>Step 2: Verify Calculations</h2>
+                        <div class="calc-grid">
+                            <div><strong>Total Hours:</strong> <span id="calcTotalHours">--</span></div>
+                            <div><strong>Total KMs:</strong> <span id="calcTotalKms">--</span></div>
+                            <div><strong>Billing Slabs (12hr):</strong> <span id="calcBillingSlabs">--</span></div>
+                        </div>
+                    </div>
+
+                    <div class="invoice-section">
+                        <h2>Step 3: Enter Billing Rates & Expenses</h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="baseRate">Base Rate per Slab (₹)</label>
+                                <input type="number" id="baseRate" value="3900">
+                            </div>
+                            <div class="form-group">
+                                <label for="includedKms">Included KMs per Slab</label>
+                                <input type="number" id="includedKms" value="300">
+                            </div>
+                            <div class="form-group">
+                                <label for="extraKmRate">Extra KM Rate (₹)</label>
+                                <input type="number" id="extraKmRate" value="13">
+                            </div>
+                            <div class="form-group">
+                                <label for="battaRate">Driver Batta per Slab (₹)</label>
+                                <input type="number" id="battaRate" value="600">
+                            </div>
+                            <div class="form-group">
+                                <label for="tolls">Tolls & Parking (₹)</label>
+                                <input type="number" id="tolls" placeholder="e.g., 700">
+                            </div>
+                            <div class="form-group">
+                                <label for="permits">State Permits (₹)</label>
+                                <input type="number" id="permits" value="0">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="invoice-section actions">
+                        <button id="generateLinkButton" class="btn btn-success">Generate Invoice Link</button>
+                    </div>
+
+                    <div id="generatedLinkContainer" class="form-group" style="display: none;">
+                        <label>Shareable Invoice Link:</label>
+                        <input type="text" id="generatedLink" readonly>
+                        <button id="copyLinkButton" class="btn">Copy</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/assets/js/common.js"></script>
+    <script src="/assets/js/generate-invoice.js"></script>
+</body>
+</html>
