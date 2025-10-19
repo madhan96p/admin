@@ -97,6 +97,38 @@ document.addEventListener('DOMContentLoaded', () => {
         const billingSlabs = totalHours > 0 ? Math.ceil(totalHours / 12) : 0;
         elements.calcBillingSlabs.value = billingSlabs;
     }
+// --- 4. CORE DATA LOGIC ---
+
+    // --- NEW HELPER FUNCTION ---
+    /**
+     * Parses a time string like "20 hrs 45 mins" or "8.83 hrs" into decimal hours.
+     * @param {string} timeString The string from the Google Sheet.
+     * @returns {number} The total hours as a decimal (e.g., 20.75).
+     */
+    function parseHoursFromString(timeString) {
+        if (!timeString) return 0;
+
+        let totalHours = 0;
+        const hrsMatch = timeString.match(/(\d+(\.\d+)?) hrs/);
+        const minsMatch = timeString.match(/(\d+) mins/);
+
+        if (hrsMatch) {
+            totalHours += parseFloat(hrsMatch[1]);
+        }
+        if (minsMatch) {
+            totalHours += parseFloat(minsMatch[1]) / 60;
+        }
+
+        // Fallback for strings like "8.83" (if "hrs" is missing but "mins" is not)
+        if (totalHours === 0 && !minsMatch) {
+             const fallbackParse = parseFloat(timeString);
+             if (!isNaN(fallbackParse)) {
+                return fallbackParse;
+             }
+        }
+
+        return totalHours;
+    }
 
     function clearStep2Inputs() {
         elements.calcTotalHours.value = '';
@@ -172,21 +204,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- MODIFIED: To populate context spans ---
+   // --- This is the NEW, FIXED code ---
     function calculateAndDisplayTotals(slip) {
-        const parseDateTime = (dateStr, timeStr) => {
-            if (!dateStr || !timeStr) return null;
-            // Assuming date is 'dd/mm/yyyy' from your API
-            const [day, month, year] = dateStr.split('/');
-            return new Date(`${year}-${month}-${day}T${timeStr}`);
-        };
-
-        const startTime = parseDateTime(slip.Date_Out || slip.Date, slip.Driver_Time_Out);
-        const endTime = parseDateTime(slip.Date_In || slip.Date, slip.Driver_Time_In);
-
-        let totalHours = 0;
-        if (startTime && endTime && endTime > startTime) {
-            totalHours = (endTime - startTime) / (1000 * 60 * 60); // Difference in hours
-        }
+        
+        // --- THIS IS THE FIX ---
+        // We now parse the "20 hrs 45 mins" string directly.
+        let totalHours = parseHoursFromString(slip.Driver_Total_Hrs);
+        // --- END OF FIX ---
 
         const startKm = parseFloat(slip.Driver_Km_Out) || 0;
         const endKm = parseFloat(slip.Driver_Km_In) || 0;
