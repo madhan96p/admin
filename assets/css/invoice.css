@@ -734,55 +734,230 @@ body {
     .invoice-actions .btn { font-size: 0.9rem; }
 }
 
-
 /* ==========================================================================
-   4. Print Styles (Modernized)
+   4. Print Styles (Modernized & Optimized) - Replaces previous print block
    ========================================================================== */
 @media print {
-    body {
-        background-color: #ffffff !important; /* Force white background */
-        margin: 0;
-        padding: 0;
-        font-size: 10pt; /* Standard print size */
-        -webkit-print-color-adjust: exact !important; /* Chrome, Safari */
-        print-color-adjust: exact !important; /* Firefox, Edge */
+    /* --- Basic Setup --- */
+    @page {
+        size: A4; /* Standard paper size */
+        margin: 1.5cm; /* Adjust margins as needed */
     }
-    /* Hide non-print elements */
-    .no-print, .invoice-actions, .sidebar-nav, .admin-header, .admin-footer /* Add other non-print IDs/classes if needed */ {
+    html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 9pt; /* Smaller base font for print */
+        line-height: 1.4; /* Tighter line height */
+        background-color: #ffffff !important; /* Force white background */
+        color: #000000 !important; /* Force black text */
+        -webkit-print-color-adjust: exact !important; /* Chrome, Safari */
+        print-color-adjust: exact !important; /* Standard */
+    }
+
+    /* --- Hide Unwanted Elements --- */
+    .no-print,
+    .invoice-actions,
+    .sidebar-nav, /* Add common elements to hide */
+    .admin-header,
+    .admin-footer,
+    #copy-upi-btn, /* Hide copy button */
+    .pay-option p:not(:first-child), /* Hide secondary payment paragraphs */
+    .pay-option a#payment-link /* Hide the click-to-pay link */
+     {
         display: none !important;
     }
-    /* Reset page layout */
-    .page-container { padding: 0 !important; }
-    .main-content { margin: 0 !important; padding: 0 !important; }
-    /* Full width invoice */
+
+    /* --- Main Container Reset --- */
+    .page-container, .main-content {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
     .invoice-container {
         width: 100% !important;
         max-width: 100% !important;
         margin: 0 !important;
-        padding: 0 !important; /* No padding */
+        padding: 0 !important; /* Remove container padding */
         box-shadow: none !important;
+        border: none !important;
         border-radius: 0 !important;
+        background: none !important; /* Transparent background */
+    }
+
+    /* --- Layout & Spacing Adjustments --- */
+    .invoice-header,
+    .invoice-meta,
+    .invoice-section,
+    .invoice-footer {
+        margin-bottom: 0.8rem !important; /* Reduced vertical spacing */
+        padding-bottom: 0 !important; /* Remove section padding */
+        border: none !important; /* Remove decorative borders */
+        page-break-inside: avoid !important; /* Prevent breaking inside sections */
+    }
+    .invoice-header {
+        padding-bottom: 0.8rem !important;
+        border-bottom: 1px solid #666666 !important; /* Subtle solid border */
+        display: flex !important; /* Ensure flex for alignment */
+        flex-direction: row !important;
+        align-items: flex-start !important;
+    }
+     .header-logo img { width: 60px !important; }
+     .header-title { text-align: center !important; margin: 0 auto !important;}
+     .header-title h1 { font-size: 14pt !important; margin-bottom: 2px !important;}
+     .header-title p { font-size: 8pt !important; }
+     .header-contact { text-align: right !important; font-size: 7pt !important; line-height: 1.3 !important;}
+     .header-contact p { margin: 0 !important; }
+
+    .invoice-meta { margin-top: 1rem !important; display: flex !important; justify-content: space-between !important; align-items: flex-start !important; }
+    .bill-to h3, .invoice-details h2 { font-size: 8pt !important; margin-bottom: 3px !important; color: #333333 !important;}
+    .invoice-details h2 { font-size: 12pt !important; text-align: right !important;}
+    .bill-to p, .invoice-details p { font-size: 8pt !important; margin: 1px 0 !important;}
+    .invoice-details { text-align: right !important; }
+
+    .invoice-section h3 {
+        font-size: 10pt !important;
+        font-weight: bold !important;
+        color: #333333 !important;
+        margin: 0 0 0.5rem 0 !important;
+        padding: 0 !important;
         border: none !important;
     }
-    /* Ensure colors print */
-    .invoice-header { border-color: var(--primary-color, #4F46E5) !important; }
-    .header-contact i, .invoice-section h3, .terms-section a { color: var(--primary-color, #4F46E5) !important; }
-    .charges-table th { background-color: var(--subtle-bg, #f9fafb) !important; }
-    .charges-table tfoot .total-row td { border-top: 2px solid var(--text-color, #111827) !important; }
-    .charges-table tfoot .total-amount { color: var(--success-color, #10B981) !important; }
-    /* Prevent elements breaking across pages */
-    .invoice-header, .invoice-meta, .invoice-section, .invoice-footer,
-    .charges-table thead, .charges-table tfoot, .summary-table tr, .charges-table tbody tr {
-        page-break-inside: avoid !important;
+
+    /* --- Table Styling --- */
+    table { width: 100% !important; border-collapse: collapse !important; }
+    th, td { border: none !important; padding: 4px !important; font-size: 8pt !important; text-align: left !important; vertical-align: top !important; line-height: 1.3 !important;}
+
+    .summary-table td:first-child { width: 80px !important; font-weight: bold !important; color: #000 !important;}
+    .summary-table td { border-bottom: 1px dashed #cccccc !important; }
+    .summary-table tr:last-child td { border-bottom: none !important;}
+
+    .charges-table th {
+        font-weight: bold !important;
+        background-color: #f0f0f0 !important; /* Light gray background */
+        color: #000000 !important;
+        border-bottom: 1px solid #999999 !important; /* Separator line */
     }
-    /* Simplify payment options for print */
-    .payment-options { grid-template-columns: 1fr; gap: 0.5rem; text-align: left;} /* Stack payment options */
-    .pay-option { background: none; border: none; padding: 0.2rem 0; }
-    .pay-option h4 { font-size: 0.8rem; margin-bottom: 0.2rem; text-align: left;}
-    .qr-code, #qr-code-canvas { max-width: 80px; margin: 0 0 0.5rem 0; } /* Smaller QR, align left */
-    .pay-option p, .pay-option .btn, #upi-id-input, #copy-upi-btn { display: none; } /* Hide buttons and extra text */
-    /* Ensure links are visible */
-    .terms-section a { text-decoration: none !important; }
-    /* Show print footer */
-    .invoice-print-footer { display: block !important; margin-top: 1.5rem; padding-top: 0.5rem;}
+    .charges-table td {
+        border-bottom: 1px solid #dddddd !important;
+    }
+    .charges-table tbody tr:last-child td {
+        border-bottom: none !important;
+    }
+    .charges-table th:nth-child(3), .charges-table td:nth-child(3),
+    .charges-table th:nth-child(4), .charges-table td:nth-child(4) {
+        text-align: right !important;
+    }
+     .charges-table td:nth-child(2) { color: #555555 !important; } /* Muted details */
+
+    .charges-table tfoot .total-row td {
+        font-size: 10pt !important;
+        font-weight: bold !important;
+        padding-top: 6px !important;
+        border-top: 1.5px solid #333333 !important; /* Stronger total line */
+    }
+    .charges-table tfoot .total-amount { color: #000000 !important; } /* Black total for print */
+
+    .amount-in-words {
+        font-size: 8pt !important;
+        font-weight: bold !important;
+        margin-top: 5px !important;
+        text-align: right !important;
+        color: #333333 !important;
+    }
+
+    /* --- Footer Sections --- */
+    .invoice-footer {
+        margin-top: 1rem !important;
+        padding-top: 0.8rem !important;
+        border-top: 1px solid #999999 !important; /* Separator line */
+        display: flex !important; /* Use flex for side-by-side */
+        justify-content: space-between !important;
+        align-items: flex-start !important;
+    }
+    .payment-section, .terms-section { width: 48%; } /* Roughly equal columns */
+
+    .payment-section h3, .terms-section h3 {
+        font-size: 9pt !important;
+        margin-bottom: 0.4rem !important;
+    }
+    .payment-section > p { display: none; } /* Hide the "Choose your method..." text */
+
+    .payment-options { display: block !important; } /* Reset grid */
+    .pay-option { background: none !important; border: none !important; padding: 0 !important; margin-bottom: 0.5rem !important; text-align: left !important;}
+    .pay-option h4 { font-size: 8pt !important; margin-bottom: 3px !important; }
+    /* QR Code for print */
+    .qr-code, #qr-code-canvas {
+        max-width: 60px !important; /* Smaller QR code */
+        height: 60px !important;
+        margin: 0 0 5px 0 !important;
+        border: 1px solid #cccccc !important; /* Add border for definition */
+    }
+    #qr-code-canvas svg { width: 100% !important; height: 100% !important; } /* Ensure SVG fills container */
+     .pay-option:nth-child(2) { display: none !important; } /* Hide Click to Pay section */
+     .pay-option:nth-child(3) h4::after { content: ': ' attr(data-upi-id); font-weight: normal; color: #000;} /* Display UPI ID */
+     .pay-option:nth-child(3) input { display: none;} /* Hide input */
+
+
+    .terms-section ol {
+        font-size: 7pt !important; /* Smaller terms */
+        line-height: 1.3 !important;
+        padding-left: 12px !important; /* Tighter list indent */
+        margin: 0 !important;
+        color: #333333 !important;
+    }
+    .terms-section li { margin-bottom: 2px !important; }
+    .terms-section a { color: #000000 !important; text-decoration: none !important; font-weight: normal !important; } /* Simple links */
+
+    /* --- Final Footer --- */
+    .invoice-print-footer {
+        display: block !important; /* Ensure it's visible */
+        text-align: center !important;
+        font-size: 7pt !important;
+        color: #888888 !important; /* Lighter gray */
+        margin-top: 1rem !important;
+        padding-top: 0.5rem !important;
+        border-top: 1px solid #cccccc !important;
+        width: 100% !important;
+        position: fixed; /* Try fixing to bottom - browser support varies */
+        bottom: 10px;
+    }
+
+    /* --- Avoid Breaking Elements --- */
+    h1, h2, h3, h4, h5, h6 { page-break-after: avoid !important; }
+    p, blockquote { page-break-inside: avoid !important; }
+    ul, ol, li { page-break-inside: avoid !important; }
+    table { page-break-inside: auto !important; } /* Allow table rows to break if needed */
+    thead { display: table-header-group !important; } /* Repeat table headers on new pages */
+    tfoot { display: table-footer-group !important; } /* Repeat table footers? (less common) */
+    tr { page-break-inside: avoid !important; page-break-after: auto !important; }
+}
+
+
+/* --- 8. STYLES FOR RUNNING TOTAL DISPLAY --- */
+.running-total {
+    margin-top: 1.5rem;
+    padding: 1rem 1.25rem;
+    background-color: #f3f4f6; /* Subtle background */
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    text-align: right;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--label-color);
+}
+.running-total strong {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-left: 0.75rem;
+}
+
+@media (min-width: 768px) {
+    .running-total {
+        font-size: 1.1rem;
+    }
+    .running-total strong {
+        font-size: 1.5rem;
+    }
 }

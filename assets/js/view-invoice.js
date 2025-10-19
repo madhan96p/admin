@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Step 1: Fetch the *saved invoice data*
             const response = await fetch(`/.netlify/functions/api?action=getInvoiceById&id=${bookingId}`);
             if (!response.ok) throw new Error('Failed to fetch invoice data.');
-            
+
             const data = await response.json();
             if (data.error || !data.invoice) {
                 throw new Error(data.error || 'Invoice data not found.');
@@ -66,11 +66,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function populateSummary(invoice) {
         setText('trip-vehicle', `${invoice.Vehicle_Type} (${invoice.Vehicle_No})`);
-        
+
         const startDate = invoice.Trip_Start_Date;
         const endDate = invoice.Trip_End_Date;
         setText('trip-dates', startDate === endDate ? startDate : `${startDate} to ${endDate}`);
-        
+
         setText('trip-total-kms', `${invoice.Total_KMs} Kms`);
         setText('trip-total-duration', `${invoice.Total_Hours} Hrs (${invoice.Billing_Slabs} Slab/s)`);
     }
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function populateCharges(invoice) {
         const tbody = document.getElementById('charges-tbody');
         tbody.innerHTML = ''; // Clear "Loading..."
-        
+
         let rows = '';
         const extraKms = parseFloat(invoice.Calculated_Extra_KMs || 0);
         const totalExpenses = parseFloat(invoice.Total_Expenses || 0);
@@ -133,12 +133,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // 5. Populate Totals
         setText('grand-total', formatCurrency(grandTotal));
         setText('total-due-amount', formatCurrency(grandTotal));
-        
+
         // This sets the text on the "Click to Pay" button
         setText('total-due-amount-button', grandTotal.toFixed(2));
-        
+
         // Simple amount in words
-        setText('amount-in-words', `Rupees ${grandTotal.toFixed(0)} Only`); 
+        setText('amount-in-words', `Rupees ${grandTotal.toFixed(0)} Only`);
     }
 
     /**
@@ -186,12 +186,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const qrCanvas = document.getElementById("qr-code-canvas");
         qrCanvas.innerHTML = ''; // Clear it first
         qrCode.append(qrCanvas);
-
+        const copyUpiHeading = document.querySelector('.pay-option:nth-child(3) h4');
+        if (copyUpiHeading) {
+            copyUpiHeading.setAttribute('data-upi-id', invoice.UPI_ID);
+        }
         // 5. Find the "Click to Pay" button and set its link
         const paymentLinkButton = document.getElementById("payment-link");
         if (paymentLinkButton) {
             paymentLinkButton.href = upiString; // Set link to the same UPI string
         }
+        const upiIdInput = document.getElementById('upi-id-input');
+        if (upiIdInput) upiIdInput.value = invoice.UPI_ID;
     }
 
     // --- 5. EVENT LISTENERS ---

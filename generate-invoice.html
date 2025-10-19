@@ -138,7 +138,7 @@
                     <div class="step-content" data-step-content="3">
                         <h2>Step 3: Enter Billing Rates & Expenses</h2>
                         <p>These values are pre-filled, but you can adjust them as needed.</p>
-                        
+
                         <div class="form-grid">
                             <div class="form-group">
                                 <label for="baseRate">Base Rate per Slab (₹)
@@ -159,10 +159,10 @@
                             <div class="form-group">
                                 <label for="extraKmRate">Extra KM Rate (₹)
                                     <span class="calc-context">
-                                        (<span id="extraKmTotalKms">--.--</span> KMs - <span id="extraKmIncluded">--</span> KMs = <span id="extraKmResult">--.--</span> KMs)
+                                       (<span id="extraKmCalcResult">--.--</span> KMs * ₹<span id="extraKmRateValue">--.--</span> = ₹<span id="extraKmCostTotal">--.--</span>)
                                     </span>
                                 </label>
-                                <input type="number" id="extraKmRate" value="13" class="form-control">
+                                <input type="number" id="extraKmRate" value="14" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label for="battaRate">Driver Batta per Slab (₹)
@@ -184,6 +184,10 @@
                                 </label>
                                 <input type="number" id="permits" value="0" class="form-control">
                             </div>
+                        </div>
+
+                        <div id="runningTotalDisplay" class="running-total">
+                            Calculated Grand Total: <strong id="runningGrandTotal">₹ --.--</strong>
                         </div>
                     </div>
 
