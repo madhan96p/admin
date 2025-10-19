@@ -138,29 +138,50 @@
                     <div class="step-content" data-step-content="3">
                         <h2>Step 3: Enter Billing Rates & Expenses</h2>
                         <p>These values are pre-filled, but you can adjust them as needed.</p>
+                        
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="baseRate">Base Rate per Slab (₹)</label>
-                                <input type="number" id="baseRate" value="1800" class="form-control">
+                                <label for="baseRate">Base Rate per Slab (₹)
+                                    <span class="calc-context">
+                                        (<span id="baseRateSlabs">--</span> Slabs * ₹<span id="baseRateValue">--.--</span> = ₹<span id="baseRateTotal">--.--</span>)
+                                    </span>
+                                </label>
+                                <input type="number" id="baseRate" value="3900" class="form-control">
                             </div>
                             <div class="form-group">
-                                <label for="includedKms">Included KMs per Slab</label>
-                                <input type="number" id="includedKms" value="250" class="form-control">
+                                <label for="includedKms">Included KMs per Slab
+                                    <span class="calc-context">
+                                        (<span id="includedKmsSlabs">--</span> Slabs * <span id="includedKmsValue">--</span> KMs = <span id="includedKmsTotal">--</span> KMs)
+                                    </span>
+                                </label>
+                                <input type="number" id="includedKms" value="300" class="form-control">
                             </div>
                             <div class="form-group">
-                                <label for="extraKmRate">Extra KM Rate (₹)</label>
-                                <input type="number" id="extraKmRate" value="14" class="form-control">
+                                <label for="extraKmRate">Extra KM Rate (₹)
+                                    <span class="calc-context">
+                                        (<span id="extraKmTotalKms">--.--</span> KMs - <span id="extraKmIncluded">--</span> KMs = <span id="extraKmResult">--.--</span> KMs)
+                                    </span>
+                                </label>
+                                <input type="number" id="extraKmRate" value="13" class="form-control">
                             </div>
                             <div class="form-group">
-                                <label for="battaRate">Driver Batta per Slab (₹)</label>
+                                <label for="battaRate">Driver Batta per Slab (₹)
+                                    <span class="calc-context">
+                                        (<span id="battaRateSlabs">--</span> Slabs * ₹<span id="battaRateValue">--.--</span> = ₹<span id="battaRateTotal">--.--</span>)
+                                    </span>
+                                </label>
                                 <input type="number" id="battaRate" value="600" class="form-control">
                             </div>
                             <div class="form-group">
-                                <label for="tolls">Tolls & Parking (₹)</label>
+                                <label for="tolls">Tolls & Parking (₹)
+                                    <span class="calc-context">(Total amount for all tolls)</span>
+                                </label>
                                 <input type="number" id="tolls" placeholder="e.g., 700" class="form-control">
                             </div>
                             <div class="form-group">
-                                <label for="permits">State Permits (₹)</label>
+                                <label for="permits">State Permits (₹)
+                                    <span class="calc-context">(Total amount for all permits)</span>
+                                </label>
                                 <input type="number" id="permits" value="0" class="form-control">
                             </div>
                         </div>

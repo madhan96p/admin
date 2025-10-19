@@ -4,11 +4,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const elements = {
         bookingIdInput: document.getElementById('bookingIdInput'),
         loadTripButton: document.getElementById('loadTripButton'),
-        manualEntryButton: document.getElementById('manualEntryButton'), // New button
+        manualEntryButton: document.getElementById('manualEntryButton'),
         loader: document.getElementById('loader'),
         tripSummary: document.getElementById('tripSummary'),
         
-        // Manual entry fields
         manualEntryFields: document.getElementById('manualEntryFields'),
         manualGuestName: document.getElementById('manualGuestName'),
         manualGuestMobile: document.getElementById('manualGuestMobile'),
@@ -17,13 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
         manualStartDate: document.getElementById('manualStartDate'),
         manualEndDate: document.getElementById('manualEndDate'),
         
-        // Calculation fields
         calcTotalHours: document.getElementById('calcTotalHours'),
         calcTotalKms: document.getElementById('calcTotalKms'),
         calcBillingSlabs: document.getElementById('calcBillingSlabs'),
         upiId: document.getElementById('upiId'),
 
-        // --- NEW: Context spans for total hours ---
         timeOutContext: document.getElementById('time-out-context'),
         timeInContext: document.getElementById('time-in-context'),
         totalHrsContext: document.getElementById('total-hrs-context'),
@@ -35,6 +32,20 @@ document.addEventListener('DOMContentLoaded', () => {
         battaRate: document.getElementById('battaRate'),
         tolls: document.getElementById('tolls'),
         permits: document.getElementById('permits'),
+
+        // --- NEW: Detailed Rate Context Spans ---
+        baseRateSlabs: document.getElementById('baseRateSlabs'),
+        baseRateValue: document.getElementById('baseRateValue'),
+        baseRateTotal: document.getElementById('baseRateTotal'),
+        includedKmsSlabs: document.getElementById('includedKmsSlabs'),
+        includedKmsValue: document.getElementById('includedKmsValue'),
+        includedKmsTotal: document.getElementById('includedKmsTotal'),
+        extraKmTotalKms: document.getElementById('extraKmTotalKms'),
+        extraKmIncluded: document.getElementById('extraKmIncluded'),
+        extraKmResult: document.getElementById('extraKmResult'),
+        battaRateSlabs: document.getElementById('battaRateSlabs'),
+        battaRateValue: document.getElementById('battaRateValue'),
+        battaRateTotal: document.getElementById('battaRateTotal'),
 
         // Step 4 fields
         finalInvoiceSummary: document.getElementById('finalInvoiceSummary'),
@@ -53,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 2. STATE MANAGEMENT ---
     let currentTripData = null;
-    let isManualFlow = false; // New state variable
+    let isManualFlow = false;
     let currentStep = 1;
     let currentCalculations = {};
 
@@ -69,15 +80,17 @@ document.addEventListener('DOMContentLoaded', () => {
             step.classList.toggle('done', stepNum < stepNumber);
         });
 
+        if (stepNumber === 3) {
+            updateRateContext();
+        }
         if (stepNumber === 4) {
             calculateAndShowSummary();
         }
         
         elements.prevStepBtn.style.display = (stepNumber > 1) ? 'inline-flex' : 'none';
-        elements.nextStepBtn.style.display = (stepNumber < 4 && stepNumber > 1) ? 'inline-flex' : 'none'; // Modified
+        elements.nextStepBtn.style.display = (stepNumber < 4 && stepNumber > 1) ? 'inline-flex' : 'none';
         elements.saveInvoiceBtn.style.display = (stepNumber === 4) ? 'inline-flex' : 'none';
         
-        // Hide "Next" on step 1
         if (stepNumber === 1) {
             elements.nextStepBtn.style.display = 'none';
         }
@@ -93,41 +106,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 4. CORE DATA LOGIC ---
 
-    // --- NEW: Function to auto-calculate slabs ---
+    // --- NEW: Function to update Step 3 hints with detail ---
+    function updateRateContext() {
+        // Read values from Step 2
+        const billingSlabs = parseInt(elements.calcBillingSlabs.value) || 0;
+        const totalKms = parseFloat(elements.calcTotalKms.value) || 0;
+
+        // Read values from Step 3
+        const baseRate = parseFloat(elements.baseRate.value) || 0;
+        const includedKms = parseFloat(elements.includedKms.value) || 0;
+        const battaRate = parseFloat(elements.battaRate.value) || 0;
+
+        // Base Rate Context
+        elements.baseRateSlabs.textContent = billingSlabs;
+        elements.baseRateValue.textContent = baseRate.toFixed(2);
+        elements.baseRateTotal.textContent = (billingSlabs * baseRate).toFixed(2);
+        
+        // Included KMs Context
+        const totalIncludedKms = billingSlabs * includedKms;
+        elements.includedKmsSlabs.textContent = billingSlabs;
+        elements.includedKmsValue.textContent = includedKms;
+        elements.includedKmsTotal.textContent = totalIncludedKms.toFixed(1);
+
+        // Extra KM Rate Context
+        const extraKms = totalKms > totalIncludedKms ? (totalKms - totalIncludedKms) : 0;
+        elements.extraKmTotalKms.textContent = totalKms.toFixed(1);
+        elements.extraKmIncluded.textContent = totalIncludedKms.toFixed(1);
+        elements.extraKmResult.textContent = extraKms.toFixed(1);
+
+        // Batta Rate Context
+        elements.battaRateSlabs.textContent = billingSlabs;
+        elements.battaRateValue.textContent = battaRate.toFixed(2);
+        elements.battaRateTotal.textContent = (billingSlabs * battaRate).toFixed(2);
+    }
+
     function updateBillingSlabs() {
         const totalHours = parseFloat(elements.calcTotalHours.value) || 0;
         const billingSlabs = totalHours > 0 ? Math.ceil(totalHours / 12) : 0;
         elements.calcBillingSlabs.value = billingSlabs;
+        updateRateContext(); 
     }
 
-    // --- NEW HELPER FUNCTION ---
-    /**
-     * Parses a time string like "20 hrs 45 mins" or "8.83 hrs" into decimal hours.
-     * @param {string} timeString The string from the Google Sheet.
-     * @returns {number} The total hours as a decimal (e.g., 20.75).
-     */
     function parseHoursFromString(timeString) {
         if (!timeString) return 0;
-
         let totalHours = 0;
         const hrsMatch = timeString.match(/(\d+(\.\d+)?) hrs/);
         const minsMatch = timeString.match(/(\d+) mins/);
-
-        if (hrsMatch) {
-            totalHours += parseFloat(hrsMatch[1]);
-        }
-        if (minsMatch) {
-            totalHours += parseFloat(minsMatch[1]) / 60;
-        }
-
-        // Fallback for strings like "8.83" (if "hrs" is missing but "mins" is not)
+        if (hrsMatch) { totalHours += parseFloat(hrsMatch[1]); }
+        if (minsMatch) { totalHours += parseFloat(minsMatch[1]) / 60; }
         if (totalHours === 0 && !minsMatch) {
              const fallbackParse = parseFloat(timeString);
-             if (!isNaN(fallbackParse)) {
-                return fallbackParse;
-             }
+             if (!isNaN(fallbackParse)) return fallbackParse;
         }
-
         return totalHours;
     }
 
@@ -141,40 +171,31 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.manualVehicleNo.value = '';
         elements.manualStartDate.value = '';
         elements.manualEndDate.value = '';
-        // Clear context spans
         elements.timeOutContext.textContent = '--';
         elements.timeInContext.textContent = '--';
         elements.totalHrsContext.textContent = '--';
+        updateRateContext(); 
     }
     
-    // MODIFIED: handleLoadTrip
     async function handleLoadTrip() {
         const bookingId = elements.bookingIdInput.value.trim();
         if (!bookingId) return alert('Please enter a Booking ID (DS_No) to load.');
-
-        isManualFlow = false; // Set flow type
+        isManualFlow = false;
         elements.loader.style.display = 'block';
         elements.loadTripButton.disabled = true;
         elements.manualEntryButton.disabled = true;
         currentTripData = null;
-
         try {
             const response = await fetch(`/.netlify/functions/api?action=getDutySlipById&id=${bookingId}`);
             if (!response.ok) throw new Error(`Network response error (Status: ${response.status})`);
-            
             const data = await response.json();
             if (data.error || !data.slip) throw new Error(data.error || 'Trip data not found.');
-
             currentTripData = data.slip;
-            
-            // Populate and show/hide fields
             displayTripSummary(currentTripData);
-            calculateAndDisplayTotals(currentTripData); // This will now populate context
+            calculateAndDisplayTotals(currentTripData);
             elements.tripSummary.style.display = 'block';
             elements.manualEntryFields.style.display = 'none';
-            
-            goToStep(2); // Go to next step on success
-
+            goToStep(2); 
         } catch (error) {
             alert(`Error loading trip data: ${error.message}`);
         } finally {
@@ -184,18 +205,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // NEW: handleManualEntry
     function handleManualEntry() {
         const bookingId = elements.bookingIdInput.value.trim();
         if (!bookingId) return alert('Please enter a unique Booking ID (e.g., "MANUAL-101") first.');
-
-        isManualFlow = true; // Set flow type
-        currentTripData = null; // No loaded data
-
-        // Show/hide fields
+        isManualFlow = true;
+        currentTripData = null; 
         elements.tripSummary.style.display = 'none';
         elements.manualEntryFields.style.display = 'block';
-        
         clearStep2Inputs();
         goToStep(2);
     }
@@ -209,29 +225,20 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    // --- MODIFIED: To populate context spans & use new parser ---
     function calculateAndDisplayTotals(slip) {
-        
-        // --- THIS IS THE FIX ---
-        // We now parse the "20 hrs 45 mins" string directly.
         let totalHours = parseHoursFromString(slip.Driver_Total_Hrs);
-        // --- END OF FIX ---
-
         const startKm = parseFloat(slip.Driver_Km_Out) || 0;
         const endKm = parseFloat(slip.Driver_Km_In) || 0;
         const totalKms = endKm > startKm ? (endKm - startKm) : 0;
         
-        // This is the decimal value
         elements.calcTotalHours.value = totalHours.toFixed(2);
         elements.calcTotalKms.value = totalKms.toFixed(1);
         
-        // This populates the context spans
         elements.timeOutContext.textContent = slip.Driver_Time_Out || '--';
         elements.timeInContext.textContent = slip.Driver_Time_In || '--';
         elements.totalHrsContext.textContent = slip.Driver_Total_Hrs || '0 hrs';
 
-        // This runs the auto-calculation for slabs
-        updateBillingSlabs();
+        updateBillingSlabs(); 
     }
 
     function calculateAndShowSummary() {
@@ -243,11 +250,9 @@ document.addEventListener('DOMContentLoaded', () => {
             tolls: parseFloat(elements.tolls.value || 0),
             permits: parseFloat(elements.permits.value || 0),
         };
-
         const totalHours = parseFloat(elements.calcTotalHours.value) || 0;
         const totalKms = parseFloat(elements.calcTotalKms.value) || 0;
         const billingSlabs = parseInt(elements.calcBillingSlabs.value) || 0;
-
         const totalIncludedKms = billingSlabs * rates.includedKms;
         const extraKms = totalKms > totalIncludedKms ? (totalKms - totalIncludedKms) : 0;
         const packageCost = billingSlabs * rates.baseRate;
@@ -295,7 +300,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${baseUrl}?id=${bookingId}`;
     }
 
-    // MODIFIED: handleSaveInvoice
     async function handleSaveInvoice() {
         elements.saveLoader.style.display = 'block';
         elements.saveInvoiceBtn.disabled = true;
@@ -308,6 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        calculateAndShowSummary(); // Recalculate just before saving
         const {
             totalHours, totalKms, billingSlabs, extraKms,
             packageCost, extraKmCost, battaCost, totalExpenses, grandTotal,
@@ -315,31 +320,18 @@ document.addEventListener('DOMContentLoaded', () => {
         } = currentCalculations;
 
         if (!rates) {
-            // This case might happen if user skips steps, let's re-calculate
-             calculateAndShowSummary();
-             // Re-assign after calculation
-             const {
-                totalHours, totalKms, billingSlabs, extraKms,
-                packageCost, extraKmCost, battaCost, totalExpenses, grandTotal,
-                rates
-            } = currentCalculations;
-             
-             if (!rates) {
-                alert('Error: Calculations are missing. Please go back to Step 3.');
-                elements.saveLoader.style.display = 'none';
-                elements.saveInvoiceBtn.disabled = false;
-                return;
-             }
+            alert('Error: Calculations are missing. Please go back to Step 3.');
+            elements.saveLoader.style.display = 'none';
+            elements.saveInvoiceBtn.disabled = false;
+            return;
         }
 
         const shareableLink = generateShareableLink(bookingId);
         
-        // This object is now built dynamically
         let invoiceData = {
             Invoice_ID: `ST-${bookingId}`,
             Booking_ID: bookingId,
             Invoice_Date: new Date().toLocaleDateString('en-GB'),
-            
             Total_KMs: totalKms.toFixed(1),
             Total_Hours: totalHours.toFixed(2),
             Billing_Slabs: billingSlabs,
@@ -360,9 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
             UPI_ID: elements.upiId.value || 'drumsjega5466-1@okhdfcbank',
         };
 
-        // Add data from the correct source
         if (isManualFlow) {
-            // Get data from manual fields
             invoiceData.Guest_Name = elements.manualGuestName.value;
             invoiceData.Guest_Mobile = elements.manualGuestMobile.value;
             invoiceData.Vehicle_Type = elements.manualVehicleType.value;
@@ -370,7 +360,6 @@ document.addEventListener('DOMContentLoaded', () => {
             invoiceData.Trip_Start_Date = elements.manualStartDate.value;
             invoiceData.Trip_End_Date = elements.manualEndDate.value;
         } else if (currentTripData) {
-            // Get data from loaded trip
             invoiceData.Guest_Name = currentTripData.Guest_Name;
             invoiceData.Guest_Mobile = currentTripData.Guest_Mobile;
             invoiceData.Vehicle_Type = currentTripData.Vehicle_Type;
@@ -384,7 +373,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Save to Google Sheet
         try {
             const response = await fetch('/.netlify/functions/api?action=saveInvoice', {
                 method: 'POST',
@@ -392,7 +380,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(invoiceData)
             });
             const result = await response.json();
-
             if (result.success) {
                 elements.generatedLink.value = shareableLink;
                 elements.generatedLinkContainer.style.display = 'block';
@@ -418,12 +405,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 5. EVENT LISTENERS ---
     elements.loadTripButton.addEventListener('click', handleLoadTrip);
-    elements.manualEntryButton.addEventListener('click', handleManualEntry); // New
+    elements.manualEntryButton.addEventListener('click', handleManualEntry);
     elements.saveInvoiceBtn.addEventListener('click', handleSaveInvoice);
     elements.copyLinkButton.addEventListener('click', handleCopyLink);
     
-    // --- NEW: Event listener for auto-calculating slabs ---
-    elements.calcTotalHours.addEventListener('input', updateBillingSlabs);
+    // --- Auto-updating listeners ---
+    elements.calcTotalHours.addEventListener('input', updateBillingSlabs); 
+    elements.calcBillingSlabs.addEventListener('input', updateRateContext);
+    elements.calcTotalKms.addEventListener('input', updateRateContext);
+    elements.baseRate.addEventListener('input', updateRateContext);
+    elements.includedKms.addEventListener('input', updateRateContext);
+    elements.battaRate.addEventListener('input', updateRateContext);
     
     goToStep(1); // Initialize
 });
