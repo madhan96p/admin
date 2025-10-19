@@ -1,215 +1,317 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. GET DATA FROM URL ---
-    const params = new URLSearchParams(window.location.search);
-    const bookingId = params.get('id'); // This is now the ONLY param we need
+    // --- 1. DOM ELEMENT CACHE ---
+    const elements = {
+        bookingIdInput: document.getElementById('bookingIdInput'),
+        loadTripButton: document.getElementById('loadTripButton'),
+        manualEntryButton: document.getElementById('manualEntryButton'), // New button
+        loader: document.getElementById('loader'),
+        tripSummary: document.getElementById('tripSummary'),
+        
+        // Manual entry fields
+        manualEntryFields: document.getElementById('manualEntryFields'),
+        manualGuestName: document.getElementById('manualGuestName'),
+        manualGuestMobile: document.getElementById('manualGuestMobile'),
+        manualVehicleType: document.getElementById('manualVehicleType'),
+        manualVehicleNo: document.getElementById('manualVehicleNo'),
+        manualStartDate: document.getElementById('manualStartDate'),
+        manualEndDate: document.getElementById('manualEndDate'),
+        
+        // Calculation fields
+        calcTotalHours: document.getElementById('calcTotalHours'),
+        calcTotalKms: document.getElementById('calcTotalKms'),
+        calcBillingSlabs: document.getElementById('calcBillingSlabs'),
+        upiId: document.getElementById('upiId'),
 
-    if (!bookingId) {
-        document.body.innerHTML = '<h1>Error: No Booking ID provided.</h1>';
-        return;
-    }
+        // Rate fields
+        baseRate: document.getElementById('baseRate'),
+        includedKms: document.getElementById('includedKms'),
+        extraKmRate: document.getElementById('extraKmRate'),
+        battaRate: document.getElementById('battaRate'),
+        tolls: document.getElementById('tolls'),
+        permits: document.getElementById('permits'),
 
-    // --- 2. HELPER FUNCTIONS ---
-    const formatCurrency = (num) => {
-        // Convert to number, as it might come as string from GSheet
-        const numberValue = parseFloat(num);
-        if (isNaN(numberValue)) {
-            return '₹ --.--';
-        }
-        return numberValue.toLocaleString('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-            minimumFractionDigits: 2,
+        // Step 4 fields
+        generatedLinkContainer: document.getElementById('generatedLinkContainer'),
+        generatedLink: document.getElementById('generatedLink'),
+        copyLinkButton: document.getElementById('copyLinkButton'),
+        saveLoader: document.getElementById('save-loader'),
+
+        // Stepper UI
+        steps: document.querySelectorAll('.step'),
+        stepContents: document.querySelectorAll('.step-content'),
+        prevStepBtn: document.getElementById('prevStepBtn'),
+        nextStepBtn: document.getElementById('nextStepBtn'),
+        saveInvoiceBtn: document.getElementById('saveInvoiceBtn'),
+    };
+
+    // --- 2. STATE MANAGEMENT ---
+    let currentTripData = null;
+    let isManualFlow = false; // New state variable
+    let currentStep = 1;
+
+    // --- 3. STEPPER/NAVIGATION LOGIC ---
+    function goToStep(stepNumber) {
+        currentStep = stepNumber;
+        elements.stepContents.forEach(content => {
+            content.classList.toggle('active', parseInt(content.dataset.stepContent) === stepNumber);
         });
-    };
-
-    const setText = (id, text) => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.textContent = text || '-'; // Use '-' as a fallback
-        }
-    };
-
-    // --- 3. CORE FETCH LOGIC ---
-    async function loadAndRenderInvoice() {
-        try {
-            // Step 1: Fetch the *saved invoice data*
-            const response = await fetch(`/.netlify/functions/api?action=getInvoiceById&id=${bookingId}`);
-            if (!response.ok) throw new Error('Failed to fetch invoice data.');
-            
-            const data = await response.json();
-            if (data.error || !data.invoice) {
-                throw new Error(data.error || 'Invoice data not found.');
-            }
-
-            const invoice = data.invoice; // All our data is in this object
-
-            // Step 2: Populate the invoice HTML
-            populateMeta(invoice);
-            populateSummary(invoice);
-            populateCharges(invoice);
-            populateQrCode(invoice);
-
-        } catch (error) {
-            document.body.innerHTML = `<h1>Error loading invoice: ${error.message}</h1>`;
-            console.error(error);
+        elements.steps.forEach(step => {
+            const stepNum = parseInt(step.dataset.step);
+            step.classList.toggle('active', stepNum === stepNumber);
+            step.classList.toggle('done', stepNum < stepNumber);
+        });
+        elements.prevStepBtn.style.display = (stepNumber > 1) ? 'inline-flex' : 'none';
+        elements.nextStepBtn.style.display = (stepNumber < 4 && stepNumber > 1) ? 'inline-flex' : 'none'; // Modified
+        elements.saveInvoiceBtn.style.display = (stepNumber === 4) ? 'inline-flex' : 'none';
+        
+        // Hide "Next" on step 1
+        if (stepNumber === 1) {
+            elements.nextStepBtn.style.display = 'none';
         }
     }
-   // --- 1. ADD THIS NEW FUNCTION somewhere in the file ---
 
-/**
- * Generates a dynamic, styled QR code
- * @param {object} invoice - The fetched invoice data object
- */
-function populateQrCode(invoice) {
-    // 1. Get the dynamic data
-    const upiId = invoice.UPI_ID;
-    const amount = parseFloat(invoice.Grand_Total).toFixed(2);
-    const transactionNote = `From D.S #${invoice.Booking_ID}`; // Your new format
-    const payeeName = "Shrish Travels";
-
-    // 2. Build the UPI intent string
-    const upiString = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
-
-    // 3. Create the QR code with your exact style requirements
-    const qrCode = new QRCodeStyling({
-        width: 120,  // Matches your .qr-code class max-width
-        height: 120, // Matches your .qr-code class max-width
-        type: "svg",
-        data: upiString,
-        image: "assets/images/logo.webp", // Your logo
-        dotsOptions: {
-            type: "classy-rounded", // Your "Classy Rounded" style
-            gradient: {
-                type: "radial", // Your "Radial Gradient"
-                colorStops: [
-                    { offset: 0, color: "#ffffff" }, // Center white
-                    { offset: 1, color: "#000000" }  // Ends black
-                ]
-            }
-        },
-        backgroundOptions: {
-            color: "#ffffff", // Standard white background
-        },
-        imageOptions: {
-            crossOrigin: "anonymous",
-            margin: 4,
-            imageSize: 0.3
-        }
+    elements.nextStepBtn.addEventListener('click', () => {
+        if (currentStep < 4) goToStep(currentStep + 1);
     });
 
-    // 4. Find the placeholder div and display the QR code
-    const qrCanvas = document.getElementById("qr-code-canvas");
-    qrCanvas.innerHTML = ''; // Clear it first
-    qrCode.append(qrCanvas);
+    elements.prevStepBtn.addEventListener('click', () => {
+        if (currentStep > 1) goToStep(currentStep - 1);
+    });
 
-    const paymentLinkButton = document.getElementById("payment-link");
-    if (paymentLinkButton) {
-        paymentLinkButton.href = upiString; // Set link to the same UPI string
+    // --- 4. CORE DATA LOGIC ---
+
+    // NEW: Function to clear all Step 2 inputs
+    function clearStep2Inputs() {
+        elements.calcTotalHours.value = '';
+        elements.calcTotalKms.value = '';
+        elements.calcBillingSlabs.value = '';
+        elements.manualGuestName.value = '';
+        elements.manualGuestMobile.value = '';
+        elements.manualVehicleType.value = '';
+        elements.manualVehicleNo.value = '';
+        elements.manualStartDate.value = '';
+        elements.manualEndDate.value = '';
     }
-}
+    
+    // MODIFIED: handleLoadTrip
+    async function handleLoadTrip() {
+        const bookingId = elements.bookingIdInput.value.trim();
+        if (!bookingId) return alert('Please enter a Booking ID (DS_No) to load.');
 
+        isManualFlow = false; // Set flow type
+        elements.loader.style.display = 'block';
+        elements.loadTripButton.disabled = true;
+        elements.manualEntryButton.disabled = true;
+        currentTripData = null;
 
-    // --- 4. POPULATION FUNCTIONS ---
+        try {
+            const response = await fetch(`/.netlify/functions/api?action=getDutySlipById&id=${bookingId}`);
+            if (!response.ok) throw new Error(`Network response error (Status: ${response.status})`);
+            
+            const data = await response.json();
+            if (data.error || !data.slip) throw new Error(data.error || 'Trip data not found.');
 
-    function populateMeta(invoice) {
-        setText('guest-name', invoice.Guest_Name);
-        setText('guest-mobile', invoice.Guest_Mobile);
-        setText('invoice-id', invoice.Invoice_ID);
-        setText('invoice-date', invoice.Invoice_Date);
+            currentTripData = data.slip;
+            
+            // Populate and show/hide fields
+            displayTripSummary(currentTripData);
+            calculateAndDisplayTotals(currentTripData);
+            elements.tripSummary.style.display = 'block';
+            elements.manualEntryFields.style.display = 'none';
+            
+            goToStep(2); // Go to next step on success
+
+        } catch (error) {
+            alert(`Error loading trip data: ${error.message}`);
+        } finally {
+            elements.loader.style.display = 'none';
+            elements.loadTripButton.disabled = false;
+            elements.manualEntryButton.disabled = false;
+        }
     }
 
-    function populateSummary(invoice) {
-        setText('trip-vehicle', `${invoice.Vehicle_Type} (${invoice.Vehicle_No})`);
+    // NEW: handleManualEntry
+    function handleManualEntry() {
+        const bookingId = elements.bookingIdInput.value.trim();
+        if (!bookingId) return alert('Please enter a unique Booking ID (e.g., "MANUAL-101") first.');
+
+        isManualFlow = true; // Set flow type
+        currentTripData = null; // No loaded data
+
+        // Show/hide fields
+        elements.tripSummary.style.display = 'none';
+        elements.manualEntryFields.style.display = 'block';
         
-        const startDate = invoice.Trip_Start_Date;
-        const endDate = invoice.Trip_End_Date;
-        setText('trip-dates', startDate === endDate ? startDate : `${startDate} to ${endDate}`);
-        
-        setText('trip-total-kms', `${invoice.Total_KMs} Kms`);
-        setText('trip-total-duration', `${invoice.Total_Hours} Hrs (${invoice.Billing_Slabs} Slab/s)`);
+        clearStep2Inputs();
+        goToStep(2);
     }
 
-    function populateCharges(invoice) {
-        const tbody = document.getElementById('charges-tbody');
-        tbody.innerHTML = ''; // Clear "Loading..."
-        
-        let rows = '';
-        const extraKms = parseFloat(invoice.Calculated_Extra_KMs || 0);
-        const totalExpenses = parseFloat(invoice.Total_Expenses || 0);
-
-        // 1. Package Cost Row
-        rows += `
-            <tr>
-                <td>Outstation Package</td>
-                <td>${invoice.Billing_Slabs} Slab/s (${invoice.Included_KMs_per_Slab} Kms/Slab)</td>
-                <td>${formatCurrency(invoice.Base_Rate)} / Slab</td>
-                <td>${formatCurrency(invoice.Package_Cost)}</td>
-            </tr>
+    function displayTripSummary(slip) {
+        elements.tripSummary.innerHTML = `
+            <h4>Trip Details for DS #${slip.DS_No}</h4>
+            <p><strong>Guest:</strong> ${slip.Guest_Name || 'N/A'} (${slip.Guest_Mobile || 'N/A'})</p>
+            <p><strong>Driver:</strong> ${slip.Driver_Name || 'N/A'} (${slip.Vehicle_No || 'N/A'})</p>
+            <p><strong>Date:</strong> ${slip.Date || 'N/A'}</p>
         `;
+    }
 
-        // 2. Extra KMs Row
-        if (extraKms > 0) {
-            rows += `
-                <tr>
-                    <td>Extra Kilometer Charge</td>
-                    <td>${invoice.Calculated_Extra_KMs} Kms</td>
-                    <td>${formatCurrency(invoice.Extra_KM_Rate)} / Km</td>
-                    <td>${formatCurrency(invoice.Extra_KM_Cost)}</td>
-                </tr>
-            `;
+    function calculateAndDisplayTotals(slip) {
+        const parseDateTime = (dateStr, timeStr) => {
+            if (!dateStr || !timeStr) return null;
+            const [day, month, year] = dateStr.split('/');
+            return new Date(`${year}-${month}-${day}T${timeStr}`);
+        };
+
+        const startTime = parseDateTime(slip.Date_Out || slip.Date, slip.Driver_Time_Out);
+        const endTime = parseDateTime(slip.Date_In || slip.Date, slip.Driver_Time_In);
+
+        let totalHours = 0;
+        if (startTime && endTime && endTime > startTime) {
+            totalHours = (endTime - startTime) / (1000 * 60 * 60);
         }
 
-        // 3. Driver Batta Row
-        rows += `
-            <tr>
-                <td>Driver Batta</td>
-                <td>${invoice.Billing_Slabs} Slab/s</td>
-                <td>${formatCurrency(invoice.Batta_Rate)} / Slab</td>
-                <td>${formatCurrency(invoice.Batta_Cost)}</td>
-            </tr>
-        `;
+        const startKm = parseFloat(slip.Driver_Km_Out) || 0;
+        const endKm = parseFloat(slip.Driver_Km_In) || 0;
+        const totalKms = endKm > startKm ? (endKm - startKm) : 0;
+        
+        const billingSlabs = totalHours > 0 ? Math.ceil(totalHours / 12) : 0;
 
-        // 4. Expenses Row
-        if (totalExpenses > 0) {
-            rows += `
-                <tr>
-                    <td>Tolls, Parking & Permits</td>
-                    <td>Charged as per actuals</td>
-                    <td>-</td>
-                    <td>${formatCurrency(invoice.Total_Expenses)}</td>
-                </tr>
-            `;
+        elements.calcTotalHours.value = totalHours.toFixed(2);
+        elements.calcTotalKms.value = totalKms.toFixed(1);
+        elements.calcBillingSlabs.value = billingSlabs;
+        // We don't touch the UPI ID, it keeps its default
+    }
+
+    function generateShareableLink(bookingId) {
+        const baseUrl = `${window.location.origin}/view-invoice.html`;
+        return `${baseUrl}?id=${bookingId}`;
+    }
+
+    // MODIFIED: handleSaveInvoice
+    async function handleSaveInvoice() {
+        elements.saveLoader.style.display = 'block';
+        elements.saveInvoiceBtn.disabled = true;
+
+        const bookingId = elements.bookingIdInput.value;
+        if (!bookingId) {
+            alert('Error: Booking ID is missing. Please go back to Step 1.');
+            elements.saveLoader.style.display = 'none';
+            elements.saveInvoiceBtn.disabled = false;
+            return;
         }
 
-        tbody.innerHTML = rows;
+        const rates = {
+            baseRate: parseFloat(elements.baseRate.value || 0),
+            includedKms: parseFloat(elements.includedKms.value || 0),
+            extraKmRate: parseFloat(elements.extraKmRate.value || 0),
+            battaRate: parseFloat(elements.battaRate.value || 0),
+            tolls: parseFloat(elements.tolls.value || 0),
+            permits: parseFloat(elements.permits.value || 0),
+        };
 
-        // 5. Populate Totals
-        setText('grand-total', formatCurrency(invoice.Grand_Total));
-        setText('total-due-amount', formatCurrency(invoice.Grand_Total));
+        const totalHours = parseFloat(elements.calcTotalHours.value) || 0;
+        const totalKms = parseFloat(elements.calcTotalKms.value) || 0;
+        const billingSlabs = parseInt(elements.calcBillingSlabs.value) || 0;
         
-        // This is a complex step, so we'll just use a placeholder for now
-        setText('amount-in-words', `Rupees ${parseFloat(invoice.Grand_Total).toFixed(0)} Only`); 
+        const totalIncludedKms = billingSlabs * rates.includedKms;
+        const extraKms = totalKms > totalIncludedKms ? (totalKms - totalIncludedKms) : 0;
+
+        const packageCost = billingSlabs * rates.baseRate;
+        const extraKmCost = extraKms * rates.extraKmRate;
+        const battaCost = billingSlabs * rates.battaRate;
+        const totalExpenses = rates.tolls + rates.permits;
+        const grandTotal = packageCost + extraKmCost + battaCost + totalExpenses;
+
+        const shareableLink = generateShareableLink(bookingId);
+        
+        // This object is now built dynamically
+        let invoiceData = {
+            Invoice_ID: `ST-${bookingId}`,
+            Booking_ID: bookingId,
+            Invoice_Date: new Date().toLocaleDateString('en-GB'),
+            
+            Total_KMs: totalKms.toFixed(1),
+            Total_Hours: totalHours.toFixed(2),
+            Billing_Slabs: billingSlabs,
+            Base_Rate: rates.baseRate,
+            Included_KMs_per_Slab: rates.includedKms,
+            Extra_KM_Rate: rates.extraKmRate,
+            Calculated_Extra_KMs: extraKms.toFixed(1),
+            Batta_Rate: rates.battaRate,
+            Total_Tolls: rates.tolls,
+            Total_Permits: rates.permits,
+            Package_Cost: packageCost,
+            Extra_KM_Cost: extraKmCost,
+            Batta_Cost: battaCost,
+            Total_Expenses: totalExpenses,
+            Grand_Total: grandTotal,
+            Status: "Generated",
+            Shareable_Link: shareableLink,
+            UPI_ID: elements.upiId.value || 'drumsjega5466-1@okhdfcbank',
+        };
+
+        // Add data from the correct source
+        if (isManualFlow) {
+            // Get data from manual fields
+            invoiceData.Guest_Name = elements.manualGuestName.value;
+            invoiceData.Guest_Mobile = elements.manualGuestMobile.value;
+            invoiceData.Vehicle_Type = elements.manualVehicleType.value;
+            invoiceData.Vehicle_No = elements.manualVehicleNo.value;
+            invoiceData.Trip_Start_Date = elements.manualStartDate.value;
+            invoiceData.Trip_End_Date = elements.manualEndDate.value;
+        } else if (currentTripData) {
+            // Get data from loaded trip
+            invoiceData.Guest_Name = currentTripData.Guest_Name;
+            invoiceData.Guest_Mobile = currentTripData.Guest_Mobile;
+            invoiceData.Vehicle_Type = currentTripData.Vehicle_Type;
+            invoiceData.Vehicle_No = currentTripData.Vehicle_No;
+            invoiceData.Trip_Start_Date = currentTripData.Date_Out || currentTripData.Date;
+            invoiceData.Trip_End_Date = currentTripData.Date_In || currentTripData.Date;
+        } else {
+            alert('Error: No trip data found. Please restart.');
+            elements.saveLoader.style.display = 'none';
+            elements.saveInvoiceBtn.disabled = false;
+            return;
+        }
+
+        // Save to Google Sheet
+        try {
+            const response = await fetch('/.netlify/functions/api?action=saveInvoice', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(invoiceData)
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                elements.generatedLink.value = shareableLink;
+                elements.generatedLinkContainer.style.display = 'block';
+                alert('Invoice saved successfully and link generated!');
+            } else {
+                throw new Error(result.error || 'Unknown error saving invoice.');
+            }
+        } catch (error) {
+            alert(`Error saving invoice: ${error.message}`);
+        } finally {
+            elements.saveLoader.style.display = 'none';
+            elements.saveInvoiceBtn.disabled = false;
+        }
+    }
+
+    function handleCopyLink() {
+        elements.generatedLink.select();
+        navigator.clipboard.writeText(elements.generatedLink.value).then(() => {
+            elements.copyLinkButton.textContent = 'Copied!';
+            setTimeout(() => { elements.copyLinkButton.textContent = 'Copy'; }, 2000);
+        });
     }
 
     // --- 5. EVENT LISTENERS ---
-    const copyUpiBtn = document.getElementById('copy-upi-btn');
-    const upiIdInput = document.getElementById('upi-id-input');
-    if (copyUpiBtn && upiIdInput) {
-        copyUpiBtn.addEventListener('click', () => {
-            upiIdInput.select();
-            navigator.clipboard.writeText(upiIdInput.value).then(() => {
-                const originalText = copyUpiBtn.textContent;
-                copyUpiBtn.textContent = 'Copied!';
-                setTimeout(() => {
-                    copyUpiBtn.textContent = originalText;
-                }, 2000);
-            }).catch(err => {
-                alert('Failed to copy UPI ID.');
-            });
-        });
-    }
-
-    // --- 6. INITIALIZE ---
-    loadAndRenderInvoice();
+    elements.loadTripButton.addEventListener('click', handleLoadTrip);
+    elements.manualEntryButton.addEventListener('click', handleManualEntry); // New
+    elements.saveInvoiceBtn.addEventListener('click', handleSaveInvoice);
+    elements.copyLinkButton.addEventListener('click', handleCopyLink);
+    
+    goToStep(1); // Initialize
 });

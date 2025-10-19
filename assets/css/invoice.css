@@ -477,3 +477,35 @@ body {
         width: 100%;
     }
 }
+
+/* --- 5. STYLES FOR MANUAL INVOICE FLOW --- */
+
+.step1-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.or-divider {
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.btn-secondary {
+    background-color: #6b7280;
+    color: #ffffff;
+}
+.btn-secondary:hover {
+    background-color: #4b5563;
+}
+
+h4.section-divider {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}

@@ -44,17 +44,66 @@
 
                 <div class="step-content-container">
 
-                    <div class="step-content active" data-step-content="1">
-                        <h2>Step 1: Load Trip Data</h2>
-                        <p>Enter the Booking ID (DS_No) from the completed duty slip.</p>
-                        <div class="form-group-inline">
-                            <label for="bookingIdInput">Booking ID (DS_No):</label>
-                            <input type="text" id="bookingIdInput" placeholder="e.g., 5">
-                            <button id="loadTripButton" class="btn btn-primary">
-                                <i class="fas fa-search"></i> Load Trip
-                            </button>
+                    <div class="step-content" data-step-content="2">
+                        <h2>Step 2: Verify & Edit Details</h2>
+                        
+                        <div id="tripSummary" class="trip-summary-box" style="display: none;">
+                            </div>
+
+                        <div id="manualEntryFields" style="display: none;">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="manualGuestName">Guest Name</label>
+                                    <input type="text" id="manualGuestName" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="manualGuestMobile">Guest Mobile</label>
+                                    <input type="text" id="manualGuestMobile" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="manualVehicleType">Vehicle Type</label>
+                                    <input type="text" id="manualVehicleType" class="form-control" placeholder="e.g., Etios">
+                                </div>
+                                <div class="form-group">
+                                    <label for="manualVehicleNo">Vehicle No</label>
+                                    <input type="text" id="manualVehicleNo" class="form-control" placeholder="e.g., TN01AB1234">
+                                </div>
+                                <div class="form-group">
+                                    <label for="manualStartDate">Trip Start Date (dd/mm/yyyy)</label>
+                                    <input type="text" id="manualStartDate" class="form-control" placeholder="e.g., 19/10/2025">
+                                </div>
+                                <div class="form-group">
+                                    <label for="manualEndDate">Trip End Date (dd/mm/yyyy)</label>
+                                    <input type="text" id="manualEndDate" class="form-control" placeholder="e.g., 19/10/2025">
+                                </div>
+                            </div>
                         </div>
-                        <div id="loader" class="loader" style="display: none;"></div>
+
+                        <h4 class="section-divider">Calculation Details</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="calcTotalHours">Total Hours (Editable)</label>
+                                <input type="number" id="calcTotalHours" step="0.01" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="calcTotalKms">Total KMs (Editable)</label>
+                                <input type="number" id="calcTotalKms" step="0.1" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="calcBillingSlabs">Billing Slabs (Editable)</label>
+                                <input type="number" id="calcBillingSlabs" step="1" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="upiId">UPI ID (for QR Code)</label>
+                                <input type="text" id="upiId" value="drumsjega5466-1@okhdfcbank" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>What is a "Slab"?</strong> A "Slab" is one 12-hour billing period. If a trip is 20
+                            hours long, it falls into 2 slabs (1-12 hrs is 1 slab, 12-24 hrs is 2 slabs).
+                        </div>
                     </div>
 
                     <div class="step-content" data-step-content="2">
