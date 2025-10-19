@@ -16,11 +16,18 @@ document.addEventListener('DOMContentLoaded', () => {
         manualStartDate: document.getElementById('manualStartDate'),
         manualEndDate: document.getElementById('manualEndDate'),
         
+        // Calculation fields
         calcTotalHours: document.getElementById('calcTotalHours'),
         calcTotalKms: document.getElementById('calcTotalKms'),
         calcBillingSlabs: document.getElementById('calcBillingSlabs'),
         upiId: document.getElementById('upiId'),
 
+        // --- NEW: Context spans for total hours ---
+        timeOutContext: document.getElementById('time-out-context'),
+        timeInContext: document.getElementById('time-in-context'),
+        totalHrsContext: document.getElementById('total-hrs-context'),
+
+        // Rate fields
         baseRate: document.getElementById('baseRate'),
         includedKms: document.getElementById('includedKms'),
         extraKmRate: document.getElementById('extraKmRate'),
@@ -29,12 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
         permits: document.getElementById('permits'),
 
         // Step 4 fields
-        finalInvoiceSummary: document.getElementById('finalInvoiceSummary'), // New
+        finalInvoiceSummary: document.getElementById('finalInvoiceSummary'),
         generatedLinkContainer: document.getElementById('generatedLinkContainer'),
         generatedLink: document.getElementById('generatedLink'),
         copyLinkButton: document.getElementById('copyLinkButton'),
         saveLoader: document.getElementById('save-loader'),
 
+        // Stepper UI
         steps: document.querySelectorAll('.step'),
         stepContents: document.querySelectorAll('.step-content'),
         prevStepBtn: document.getElementById('prevStepBtn'),
@@ -46,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentTripData = null;
     let isManualFlow = false;
     let currentStep = 1;
-    let currentCalculations = {}; // New: Store final calculations here
+    let currentCalculations = {};
 
     // --- 3. STEPPER/NAVIGATION LOGIC ---
     function goToStep(stepNumber) {
@@ -60,9 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
             step.classList.toggle('done', stepNum < stepNumber);
         });
 
-        // --- MODIFIED: Show summary on Step 4 ---
         if (stepNumber === 4) {
-            calculateAndShowSummary(); // Generate the summary when entering Step 4
+            calculateAndShowSummary();
         }
         
         elements.prevStepBtn.style.display = (stepNumber > 1) ? 'inline-flex' : 'none';
@@ -83,6 +90,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- 4. CORE DATA LOGIC ---
+
+    // --- NEW: Function to auto-calculate slabs ---
+    function updateBillingSlabs() {
+        const totalHours = parseFloat(elements.calcTotalHours.value) || 0;
+        const billingSlabs = totalHours > 0 ? Math.ceil(totalHours / 12) : 0;
+        elements.calcBillingSlabs.value = billingSlabs;
+    }
+
     function clearStep2Inputs() {
         elements.calcTotalHours.value = '';
         elements.calcTotalKms.value = '';
@@ -93,6 +108,10 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.manualVehicleNo.value = '';
         elements.manualStartDate.value = '';
         elements.manualEndDate.value = '';
+        // Clear context spans
+        elements.timeOutContext.textContent = '--';
+        elements.timeInContext.textContent = '--';
+        elements.totalHrsContext.textContent = '--';
     }
     
     async function handleLoadTrip() {
@@ -114,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentTripData = data.slip;
             
             displayTripSummary(currentTripData);
-            calculateAndDisplayTotals(currentTripData);
+            calculateAndDisplayTotals(currentTripData); // This will now populate context
             elements.tripSummary.style.display = 'block';
             elements.manualEntryFields.style.display = 'none';
             
@@ -152,9 +171,11 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
+    // --- MODIFIED: To populate context spans ---
     function calculateAndDisplayTotals(slip) {
         const parseDateTime = (dateStr, timeStr) => {
             if (!dateStr || !timeStr) return null;
+            // Assuming date is 'dd/mm/yyyy' from your API
             const [day, month, year] = dateStr.split('/');
             return new Date(`${year}-${month}-${day}T${timeStr}`);
         };
@@ -164,23 +185,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let totalHours = 0;
         if (startTime && endTime && endTime > startTime) {
-            totalHours = (endTime - startTime) / (1000 * 60 * 60);
+            totalHours = (endTime - startTime) / (1000 * 60 * 60); // Difference in hours
         }
 
         const startKm = parseFloat(slip.Driver_Km_Out) || 0;
         const endKm = parseFloat(slip.Driver_Km_In) || 0;
         const totalKms = endKm > startKm ? (endKm - startKm) : 0;
         
-        const billingSlabs = totalHours > 0 ? Math.ceil(totalHours / 12) : 0;
-
+        // This is the decimal value
         elements.calcTotalHours.value = totalHours.toFixed(2);
         elements.calcTotalKms.value = totalKms.toFixed(1);
-        elements.calcBillingSlabs.value = billingSlabs;
+        
+        // This populates the context spans
+        elements.timeOutContext.textContent = slip.Driver_Time_Out || '--';
+        elements.timeInContext.textContent = slip.Driver_Time_In || '--';
+        elements.totalHrsContext.textContent = slip.Driver_Total_Hrs || '0 hrs';
+
+        // This runs the auto-calculation for slabs
+        updateBillingSlabs();
     }
 
-    // --- NEW FUNCTION: To calculate and show the summary in Step 4 ---
     function calculateAndShowSummary() {
-        // 1. Read all values from inputs (Steps 2 & 3)
         const rates = {
             baseRate: parseFloat(elements.baseRate.value || 0),
             includedKms: parseFloat(elements.includedKms.value || 0),
@@ -194,7 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalKms = parseFloat(elements.calcTotalKms.value) || 0;
         const billingSlabs = parseInt(elements.calcBillingSlabs.value) || 0;
 
-        // 2. Perform calculations
         const totalIncludedKms = billingSlabs * rates.includedKms;
         const extraKms = totalKms > totalIncludedKms ? (totalKms - totalIncludedKms) : 0;
         const packageCost = billingSlabs * rates.baseRate;
@@ -203,14 +227,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalExpenses = rates.tolls + rates.permits;
         const grandTotal = packageCost + extraKmCost + battaCost + totalExpenses;
 
-        // 3. Store calculations globally for handleSaveInvoice to use
         currentCalculations = {
             totalHours, totalKms, billingSlabs, extraKms,
             packageCost, extraKmCost, battaCost, totalExpenses, grandTotal,
-            rates // Store the rates object too
+            rates
         };
 
-        // 4. Generate HTML and inject it
         const summaryHtml = `
             <h4 class="section-divider">Final Invoice Summary</h4>
             <div class="summary-grid">
@@ -244,7 +266,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${baseUrl}?id=${bookingId}`;
     }
 
-    // --- MODIFIED: To use the pre-calculated data ---
     async function handleSaveInvoice() {
         elements.saveLoader.style.display = 'block';
         elements.saveInvoiceBtn.disabled = true;
@@ -257,7 +278,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // --- All calculations are now read from the global state ---
         const {
             totalHours, totalKms, billingSlabs, extraKms,
             packageCost, extraKmCost, battaCost, totalExpenses, grandTotal,
@@ -270,7 +290,6 @@ document.addEventListener('DOMContentLoaded', () => {
             elements.saveInvoiceBtn.disabled = false;
             return;
         }
-        // --- End of change ---
 
         const shareableLink = generateShareableLink(bookingId);
         
@@ -356,6 +375,9 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.manualEntryButton.addEventListener('click', handleManualEntry);
     elements.saveInvoiceBtn.addEventListener('click', handleSaveInvoice);
     elements.copyLinkButton.addEventListener('click', handleCopyLink);
+    
+    // --- NEW: Event listener for auto-calculating slabs ---
+    elements.calcTotalHours.addEventListener('input', updateBillingSlabs);
     
     goToStep(1); // Initialize
 });

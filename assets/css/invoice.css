@@ -553,3 +553,12 @@ h4.section-divider {
     font-size: 1.25rem;
     font-weight: 700;
 }
+
+/* --- 7. STYLES FOR CALCULATION CONTEXT --- */
+.calc-context {
+    font-weight: 400;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    display: block;
+    margin-top: 4px;
+}

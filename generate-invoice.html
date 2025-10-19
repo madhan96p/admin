@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,8 @@
     <link rel="stylesheet" href="/assets/css/common.css">
     <link rel="stylesheet" href="/assets/css/invoice.css">
     <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
-    </head>
+</head>
+
 <body>
     <div class="page-container">
         <main class="main-content">
@@ -62,9 +64,9 @@
 
                     <div class="step-content" data-step-content="2">
                         <h2>Step 2: Verify & Edit Details</h2>
-                        
+
                         <div id="tripSummary" class="trip-summary-box" style="display: none;">
-                            </div>
+                        </div>
 
                         <div id="manualEntryFields" style="display: none;">
                             <h4 class="section-divider">Manual Trip Details</h4>
@@ -79,19 +81,23 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="manualVehicleType">Vehicle Type</label>
-                                    <input type="text" id="manualVehicleType" class="form-control" placeholder="e.g., Etios">
+                                    <input type="text" id="manualVehicleType" class="form-control"
+                                        placeholder="e.g., Etios">
                                 </div>
                                 <div class="form-group">
                                     <label for="manualVehicleNo">Vehicle No</label>
-                                    <input type="text" id="manualVehicleNo" class="form-control" placeholder="e.g., TN01AB1234">
+                                    <input type="text" id="manualVehicleNo" class="form-control"
+                                        placeholder="e.g., TN01AB1234">
                                 </div>
                                 <div class="form-group">
                                     <label for="manualStartDate">Trip Start Date (dd/mm/yyyy)</label>
-                                    <input type="text" id="manualStartDate" class="form-control" placeholder="e.g., 19/10/2025">
+                                    <input type="text" id="manualStartDate" class="form-control"
+                                        placeholder="e.g., 19/10/2025">
                                 </div>
                                 <div class="form-group">
                                     <label for="manualEndDate">Trip End Date (dd/mm/yyyy)</label>
-                                    <input type="text" id="manualEndDate" class="form-control" placeholder="e.g., 19/10/2025">
+                                    <input type="text" id="manualEndDate" class="form-control"
+                                        placeholder="e.g., 19/10/2025">
                                 </div>
                             </div>
                         </div>
@@ -99,7 +105,13 @@
                         <h4 class="section-divider">Calculation Details</h4>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="calcTotalHours">Total Hours (Editable)</label>
+                                <label for="calcTotalHours">
+                                    Total Hours (Editable)
+                                    <span class="calc-context">
+                                        (<span id="time-out-context">--</span> - <span id="time-in-context">--</span> =
+                                        <span id="total-hrs-context">--</span>)
+                                    </span>
+                                </label>
                                 <input type="number" id="calcTotalHours" step="0.01" class="form-control">
                             </div>
                             <div class="form-group">
@@ -157,7 +169,7 @@
                     <div class="step-content" data-step-content="4">
                         <h2>Step 4: Review & Generate</h2>
                         <p>Please review the final invoice summary below before saving and generating the link.</p>
-                        
+
                         <div id="finalInvoiceSummary" class="invoice-summary-preview">
                             <div class="loader"></div>
                         </div>
@@ -190,4 +202,5 @@
     <script src="/assets/js/common.js"></script>
     <script src="/assets/js/generate-invoice.js"></script>
 </body>
+
 </html>
