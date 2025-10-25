@@ -81,7 +81,7 @@ function generateActionButtons(data) {
     const driverSignature = `\n\nRegards Shrish Group\nContact +91 8883451668 / 9176500207\n- Sent via Shrish Travels`;
 
     // 4. Modification: NEW WhatsApp Driver Message Format
-    const driverMessage = `Guest_Name / Guest_Mobile . Rep Time Reporting_Time DS#DS_No by Date Rep @ Reporting_Address.
+    const driverMessage = `Guest_Name / Guest_Mobile . Rep Time Reporting_Time DS#DS_No by Date Rep @ Reporting_Address
 
 Close link: https://admin.shrishgroup.com/edit-slip.html?id=${data.DS_No}
 
