@@ -161,7 +161,7 @@ function initializeEditSlipPage() {
         const message = `
 Booking: DS#${bookingId}
 Passenger: *${guestName}* / +91 ${guestMobile}
-Vehicle: ${vehicleType} (${vehicleNo})
+Vehicle: ${vehicleType}/ *${vehicleNo}*
 Date: ${date}
 Reporting time: ${reportingTime}
 Reporting address: ${reportingAddress}
