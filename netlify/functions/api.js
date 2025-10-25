@@ -83,9 +83,9 @@ function generateActionButtons(data) {
     // 4. Modification: NEW WhatsApp Driver Message Format
     const driverMessage = `Guest_Name / Guest_Mobile . Rep Time Reporting_Time DS#DS_No by Date Rep @Reporting_Address.
 
-Close link: https://admin.shrishgroup.com/edit-slip.html?id=DS_No
+Close link: https://admin.shrishgroup.com/edit-slip.html?id=${dsNo}
 
-SHRISH SERVICES`
+SHRISH GROUP`
         .replace('Guest_Name', data.Guest_Name || 'N/A')
         .replace('Guest_Mobile', data.Guest_Mobile || 'N/A')
         .replace('Reporting_Time', data.Reporting_Time || 'N/A')
