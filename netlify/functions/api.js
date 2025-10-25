@@ -83,7 +83,7 @@ function generateActionButtons(data) {
     // 4. Modification: NEW WhatsApp Driver Message Format
     const driverMessage = `Guest_Name / Guest_Mobile . Rep Time Reporting_Time DS#DS_No by Date Rep @Reporting_Address.
 
-Close link: https://admin.shrishgroup.com/edit-slip.html?id=${dsNo}
+Close link: https://admin.shrishgroup.com/edit-slip.html?id=${data.DS_No}
 
 SHRISH GROUP`
         .replace('Guest_Name', data.Guest_Name || 'N/A')
@@ -614,28 +614,28 @@ exports.handler = async function (event, context) {
             case 'saveInvoice': {
                 const invoiceData = JSON.parse(event.body);
                 const invoiceSheet = doc.sheetsByTitle['invoices']; // Get the new 'invoices' sheet
-                
+
                 if (!invoiceSheet) {
                     throw new Error('"invoices" sheet not found in Google Spreadsheet.');
                 }
-                
+
                 await invoiceSheet.addRow(invoiceData);
-                
+
                 responseData = { success: true, message: 'Invoice saved successfully.' };
                 break;
-            }   
+            }
 
             case 'getInvoiceById': {
                 const bookingId = event.queryStringParameters.id;
                 if (!bookingId) {
                     return { statusCode: 400, body: JSON.stringify({ error: 'Booking ID is required.' }) };
                 }
-                
+
                 const invoiceSheet = doc.sheetsByTitle['invoices'];
                 if (!invoiceSheet) {
                     throw new Error('"invoices" sheet not found in Google Spreadsheet.');
                 }
-                
+
                 await invoiceSheet.loadHeaderRow(); // Ensure headers are loaded
                 const invoiceHeaders = invoiceSheet.headerValues;
                 const invoiceRows = await invoiceSheet.getRows();
