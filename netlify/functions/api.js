@@ -96,7 +96,7 @@ SHRISH GROUP`
     const driverLink = generateWhatsappLink(data.Driver_Mobile, driverMessage);
 
     // 2. Message for the Guest with chauffeur information
-    const guestInfoMessage = `Dear Sir/Madam,\nPlease find below the driver and vehicle details for your trip:\n\nDriver Name : ${data.Driver_Name} ( +91 ${data.Driver_Mobile})\nVehicle : ${data.Vehicle_Type} (${vehicleNo})\n\nThe driver will arrive on time at the pickup location.\nFor any assistance, feel free to contact us.\n\nThank you for choosing Shrish Travels.${guestSignature}`;
+    const guestInfoMessage = `Dear Sir/Madam,\nPlease find below the driver and vehicle details for your trip:\n\nDriver Name : ${data.Driver_Name} / +91 ${data.Driver_Mobile}\nVehicle : ${data.Vehicle_Type} (${vehicleNo})\n\nThe driver will arrive on time at the pickup location.\nFor any assistance, feel free to contact us.\n\nThank you for choosing Shrish Travels.${guestSignature}`;
     const guestInfoLink = generateWhatsappLink(data.Guest_Mobile, guestInfoMessage);
 
     // 3. Message asking the Guest to sign and close the trip
