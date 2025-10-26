@@ -510,3 +510,88 @@ tbody tr.is-entering {
         justify-content: center;
     }
 }
+
+/* === 8. NEW STYLES FOR REVIEW MODAL === */
+
+/* Style for the button container in the header */
+.page-title-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+    gap: var(--spacing-md);
+}
+.title-bar-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+/* New secondary button style */
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg-card);
+    color: var(--color-text-dark);
+    transition: all var(--transition-speed);
+}
+.btn-secondary:hover {
+    background-color: var(--color-bg-muted);
+    border-color: #d1d5db;
+}
+
+/* Styles for the new modal form */
+.modal-help-text {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    background-color: var(--color-bg-muted);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-md);
+    margin-top: 0;
+    margin-bottom: var(--spacing-lg);
+}
+
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+.form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-text-dark);
+    margin-bottom: var(--spacing-sm);
+}
+.form-group input[type="text"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    font-size: 1rem;
+    font-family: inherit;
+    box-sizing: border-box; /* Important for width: 100% */
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+.form-group input[type="text"]:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+/* Loading spinner for submit button */
+#review-submit-btn.is-loading .btn-text {
+    display: none;
+}
+#review-submit-btn.is-loading .btn-spinner {
+    display: inline-block;
+}

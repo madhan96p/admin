@@ -686,6 +686,40 @@ exports.handler = async function (event, context) {
                 break;
             }
 
+            case 'logNewReview': {
+                const formData = JSON.parse(event.body);
+
+                const reviewSheet = doc.sheetsByTitle['g_reviews'];
+                if (!reviewSheet) {
+                    throw new Error('"g_reviews" sheet not found in Google Spreadsheet.');
+                }
+
+                // Auto-increment logic
+                const reviewRows = await reviewSheet.getRows();
+                let nextId = 1;
+                if (reviewRows.length > 0) {
+                    const lastRow = reviewRows[reviewRows.length - 1];
+                    const lastId = parseInt(lastRow.review_id);
+                    if (!isNaN(lastId)) {
+                        nextId = lastId + 1;
+                    }
+                }
+
+                const dataToSave = {
+                    review_id: nextId,
+                    ds_no: formData.ds_no,
+                    reviewer_name: formData.reviewer_name,
+                    rating: formData.rating,
+                    comment: formData.comment,
+                    follow_up_sent: "No" // Default value
+                };
+
+                await reviewSheet.addRow(dataToSave);
+                
+                responseData = { success: true, message: `Review #${nextId} saved.` };
+                break;
+            }
+            
             default:
                 responseData = { error: 'Invalid action.' };
         }

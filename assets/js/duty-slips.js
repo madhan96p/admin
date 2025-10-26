@@ -6,6 +6,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const createButton = document.getElementById('create-new-slip-btn');
     const retryButton = document.getElementById('retry-fetch-btn');
 
+    const logReviewBtn = document.getElementById('log-review-btn');
+    const logReviewModal = document.getElementById('log-review-modal');
+    const reviewModalCloseBtn = document.getElementById('review-modal-close-btn');
+    const logReviewForm = document.getElementById('log-review-form');
+    const reviewSubmitBtn = document.getElementById('review-submit-btn');
+    const reviewDsNo = document.getElementById('review-ds-no');
+    const reviewName = document.getElementById('review-name');
+    const reviewRating = document.getElementById('review-rating');
+    const reviewComment = document.getElementById('review-comment');
+
     // Modal elements
     const quickViewModal = document.getElementById('quick-view-modal');
     const modalBody = document.getElementById('modal-body');
@@ -172,7 +182,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 render();
             }, 300); // Debounce
         });
-
+        logReviewBtn.addEventListener('click', openLogReviewModal);
+        reviewModalCloseBtn.addEventListener('click', closeLogReviewModal);
+        logReviewModal.addEventListener('click', e => {
+            if (e.target === logReviewModal || e.target.matches('.modal-overlay')) {
+                closeLogReviewModal();
+            }
+        });
+        logReviewForm.addEventListener('submit', handleLogReviewSubmit);
         // Use event delegation for actions inside the table body
         tableBody.addEventListener('click', e => {
             const quickViewBtn = e.target.closest('.quick-view-btn');
@@ -181,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const slip = state.allSlips.find(s => s.DS_No == slipId);
                 openQuickViewModal(slip, quickViewBtn);
             }
-            
+
         });
 
         // Modal closing events
@@ -223,6 +240,56 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function openLogReviewModal() {
+        logReviewForm.reset(); // Clear the form
+        logReviewModal.classList.add('visible');
+        reviewDsNo.focus(); // Focus the first field
+    }
+
+    function closeLogReviewModal() {
+        logReviewModal.classList.remove('visible');
+    }
+
+    async function handleLogReviewSubmit(event) {
+        event.preventDefault();
+        
+        // Show spinner and disable button
+        reviewSubmitBtn.disabled = true;
+        reviewSubmitBtn.classList.add('is-loading');
+
+        const formData = {
+            ds_no: reviewDsNo.value.trim(),
+            reviewer_name: reviewName.value.trim(),
+            rating: reviewRating.value,
+            comment: reviewComment.value.trim()
+        };
+
+        try {
+            const response = await fetch('/api?action=logNewReview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+            
+            if (response.ok && result.success) {
+                alert(result.message);
+                closeLogReviewModal();
+            } else {
+                throw new Error(result.error || 'Failed to save review.');
+            }
+
+        } catch (error) {
+            console.error('Failed to submit review:', error);
+            alert(`Error: ${error.message}`);
+        } finally {
+            // Hide spinner and re-enable button
+            reviewSubmitBtn.disabled = false;
+            reviewSubmitBtn.classList.remove('is-loading');
+        }
+    }
+    
     // --- 6. INITIALIZE ---
     function init() {
         setupEventListeners();
