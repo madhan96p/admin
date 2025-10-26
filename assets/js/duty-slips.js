@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const reviewName = document.getElementById('review-name');
     const reviewRating = document.getElementById('review-rating');
     const reviewComment = document.getElementById('review-comment');
+    const reviewGuestNameDisplay = document.getElementById('review-guest-name-display'); // <-- ADD THIS
 
     // Modal elements
     const quickViewModal = document.getElementById('quick-view-modal');
@@ -190,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         logReviewForm.addEventListener('submit', handleLogReviewSubmit);
-        // Use event delegation for actions inside the table body
+        reviewDsNo.addEventListener('blur', fetchGuestNameForReview);
         tableBody.addEventListener('click', e => {
             const quickViewBtn = e.target.closest('.quick-view-btn');
             if (quickViewBtn) {
@@ -242,6 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function openLogReviewModal() {
         logReviewForm.reset(); // Clear the form
+        reviewGuestNameDisplay.innerHTML = ''; // <-- ADD THIS
+        reviewGuestNameDisplay.className = 'guest-name-display'; // <-- ADD THIS
         logReviewModal.classList.add('visible');
         reviewDsNo.focus(); // Focus the first field
     }
@@ -287,6 +290,34 @@ document.addEventListener('DOMContentLoaded', () => {
             // Hide spinner and re-enable button
             reviewSubmitBtn.disabled = false;
             reviewSubmitBtn.classList.remove('is-loading');
+        }
+    }
+    
+    async function fetchGuestNameForReview() {
+        const dsNo = reviewDsNo.value.trim();
+
+        if (!dsNo) {
+            reviewGuestNameDisplay.innerHTML = '';
+            reviewGuestNameDisplay.className = 'guest-name-display';
+            return;
+        }
+
+        reviewGuestNameDisplay.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fetching guest name...';
+        reviewGuestNameDisplay.className = 'guest-name-display is-loading';
+
+        try {
+            const response = await fetch(`/api?action=getDutySlipById&id=${dsNo}`);
+            const result = await response.json();
+
+            if (response.ok && result.slip) {
+                reviewGuestNameDisplay.innerHTML = `✅ Guest: <strong>${result.slip.Guest_Name}</strong>`;
+                reviewGuestNameDisplay.className = 'guest-name-display is-success';
+            } else {
+                throw new Error(result.error || 'Slip not found.');
+            }
+        } catch (error) {
+            reviewGuestNameDisplay.innerHTML = `❌ ${error.message}`;
+            reviewGuestNameDisplay.className = 'guest-name-display is-error';
         }
     }
     
