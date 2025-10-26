@@ -391,3 +391,88 @@
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+/* --- CSS for Simplified Mobile Save Button --- */
+/* Add this to /assets/css/duty_slip_form.css */
+
+/* Hide the old complex FAB container (if it's still cached) */
+.action-buttons-container {
+    display: none;
+}
+
+/* New container for the single button */
+.action-buttons-container-simplified {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: none; /* Hidden on desktop by default */
+}
+
+/* The new single button style */
+.action-button-single {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    background-color: #4F46E5; /* Primary blue */
+    color: white;
+    border: none;
+    border-radius: 50px; /* Rounded pill shape */
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 150px; /* Ensures text is visible */
+}
+
+.action-button-single .icon {
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+
+.action-button-single .text {
+    display: inline-block;
+}
+
+/* Loading state */
+.action-button-single.is-loading {
+    background-color: #5a60a9; /* Darker blue */
+    cursor: not-allowed;
+}
+
+/* Celebration/Success state */
+.action-button-single.is-success {
+    background-color: #22c55e; /* Green */
+}
+
+/* This is the magic: Show our new button on mobile */
+@media (max-width: 768px) {
+    .action-buttons-container-simplified {
+        display: block; /* Show on mobile */
+    }
+    
+    /* And hide the desktop buttons on mobile */
+    .action-buttons-desktop {
+        display: none;
+    }
+
+    /* For very small screens, hide text and show just the icon */
+    @media (max-width: 360px) {
+        .action-button-single .text {
+            display: none;
+        }
+        .action-button-single .icon {
+            margin-right: 0;
+        }
+        .action-button-single {
+            width: 56px;
+            height: 56px;
+            padding: 0;
+            border-radius: 50%; /* Make it a circle */
+            min-width: 0;
+        }
+    }
+}
