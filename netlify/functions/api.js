@@ -686,6 +686,49 @@ exports.handler = async function (event, context) {
                 break;
             }
 
+            case 'getFeedbackDetails': {
+                const reviewId = event.queryStringParameters.id;
+                if (!reviewId) {
+                    return { statusCode: 400, body: JSON.stringify({ error: 'Review ID is required.' }) };
+                }
+
+                // 1. Get the Review
+                const reviewSheet = doc.sheetsByTitle['g_reviews'];
+                if (!reviewSheet) throw new Error('"g_reviews" sheet not found.');
+                
+                const reviewRows = await reviewSheet.getRows();
+                const foundReview = reviewRows.find(row => String(row.review_id) === String(reviewId));
+                if (!foundReview) {
+                    return { statusCode: 404, body: JSON.stringify({ error: 'Review not found.' }) };
+                }
+
+                const reviewData = {};
+                reviewSheet.headerValues.forEach(h => { reviewData[h] = foundReview[h]; });
+
+                // 2. Get the matching Duty Slip
+                let slipData = null;
+                const dsNo = reviewData.ds_no;
+                if (dsNo) {
+                    const dutySheet = doc.sheetsByTitle['duty_slips'];
+                    if (!dutySheet) throw new Error('"duty_slips" sheet not found.');
+
+                    const slipRows = await dutySheet.getRows();
+                    const foundSlip = slipRows.find(row => String(row.DS_No) === String(dsNo));
+                    
+                    if (foundSlip) {
+                        slipData = {};
+                        dutySheet.headerValues.forEach(h => { slipData[h] = foundSlip[h]; });
+                    }
+                }
+                
+                // 3. Combine and return
+                responseData = { 
+                    review: reviewData, 
+                    slip: slipData // Will be null if slip not found or no ds_no
+                };
+                break;
+            }
+            
             case 'logNewReview': {
                 const formData = JSON.parse(event.body);
 
@@ -742,7 +785,7 @@ exports.handler = async function (event, context) {
                 responseData = { reviews: reviews };
                 break;
             }
-            
+
             default:
                 responseData = { error: 'Invalid action.' };
         }

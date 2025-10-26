@@ -1,43 +1,23 @@
 /* =================================
    Feedbacks Page CSS (feedbacks.css)
+   RECREATED (V2)
    ================================= */
 
 /* --- 1. Page States (Loader, Empty, Error) --- */
 .full-page-state {
-    text-align: center;
-    padding: 4rem 1rem;
-    color: var(--color-text-muted);
-    background-color: var(--color-bg-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--border-radius-lg);
-    margin-top: var(--spacing-xl);
+    text-align: center; padding: 4rem 1rem; color: var(--color-text-muted);
+    background-color: var(--color-bg-card); border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-lg); margin-top: var(--spacing-xl);
 }
-.full-page-state i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: #d1d5db;
-}
-.full-page-state h3 {
-    margin: 0.5rem 0;
-    color: var(--color-text-dark);
-}
-#error-state i {
-    color: var(--color-danger);
-}
+.full-page-state i { font-size: 3rem; margin-bottom: 1rem; color: #d1d5db; }
+.full-page-state h3 { margin: 0.5rem 0; color: var(--color-text-dark); }
+#error-state i { color: var(--color-danger); }
 
 /* Skeleton Loader */
-.skeleton-loader {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: var(--spacing-lg);
-}
+.skeleton-loader { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--spacing-lg); }
 .skeleton-card {
-    height: 220px;
-    background-color: var(--color-bg-card);
-    border-radius: var(--border-radius-lg);
-    border: 1px solid var(--color-border);
-    position: relative;
-    overflow: hidden;
+    height: 190px; background-color: var(--color-bg-card); border-radius: var(--border-radius-lg);
+    border: 1px solid var(--color-border); position: relative; overflow: hidden;
 }
 .skeleton-card::after {
     content: ''; position: absolute; top: 0; left: -150%; width: 150%; height: 100%;
@@ -45,7 +25,6 @@
     animation: shimmer 1.5s infinite;
 }
 @keyframes shimmer { 100% { left: 150%; } }
-
 
 /* --- 2. Feedbacks Card Grid --- */
 .feedbacks-grid-container {
@@ -55,192 +34,146 @@
 }
 
 .feedback-mini-card {
-    display: flex;
-    flex-direction: column;
-    background-color: var(--color-bg-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-sm);
+    display: flex; flex-direction: column; background-color: var(--color-bg-card);
+    border-radius: var(--border-radius-lg); box-shadow: var(--shadow-sm);
+    /* NEW: Removed border, will use border-left */
+    border-left: 5px solid;
     transition: all var(--transition-speed);
+    position: relative; /* For the action menu */
 }
 .feedback-mini-card:hover {
     box-shadow: var(--shadow-md);
     transform: translateY(-4px);
 }
 
+/* NEW: Colored borders based on rating */
+.feedback-mini-card.rating-border-5 { border-color: #16a34a; }
+.feedback-mini-card.rating-border-4 { border-color: #3b82f6; }
+.feedback-mini-card.rating-border-3 { border-color: #f97316; }
+.feedback-mini-card.rating-border-2 { border-color: #ef4444; }
+.feedback-mini-card.rating-border-1 { border-color: #dc2626; }
+
 .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: flex; justify-content: space-between; align-items: flex-start;
     padding: var(--spacing-md);
-    border-bottom: 1px solid var(--color-border);
 }
 .card-header h4 {
-    margin: 0;
-    font-size: 1.1rem;
-    color: var(--color-text-dark);
-    /* Truncate long names */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    margin: 0; font-size: 1.1rem; color: var(--color-text-dark);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     max-width: 200px;
 }
-.card-rating {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 1rem;
-    font-weight: 600;
+.card-body {
+    padding: 0 var(--spacing-md) var(--spacing-md) var(--spacing-md);
+    flex-grow: 1;
 }
-/* Star colors */
+
+/* NEW: Star Rating styling */
+.card-rating {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 1.1rem; /* Made stars bigger */
+    margin-bottom: var(--spacing-sm);
+}
+.card-rating .fas { color: #f59e0b; } /* Solid star color (amber) */
+.card-rating .far { color: #d1d5db; } /* Empty star color (gray) */
+
+/* Star colors in text (for modal) */
 .card-rating.rating-5 { color: #16a34a; }
 .card-rating.rating-4 { color: #3b82f6; }
 .card-rating.rating-3 { color: #f97316; }
 .card-rating.rating-2 { color: #ef4444; }
 .card-rating.rating-1 { color: #dc2626; }
 
-.card-body {
-    padding: var(--spacing-md);
-    flex-grow: 1;
-}
 .card-body p {
-    margin: 0;
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
-    /* Clamp comment to 3 lines */
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    -webkit-box-orient: vertical;  
-    overflow: hidden;
-    min-height: 54px; /* 3 lines * 1.6 line-height * 0.9rem font-size */
+    margin: 0; font-size: 0.9rem; color: var(--color-text-muted);
+    display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3;
+    -webkit-box-orient: vertical; overflow: hidden;
+    min-height: 54px; /* 3 lines */
 }
 
 .card-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: flex; justify-content: space-between; align-items: center;
     padding: var(--spacing-sm) var(--spacing-md);
     border-top: 1px solid var(--color-border);
     background-color: var(--color-bg-muted);
 }
-.card-info-tags {
-    display: flex;
-    gap: var(--spacing-sm);
-}
-.info-tag {
-    font-size: 0.8rem;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 99px;
-}
-.info-tag.tag-dsno {
-    background-color: #e0e7ff;
-    color: #3730a3;
-}
-.info-tag.tag-pending {
-    background-color: #fef3c7;
-    color: #92400e;
-}
-.info-tag.tag-sent {
-    background-color: #dcfce7;
-    color: #166534;
-}
+.card-info-tags { display: flex; gap: var(--spacing-sm); }
+.info-tag { font-size: 0.8rem; font-weight: 500; padding: 3px 8px; border-radius: 99px; }
+.info-tag.tag-dsno { background-color: #e0e7ff; color: #3730a3; }
+.info-tag.tag-pending { background-color: #fef3c7; color: #92400e; }
+.info-tag.tag-sent { background-color: #dcfce7; color: #166534; }
 
 /* --- 3. Card Action Menu (3-dot) --- */
-.action-menu {
-    position: relative;
-}
+.action-menu { position: relative; } /* Was absolute, now relative to header */
+
 .action-menu-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.1rem;
-    color: var(--color-text-muted);
-    padding: 5px;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
+    background: none; border: none; cursor: pointer; font-size: 1.1rem;
+    color: var(--color-text-muted); padding: 5px; border-radius: 50%;
+    width: 32px; height: 32px;
+    /* NEW: Hide by default, show on card hover */
+    opacity: 0;
+    transition: all var(--transition-speed);
 }
-.action-menu-btn:hover {
-    background-color: #e5e7eb;
+.feedback-mini-card:hover .action-menu-btn,
+.action-menu.is-open .action-menu-btn {
+    opacity: 1;
 }
+.action-menu-btn:hover { background-color: #e5e7eb; }
+
 .action-dropdown {
-    position: absolute;
-    top: 110%;
-    right: 0;
-    background: var(--color-bg-card);
-    border-radius: var(--border-radius-md);
-    border: 1px solid var(--color-border);
-    box-shadow: var(--shadow-lg);
-    list-style: none;
-    padding: var(--spacing-sm) 0;
-    width: 180px;
-    z-index: 10;
+    position: absolute; top: 110%; right: 0;
+    background: var(--color-bg-card); border-radius: var(--border-radius-md);
+    border: 1px solid var(--color-border); box-shadow: var(--shadow-lg);
+    list-style: none; padding: var(--spacing-sm) 0;
+    width: 180px; z-index: 10;
     display: none; /* Hidden by default */
 }
-.action-menu.is-open .action-dropdown {
-    display: block;
+.action-menu.is-open .action-dropdown { display: block; }
+.action-dropdown button, .action-dropdown a {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.7rem 1.2rem; color: var(--color-text-dark);
+    background: none; border: none; width: 100%; text-align: left;
+    cursor: pointer; font-size: 0.9rem; text-decoration: none;
 }
-.action-dropdown button,
-.action-dropdown a {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.7rem 1.2rem;
-    color: var(--color-text-dark);
-    background: none;
-    border: none;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
-    font-size: 0.9rem;
-    text-decoration: none;
-}
-.action-dropdown button:hover,
-.action-dropdown a:hover {
-    background-color: #f3f4f6;
-}
-.action-dropdown i {
-    width: 18px;
-    text-align: center;
-    color: var(--color-text-muted);
-}
-.action-dropdown a {
-    color: #16a34a; /* Green for WhatsApp */
-}
+.action-dropdown button:hover, .action-dropdown a:hover { background-color: #f3f4f6; }
+.action-dropdown i { width: 18px; text-align: center; color: var(--color-text-muted); }
+.action-dropdown a { color: #16a34a; } /* Green for WhatsApp */
 
 /* --- 4. View Details Modal --- */
-/* (Uses existing modal styles from admin.css/duty-slips.css) */
-/* We just add styles for the content inside */
+.modal-body .detail-section {
+    margin-bottom: var(--spacing-lg);
+}
+.modal-body .detail-section:last-child {
+    margin-bottom: 0;
+}
+.modal-body .detail-section h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--color-primary-light);
+    margin: 0 0 var(--spacing-md) 0;
+}
 .modal-body .detail-grid {
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 140px 1fr; /* Fixed label width */
     gap: var(--spacing-md);
     font-size: 0.95rem;
 }
-.modal-body .detail-grid label {
-    font-weight: 600;
-    color: var(--color-text-muted);
-}
-.modal-body .detail-grid span {
-    color: var(--color-text-dark);
-}
+.modal-body .detail-grid label { font-weight: 600; color: var(--color-text-muted); }
+.modal-body .detail-grid span { color: var(--color-text-dark); word-break: break-word; }
 .modal-body .comment-box {
-    margin-top: var(--spacing-lg);
-    background-color: var(--color-bg-muted);
-    border: 1px solid var(--color-border);
-    padding: var(--spacing-md);
+    margin-top: var(--spacing-md); background-color: var(--color-bg-muted);
+    border: 1px solid var(--color-border); padding: var(--spacing-md);
     border-radius: var(--border-radius-md);
 }
 .modal-body .comment-box label {
-    font-weight: 600;
-    color: var(--color-text-dark);
-    display: block;
-    margin-bottom: var(--spacing-sm);
+    font-weight: 600; color: var(--color-text-dark);
+    display: block; margin-bottom: var(--spacing-sm);
 }
-.modal-body .comment-box p {
-    margin: 0;
-    font-style: italic;
-    color: var(--color-text-base);
+.modal-body .comment-box p { margin: 0; font-style: italic; color: var(--color-text-base); }
+.modal-body .detail-error {
+    color: var(--color-danger);
+    background-color: #fff1f2;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius-md);
 }
