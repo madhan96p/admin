@@ -492,7 +492,6 @@ exports.handler = async function (event, context) {
                 } else { responseData = { error: `Could not find Duty Slip ${slipToUpdateId}` }; }
                 break;
 
-            // --- CORRECTED: Salary Slip Cases ---
             case 'createSalarySlip':
                 const salaryData = JSON.parse(event.body);
                 salaryData.DateGenerated = new Date().toISOString();
@@ -568,6 +567,7 @@ exports.handler = async function (event, context) {
                 }
                 break;
             }
+
             case 'updateSalarySlip': {
                 const updatedSlipData = JSON.parse(event.body);
                 const salarySlipToUpdateId = updatedSlipData.slipId;
@@ -611,6 +611,7 @@ exports.handler = async function (event, context) {
                 }
                 break;
             }
+
             case 'saveInvoice': {
                 const invoiceData = JSON.parse(event.body);
                 const invoiceSheet = doc.sheetsByTitle['invoices']; // Get the new 'invoices' sheet
@@ -654,6 +655,37 @@ exports.handler = async function (event, context) {
                 }
                 break;
             }
+
+            case 'getReviewById': {
+                const reviewId = event.queryStringParameters.id;
+                if (!reviewId) {
+                    return { statusCode: 400, body: JSON.stringify({ error: 'Review ID is required.' }) };
+                }
+
+                const reviewSheet = doc.sheetsByTitle['g_reviews'];
+                if (!reviewSheet) {
+                    throw new Error('"g_reviews" sheet not found in Google Spreadsheet.');
+                }
+
+                await reviewSheet.loadHeaderRow(); // Ensure headers are loaded
+                const reviewHeaders = reviewSheet.headerValues;
+                const reviewRows = await reviewSheet.getRows();
+
+                // Find the row by review_id
+                const foundRow = reviewRows.find(row => String(row.review_id) === String(reviewId));
+
+                if (foundRow) {
+                    const reviewObject = {};
+                    reviewHeaders.forEach(header => {
+                        reviewObject[header] = foundRow[header];
+                    });
+                    responseData = { review: reviewObject };
+                } else {
+                    responseData = { error: `Review with ID ${reviewId} not found.` };
+                }
+                break;
+            }
+
             default:
                 responseData = { error: 'Invalid action.' };
         }
