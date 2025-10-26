@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Get the ID from the URL
     const params = new URLSearchParams(window.location.search);
-    const reviewId = params.get('review_id');
+    const reviewId = params.get('id');
 
     // --- 2. Main Function to Fetch and Display ---
     async function loadFeedback() {

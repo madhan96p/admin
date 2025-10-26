@@ -720,6 +720,29 @@ exports.handler = async function (event, context) {
                 break;
             }
             
+            case 'getAllReviews': {
+                const reviewSheet = doc.sheetsByTitle['g_reviews'];
+                if (!reviewSheet) {
+                    throw new Error('"g_reviews" sheet not found in Google Spreadsheet.');
+                }
+
+                await reviewSheet.loadHeaderRow();
+                const reviewHeaders = reviewSheet.headerValues;
+                const reviewRows = await reviewSheet.getRows();
+
+                // Sort by review_id descending (newest first)
+                const reviews = reviewRows.map(row => {
+                    const reviewObject = {};
+                    reviewHeaders.forEach(header => {
+                        reviewObject[header] = row[header];
+                    });
+                    return reviewObject;
+                }).sort((a, b) => (parseInt(b.review_id, 10) || 0) - (parseInt(a.review_id, 10) || 0));
+                
+                responseData = { reviews: reviews };
+                break;
+            }
+            
             default:
                 responseData = { error: 'Invalid action.' };
         }

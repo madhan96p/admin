@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedbacks | Shrish Admin</title>
+
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <link rel="stylesheet" href="/assets/css/feedbacks.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon/favicon.ico">
+</head>
+<body>
+    <script src="/assets/js/auth.js"></script>
+
+    <div class="admin-layout">
+        <div id="admin-sidebar"></div>
+
+        <main class="admin-main-content">
+            <div id="admin-header"></div>
+
+            <div class="page-content">
+                <div class="page-title-bar">
+                    <h1>Client Feedbacks</h1>
+                    <p>Manage and share client reviews from Google.</p>
+                </div>
+
+                <div id="feedbacks-container">
+
+                    <div id="skeleton-loader" class="skeleton-loader">
+                        <div class="skeleton-card"></div>
+                        <div class="skeleton-card"></div>
+                        <div class="skeleton-card"></div>
+                    </div>
+
+                    <div id="error-state" class="full-page-state" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Could Not Load Feedbacks</h3>
+                        <p>Something went wrong. Please check the console or try again.</p>
+                        <button id="retry-fetch-btn" class="btn-secondary">
+                            <i class="fas fa-redo"></i> Retry
+                        </button>
+                    </div>
+
+                    <div id="empty-state" class="full-page-state" style="display: none;">
+                        <i class="fas fa-star"></i>
+                        <h3>No Feedbacks Logged</h3>
+                        <p>Use the "Log Review" button on the Duty Slips page to add one.</p>
+                    </div>
+
+                    <div id="feedbacks-grid" class="feedbacks-grid-container" style="display: none;">
+                        </div>
+
+                </div>
+            </div>
+
+            <div id="admin-footer"></div>
+        </main>
+    </div>
+
+    <div id="view-details-modal" class="modal-wrapper">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Review Details</h3>
+                <button id="modal-close-btn" class="modal-close-btn" aria-label="Close modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="modal-body" class="modal-body">
+                <div class="skeleton-loader"><div class="skeleton-card" style="height: 200px;"></div></div>
+            </div>
+        </div>
+    </div>
+    <script src="/assets/js/common.js"></script>
+    <script src="/assets/js/feedbacks.js"></script>
+</body>
+</html>
