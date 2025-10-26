@@ -1,49 +1,41 @@
 /**
  * ====================================================================
  * Shrish Travels - Feedbacks Dashboard Styles (feedbacks.css)
- * * Gen Z / Dark Glassmorphism Theme
+ * * Professional / Light Theme
  * ====================================================================
  */
 
-/* --- 1. Root Variables (Vibrant Dark Palette) --- */
+/* --- 1. Root Variables (Professional Light Palette) --- */
 :root {
     /* Fonts */
     font-family: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
 
     /* Colors */
-    --color-bg: #121218; /* Deep space background */
-    --color-surface: rgba(36, 36, 42, 0.7); /* Frosted glass surface */
-    --color-surface-solid: #24242A; /* Solid version of surface */
-    --color-border: rgba(255, 255, 255, 0.1); /* Subtle glass edge */
+    --color-bg: #f4f7fa; /* Light grey background */
+    --color-surface: #ffffff; /* White card/modal surface */
+    --color-surface-solid: #f0f2f5; /* Slightly darker grey for hover/dividers */
+    --color-border: #dee2e6; /* Subtle, crisp border */
     
-    --color-text-primary: #f0f0f5; /* Bright primary text */
-    --color-text-secondary: #a0a0b0; /* Muted secondary text */
+    --color-text-primary: #1a202c; /* Dark, readable text */
+    --color-text-secondary: #555e68; /* Muted secondary text */
     
-    /* Main Accent Gradient */
-    --grad-primary: linear-gradient(90deg, #8E2DE2, #4A00E0);
-    --color-primary: #8E2DE2; /* Purple */
-    --color-secondary: #4A00E0; /* Blue/Purple */
+    /* Main Accent (Professional Blue) */
+    --color-primary: #007bff;
+    --color-secondary: #0056b3; /* Darker shade for titles/hovers */
+    --grad-primary: linear-gradient(90deg, var(--color-primary), var(--color-secondary)); /* Kept if needed, but solids are preferred */
 
-    /* Rating Colors (Neon-inspired) */
-    --rating-1: #FF3B30; /* Neon Red */
-    --rating-2: #FF9500; /* Neon Orange */
-    --rating-3: #FFCC00; /* Neon Yellow */
-    --rating-4: #34C759; /* Neon Green */
-    --rating-5: #007AFF; /* Neon Blue */
+    /* Rating Colors (Standard Web Tones) */
+    --rating-1: #d9534f; /* Red (Danger) */
+    --rating-2: #f0ad4e; /* Orange (Warning) */
+    --rating-3: #ffc107; /* Yellow (Warning) */
+    --rating-4: #5cb85c; /* Green (Success) */
+    --rating-5: #007bff; /* Blue (Primary) */
     
     /* Sizing & Effects */
-    --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.3);
-    --border-radius: 16px; /* Softer, rounder corners */
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06); /* Softer, professional shadow */
+    --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.08); /* Larger shadow for hover/modals */
+    --border-radius: 12px; /* Modern, rounded corners */
     --transition-speed: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    
-    /* Glassmorphism Effect */
-    --glass-effect: {
-        background: var(--color-surface);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid var(--color-border);
-        box-shadow: var(--shadow-md);
-    };
 }
 
 body {
@@ -55,7 +47,7 @@ body {
 
 .page-content {
     padding: 2rem;
-    background-color: transparent; /* Background is now on the body */
+    background-color: transparent;
 }
 
 .page-title-bar {
@@ -68,12 +60,8 @@ body {
     font-size: 2.25rem;
     font-weight: 800;
     margin-bottom: 0.25rem;
-    /* Gradient text */
-    background: var(--grad-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-fill-color: transparent;
+    /* Solid, professional color */
+    color: var(--color-secondary);
 }
 
 .page-title-bar p {
@@ -96,14 +84,15 @@ body {
 }
 
 .skeleton-card {
-    background: var(--color-surface-solid);
+    background: var(--color-surface); /* White base */
+    border: 1px solid var(--color-border);
     border-radius: var(--border-radius);
     height: 220px;
     position: relative;
     overflow: hidden;
 }
 
-/* Vibrant gradient shimmer */
+/* Light gray shimmer */
 .skeleton-card::after {
     content: '';
     position: absolute;
@@ -111,7 +100,7 @@ body {
     left: -150%;
     width: 150%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(142, 45, 226, 0.3), transparent);
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.04), transparent);
     animation: shimmer 1.8s infinite;
 }
 
@@ -122,33 +111,30 @@ body {
 
 /* 3.2. Empty & Error States */
 .full-page-state {
-    @apply --glass-effect;
+    /* Replaces @apply --glass-effect */
+    background: var(--color-surface);
+    border: 1px dashed var(--color-border); /* Dashed to show it's an empty state */
+    box-shadow: var(--shadow-md);
+    border-radius: var(--border-radius);
+    
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
     padding: 3rem;
-    border-radius: var(--border-radius);
-    border-style: dashed;
     min-height: 40vh;
 }
 
 .full-page-state i {
     font-size: 3rem;
     margin-bottom: 1.5rem;
-    /* Gradient icon */
-    background: var(--grad-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-fill-color: transparent;
+    /* Solid primary color */
+    color: var(--color-primary);
 }
 
 #error-state i {
-    background: linear-gradient(90deg, var(--rating-2), var(--rating-1));
-    -webkit-background-clip: text;
-    background-clip: text;
+    color: var(--rating-1); /* Solid red for error */
 }
 
 .full-page-state h3 {
@@ -166,7 +152,7 @@ body {
 }
 
 #retry-fetch-btn {
-    background: var(--grad-primary);
+    background: var(--color-primary);
     color: white;
     padding: 0.75rem 1.5rem;
     border: none;
@@ -174,11 +160,12 @@ body {
     font-weight: 700;
     cursor: pointer;
     transition: var(--transition-speed);
-    box-shadow: 0 4px 15px rgba(142, 45, 226, 0.3);
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
 }
 #retry-fetch-btn:hover {
-    transform: scale(1.05) translateY(-2px);
-    box-shadow: 0 6px 20px rgba(142, 45, 226, 0.4);
+    background: var(--color-secondary);
+    transform: scale(1.03) translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 123, 255, 0.3);
 }
 
 /* --- 4. Feedbacks Grid & Cards --- */
@@ -190,20 +177,23 @@ body {
 }
 
 .feedback-mini-card {
-    @apply --glass-effect;
+    /* Replaces @apply --glass-effect */
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-md);
+    
     border-radius: var(--border-radius);
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
     position: relative;
-    /* Glowy border effect using box-shadow */
-    box-shadow: 0 0 0 1px var(--color-border), 0 0 20px rgba(0,0,0,0.3);
-    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed), border-color var(--transition-speed);
 }
 
 .feedback-mini-card:hover {
-    transform: scale(1.03);
-    box-shadow: 0 0 0 1px var(--color-border), 0 10px 30px rgba(0,0,0,0.4);
+    transform: scale(1.02);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-primary); /* Default hover border */
 }
 
 /* 4.1. Card Content */
@@ -265,33 +255,33 @@ body {
     padding: 0.3rem 0.8rem;
     border-radius: 99px; /* Pill shape */
     text-transform: uppercase;
-    background: rgba(255, 255, 255, 0.05); /* Glassy tag */
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--color-surface-solid); /* Light grey tag */
+    border: 1px solid var(--color-border);
 }
 
 .tag-dsno {
-    color: #a0a0b0;
+    color: var(--color-text-secondary);
 }
 
 .tag-sent {
     color: var(--rating-4);
-    background: rgba(52, 199, 89, 0.1);
-    border-color: rgba(52, 199, 89, 0.2);
+    background: rgba(92, 184, 92, 0.1);
+    border-color: rgba(92, 184, 92, 0.2);
 }
 
 .tag-pending {
-    color: var(--rating-3);
-    background: rgba(255, 204, 0, 0.1);
-    border-color: rgba(255, 204, 0, 0.2);
+    color: var(--rating-2); /* Use orange for pending */
+    background: rgba(240, 173, 78, 0.1);
+    border-color: rgba(240, 173, 78, 0.2);
 }
 
 /* 4.2. Rating Colors */
-/* Apply rating color to the card's box-shadow on hover for a glow */
-.rating-border-1:hover { box-shadow: 0 0 25px -5px var(--rating-1); }
-.rating-border-2:hover { box-shadow: 0 0 25px -5px var(--rating-2); }
-.rating-border-3:hover { box-shadow: 0 0 25px -5px var(--rating-3); }
-.rating-border-4:hover { box-shadow: 0 0 25px -5px var(--rating-4); }
-.rating-border-5:hover { box-shadow: 0 0 25px -5px var(--rating-5); }
+/* Apply rating color to the card's BORDER on hover (replaces glow) */
+.rating-border-1:hover { border-color: var(--rating-1); }
+.rating-border-2:hover { border-color: var(--rating-2); }
+.rating-border-3:hover { border-color: var(--rating-3); }
+.rating-border-4:hover { border-color: var(--rating-4); }
+.rating-border-5:hover { border-color: var(--rating-5); }
 
 /* Color the stars themselves */
 .rating-1 .fa-star { color: var(--rating-1); }
@@ -299,7 +289,7 @@ body {
 .rating-3 .fa-star { color: var(--rating-3); }
 .rating-4 .fa-star { color: var(--rating-4); }
 .rating-5 .fa-star { color: var(--rating-5); }
-.card-rating .far.fa-star { color: rgba(255, 255, 255, 0.2); } /* Empty stars */
+.card-rating .far.fa-star { color: var(--color-border); } /* Empty stars */
 
 /* 4.3. Card Action Menu */
 .card-action-menu {
@@ -309,9 +299,9 @@ body {
 }
 
 .action-menu-btn {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--color-surface-solid);
     color: var(--color-text-secondary);
-    border: none;
+    border: 1px solid var(--color-border);
     border-radius: 50%;
     width: 32px;
     height: 32px;
@@ -324,12 +314,16 @@ body {
 }
 
 .action-menu-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: #e0e0e0; /* Darker grey */
     color: var(--color-text-primary);
 }
 
 .action-dropdown {
-    @apply --glass-effect;
+    /* Replaces @apply --glass-effect */
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
     display: none;
     position: absolute;
     top: 100%;
@@ -378,7 +372,7 @@ body {
 
 .action-dropdown button:hover,
 .action-dropdown a:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--color-surface-solid);
     color: var(--color-text-primary);
 }
 
@@ -411,13 +405,15 @@ body {
     width: 100%;
     height: 100%;
     background: rgba(0,0,0,0.4);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(4px); /* A subtle blur is professional */
+    -webkit-backdrop-filter: blur(4px);
 }
 
 .modal-content {
-    @apply --glass-effect;
-    background: rgba(30, 30, 36, 0.85); /* Darker glass for modal */
+    /* Replaces @apply --glass-effect */
+    background: var(--color-surface); /* Solid white */
+    box-shadow: var(--shadow-lg);
+    
     border-radius: var(--border-radius);
     width: 90%;
     max-width: 700px;
@@ -436,7 +432,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 1.25rem 1.5rem;
-    background: rgba(255, 255, 255, 0.05); /* Header emphasis */
+    background: var(--color-surface-solid); /* Light grey header */
     border-bottom: 1px solid var(--color-border);
 }
 
@@ -489,7 +485,7 @@ body {
 }
 
 .modal-comment-box {
-    background: rgba(0, 0, 0, 0.2); /* Darker inlay for quote */
+    background: var(--color-surface-solid); /* Light grey for quote */
     border-radius: 12px;
     padding: 1.5rem;
     position: relative;
@@ -502,8 +498,8 @@ body {
     top: 1rem;
     left: 1.5rem;
     font-size: 1.5rem;
-    color: var(--color-primary);
-    opacity: 0.5;
+    color: var(--color-primary); /* Blue quote icon */
+    opacity: 1; /* Solid */
 }
 
 .modal-comment-box p {
@@ -522,7 +518,7 @@ body {
 }
 
 .modal-detail-box {
-    background: rgba(0, 0, 0, 0.2);
+    background: var(--color-surface); /* White */
     border-radius: 12px;
     border: 1px solid var(--color-border);
     overflow: hidden;
@@ -534,7 +530,7 @@ body {
     color: var(--color-text-primary);
     margin: 0;
     padding: 1rem 1.5rem;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--color-surface-solid); /* Light grey title bar */
     border-bottom: 1px solid var(--color-border);
 }
 
@@ -569,7 +565,7 @@ body {
 .detail-error {
     padding: 1.5rem;
     font-size: 0.95rem;
-    color: var(--rating-2);
+    color: var(--rating-1); /* Red for error text */
     font-style: italic;
     margin: 0;
 }
@@ -580,11 +576,12 @@ body {
     padding: 1rem;
     min-height: 200px;
     border-style: solid;
-    background: rgba(255, 59, 48, 0.1);
-    border-color: rgba(255, 59, 48, 0.3);
+    background: rgba(217, 83, 79, 0.1); /* Light red background */
+    border-color: rgba(217, 83, 79, 0.2);
 }
 .modal-body .full-page-state i {
-    background: var(--rating-1);
-    -webkit-background-clip: text;
-    background-clip: text;
+    color: var(--rating-1); /* Solid red icon */
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
 }
