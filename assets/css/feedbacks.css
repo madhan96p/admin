@@ -1,29 +1,18 @@
 /* =================================
    Feedbacks Page CSS (feedbacks.css)
-   RECREATED (V2)
+   RECREATED (V3)
    ================================= */
 
 /* --- 1. Page States (Loader, Empty, Error) --- */
-.full-page-state {
-    text-align: center; padding: 4rem 1rem; color: var(--color-text-muted);
-    background-color: var(--color-bg-card); border: 1px solid var(--color-border);
-    border-radius: var(--border-radius-lg); margin-top: var(--spacing-xl);
-}
+.full-page-state { text-align: center; padding: 4rem 1rem; color: var(--color-text-muted); background-color: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: var(--border-radius-lg); margin-top: var(--spacing-xl); }
 .full-page-state i { font-size: 3rem; margin-bottom: 1rem; color: #d1d5db; }
 .full-page-state h3 { margin: 0.5rem 0; color: var(--color-text-dark); }
 #error-state i { color: var(--color-danger); }
 
 /* Skeleton Loader */
 .skeleton-loader { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--spacing-lg); }
-.skeleton-card {
-    height: 190px; background-color: var(--color-bg-card); border-radius: var(--border-radius-lg);
-    border: 1px solid var(--color-border); position: relative; overflow: hidden;
-}
-.skeleton-card::after {
-    content: ''; position: absolute; top: 0; left: -150%; width: 150%; height: 100%;
-    background: linear-gradient(90deg, transparent, #f3f4f6, transparent);
-    animation: shimmer 1.5s infinite;
-}
+.skeleton-card { height: 190px; background-color: var(--color-bg-card); border-radius: var(--border-radius-lg); border: 1px solid var(--color-border); position: relative; overflow: hidden; }
+.skeleton-card::after { content: ''; position: absolute; top: 0; left: -150%; width: 150%; height: 100%; background: linear-gradient(90deg, transparent, #f3f4f6, transparent); animation: shimmer 1.5s infinite; }
 @keyframes shimmer { 100% { left: 150%; } }
 
 /* --- 2. Feedbacks Card Grid --- */
@@ -36,7 +25,6 @@
 .feedback-mini-card {
     display: flex; flex-direction: column; background-color: var(--color-bg-card);
     border-radius: var(--border-radius-lg); box-shadow: var(--shadow-sm);
-    /* NEW: Removed border, will use border-left */
     border-left: 5px solid;
     transition: all var(--transition-speed);
     position: relative; /* For the action menu */
@@ -46,7 +34,6 @@
     transform: translateY(-4px);
 }
 
-/* NEW: Colored borders based on rating */
 .feedback-mini-card.rating-border-5 { border-color: #16a34a; }
 .feedback-mini-card.rating-border-4 { border-color: #3b82f6; }
 .feedback-mini-card.rating-border-3 { border-color: #f97316; }
@@ -54,29 +41,23 @@
 .feedback-mini-card.rating-border-1 { border-color: #dc2626; }
 
 .card-header {
-    display: flex; justify-content: space-between; align-items: flex-start;
     padding: var(--spacing-md);
 }
 .card-header h4 {
-    margin: 0; font-size: 1.1rem; color: var(--color-text-dark);
+    margin: 0 0 8px 0; font-size: 1.1rem; color: var(--color-text-dark);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    max-width: 200px;
+    padding-right: 30px; /* Space for the 3-dot menu */
 }
 .card-body {
     padding: 0 var(--spacing-md) var(--spacing-md) var(--spacing-md);
     flex-grow: 1;
 }
 
-/* NEW: Star Rating styling */
-.card-rating {
-    display: flex; align-items: center; gap: 4px;
-    font-size: 1.1rem; /* Made stars bigger */
-    margin-bottom: var(--spacing-sm);
-}
-.card-rating .fas { color: #f59e0b; } /* Solid star color (amber) */
-.card-rating .far { color: #d1d5db; } /* Empty star color (gray) */
+.card-rating { display: flex; align-items: center; gap: 4px; font-size: 1.1rem; }
+.card-rating .fas { color: #f59e0b; } /* Solid star */
+.card-rating .far { color: #d1d5db; } /* Empty star */
 
-/* Star colors in text (for modal) */
+/* Star colors for modal text */
 .card-rating.rating-5 { color: #16a34a; }
 .card-rating.rating-4 { color: #3b82f6; }
 .card-rating.rating-3 { color: #f97316; }
@@ -90,32 +71,29 @@
     min-height: 54px; /* 3 lines */
 }
 
-.card-footer {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-top: 1px solid var(--color-border);
-    background-color: var(--color-bg-muted);
-}
+.card-footer { display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-sm) var(--spacing-md); border-top: 1px solid var(--color-border); background-color: var(--color-bg-muted); }
 .card-info-tags { display: flex; gap: var(--spacing-sm); }
 .info-tag { font-size: 0.8rem; font-weight: 500; padding: 3px 8px; border-radius: 99px; }
 .info-tag.tag-dsno { background-color: #e0e7ff; color: #3730a3; }
 .info-tag.tag-pending { background-color: #fef3c7; color: #92400e; }
 .info-tag.tag-sent { background-color: #dcfce7; color: #166534; }
 
-/* --- 3. Card Action Menu (3-dot) --- */
-.action-menu { position: relative; } /* Was absolute, now relative to header */
-
+/* --- 3. Card Action Menu (NEW HOVER BEHAVIOR) --- */
+.card-action-menu {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
 .action-menu-btn {
     background: none; border: none; cursor: pointer; font-size: 1.1rem;
     color: var(--color-text-muted); padding: 5px; border-radius: 50%;
     width: 32px; height: 32px;
-    /* NEW: Hide by default, show on card hover */
-    opacity: 0;
+    opacity: 0; /* Hide by default */
     transition: all var(--transition-speed);
 }
 .feedback-mini-card:hover .action-menu-btn,
-.action-menu.is-open .action-menu-btn {
-    opacity: 1;
+.card-action-menu.is-open .action-menu-btn {
+    opacity: 1; /* Show on card hover or if open */
 }
 .action-menu-btn:hover { background-color: #e5e7eb; }
 
@@ -127,25 +105,64 @@
     width: 180px; z-index: 10;
     display: none; /* Hidden by default */
 }
-.action-menu.is-open .action-dropdown { display: block; }
-.action-dropdown button, .action-dropdown a {
-    display: flex; align-items: center; gap: 0.75rem;
-    padding: 0.7rem 1.2rem; color: var(--color-text-dark);
-    background: none; border: none; width: 100%; text-align: left;
-    cursor: pointer; font-size: 0.9rem; text-decoration: none;
-}
+.card-action-menu.is-open .action-dropdown { display: block; }
+.action-dropdown button, .action-dropdown a { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 1.2rem; color: var(--color-text-dark); background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-size: 0.9rem; text-decoration: none; }
 .action-dropdown button:hover, .action-dropdown a:hover { background-color: #f3f4f6; }
 .action-dropdown i { width: 18px; text-align: center; color: var(--color-text-muted); }
 .action-dropdown a { color: #16a34a; } /* Green for WhatsApp */
 
-/* --- 4. View Details Modal --- */
-.modal-body .detail-section {
-    margin-bottom: var(--spacing-lg);
+/* --- 4. NEW View Details Modal --- */
+.modal-review-header {
+    text-align: center;
+    padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-lg) var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border);
 }
-.modal-body .detail-section:last-child {
-    margin-bottom: 0;
+.modal-review-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--color-text-dark);
 }
-.modal-body .detail-section h4 {
+.modal-review-header .card-rating {
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-top: 8px;
+}
+
+.modal-comment-box {
+    background-color: var(--color-bg-muted);
+    border: 1px solid var(--color-border);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    margin: var(--spacing-lg) 0;
+    position: relative;
+}
+.modal-comment-box .fa-quote-left {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    font-size: 1rem;
+    color: #d1d5db;
+}
+.modal-comment-box p {
+    margin: 0;
+    font-style: italic;
+    color: var(--color-text-base);
+    padding-left: 25px;
+}
+
+.modal-details-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+}
+
+.modal-detail-box {
+    background-color: #f9fafb;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-md);
+}
+.modal-detail-box h4 {
     font-size: 1rem;
     font-weight: 600;
     color: var(--color-primary-dark);
@@ -153,27 +170,33 @@
     border-bottom: 2px solid var(--color-primary-light);
     margin: 0 0 var(--spacing-md) 0;
 }
-.modal-body .detail-grid {
+.modal-detail-box .detail-grid {
     display: grid;
-    grid-template-columns: 140px 1fr; /* Fixed label width */
+    grid-template-columns: 1fr;
     gap: var(--spacing-md);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
 }
-.modal-body .detail-grid label { font-weight: 600; color: var(--color-text-muted); }
-.modal-body .detail-grid span { color: var(--color-text-dark); word-break: break-word; }
-.modal-body .comment-box {
-    margin-top: var(--spacing-md); background-color: var(--color-bg-muted);
-    border: 1px solid var(--color-border); padding: var(--spacing-md);
-    border-radius: var(--border-radius-md);
+.modal-detail-box .detail-grid label {
+    font-weight: 600;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
-.modal-body .comment-box label {
-    font-weight: 600; color: var(--color-text-dark);
-    display: block; margin-bottom: var(--spacing-sm);
+.modal-detail-box .detail-grid span {
+    color: var(--color-text-dark);
+    word-break: break-word;
+    padding-left: 22px; /* Indent under label icon */
+    margin-top: -12px; /* Pull up under label */
 }
-.modal-body .comment-box p { margin: 0; font-style: italic; color: var(--color-text-base); }
-.modal-body .detail-error {
+.modal-detail-box .detail-error {
     color: var(--color-danger);
-    background-color: #fff1f2;
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: var(--border-radius-md);
+    font-size: 0.9rem;
+}
+
+/* Responsive modal columns */
+@media (max-width: 600px) {
+    .modal-details-container {
+        grid-template-columns: 1fr;
+    }
 }
