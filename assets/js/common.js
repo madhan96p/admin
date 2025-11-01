@@ -44,7 +44,16 @@ const driverData = {
     // RAMAKRISHNAN 
     "Ramakrishnan": {
         id: "SH008",
-    }
+    },
+    // Chandru K
+    "ChandruK": { 
+        id: "SH009", 
+        designation: "Professional Driver", 
+        monthlySalary: 22000, 
+        joinedDate: "03/11/2025", 
+        mobile: "7418613632", 
+        signatureUrl: "" 
+    },
 };
 
 let signaturePad;
