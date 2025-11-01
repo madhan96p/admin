@@ -46,7 +46,7 @@ const driverData = {
         id: "SH008",
     },
     // Chandru K
-    "ChandruK": { 
+    "Chandru": { 
         id: "SH009", 
         designation: "Professional Driver", 
         monthlySalary: 22000, 
