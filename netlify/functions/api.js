@@ -196,7 +196,15 @@ function generateEmailBase(title, contentHtml) {
     </html>`;
 }
 
-// --- Email Sending Logic (NEW with Resend) ---
+/**
+ * Generates a 6-character random alphanumeric ID.
+ * Not cryptographically secure, but sufficient for a unique, non-guessable URL.
+ * @returns {string} A 6-character random ID (e.g., "ax9t4b").
+ */
+function generatePublicId() {
+    return Math.random().toString(36).substring(2, 8);
+}
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 async function sendEmail(subject, htmlBody) {
@@ -614,22 +622,80 @@ exports.handler = async function (event, context) {
 
             case 'saveInvoice': {
                 const invoiceData = JSON.parse(event.body);
-                const invoiceSheet = doc.sheetsByTitle['invoices']; // Get the new 'invoices' sheet
-
+                const invoiceSheet = doc.sheetsByTitle['invoices'];
                 if (!invoiceSheet) {
                     throw new Error('"invoices" sheet not found in Google Spreadsheet.');
                 }
 
-                await invoiceSheet.addRow(invoiceData);
+                // Load headers and all rows to check for existing data
+                await invoiceSheet.loadHeaderRow();
+                const invoiceRows = await invoiceSheet.getRows();
+                
+                // Find the exact header names from your sheet (case-sensitive)
+                const bookingIdHeader = 'Booking_ID';
+                const publicIdHeader = 'Public_ID';
+                const shareableLinkHeader = 'Shareable_Link';
 
-                responseData = { success: true, message: 'Invoice saved successfully.' };
+                const bookingIdToFind = String(invoiceData[bookingIdHeader]);
+                const foundRow = invoiceRows.find(row => String(row[bookingIdHeader]) === bookingIdToFind);
+
+                let publicId;
+                let shareableLink;
+
+                if (foundRow) {
+                    // --- 1. IF YES (Overwrite) ---
+                    // Get the existing Public_ID
+                    publicId = foundRow[publicIdHeader];
+                    
+                    // Construct the shareable link
+                    shareableLink = `https://admin.shrishgroup.com/view-invoice.html?id=${publicId}`;
+                    
+                    // Add the link to the data we're saving
+                    invoiceData[shareableLinkHeader] = shareableLink;
+
+                    // Update all data in the found row
+                    for (const header in invoiceData) {
+                        if (invoiceSheet.headerValues.includes(header)) {
+                            foundRow[header] = invoiceData[header];
+                        }
+                    }
+                    await foundRow.save(); // Save the updated row
+                
+                } else {
+                    // --- 2. IF NO (New Invoice) ---
+                    let isUnique = false;
+                    do {
+                        // Generate a new 6-character Public_ID
+                        publicId = generatePublicId();
+                        // Perform the collision check
+                        isUnique = !invoiceRows.some(row => row[publicIdHeader] === publicId);
+                    } while (!isUnique); // Loop until a unique ID is found
+
+                    // Construct the shareable link
+                    shareableLink = `https://admin.shrishgroup.com/view-invoice.html?id=${publicId}`;
+
+                    // Add the new IDs to the data before saving
+                    invoiceData[publicIdHeader] = publicId;
+                    invoiceData[shareableLinkHeader] = shareableLink;
+
+                    // Add the new row to the sheet
+                    await invoiceSheet.addRow(invoiceData);
+                }
+
+                // --- 3. Finally (Return) ---
+                // Return the success message AND the new link for the frontend
+                responseData = { 
+                    success: true, 
+                    shareableLink: shareableLink,
+                    message: `Invoice ${invoiceData.Invoice_ID} saved.` 
+                };
                 break;
             }
 
-            case 'getInvoiceById': {
-                const bookingId = event.queryStringParameters.id;
-                if (!bookingId) {
-                    return { statusCode: 400, body: JSON.stringify({ error: 'Booking ID is required.' }) };
+            case 'getInvoiceByPublicId': { // RENAMED ACTION
+                const publicId = event.queryStringParameters.pid; // RENAMED PARAM
+                if (!publicId) {
+                    return { statusCode: 400, body: JSON.stringify({ error: 'Public ID is required.' }) };
                 }
 
                 const invoiceSheet = doc.sheetsByTitle['invoices'];
@@ -637,12 +703,15 @@ exports.handler = async function (event, context) {
                     throw new Error('"invoices" sheet not found in Google Spreadsheet.');
                 }
 
-                await invoiceSheet.loadHeaderRow(); // Ensure headers are loaded
+                await invoiceSheet.loadHeaderRow(); 
                 const invoiceHeaders = invoiceSheet.headerValues;
                 const invoiceRows = await invoiceSheet.getRows();
+                
+                // Find the header name for Public_ID
+                const publicIdHeader = 'Public_ID';
 
-                // Find the row by Booking_ID
-                const foundRow = invoiceRows.find(row => String(row.Booking_ID) === String(bookingId));
+                // Find the row by Public_ID
+                const foundRow = invoiceRows.find(row => String(row[publicIdHeader]) === String(publicId));
 
                 if (foundRow) {
                     const invoiceObject = {};
@@ -651,7 +720,7 @@ exports.handler = async function (event, context) {
                     });
                     responseData = { invoice: invoiceObject };
                 } else {
-                    responseData = { error: `Invoice with Booking ID ${bookingId} not found.` };
+                    responseData = { error: `Invoice with ID ${publicId} not found.` };
                 }
                 break;
             }

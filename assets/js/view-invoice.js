@@ -2,9 +2,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 1. GET DATA FROM URL ---
     const params = new URLSearchParams(window.location.search);
-    const bookingId = params.get('id'); // This is the ONLY param we need
+    const publicId = params.get('id'); // This is now the Public_ID (e.g., "ax9T4b")
 
-    if (!bookingId) {
+    if (!publicId) {
         document.body.innerHTML = '<h1>Error: No Booking ID provided.</h1>';
         return;
     }
@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setText('guest-mobile', invoice.Guest_Mobile);
         setText('invoice-id', invoice.Invoice_ID);
         setText('invoice-date', invoice.Invoice_Date);
+        setText('last-updated', invoice.Last_Updated || 'N/A'); // ADD THIS LINE
     }
 
     function populateSummary(invoice) {

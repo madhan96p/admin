@@ -401,9 +401,9 @@ document.addEventListener('DOMContentLoaded', () => {
         let invoiceData = {
             Invoice_ID: `ST-${bookingId}`,
             Booking_ID: bookingId,
-            Invoice_Date: new Date().toLocaleDateString('en-GB'), // dd/mm/yyyy
-
-            // Data from calculations/inputs
+            Invoice_Date: new Date().toLocaleDateString('en-GB'), 
+            Last_Updated: new Date().toLocaleString('en-GB', { hour12: false }), // e.g., "03/11/2025, 01:28:15"
+            Invoice_Note: document.getElementById('invoiceNote').value.trim(), // Get the new note
             Total_KMs: totalKms.toFixed(1),
             Total_Hours: totalHours.toFixed(2),
             Billing_Slabs: billingSlabs,
@@ -420,7 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
             Total_Expenses: totalExpenses,
             Grand_Total: grandTotal,
             Status: "Generated", // Default status
-            Shareable_Link: shareableLink,
+            // Shareable_Link: shareableLink,
             UPI_ID: elements.upiId.value.trim() || 'drumsjega5466-1@okhdfcbank', // Use default if empty
         };
 
@@ -456,12 +456,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const result = await response.json();
 
-            if (result.success) {
-                elements.generatedLink.value = shareableLink;
+            if (result.success && result.shareableLink) { // Check for the link from the backend
+                elements.generatedLink.value = result.shareableLink; // Use the NEW secure link
                 elements.generatedLinkContainer.style.display = 'block'; // Show link field
                 alert('Invoice saved successfully and link generated!');
             } else {
-                throw new Error(result.error || 'Unknown error saving invoice.');
+                throw new Error(result.error || 'Backend did not return a shareable link.');
             }
         } catch (error) {
             alert(`Error saving invoice: ${error.message}`);
