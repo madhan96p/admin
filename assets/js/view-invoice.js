@@ -61,7 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
         setText('guest-mobile', invoice.Guest_Mobile);
         setText('invoice-id', invoice.Invoice_ID);
         setText('invoice-date', invoice.Invoice_Date);
-        setText('last-updated', invoice.Last_Updated || 'N/A'); // ADD THIS LINE
+        const formattedTimestamp = (invoice.Last_Updated || 'N/A').replace(/:\d\d$/, '');
+        setText('last-updated', formattedTimestamp);
     }
 
     function populateSummary(invoice) {

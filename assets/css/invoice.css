@@ -404,13 +404,38 @@ body {
 
 /* --- Invoice Meta (Bill To / Details) --- */
 .invoice-meta {
-    display: flex;
-    flex-direction: column; /* Stack on mobile */
-    gap: 1.5rem;
     margin-bottom: 2rem;
-    font-size: 0.85rem; /* Smaller base font */
+    font-size: 0.85rem; 
 }
-.bill-to h3 {
+
+/* --- NEW Meta Table Styles --- */
+.invoice-meta-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.invoice-meta-table .merged-header {
+    text-align: center;
+    padding-bottom: 0.75rem;
+}
+.invoice-meta-table .merged-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+.invoice-meta-table .bill-to-cell,
+.invoice-meta-table .details-cell {
+    width: 50%;
+    vertical-align: top;
+    padding: 1rem 0 0 0;
+    border-top: 1px solid var(--border-color);
+}
+.invoice-meta-table .bill-to-cell {
+    padding-right: 1rem;
+}
+.invoice-meta-table .details-cell {
+    padding-left: 1rem;
+}
+.bill-to-cell h3 {
     font-size: 0.75rem; /* Small heading */
     font-weight: 600;
     color: var(--text-muted, #6B7280);
@@ -418,21 +443,34 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
-.bill-to p {
+.bill-to-cell p {
     margin: 0.1rem 0;
-    font-weight: 500; /* Slightly less bold */
+    font-weight: 500; 
     color: var(--text-color, #111827);
     line-height: 1.5;
 }
-.invoice-details {
-    text-align: left; /* Keep left on mobile */
+
+.invoice-details-nested-table {
+    width: 100%;
+    border-collapse: collapse;
 }
-.invoice-details h2 {
-    font-size: 1.4rem; /* Smaller invoice title */
-    font-weight: 700;
+.invoice-details-nested-table tr:first-child td {
+    padding-top: 0; /* No padding on the first row */
+}
+.invoice-details-nested-table td {
+    padding: 3px 0; /* Tighter padding for details */
+    font-size: 0.9rem;
+}
+.invoice-details-nested-table .label-cell {
+    text-align: left;
+    font-weight: 500;
+    color: var(--text-muted, #6B7280);
+    padding-right: 1rem;
+}
+.invoice-details-nested-table .value-cell {
+    text-align: right;
+    font-weight: 500;
     color: var(--text-color, #111827);
-    margin: 0 0 0.5rem 0;
-    text-align: right; /* Align right on mobile */
 }
 .invoice-details p {
     margin: 0.2rem 0;
@@ -478,6 +516,7 @@ body {
 .summary-table td:last-child {
     color: var(--text-color, #111827);
     font-weight: 500;
+    text-align: right; /* <-- This right-aligns your summary data */
 }
 
 /* --- Charges Table --- */
