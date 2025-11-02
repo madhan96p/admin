@@ -5,14 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generate Invoice - Shrish Admin</title>
+
+    <link rel="stylesheet" href="/assets/css/admin.css">
+
     <link rel="stylesheet" href="/assets/css/common.css">
     <link rel="stylesheet" href="/assets/css/invoice.css">
-    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
 <body>
-    <div class="page-container">
-        <main class="main-content">
+    <div id="admin-sidebar"></div>
+
+    <div class="admin-main-content">
+    
+        <div id="admin-header"></div>
+
+        <main class="page-content">
             <div class="page-header">
                 <h1>Invoice Generator</h1>
                 <p>Create a new client invoice from a completed duty slip.</p>
@@ -114,7 +123,7 @@
                                     placeholder="This note will be saved for internal records."></textarea>
                             </div>
                         </div>
-                        
+
                         </div>
 
                         <h4 class="section-divider">Calculation Details</h4>
@@ -236,10 +245,11 @@
                     </button>
                 </div>
             </div>
+            
         </main>
-    </div>
+<div id="admin-footer"></div>
 
-    <script src="/assets/js/common.js"></script>
+    </div> <script src="/assets/js/common.js"></script>
     <script src="/assets/js/generate-invoice.js"></script>
 </body>
 
