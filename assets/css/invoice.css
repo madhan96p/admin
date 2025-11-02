@@ -761,39 +761,41 @@ body {
 /* ==========================================================================
    4. Print Styles (Modernized & Optimized) - Replaces previous print block
    ========================================================================== */
+/* ==========================================================================
+   4. Print Styles (NEW - v2.0 "Classic Letterhead" Design)
+   ========================================================================== */
 @media print {
-    /* --- Basic Setup --- */
+    /* --- 1. Basic Setup --- */
     @page {
-        size: A4; /* Standard paper size */
-        margin: 1.5cm; /* Adjust margins as needed */
+        size: A4;
+        margin: 1.5cm; /* Standard print margin */
     }
     html, body {
         width: 100%;
         height: 100%;
         margin: 0 !important;
         padding: 0 !important;
-        font-size: 9pt; /* Smaller base font for print */
-        line-height: 1.4; /* Tighter line height */
-        background-color: #ffffff !important; /* Force white background */
-        color: #000000 !important; /* Force black text */
-        -webkit-print-color-adjust: exact !important; /* Chrome, Safari */
-        print-color-adjust: exact !important; /* Standard */
+        font-size: 9pt; /* Standard document font size */
+        line-height: 1.4;
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 
-    /* --- Hide Unwanted Elements --- */
+    /* --- 2. Hide Web-Only Elements --- */
     .no-print,
     .invoice-actions,
-    .sidebar-nav, /* Add common elements to hide */
+    .sidebar-nav,
     .admin-header,
     .admin-footer,
-    #copy-upi-btn, /* Hide copy button */
-    .pay-option p:not(:first-child), /* Hide secondary payment paragraphs */
-    .pay-option a#payment-link /* Hide the click-to-pay link */
-     {
+    #copy-upi-btn,
+    .pay-option a#payment-link,
+    .pay-option p {
         display: none !important;
     }
 
-    /* --- Main Container Reset --- */
+    /* --- 3. Main Container Reset --- */
     .page-container, .main-content {
         padding: 0 !important;
         margin: 0 !important;
@@ -802,80 +804,117 @@ body {
         width: 100% !important;
         max-width: 100% !important;
         margin: 0 !important;
-        padding: 0 !important; /* Remove container padding */
+        padding: 0 !important;
         box-shadow: none !important;
         border: none !important;
-        border-radius: 0 !important;
-        background: none !important; /* Transparent background */
+        background: none !important;
     }
 
-    /* --- Layout & Spacing Adjustments --- */
-    .invoice-header,
-    .invoice-meta,
-    .invoice-section,
-    .invoice-footer {
-        margin-bottom: 0.8rem !important; /* Reduced vertical spacing */
-        padding-bottom: 0 !important; /* Remove section padding */
-        border: none !important; /* Remove decorative borders */
-        page-break-inside: avoid !important; /* Prevent breaking inside sections */
-    }
+    /* --- 4. NEW Letterhead Header --- */
     .invoice-header {
-        /* --- NEW BRANDING --- */
-        background-color: var(--color-bg-sidebar, #1f2937) !important; /* Use your dark sidebar color */
-        color: #ffffff !important;
-        padding: 0.75rem 1rem !important; /* 1.5cm page margin - 1rem padding */
-        margin: -1.5cm -1.5cm 1rem -1.5cm !important; /* Bleed to page edge */
-        border-bottom: 4px solid var(--primary-color, #4F46E5) !important;
-        -webkit-print-color-adjust: exact !important; /* Force colors */
-        print-color-adjust: exact !important;
-
         display: flex !important; 
         flex-direction: row !important;
-        align-items: center !important; /* Center items vertically */
+        align-items: flex-start !important; /* Align logo and text to the top */
+        justify-content: space-between !important;
+        padding-bottom: 0.8rem !important;
+        border-bottom: 1px solid #999999 !important; /* Simple, clean line */
+        margin-bottom: 1.5rem !important;
+        page-break-inside: avoid !important;
     }
-     .header-logo img { 
-         width: 60px !important; 
-         filter: brightness(0) invert(1); /* Make logo white */
+    .header-logo img { 
+        width: 70px !important; /* Slightly larger logo */
     }
-     .header-title { text-align: left !important; margin: 0 0 0 1rem !important;}
-     .header-title h1 { font-size: 14pt !important; margin: 0 !important; color: #ffffff !important;}
-     .header-title p { font-size: 8pt !important; color: #ffffff !important; opacity: 0.8;}
-     .header-contact { 
-         text-align: right !important; 
-         font-size: 7pt !important; 
-         line-height: 1.4 !important;
-         margin-left: auto; /* Push to the right */
+    .header-title { 
+        text-align: center !important;
+        margin: 0 !important;
+        padding: 0 1rem;
     }
-     .header-contact p { margin: 0 !important; color: #ffffff !important;}
+    .header-title h1 { 
+        font-size: 16pt !important; 
+        margin: 0 !important; 
+        color: #000000 !important;
+    }
+    .header-title p { 
+        font-size: 9pt !important; 
+        color: #333333 !important; 
+    }
+    .header-contact { 
+        text-align: right !important; 
+        font-size: 8pt !important; 
+        line-height: 1.4 !important;
+    }
+    .header-contact p { 
+        margin: 0 !important; 
+        color: #000000 !important;
+    }
 
-    .invoice-meta { margin-top: 1rem !important; display: flex !important; justify-content: space-between !important; align-items: flex-start !important; }
-    .bill-to h3, .invoice-details h2 { font-size: 8pt !important; margin-bottom: 3px !important; color: #333333 !important;}
-    .invoice-details h2 { font-size: 12pt !important; text-align: right !important;}
-    .bill-to p, .invoice-details p { font-size: 8pt !important; margin: 1px 0 !important;}
+    /* --- 5. Meta Section (Bill To / Invoice #) --- */
+    .invoice-meta { 
+        margin-top: 1rem !important; 
+        display: flex !important; 
+        justify-content: space-between !important; 
+        align-items: flex-start !important; 
+        margin-bottom: 1.5rem !important;
+        page-break-inside: avoid !important;
+    }
+    .bill-to h3 { 
+        font-size: 8pt !important; 
+        margin-bottom: 3px !important; 
+        color: #555 !important;
+        text-transform: uppercase;
+    }
+    .invoice-details h2 { 
+        font-size: 14pt !important; 
+        text-align: right !important;
+        margin-bottom: 5px !important;
+    }
+    .bill-to p, .invoice-details p { 
+        font-size: 9pt !important; 
+        margin: 1px 0 !important;
+    }
     .invoice-details { text-align: right !important; }
 
+    /* --- 6. Section & Table Styling --- */
+    .invoice-section {
+        margin-bottom: 1rem !important;
+        page-break-inside: avoid !important;
+    }
     .invoice-section h3 {
         font-size: 10pt !important;
         font-weight: bold !important;
         color: #333333 !important;
         margin: 0 0 0.5rem 0 !important;
-        padding: 0 !important;
-        border: none !important;
+        padding-bottom: 3px !important;
+        border-bottom: 1px solid #cccccc !important;
+    }
+    
+    table { 
+        width: 100% !important; 
+        border-collapse: collapse !important; 
+    }
+    th, td { 
+        border: none !important; 
+        padding: 4px !important; 
+        font-size: 8.5pt !important; 
+        text-align: left !important; 
+        vertical-align: top !important; 
     }
 
-    /* --- Table Styling --- */
-    table { width: 100% !important; border-collapse: collapse !important; }
-    th, td { border: none !important; padding: 4px !important; font-size: 8pt !important; text-align: left !important; vertical-align: top !important; line-height: 1.3 !important;}
-
-    .summary-table td:first-child { width: 80px !important; font-weight: bold !important; color: #000 !important;}
-    .summary-table td { border-bottom: 1px dashed #cccccc !important; }
-    .summary-table tr:last-child td { border-bottom: none !important;}
+    .summary-table td:first-child { 
+        width: 90px !important; 
+        font-weight: bold !important; 
+        color: #000 !important;
+    }
+    .summary-table td { 
+        border-bottom: 1px dashed #cccccc !important; 
+    }
 
     .charges-table th {
         font-weight: bold !important;
-        background-color: #f0f0f0 !important; /* Light gray background */
+        background: none !important; /* REMOVED background color */
         color: #000000 !important;
-        border-bottom: 1px solid #999999 !important; /* Separator line */
+        border-bottom: 1.5px solid #333333 !important; /* Stronger line, no bg */
+        padding-bottom: 6px !important;
     }
     .charges-table td {
         border-bottom: 1px solid #dddddd !important;
@@ -887,97 +926,111 @@ body {
     .charges-table th:nth-child(4), .charges-table td:nth-child(4) {
         text-align: right !important;
     }
-     .charges-table td:nth-child(2) { color: #555555 !important; } /* Muted details */
+    .charges-table td:nth-child(2) { color: #555555 !important; } /* Muted details */
 
     .charges-table tfoot .total-row td {
-        font-size: 10pt !important;
+        font-size: 11pt !important;
         font-weight: bold !important;
         padding-top: 6px !important;
-        border-top: 1.5px solid #333333 !important; /* Stronger total line */
+        border-top: 2px solid #333333 !important;
     }
-    .charges-table tfoot .total-amount { color: #000000 !important; } /* Black total for print */
+    .charges-table tfoot .total-amount { color: #000000 !important; }
 
     .amount-in-words {
-        font-size: 8pt !important;
+        font-size: 9pt !important;
         font-weight: bold !important;
         margin-top: 5px !important;
         text-align: right !important;
         color: #333333 !important;
     }
 
-    /* --- Footer Sections --- */
+    /* --- 7. NEW Footer Layout (Terms & Payment) --- */
     .invoice-footer {
-        margin-top: 1rem !important;
+        margin-top: 1.5rem !important;
         padding-top: 0.8rem !important;
-        border-top: 1px solid #999999 !important; /* Separator line */
-        display: flex !important; /* Use flex for side-by-side */
-        justify-content: space-between !important;
+        border-top: 1px solid #999999 !important;
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: flex-start !important; /* Align left */
         align-items: flex-start !important;
+        gap: 2rem !important; /* Space between columns */
+        page-break-inside: avoid !important;
     }
-    .payment-section, .terms-section { width: 48%; } /* Roughly equal columns */
+    .terms-section { 
+        width: 60% !important; /* Terms are wider */
+    }
+    .payment-section { 
+        width: 35% !important; /* Payment is compact */
+        flex-shrink: 0;
+    }
 
     .payment-section h3, .terms-section h3 {
-        font-size: 9pt !important;
+        font-size: 9.5pt !important;
         margin-bottom: 0.4rem !important;
     }
-    .payment-section > p { display: none; } /* Hide the "Choose your method..." text */
 
-    .payment-options { display: block !important; } /* Reset grid */
-    .pay-option { background: none !important; border: none !important; padding: 0 !important; margin-bottom: 0.5rem !important; text-align: left !important;}
-    .pay-option h4 { font-size: 8pt !important; margin-bottom: 3px !important; }
-    /* QR Code for print */
-    .qr-code, #qr-code-canvas {
-        max-width: 60px !important; /* Smaller QR code */
-        height: 60px !important;
-        margin: 0 0 5px 0 !important;
-        border: 1px solid #cccccc !important; /* Add border for definition */
+    .payment-options { display: block !important; }
+    .pay-option { 
+        background: none !important; 
+        border: none !important; 
+        padding: 0 !important; 
+        margin-bottom: 0.8rem !important; 
+        text-align: left !important;
     }
-    #qr-code-canvas svg { width: 100% !important; height: 100% !important; } /* Ensure SVG fills container */
-     .pay-option:nth-child(2) { display: none !important; } /* Hide Click to Pay section */
-     .pay-option:nth-child(3) h4 { margin-bottom: 0 !important; }
-     .pay-option:nth-child(3) input { 
-        display: block !important; /* SHOW the input */
+    .pay-option h4 { 
+        font-size: 9pt !important; 
+        margin-bottom: 4px !important; 
+    }
+    
+    .qr-code, #qr-code-canvas {
+        max-width: 80px !important; /* Bigger QR code */
+        height: 80px !important;
+        margin: 0 0 5px 0 !important;
+        border: 1px solid #cccccc !important;
+    }
+    #qr-code-canvas svg { width: 100% !important; height: 100% !important; }
+
+    .pay-option:nth-child(3) input { 
+        display: block !important;
         background: none !important;
         border: none !important;
         padding: 0 !important;
         margin-top: 4px !important;
-        font-size: 9pt !important; /* Make it readable */
+        font-size: 8.5pt !important; /* Slightly smaller to fit */
         font-weight: bold !important;
         color: #000000 !important;
-     }
-
+    }
 
     .terms-section ol {
-        font-size: 7pt !important; /* Smaller terms */
+        font-size: 8pt !important; /* Smaller terms */
         line-height: 1.3 !important;
-        padding-left: 12px !important; /* Tighter list indent */
+        padding-left: 14px !important;
         margin: 0 !important;
         color: #333333 !important;
     }
     .terms-section li { margin-bottom: 2px !important; }
-    .terms-section a { color: #000000 !important; text-decoration: none !important; font-weight: normal !important; } /* Simple links */
+    .terms-section a { color: #000000 !important; text-decoration: none !important; }
 
-    /* --- Final Footer --- */
+    /* --- 8. Final Page Footer --- */
     .invoice-print-footer {
-        display: block !important; /* Ensure it's visible */
+        display: block !important;
         text-align: center !important;
-        font-size: 7pt !important;
-        color: #888888 !important; /* Lighter gray */
-        margin-top: 1rem !important;
+        font-size: 7.5pt !important;
+        color: #888888 !important;
+        margin-top: 2rem !important; /* Add space, don't fix position */
         padding-top: 0.5rem !important;
         border-top: 1px solid #cccccc !important;
         width: 100% !important;
-        position: fixed; /* Try fixing to bottom - browser support varies */
-        bottom: 10px;
+        page-break-before: auto;
+        page-break-inside: avoid;
     }
 
-    /* --- Avoid Breaking Elements --- */
-    h1, h2, h3, h4, h5, h6 { page-break-after: avoid !important; }
+    /* --- 9. Break Avoidance --- */
+    h1, h2, h3, h4 { page-break-after: avoid !important; }
     p, blockquote { page-break-inside: avoid !important; }
     ul, ol, li { page-break-inside: avoid !important; }
-    table { page-break-inside: auto !important; } /* Allow table rows to break if needed */
-    thead { display: table-header-group !important; } /* Repeat table headers on new pages */
-    tfoot { display: table-footer-group !important; } /* Repeat table footers? (less common) */
+    table { page-break-inside: auto !important; }
+    thead { display: table-header-group !important; } /* Repeat headers on new page */
     tr { page-break-inside: avoid !important; page-break-after: auto !important; }
 }
 
