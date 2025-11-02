@@ -1,527 +1,1243 @@
-/* ---
-  PREMIUM INVOICE STYLESHEET
-  Design: "Modern Tech" / "GenZ" Aesthetic
---- */
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
-/* --- 1. FONT IMPORT (Essential for the look) --- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+:root {
+  --primary: #1a3a5c;
+  --primary-dark: #0f2438;
+  --primary-light: #2c5aa0;
+  --accent: #c9a961;
+  --success: #2d6a4f;
+  --success-dark: #1b4332;
+  --neutral-50: #fafafa;
+  --neutral-100: #f5f5f5;
+  --neutral-200: #e8e8e8;
+  --neutral-300: #d9d9d9;
+  --neutral-400: #9e9e9e;
+  --neutral-500: #757575;
+  --neutral-600: #424242;
+  --neutral-700: #212121;
+  --neutral-800: #1a1a1a;
+  --neutral-900: #000000;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.18);
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --transition: all 0.25s ease;
+}
 
-/* --- 2. GLOBAL & BODY STYLING --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: #f7f8fa; /* Light, subtle page background */
-    margin: 0;
-    padding: 0;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    color: #333;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  color: var(--neutral-700);
+  background: #f8f8f8;
+  min-height: 100vh;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* --- 3. MAIN INVOICE CONTAINER --- */
+.page-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  animation: fadeInDown 0.6s ease-out;
+}
+
+.page-header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+  font-family: 'Lora', serif;
+}
+
+.page-header p {
+  font-size: 1.125rem;
+  color: var(--neutral-600);
+  font-weight: 400;
+}
+
+.card {
+  background: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: visible;
+  border-top: 4px solid var(--primary);
+}
+
+.stepper-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+  position: relative;
+  padding: 0 1rem;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+  z-index: 2;
+  transition: var(--transition);
+}
+
+.step-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--neutral-200);
+  border: 2px solid var(--neutral-400);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: var(--neutral-600);
+  transition: var(--transition);
+  position: relative;
+}
+
+.step.active .step-icon {
+  background: var(--primary);
+  border-color: var(--primary-dark);
+  color: white;
+  box-shadow: 0 2px 8px rgba(26, 58, 92, 0.25);
+}
+
+.step.done .step-icon {
+  background: var(--success);
+  border-color: var(--success-dark);
+  color: white;
+}
+
+.step.done .step-icon::after {
+  content: '✓';
+  position: absolute;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.step-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--neutral-600);
+  text-align: center;
+  transition: var(--transition);
+}
+
+.step.active .step-label {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.step.done .step-label {
+  color: var(--success-dark);
+}
+
+.step-divider {
+  flex: 1;
+  height: 3px;
+  background: var(--neutral-200);
+  margin: 0 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.step.done + .step-divider {
+  background: var(--success);
+}
+
+.step-content {
+  display: none;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.step-content.active {
+  display: block;
+}
+
+.step-content h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+.step-content > p {
+  color: var(--neutral-600);
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--neutral-700);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.01em;
+}
+
+.calc-context {
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: var(--neutral-500);
+  margin-left: 0.25rem;
+}
+
+.form-control,
+input[type="text"],
+input[type="number"],
+textarea {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid var(--neutral-200);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: var(--transition);
+  background: white;
+  color: var(--neutral-800);
+}
+
+.form-control:focus,
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-control::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: var(--neutral-400);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.75rem;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+  background: var(--neutral-600);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover {
+  background: var(--neutral-700);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-success {
+  background: var(--success);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-success:hover {
+  background: var(--success-dark);
+  box-shadow: var(--shadow-md);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.step1-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.or-divider {
+  font-weight: 600;
+  color: var(--neutral-400);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: relative;
+  padding: 0 1rem;
+}
+
+.or-divider::before,
+.or-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40px;
+  height: 2px;
+  background: var(--neutral-300);
+}
+
+.or-divider::before {
+  right: 100%;
+}
+
+.or-divider::after {
+  left: 100%;
+}
+
+.trip-summary-box {
+  background: var(--neutral-50);
+  border: 1px solid var(--neutral-300);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.trip-summary-box h4 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  margin-bottom: 1rem;
+}
+
+.trip-summary-box p {
+  margin-bottom: 0.5rem;
+  color: var(--neutral-700);
+  line-height: 1.8;
+}
+
+.section-divider {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  margin: 2rem 0 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--neutral-200);
+}
+
+.help-text {
+  background: var(--neutral-50);
+  border-left: 4px solid var(--primary);
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-md);
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--neutral-700);
+  line-height: 1.7;
+}
+
+.help-text i {
+  color: var(--primary);
+  margin-right: 0.5rem;
+}
+
+.running-total {
+  background: var(--neutral-50);
+  border: 2px solid var(--success);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--neutral-800);
+}
+
+.running-total strong {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--success-dark);
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.invoice-summary-preview {
+  margin: 2rem 0;
+}
+
+.summary-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: white;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--neutral-300);
+  transition: var(--transition);
+}
+
+.summary-item span {
+  font-size: 0.95rem;
+  color: var(--neutral-700);
+}
+
+.summary-item strong {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+}
+
+.summary-item.total {
+  background: var(--primary);
+  color: white;
+  margin-top: 1rem;
+  padding: 1.25rem;
+  border: none;
+}
+
+.summary-item.total span,
+.summary-item.total strong {
+  color: white;
+  font-size: 1.25rem;
+}
+
+.summary-item.total strong {
+  font-size: 1.75rem;
+  font-weight: 800;
+}
+
+.step-navigation {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--neutral-200);
+}
+
+.loader {
+  border: 4px solid var(--neutral-200);
+  border-top: 4px solid var(--primary);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  animation: spin 0.8s linear infinite;
+  margin: 2rem auto;
+}
+
+#generatedLinkContainer {
+  background: var(--neutral-50);
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--success);
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#generatedLinkContainer label {
+  font-weight: 700;
+  color: var(--success-dark);
+  font-size: 1rem;
+}
+
+#generatedLink {
+  flex: 1;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  background: white;
+}
+
 .invoice-container {
-    max-width: 900px;
-    margin: 40px auto;
-    background: #ffffff;
-    border-radius: 16px; /* Modern rounded corners */
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08); /* Soft, premium shadow */
-    overflow: hidden; /* Ensures radius is respected */
+  max-width: 900px;
+  margin: 2rem auto;
+  background: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
 }
 
-/* --- 4. INVOICE HEADER --- */
 .invoice-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap; /* For mobile */
-    gap: 20px;
-    padding: 40px;
-    border-bottom: 1px solid #e9edf2; /* Clean separator */
+  background: white;
+  color: var(--primary);
+  padding: 1.5rem 2rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 2rem;
+  align-items: center;
+  border-bottom: 2px solid var(--primary);
 }
 
 .header-logo img {
-    max-height: 50px; /* Constrain logo size */
-    width: auto;
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  background: white;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
 }
 
 .header-title h1 {
-    margin: 0;
-    font-size: 1.75rem; /* 28px */
-    font-weight: 700;
-    color: #1d2b3a; /* Dark, strong blue/grey */
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  letter-spacing: 0;
+  font-family: 'Lora', serif;
+  color: var(--primary);
 }
 
 .header-title p {
-    margin: 4px 0 0;
-    font-size: 0.9rem; /* 14px */
-    color: #5a677d; /* Softer text color */
-    font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--neutral-600);
+  font-weight: 400;
 }
 
 .header-contact {
-    text-align: right;
-    font-size: 0.9rem;
-    line-height: 1.6;
+  text-align: right;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--neutral-700);
 }
 
 .header-contact p {
-    margin: 2px 0;
-    color: #5a677d;
-    font-weight: 500;
+  margin-bottom: 0.2rem;
 }
 
 .header-contact i {
-    margin-right: 8px;
-    color: #0052cc; /* Professional blue accent */
-    width: 14px; /* Align icons */
+  width: 14px;
+  margin-right: 0.4rem;
+  color: var(--primary);
 }
 
-/* --- 5. INVOICE META (Bill To, Dates) --- */
 .invoice-meta {
-    padding: 40px;
+  padding: 2rem;
+  background: var(--neutral-50);
+  border-bottom: 1px solid var(--neutral-200);
 }
 
 .invoice-meta-table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.merged-header {
+  text-align: center;
+  padding-bottom: 1.5rem;
 }
 
 .merged-header h2 {
-    font-size: 2.5rem; /* 40px */
-    font-weight: 700;
-    margin: 0 0 20px 0;
-    color: #1d2b3a;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 0.08em;
+  font-family: 'Lora', serif;
 }
 
-.bill-to-cell, .details-cell {
-    width: 50%;
-    vertical-align: top;
-    padding: 10px 0;
+.bill-to-cell {
+  vertical-align: top;
+  padding: 1rem;
+  width: 50%;
 }
 
 .bill-to-cell h3 {
-    font-size: 0.8rem; /* 13px */
-    font-weight: 600;
-    color: #5a677d;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin: 0 0 8px 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--neutral-600);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
 }
 
 .bill-to-cell p {
-    margin: 4px 0;
-    font-size: 1rem; /* 16px */
-    font-weight: 600;
-    color: #1d2b3a;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--neutral-900);
+  margin-bottom: 0.25rem;
 }
-.bill-to-cell p#guest-mobile {
-    font-weight: 500;
-    color: #5a677d;
+
+.details-cell {
+  vertical-align: top;
+  padding: 1rem;
 }
 
 .invoice-details-nested-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: right;
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.label-cell, .value-cell {
-    padding: 6px 0;
-    font-size: 0.9rem; /* 14px */
+.invoice-details-nested-table td {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
 }
 
 .label-cell {
-    color: #5a677d;
-    font-weight: 500;
-    padding-right: 15px;
+  font-weight: 600;
+  color: var(--neutral-600);
+  white-space: nowrap;
 }
 
 .value-cell {
-    color: #1d2b3a;
-    font-weight: 600;
+  font-weight: 600;
+  color: var(--neutral-900);
+  text-align: right;
 }
 
-/* --- 6. CONTENT SECTIONS (Summary, Charges) --- */
 .invoice-section {
-    padding: 20px 40px;
+  padding: 2rem;
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+.invoice-section:last-of-type {
+  border-bottom: none;
 }
 
 .invoice-section h3 {
-    font-size: 1.25rem; /* 20px */
-    font-weight: 600;
-    color: #1d2b3a;
-    margin: 0 0 20px 0;
-    border-bottom: 2px solid #e9edf2;
-    padding-bottom: 10px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--neutral-200);
 }
 
-/* Trip Summary Table */
-.summary-table {
-    width: 100%;
-    text-align: left;
-    border-collapse: collapse;
-}
-.summary-table tr {
-    border-bottom: 1px solid #f7f8fa; /* Very light row separator */
-}
-.summary-table tr:last-child {
-    border-bottom: none;
-}
-.summary-table td {
-    padding: 10px 5px;
-    font-size: 0.95rem;
-    color: #5a677d;
-}
-.summary-table td:first-child {
-    font-weight: 600;
-    color: #1d2b3a;
-}
-
-/* Itemized Charges Table */
+.summary-table,
 .charges-table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.summary-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+.summary-table td:first-child {
+  font-weight: 600;
+  color: var(--neutral-600);
+  width: 40%;
+}
+
+.summary-table td:last-child {
+  color: var(--neutral-900);
+  font-weight: 600;
 }
 
 .charges-table thead th {
-    text-align: left;
-    padding: 15px 5px;
-    font-size: 0.75rem; /* 12px */
-    font-weight: 600;
-    color: #5a677d;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 2px solid #e9edf2;
-}
-.charges-table thead th:last-child {
-    text-align: right;
+  background: var(--neutral-100);
+  padding: 1rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: var(--neutral-700);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--neutral-300);
 }
 
 .charges-table tbody td {
-    padding: 18px 5px;
-    border-bottom: 1px solid #e9edf2;
-    font-size: 0.95rem;
-    color: #1d2b3a;
-    vertical-align: top;
-}
-.charges-table tbody td:nth-child(2) { /* Details column */
-    font-size: 0.9rem;
-    color: #5a677d;
-}
-.charges-table tbody td:nth-child(3),
-.charges-table tbody td:nth-child(4) {
-    text-align: right;
-    font-family: 'Inter', sans-serif; /* Ensure monospaced feel for numbers */
-    font-weight: 500;
-}
-.charges-table tbody td:nth-child(4) {
-    font-weight: 600; /* Emphasize row amount */
+  padding: 1rem;
+  border-bottom: 1px solid var(--neutral-200);
+  color: var(--neutral-700);
 }
 
-/* Grand Total Footer */
+.charges-table tbody tr:hover {
+  background: var(--neutral-50);
+}
+
 .charges-table tfoot .total-row {
-    border-top: 2px solid #1d2b3a;
+  background: var(--primary);
+  color: white;
 }
+
+.charges-table tfoot td {
+  padding: 1.25rem 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
 .total-label {
-    text-align: right;
-    padding: 25px 10px;
-    font-size: 1.1rem; /* 18px */
-    font-weight: 600;
-    color: #1d2b3a;
+  text-align: right;
 }
+
 .total-amount {
-    text-align: right;
-    padding: 25px 5px;
-    font-size: 1.75rem; /* 28px */
-    font-weight: 700;
-    color: #0052cc; /* Main accent color for total */
+  text-align: right;
+  font-size: 1.5rem !important;
+  font-weight: 800;
 }
 
 .amount-in-words {
-    text-align: right;
-    margin: 10px 5px 0 0;
-    font-size: 0.9rem;
-    font-weight: 500;
-    font-style: italic;
-    color: #5a677d;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--neutral-50);
+  border-radius: var(--radius-md);
+  font-style: italic;
+  color: var(--neutral-600);
+  text-align: center;
 }
 
-/* --- 7. INVOICE FOOTER (Payment & Terms) --- */
 .invoice-footer {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr; /* 55% / 45% split */
-    gap: 40px;
-    padding: 40px;
-    background: #f7f8fa; /* Slight bg change to differentiate footer */
-    border-top: 1px solid #e9edf2;
+  background: var(--neutral-50);
+  padding: 2rem;
 }
 
-.payment-section h3, .terms-section h3 {
-    /* Same style as .invoice-section h3 */
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1d2b3a;
-    margin: 0 0 20px 0;
-    border-bottom: 2px solid #e9edf2;
-    padding-bottom: 10px;
+.payment-section h3,
+.terms-section h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  margin-bottom: 1rem;
 }
 
 .payment-section p {
-    font-size: 0.95rem;
-    color: #5a677d;
-    margin-bottom: 20px;
-}
-.payment-section p strong {
-    color: #1d2b3a;
-    font-weight: 600;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--neutral-700);
+  font-size: 1rem;
 }
 
 .payment-options {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .pay-option {
-    background: #ffffff;
-    border: 1px solid #e9edf2;
-    border-radius: 12px;
-    padding: 20px;
-    text-align: center;
-    transition: box-shadow 0.2s ease;
+  background: white;
+  border: 2px solid var(--neutral-200);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  text-align: center;
+  transition: var(--transition);
 }
+
 .pay-option:hover {
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
 }
 
 .pay-option h4 {
-    margin: 0 0 15px 0;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #1d2b3a;
-}
-.pay-option p {
-    font-size: 0.8rem;
-    color: #5a677d;
-    margin: 10px 0 0 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--neutral-800);
+  margin-bottom: 1rem;
 }
 
 .qr-code {
-    margin: 0 auto 10px auto;
-    border-radius: 8px; /* For the QR code itself */
-    overflow: hidden;
-    display: inline-block;
-    line-height: 0;
-}
-.qr-code canvas, .qr-code svg {
-    border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0;
 }
 
-/* Button Styling (re-using .btn from common.css if available) */
-.btn {
-    display: inline-block;
-    padding: 12px 24px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    border-radius: 8px;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border: none;
-    line-height: 1.2;
-}
-.btn-success {
-    background: #28a745;
-    color: #ffffff;
-}
-.btn-success:hover {
-    background: #218838;
-}
-/* Copy UPI Button */
-#copy-upi-btn {
-    background: #e9edf2;
-    color: #1d2b3a;
-    width: 100%;
-}
-#copy-upi-btn:hover {
-    background: #dbe1e7;
+.pay-option p {
+  font-size: 0.875rem;
+  color: var(--neutral-600);
+  margin-top: 0.5rem;
 }
 
-#upi-id-input {
-    width: 100%;
-    box-sizing: border-box; /* Important */
-    padding: 12px;
-    border: 1px solid #dbe1e7;
-    border-radius: 8px;
-    text-align: center;
-    font-family: 'Inter', sans-serif;
-    font-weight: 500;
-    font-size: 1rem;
-    color: #1d2b3a;
-    background-color: #f7f8fa;
-    margin-bottom: 10px;
+.pay-option input {
+  width: 100%;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: 600;
 }
 
-/* Terms Section */
+.terms-section {
+  margin-top: 2rem;
+}
+
 .terms-section ol {
-    padding-left: 20px;
-    margin: 0;
-}
-.terms-section li {
-    margin-bottom: 12px;
-    font-size: 0.85rem;
-    line-height: 1.6;
-    color: #5a677d;
-}
-.terms-section li a {
-    color: #0052cc;
-    font-weight: 500;
-    text-decoration: none;
-}
-.terms-section li a:hover {
-    text-decoration: underline;
+  list-style-position: inside;
+  color: var(--neutral-700);
+  line-height: 2;
 }
 
-/* --- 8. PRINT-SPECIFIC STYLES --- */
+.terms-section li {
+  margin-bottom: 0.5rem;
+}
+
+.terms-section a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.terms-section a:hover {
+  text-decoration: underline;
+  color: var(--primary-dark);
+}
+
 .invoice-print-footer {
-    text-align: center;
-    padding: 30px 40px;
-    font-size: 0.8rem;
-    color: #aaa;
-    border-top: 1px solid #e9edf2;
+  background: var(--neutral-800);
+  color: white;
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 0.875rem;
 }
 
 .invoice-actions {
-    text-align: center;
-    padding: 20px 0 40px 0;
+  text-align: center;
+  padding: 2rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
-/* Hide elements when printing */
-@media print {
-    body {
-        background-color: #ffffff;
-        font-family: sans-serif; /* Use print-safe fonts */
-    }
-    .invoice-container {
-        width: 100%;
-        max-width: 100%;
-        margin: 0;
-        box-shadow: none;
-        border-radius: 0;
-    }
-    .invoice-actions, .no-print {
-        display: none;
-    }
-    .invoice-footer {
-        grid-template-columns: 1fr; /* Stack footer columns */
-        background: #ffffff;
-        page-break-inside: avoid;
-    }
-    .payment-section {
-        page-break-inside: avoid;
-    }
-    .qr-code {
-        display: none; /* QR codes can be problematic in print */
-    }
-    .pay-option {
-        border: 1px solid #ccc;
-    }
-    .btn {
-        display: none;
-    }
-    #upi-id-input {
-        display: none; /* Hide input field */
-    }
-    /* Show UPI ID in print */
-    .pay-option h4[data-upi-id]::after {
-        content: ' (' attr(data-upi-id) ')';
-        font-weight: 500;
-        color: #333;
-    }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-/* --- 9. RESPONSIVE DESIGN (Mobile) --- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+}
+
 @media (max-width: 768px) {
-    .invoice-container {
-        margin: 10px auto;
-        border-radius: 0;
-    }
-    .invoice-header {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 30px;
-    }
-    .header-contact {
-        text-align: left;
-    }
-    .invoice-meta {
-        padding: 30px;
-    }
-    .merged-header h2 {
-        font-size: 2rem;
-    }
-    .bill-to-cell, .details-cell {
-        width: 100%;
-        padding-top: 15px;
-    }
-    .invoice-details-nested-table {
-        text-align: left;
-    }
-    .label-cell {
-        padding-right: 10px;
-    }
-    .invoice-section {
-        padding: 15px 30px;
-    }
+  .page-header h1 {
+    font-size: 1.875rem;
+  }
 
-    /* Charges table responsive (data-label trick) */
-    .charges-table thead {
-        display: none;
-    }
-    .charges-table tbody tr {
-        display: block;
-        margin-bottom: 15px;
-        border: 1px solid #e9edf2;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-    .charges-table tbody td {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 15px;
-        text-align: right !important;
-        border-bottom: 1px dotted #e9edf2;
-    }
-    .charges-table tbody td:last-child {
-        border-bottom: none;
-    }
-    .charges-table tbody td::before {
-        content: attr(data-label); /* Requires data-label="Header" on <td> */
-        font-weight: 600;
-        color: #5a677d;
-        margin-right: 10px;
-        text-align: left;
-    }
-    /* JS needs to add these data-labels. If not, this won't work. */
-    /* Let's assume JS won't, and use a simpler method. */
-    
-    /* Simpler responsive table */
-    .charges-table {
-        display: block;
-        width: 100%;
-        overflow-x: auto; /* Just allow horizontal scrolling */
-        -webkit-overflow-scrolling: touch;
-    }
+  .card {
+    padding: 1.5rem;
+  }
 
-    .total-label {
-        font-size: 1rem;
-        padding: 20px 10px;
-    }
-    .total-amount {
-        font-size: 1.5rem;
-    }
-    .invoice-footer {
-        grid-template-columns: 1fr;
-        padding: 30px;
-    }
+  .stepper-container {
+    padding: 0;
+  }
+
+  .step-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 1rem;
+  }
+
+  .step-label {
+    font-size: 0.75rem;
+  }
+
+  .step-divider {
+    margin: 0 0.5rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .step1-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .step1-actions button {
+    width: 100%;
+  }
+
+  .or-divider::before,
+  .or-divider::after {
+    display: none;
+  }
+
+  .invoice-header {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .header-logo {
+    justify-self: center;
+  }
+
+  .header-contact {
+    text-align: center;
+  }
+
+  .bill-to-cell,
+  .details-cell {
+    display: block;
+    width: 100%;
+    padding: 1rem 0;
+  }
+
+  .invoice-meta-table tr {
+    display: block;
+  }
+
+  .charges-table {
+    font-size: 0.875rem;
+  }
+
+  .charges-table thead th,
+  .charges-table tbody td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .payment-options {
+    grid-template-columns: 1fr;
+  }
+
+  .step-navigation {
+    flex-direction: column-reverse;
+  }
+
+  .step-navigation button {
+    width: 100%;
+  }
+}
+
+@media print {
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    background: white;
+  }
+
+  body {
+    font-size: 12px;
+    line-height: 1.3;
+  }
+
+  .invoice-container {
+    box-shadow: none;
+    margin: 0;
+    border-radius: 0;
+    max-width: 100%;
+    page-break-after: avoid;
+  }
+
+  .no-print,
+  .invoice-actions {
+    display: none !important;
+  }
+
+  .invoice-header {
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid var(--primary);
+  }
+
+  .header-logo img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .header-title h1 {
+    font-size: 1.3rem;
+  }
+
+  .header-title p {
+    font-size: 0.75rem;
+  }
+
+  .header-contact {
+    font-size: 0.7rem;
+    line-height: 1.4;
+  }
+
+  .invoice-meta {
+    padding: 0.8rem 1rem;
+  }
+
+  .merged-header {
+    padding-bottom: 0.5rem;
+  }
+
+  .merged-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .invoice-details-nested-table td {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.75rem;
+  }
+
+  .bill-to-cell {
+    padding: 0.5rem;
+  }
+
+  .bill-to-cell h3 {
+    font-size: 0.8rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .bill-to-cell p {
+    font-size: 0.9rem;
+    margin-bottom: 0.1rem;
+  }
+
+  .invoice-section {
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid var(--neutral-300);
+    page-break-inside: avoid;
+  }
+
+  .invoice-section h3 {
+    font-size: 1rem;
+    margin-bottom: 0.6rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--neutral-300);
+  }
+
+  .summary-table td {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.75rem;
+    border-bottom: none;
+  }
+
+  .charges-table {
+    margin-top: 0;
+    font-size: 0.75rem;
+  }
+
+  .charges-table thead th {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.7rem;
+    border-bottom: 1px solid var(--neutral-400);
+  }
+
+  .charges-table tbody td {
+    padding: 0.35rem 0.5rem;
+    border-bottom: 1px dotted var(--neutral-300);
+  }
+
+  .charges-table tfoot td {
+    padding: 0.6rem 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .amount-in-words {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    background: transparent;
+    text-align: center;
+  }
+
+  .invoice-footer {
+    background: white;
+    padding: 0.8rem 1rem;
+  }
+
+  .payment-section {
+    page-break-inside: avoid;
+  }
+
+  .payment-section h3 {
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .payment-section p {
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .payment-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .pay-option {
+    background: white;
+    border: 1px solid var(--neutral-400);
+    border-radius: 2px;
+    padding: 0.6rem;
+    page-break-inside: avoid;
+  }
+
+  .pay-option h4 {
+    font-size: 0.75rem;
+    margin-bottom: 0.4rem;
+    text-align: center;
+  }
+
+  .qr-code {
+    margin: 0.3rem 0;
+  }
+
+  .qr-code svg {
+    max-width: 100%;
+    height: auto !important;
+    width: 100px !important;
+  }
+
+  .pay-option p {
+    font-size: 0.7rem;
+    margin-top: 0.2rem;
+  }
+
+  .pay-option input {
+    width: 100%;
+    margin-bottom: 0.4rem;
+    padding: 0.2rem;
+    font-size: 0.65rem;
+  }
+
+  .pay-option h4::after {
+    content: attr(data-upi-id);
+    display: block;
+    font-family: 'Courier New', monospace;
+    font-size: 0.65rem;
+    margin-top: 0.2rem;
+    font-weight: 600;
+  }
+
+  .terms-section {
+    margin-top: 0.6rem;
+  }
+
+  .terms-section h3 {
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .terms-section ol {
+    list-style-position: inside;
+    color: var(--neutral-700);
+    line-height: 1.4;
+    font-size: 0.7rem;
+    columns: 2;
+    column-gap: 1rem;
+    page-break-inside: avoid;
+  }
+
+  .terms-section li {
+    margin-bottom: 0.2rem;
+    break-inside: avoid;
+  }
+
+  .terms-section a {
+    color: var(--primary);
+  }
+
+  .invoice-print-footer {
+    background: var(--primary);
+    color: white;
+    padding: 0.4rem;
+    text-align: center;
+    font-size: 0.7rem;
+  }
+
+  @page {
+    size: A4;
+    margin: 0.4in;
+    orphans: 0;
+    widows: 0;
+  }
 }
