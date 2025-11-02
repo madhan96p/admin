@@ -184,72 +184,8 @@
 .signature-image { width: 100%; height: 100%; display: none; object-fit: contain; }
 @media (min-width: 768px) { .footer { flex-direction: row; } }
 
-/* --- Action Buttons (Desktop) --- */
 
-.action-buttons-desktop .action-button {
-    padding: 0.75rem 1.25rem;
-    border: none;
-    border-radius: var(--radius-lg);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--white);
-    background-color: var(--primary-blue);
-}
-.action-buttons-desktop .whatsapp-button { background-color: var(--whatsapp-color); }
-.action-buttons-desktop .generate-link-button { background-color: var(--secondary-teal); }
 
-/* --- Responsive Breakpoint Logic --- */
-@media (min-width: 1024px) {
-    .action-buttons-desktop {
-        display: flex; /* Show desktop buttons on large screens */
-        justify-content: flex-end;
-        gap: 0.75rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .action-buttons-container {
-        display: none; /* Hide mobile FAB on large screens */
-    }
-}
-
-/* --- FAB Menu (Mobile) --- */
-@media (max-width: 1023.98px) {
-    .action-buttons-desktop {
-        display: none;
-    }
-    .action-buttons-container {
-        display: block;
-        position: fixed;
-        bottom: 1.25rem;
-        right: 1.25rem;
-        z-index: 1000;
-    }
-    .action-buttons-container .action-button {
-        width: 50px; height: 50px; border-radius: 50%;
-        margin-bottom: 1rem; font-size: 1.25rem;
-        display: flex; align-items: center; justify-content: center;
-        transform: scale(0); transition: all var(--transition-normal); opacity: 0;
-        color: white; border: none; cursor: pointer;
-    }
-    .action-buttons-container.active .action-button { transform: scale(1); opacity: 1; }
-    .fab-main {
-        width: 60px; height: 60px;
-        background: linear-gradient(135deg, var(--primary-blue), var(--secondary-teal));
-        border-radius: 50%; border: none;
-        display: flex; justify-content: center; align-items: center;
-        color: white; font-size: 2rem; cursor: pointer;
-        transition: all var(--transition-normal);
-    }
-    .action-buttons-container.active .fab-main { transform: rotate(45deg); background: var(--danger-color); }
-    .action-button.save { background-color: var(--primary-blue); }
-    .action-button.whatsapp-button { background-color: var(--whatsapp-color); }
-    .action-button.generate-link-button { background-color: var(--secondary-teal); }
-    .action-button.download-button { background-color: var(--danger-color); }
-}
 
 /* --- Signature Modal --- */
 #signature-modal {
@@ -303,53 +239,6 @@
     50% { border-color: #ef4444; }
 }
 /* --- Floating Action Button (FAB) Styles --- */
-.action-buttons-container {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    z-index: 99;
-}
-
-.fab-main {
-    width: 60px;
-    height: 60px;
-    background-color: #4f46e5; /* A nice indigo color */
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 2rem;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease;
-}
-
-/* Rotate the '+' icon when open */
-.action-buttons-container.is-open .fab-main {
-    transform: rotate(45deg);
-}
-
-/* Hide action buttons by default */
-.action-button {
-    position: absolute;
-    bottom: 5px; /* Center them on the main button */
-    right: 5px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-
-/* Style individual buttons */
-.action-button.save { background-color: #e5e7eb; transition-delay: 0.05s; }
-.action-button.whatsapp-button { background-color: #25D366; color: white; transition-delay: 0.1s; }
-.action-button.generate-link-button { background-color: #3b82f6; color: white; transition-delay: 0.15s; }
-.action-button.download-button { background-color: #ef4444; color: white; transition-delay: 0.2s; }
 .input-error {
     border-color: #f87171 !important;
     animation: blink-error 1s ease-in-out;
@@ -369,24 +258,13 @@
     to { transform: rotate(360deg); }
 }
 
-/* --- CSS for Simplified Mobile Save Button --- */
-/* Add this to /assets/css/duty_slip_form.css */
-
-/* Hide the old complex FAB container (if it's still cached) */
-.action-buttons-container {
-    display: none;
-}
-
-/* New container for the single button */
+/* --- Responsive Save Button --- */
 .action-buttons-container-simplified {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-    display: none; /* Hidden on desktop by default */
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
 }
 
-/* The new single button style */
 .action-button-single {
     display: flex;
     align-items: center;
@@ -402,7 +280,6 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     cursor: pointer;
     transition: all 0.3s ease;
-    min-width: 150px; /* Ensures text is visible */
 }
 
 .action-button-single .icon {
@@ -410,17 +287,27 @@
     font-size: 1.1em;
 }
 
-.action-button-single .text {
-    display: inline-block;
-}
+/* Mobile styles */
+@media (max-width: 768px) {
+    .action-buttons-container-simplified {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
 
-/* Loading state */
-.action-button-single.is-loading {
-    background-color: #5a60a9; /* Darker blue */
-    cursor: not-allowed;
-}
+    .action-button-single {
+        min-width: 56px;
+        height: 56px;
+        padding: 0;
+        border-radius: 50%;
+    }
 
-/* Celebration/Success state */
-.action-button-single.is-success {
-    background-color: #22c55e; /* Green */
+    .action-button-single .text {
+        display: none;
+    }
+
+    .action-button-single .icon {
+        margin-right: 0;
+    }
 }
