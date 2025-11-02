@@ -32,8 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 3. CORE FETCH LOGIC ---
     async function loadAndRenderInvoice() {
         try {
-            // Step 1: Fetch the *saved invoice data*
-            const response = await fetch(`/.netlify/functions/api?action=getInvoiceById&id=${bookingId}`);
+            const response = await fetch(`/.netlify/functions/api?action=getInvoiceByPublicId&pid=${publicId}`);
             if (!response.ok) throw new Error('Failed to fetch invoice data.');
 
             const data = await response.json();
