@@ -78,19 +78,25 @@ body {
 }
 
 .sidebar-header {
-    padding: 1.5rem;
-    text-align: center;
+    display: flex; /* CHANGED */
+    align-items: center; /* ADDED */
+    gap: 0.75rem; /* ADDED: Space between logo and text */
+    padding: 1rem 1.25rem; /* CHANGED: Reduced padding */
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    height: var(--header-height); /* ADDED: Match main header height */
 }
 
 .sidebar-logo {
-    max-width: 60px;
-    margin-bottom: 0.5rem;
+    max-width: 40px; /* CHANGED: Smaller logo */
+    margin-bottom: 0; /* CHANGED */
+    flex-shrink: 0; /* ADDED: Stop logo from shrinking */
 }
 
 .sidebar-header h3 {
     margin: 0;
     font-weight: 600;
+    font-size: 1.1rem; /* ADDED */
+    line-height: 1.2; /* ADDED */
 }
 
 .nav-links {
@@ -369,15 +375,18 @@ body {
     color: var(--primary-color);
 }
 
-/* ... [Existing Styles for .admin-layout, #admin-sidebar, etc.] ... */
-
-/* --- 3. Component Styling: Sidebar (ADDITIONS) --- */
 .sidebar-header .app-version {
     margin: 0;
-    font-size: 0.75rem;
-    color: #4f46e5;
-    /* Primary color highlight */
+    font-size: 0.7rem; /* CHANGED */
+    color: var(--color-primary); /* CHANGED: Use variable */
     font-weight: 500;
+    line-height: 1; /* ADDED */
+}
+
+/* NEW rule for the sidebar title wrapper */
+.sidebar-title-group {
+    display: flex;
+    flex-direction: column;
 }
 
 .sidebar-footer {
