@@ -50,7 +50,7 @@ body {
     left: 0;
     height: 100vh;
     background-color: var(--color-bg-sidebar);
-    transition: transform var(--transition-speed);
+    transition: width var(--transition-speed), transform var(--transition-speed);
 }
 
 .admin-main-content {
@@ -200,7 +200,7 @@ body {
 
 /* --- 7. Mobile Responsiveness --- */
 .sidebar-toggle {
-    display: none; /* Hidden on desktop */
+    display: block; /* Hidden on desktop */
     background: none;
     border: none;
     color: var(--color-text-dark);
@@ -209,14 +209,51 @@ body {
     margin-right: 1.5rem;
 }
 
-@media (max-width: 992px) {
-    .sidebar-toggle {
-        display: block; /* Show hamburger button */
+/* ================================================= */
+/* --- 7. Responsive Sidebar (Premium Upgrade) --- */
+/* ================================================= */
+
+/* --- A. DESKTOP: Collapsed Mini-Bar (NEW) --- */
+@media (min-width: 993px) {
+    .admin-layout.sidebar-collapsed #admin-sidebar {
+        width: 80px; /* New "mini-bar" width */
     }
 
+    .admin-layout.sidebar-collapsed .admin-main-content {
+        margin-left: 80px; /* Match the mini-bar width */
+    }
+
+    /* Hide text, keep icons */
+    .admin-layout.sidebar-collapsed .sidebar-header h3,
+    .admin-layout.sidebar-collapsed .sidebar-header .app-version,
+    .admin-layout.sidebar-collapsed .nav-links a span,
+    .admin-layout.sidebar-collapsed .sidebar-footer .nav-logout-btn span {
+        display: none;
+    }
+
+    /* Center logo and icons */
+    .admin-layout.sidebar-collapsed .sidebar-header {
+        padding: 1.5rem 0.5rem; /* Adjust padding */
+    }
+    .admin-layout.sidebar-collapsed .sidebar-logo {
+        max-width: 40px; /* Smaller logo */
+    }
+    .admin-layout.sidebar-collapsed .nav-links a {
+        justify-content: center;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    .admin-layout.sidebar-collapsed .nav-logout-btn {
+        justify-content: center;
+    }
+}
+
+/* --- B. MOBILE: Fly-out Menu (EXISTING, but cleaned up) --- */
+@media (max-width: 992px) {
     #admin-sidebar {
         transform: translateX(-100%); /* Hide sidebar off-screen */
         z-index: 1000;
+        width: var(--sidebar-width); /* Ensure it's full width on mobile */
     }
 
     .admin-main-content {
@@ -224,11 +261,12 @@ body {
         width: 100%;
     }
     
+    /* This class now ONLY controls the mobile fly-out */
     .admin-layout.sidebar-collapsed #admin-sidebar {
-        transform: translateX(0); /* Show sidebar when class is applied */
+        transform: translateX(0); /* Show sidebar */
     }
 
-    /* Optional: Add an overlay for better focus on mobile */
+    /* The overlay for mobile focus */
     .admin-layout.sidebar-collapsed::after {
         content: '';
         position: fixed;
