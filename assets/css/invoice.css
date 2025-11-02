@@ -916,7 +916,6 @@ body {
     /* --- 6. Section & Table Styling --- */
     .invoice-section {
         margin-bottom: 1rem !important;
-        text-align: center;
         page-break-inside: avoid !important;
     }
     .invoice-section h3 {
