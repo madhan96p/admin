@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoice - Shrish Travels</title>
     <link rel="stylesheet" href="/assets/css/common.css">
-    <link rel="stylesheet" href="/assets/css/invoice.css">
+    <link rel="stylesheet" href="/assets/css/invoice-redesign.css">
     <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
 </head>
@@ -28,67 +28,57 @@
         </header>
 
         <section class="invoice-meta">
-            <table class="invoice-meta-table">
-                <tr>
-                    <td colspan="2" class="merged-header">
-                        <h2>INVOICE</h2>
-                    </td>
-                </tr>
-                
-                <tr>
-                    <td class="bill-to-cell">
-                        <h3>Bill To:</h3>
-                        <p id="guest-name">Loading...</p>
-                        <p id="guest-mobile">Loading...</p>
-                    </td>
-
-                    <td class="details-cell">
-                        <table class="invoice-details-nested-table">
-                            <tr>
-                                <td class="label-cell">Invoice #:</td>
-                                <td class="value-cell"><span id="invoice-id">Loading...</span></td>
-                            </tr>
-                            <tr>
-                                <td class="label-cell">Invoice Date:</td>
-                                <td class="value-cell"><span id="invoice-date">Loading...</span></td>
-                            </tr>
-                            <tr>
-                                <td class="label-cell">Last Updated:</td>
-                                <td class="value-cell"><span id="last-updated">Loading...</span></td>
-                            </tr>
-                            <tr>
-                                <td class="label-cell">Due Date:</td>
-                                <td class="value-cell">Due Upon Receipt</td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
+            <div class="bill-to">
+                <h3>Bill To:</h3>
+                <p id="guest-name">Loading...</p>
+                <p id="guest-mobile">Loading...</p>
+            </div>
+            <div class="invoice-details">
+                <h2>INVOICE</h2>
+                <table>
+                    <tr>
+                        <td>Invoice #:</td>
+                        <td id="invoice-id">Loading...</td>
+                    </tr>
+                    <tr>
+                        <td>Invoice Date:</td>
+                        <td id="invoice-date">Loading...</td>
+                    </tr>
+                    <tr>
+                        <td>Last Updated:</td>
+                        <td id="last-updated">Loading...</td>
+                    </tr>
+                    <tr>
+                        <td>Due Date:</td>
+                        <td>Due Upon Receipt</td>
+                    </tr>
+                </table>
+            </div>
         </section>
 
-        <section class="invoice-section">
+        <section class="trip-summary">
             <h3>Trip Summary</h3>
-            <table class="summary-table">
+            <table>
                 <tr>
-                    <td><strong>Vehicle:</strong></td>
+                    <td>Vehicle:</td>
                     <td id="trip-vehicle">Loading...</td>
                 </tr>
                 <tr>
-                    <td><strong>Trip Dates:</strong></td>
+                    <td>Trip Dates:</td>
                     <td id="trip-dates">Loading...</td>
                 </tr>
                 <tr>
-                    <td><strong>Total KMs:</strong></td>
+                    <td>Total KMs:</td>
                     <td id="trip-total-kms">Loading...</td>
                 </tr>
                 <tr>
-                    <td><strong>Total Duration:</strong></td>
+                    <td>Total Duration:</td>
                     <td id="trip-total-duration">Loading...</td>
                 </tr>
             </table>
         </section>
 
-        <section class="invoice-section">
+        <section class="itemized-charges">
             <h3>Itemized Charges</h3>
             <table class="charges-table">
                 <thead>
@@ -104,14 +94,21 @@
                         <td colspan="4" style="text-align: center;">Loading charges...</td>
                     </tr>
                 </tbody>
-                <tfoot>
-                    <tr class="total-row">
-                        <td colspan="3" class="total-label">Grand Total</td>
-                        <td class="total-amount" id="grand-total">₹ --.--</td>
-                    </tr>
-                </tfoot>
             </table>
-            <p class="amount-in-words" id="amount-in-words">Loading...</p>
+        </section>
+        
+        <section class="invoice-total">
+            <div class="total-section">
+                <p class="amount-in-words" id="amount-in-words">Loading...</p>
+                <table class="total-table">
+                    <tfoot>
+                        <tr class="total-row">
+                            <td class="total-label">Grand Total</td>
+                            <td class="total-amount" id="grand-total">₹ --.--</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </section>
 
         <section class="invoice-footer">
