@@ -354,12 +354,15 @@ body {
 /* --- Invoice Header --- */
 .invoice-header {
     display: flex;
-    flex-direction: column; /* Stack on mobile */
+    flex-direction: column; 
     align-items: center;
     text-align: center;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid var(--primary-color, #4F46E5);
-    margin-bottom: 1.5rem;
+    /* --- CHANGES --- */
+    padding: 1.5rem 1rem; /* Add vertical padding */
+    border-top: 4px solid var(--primary-color, #4F46E5); /* Strong top border */
+    background-color: var(--subtle-bg, #f9fafb); /* Subtle background */
+    margin-bottom: 2rem; /* Increase space */
+    border-bottom: 1px solid var(--border-color); /* Subtle bottom line */
 }
 .header-logo img {
     width: 70px; /* Slightly smaller logo */
@@ -723,7 +726,28 @@ body {
         margin-top: 2.5rem;
         padding-top: 2rem;
     }
-    .payment-options { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .payment-options {
+        grid-template-columns: 1fr 1fr; /* NEW: 2-column layout */
+        gap: 1.5rem;
+        align-items: center; /* Vertically align items */
+    }
+
+    /* Make the UPI button span the full right column */
+    .pay-option:nth-child(2) {
+        grid-row: 1 / span 2; /* Span both rows */
+        grid-column: 2 / 3;
+        padding: 2rem; /* Make it bigger */
+    }
+    
+    /* Make the button inside it larger */
+    .pay-option .btn#payment-link {
+        font-size: 1.1rem;
+        padding: 0.8rem 1.2rem;
+    }
+
+    /* Stack the QR and Copy ID on the left */
+    .pay-option:nth-child(1) { grid-row: 1 / 2; grid-column: 1 / 2; }
+    .pay-option:nth-child(3) { grid-row: 2 / 3; grid-column: 1 / 2; }
     .pay-option h4 { font-size: 0.9rem; }
     .pay-option p { font-size: 0.8rem; }
     .qr-code { max-width: 110px; }
@@ -796,18 +820,33 @@ body {
         page-break-inside: avoid !important; /* Prevent breaking inside sections */
     }
     .invoice-header {
-        padding-bottom: 0.8rem !important;
-        border-bottom: 1px solid #666666 !important; /* Subtle solid border */
-        display: flex !important; /* Ensure flex for alignment */
+        /* --- NEW BRANDING --- */
+        background-color: var(--color-bg-sidebar, #1f2937) !important; /* Use your dark sidebar color */
+        color: #ffffff !important;
+        padding: 0.75rem 1rem !important; /* 1.5cm page margin - 1rem padding */
+        margin: -1.5cm -1.5cm 1rem -1.5cm !important; /* Bleed to page edge */
+        border-bottom: 4px solid var(--primary-color, #4F46E5) !important;
+        -webkit-print-color-adjust: exact !important; /* Force colors */
+        print-color-adjust: exact !important;
+
+        display: flex !important; 
         flex-direction: row !important;
-        align-items: flex-start !important;
+        align-items: center !important; /* Center items vertically */
     }
-     .header-logo img { width: 60px !important; }
-     .header-title { text-align: center !important; margin: 0 auto !important;}
-     .header-title h1 { font-size: 14pt !important; margin-bottom: 2px !important;}
-     .header-title p { font-size: 8pt !important; }
-     .header-contact { text-align: right !important; font-size: 7pt !important; line-height: 1.3 !important;}
-     .header-contact p { margin: 0 !important; }
+     .header-logo img { 
+         width: 60px !important; 
+         filter: brightness(0) invert(1); /* Make logo white */
+    }
+     .header-title { text-align: left !important; margin: 0 0 0 1rem !important;}
+     .header-title h1 { font-size: 14pt !important; margin: 0 !important; color: #ffffff !important;}
+     .header-title p { font-size: 8pt !important; color: #ffffff !important; opacity: 0.8;}
+     .header-contact { 
+         text-align: right !important; 
+         font-size: 7pt !important; 
+         line-height: 1.4 !important;
+         margin-left: auto; /* Push to the right */
+    }
+     .header-contact p { margin: 0 !important; color: #ffffff !important;}
 
     .invoice-meta { margin-top: 1rem !important; display: flex !important; justify-content: space-between !important; align-items: flex-start !important; }
     .bill-to h3, .invoice-details h2 { font-size: 8pt !important; margin-bottom: 3px !important; color: #333333 !important;}
@@ -895,8 +934,17 @@ body {
     }
     #qr-code-canvas svg { width: 100% !important; height: 100% !important; } /* Ensure SVG fills container */
      .pay-option:nth-child(2) { display: none !important; } /* Hide Click to Pay section */
-     .pay-option:nth-child(3) h4::after { content: ': ' attr(data-upi-id); font-weight: normal; color: #000;} /* Display UPI ID */
-     .pay-option:nth-child(3) input { display: none;} /* Hide input */
+     .pay-option:nth-child(3) h4 { margin-bottom: 0 !important; }
+     .pay-option:nth-child(3) input { 
+        display: block !important; /* SHOW the input */
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin-top: 4px !important;
+        font-size: 9pt !important; /* Make it readable */
+        font-weight: bold !important;
+        color: #000000 !important;
+     }
 
 
     .terms-section ol {
