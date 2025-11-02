@@ -95,8 +95,11 @@ body {
     list-style: none;
     padding: 1rem 0;
     margin: 0;
-}
 
+    /* --- ADD THESE LINES --- */
+    flex-grow: 1;       /* Tells the link list to fill all available space */
+    overflow-y: auto;   /* Adds a scrollbar ONLY if the links are too tall */
+}
 .nav-links a {
     display: flex;
     align-items: center;
