@@ -217,7 +217,6 @@
 }
 
 /* --- FAB Menu (Mobile) --- */
-.action-buttons-container { display: none; }
 @media (max-width: 1023.98px) {
     .action-buttons-desktop {
         display: none;
@@ -342,31 +341,9 @@
     border: none;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     cursor: pointer;
-    opacity: 0;
-    transform: scale(0.5);
     transition: all 0.3s ease;
-    z-index: -1; /* Place them behind the main button */
 }
 
-/* Position action buttons when container is open */
-.action-buttons-container.is-open .action-button {
-    opacity: 1;
-    transform: scale(1);
-    z-index: 1;
-}
-
-.action-buttons-container.is-open .action-button.save {
-    transform: translateY(-70px);
-}
-.action-buttons-container.is-open .action-button.whatsapp-button {
-    transform: translateY(-135px);
-}
-.action-buttons-container.is-open .action-button.generate-link-button {
-    transform: translateY(-200px);
-}
-.action-buttons-container.is-open .action-button.download-button {
-    transform: translateY(-265px);
-}
 
 /* Style individual buttons */
 .action-button.save { background-color: #e5e7eb; transition-delay: 0.05s; }
@@ -446,33 +423,4 @@
 /* Celebration/Success state */
 .action-button-single.is-success {
     background-color: #22c55e; /* Green */
-}
-
-/* This is the magic: Show our new button on mobile */
-@media (max-width: 768px) {
-    .action-buttons-container-simplified {
-        display: block; /* Show on mobile */
-    }
-    
-    /* And hide the desktop buttons on mobile */
-    .action-buttons-desktop {
-        display: none;
-    }
-
-    /* For very small screens, hide text and show just the icon */
-    @media (max-width: 360px) {
-        .action-button-single .text {
-            display: none;
-        }
-        .action-button-single .icon {
-            margin-right: 0;
-        }
-        .action-button-single {
-            width: 56px;
-            height: 56px;
-            padding: 0;
-            border-radius: 50%; /* Make it a circle */
-            min-width: 0;
-        }
-    }
 }
