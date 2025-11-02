@@ -251,21 +251,21 @@ function setupGlobalEventListeners() {
     
     const sidebarToggle = document.getElementById('sidebar-toggle-btn');
     const sidebar = document.getElementById('admin-sidebar');
-    const layout = document.querySelector('.admin-layout');
+    // const layout = document.querySelector('.admin-layout'); // We don't need this anymore
 
-    if (sidebarToggle && sidebar && layout) {
+    if (sidebarToggle && sidebar) { // Removed 'layout' from check
         sidebarToggle.addEventListener('click', (event) => {
             event.stopPropagation();
-            layout.classList.toggle('sidebar-collapsed');
+            document.body.classList.toggle('sidebar-collapsed'); // Apply to <body>
         });
 
         document.addEventListener('click', (event) => {
             const isClickInsideSidebar = sidebar.contains(event.target);
             const isClickOnToggleButton = sidebarToggle.contains(event.target);
-            const isSidebarOpen = layout.classList.contains('sidebar-collapsed');
+            const isSidebarOpen = document.body.classList.contains('sidebar-collapsed'); // Check <body>
 
             if (isSidebarOpen && !isClickInsideSidebar && !isClickOnToggleButton) {
-                layout.classList.remove('sidebar-collapsed');
+                document.body.classList.remove('sidebar-collapsed'); // Remove from <body>
             }
         });
     }

@@ -7,7 +7,7 @@
 :root {
     --sidebar-width: 260px;
     --header-height: 70px;
-    
+
     /* Color Palette */
     --color-bg-main: #f8f9fa;
     --color-bg-sidebar: #1f2937;
@@ -25,7 +25,9 @@
     --transition-speed: 0.3s ease;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
@@ -97,9 +99,12 @@ body {
     margin: 0;
 
     /* --- ADD THESE LINES --- */
-    flex-grow: 1;       /* Tells the link list to fill all available space */
-    overflow-y: auto;   /* Adds a scrollbar ONLY if the links are too tall */
+    flex-grow: 1;
+    /* Tells the link list to fill all available space */
+    overflow-y: auto;
+    /* Adds a scrollbar ONLY if the links are too tall */
 }
+
 .nav-links a {
     display: flex;
     align-items: center;
@@ -113,7 +118,8 @@ body {
 }
 
 .nav-links a:hover {
-    background-color: rgba(79, 70, 229, 0.2); /* Faded primary color */
+    background-color: rgba(79, 70, 229, 0.2);
+    /* Faded primary color */
     color: var(--color-text-light);
 }
 
@@ -141,6 +147,9 @@ body {
     position: sticky;
     top: 0;
     z-index: 900;
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    transition: margin-left var(--transition-speed), width var(--transition-speed);
 }
 
 .header-title {
@@ -156,6 +165,9 @@ body {
     border-top: 1px solid var(--color-border);
     font-size: 0.9rem;
     color: var(--color-text-muted);
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    transition: margin-left var(--transition-speed), width var(--transition-speed);
 }
 
 /* --- 5. Content Styling: Cards, Titles, etc. --- */
@@ -180,7 +192,8 @@ body {
 }
 
 /* --- 6. Utility & Form Element Styling --- */
-.btn-primary, .logout-btn {
+.btn-primary,
+.logout-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -195,7 +208,8 @@ body {
     color: white;
 }
 
-.btn-primary:hover, .logout-btn:hover {
+.btn-primary:hover,
+.logout-btn:hover {
     background-color: var(--color-primary-hover);
     box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
     transform: translateY(-2px);
@@ -203,7 +217,8 @@ body {
 
 /* --- 7. Mobile Responsiveness --- */
 .sidebar-toggle {
-    display: block; /* Hidden on desktop */
+    display: block;
+    /* Hidden on desktop */
     background: none;
     border: none;
     color: var(--color-text-dark);
@@ -218,35 +233,43 @@ body {
 
 /* --- A. DESKTOP: Collapsed Mini-Bar (NEW) --- */
 @media (min-width: 993px) {
-    .admin-layout.sidebar-collapsed #admin-sidebar {
+    body.sidebar-collapsed #admin-sidebar { /* MODIFIED */
         width: 80px; /* New "mini-bar" width */
     }
 
-    .admin-layout.sidebar-collapsed .admin-main-content {
-        margin-left: 80px; /* Match the mini-bar width */
+    body.sidebar-collapsed .admin-main-content { /* MODIFIED */
+        margin-left: 80px;
+        width: calc(100% - 80px); /* ADDED */
+    }
+
+    /* --- ADDED THIS BLOCK --- */
+    body.sidebar-collapsed .admin-header,
+    body.sidebar-collapsed .admin-footer {
+        margin-left: 80px;
+        width: calc(100% - 80px);
     }
 
     /* Hide text, keep icons */
-    .admin-layout.sidebar-collapsed .sidebar-header h3,
-    .admin-layout.sidebar-collapsed .sidebar-header .app-version,
-    .admin-layout.sidebar-collapsed .nav-links a span,
-    .admin-layout.sidebar-collapsed .sidebar-footer .nav-logout-btn span {
+    body.sidebar-collapsed .sidebar-header h3, /* MODIFIED */
+    body.sidebar-collapsed .sidebar-header .app-version, /* MODIFIED */
+    body.sidebar-collapsed .nav-links a span, /* MODIFIED */
+    body.sidebar-collapsed .sidebar-footer .nav-logout-btn span { /* MODIFIED */
         display: none;
     }
 
     /* Center logo and icons */
-    .admin-layout.sidebar-collapsed .sidebar-header {
-        padding: 1.5rem 0.5rem; /* Adjust padding */
+    body.sidebar-collapsed .sidebar-header { /* MODIFIED */
+        padding: 1.5rem 0.5rem; 
     }
-    .admin-layout.sidebar-collapsed .sidebar-logo {
-        max-width: 40px; /* Smaller logo */
+    body.sidebar-collapsed .sidebar-logo { /* MODIFIED */
+        max-width: 40px; 
     }
-    .admin-layout.sidebar-collapsed .nav-links a {
+    body.sidebar-collapsed .nav-links a { /* MODIFIED */
         justify-content: center;
         padding-left: 1rem;
         padding-right: 1rem;
     }
-    .admin-layout.sidebar-collapsed .nav-logout-btn {
+    body.sidebar-collapsed .nav-logout-btn { /* MODIFIED */
         justify-content: center;
     }
 }
@@ -254,23 +277,30 @@ body {
 /* --- B. MOBILE: Fly-out Menu (EXISTING, but cleaned up) --- */
 @media (max-width: 992px) {
     #admin-sidebar {
-        transform: translateX(-100%); /* Hide sidebar off-screen */
+        transform: translateX(-100%); 
         z-index: 1000;
-        width: var(--sidebar-width); /* Ensure it's full width on mobile */
+        width: var(--sidebar-width); 
     }
 
     .admin-main-content {
         margin-left: 0;
         width: 100%;
     }
+
+    /* --- ADDED THIS BLOCK --- */
+    /* Reset header/footer for mobile view */
+    .admin-header,
+    .admin-footer {
+        margin-left: 0;
+        width: 100%;
+    }
     
-    /* This class now ONLY controls the mobile fly-out */
-    .admin-layout.sidebar-collapsed #admin-sidebar {
+    body.sidebar-collapsed #admin-sidebar { /* MODIFIED */
         transform: translateX(0); /* Show sidebar */
     }
 
     /* The overlay for mobile focus */
-    .admin-layout.sidebar-collapsed::after {
+    body.sidebar-collapsed::after { /* MODIFIED */
         content: '';
         position: fixed;
         top: 0;
@@ -291,7 +321,8 @@ body {
 .search-bar {
     position: relative;
     width: 100%;
-    max-width: 320px; /* Adjust as needed */
+    max-width: 320px;
+    /* Adjust as needed */
 }
 
 .search-bar .fa-search {
@@ -299,15 +330,18 @@ body {
     top: 50%;
     left: 15px;
     transform: translateY(-50%);
-    color: var(--text-color-light); /* Using variables from previous style */
+    color: var(--text-color-light);
+    /* Using variables from previous style */
     font-size: 0.9rem;
-    pointer-events: none; /* Allows clicking through the icon to the input */
+    pointer-events: none;
+    /* Allows clicking through the icon to the input */
     transition: color 0.2s ease-in-out;
 }
 
 .search-bar input {
     width: 100%;
-    padding: 10px 15px 10px 40px; /* Left padding makes space for the icon */
+    padding: 10px 15px 10px 40px;
+    /* Left padding makes space for the icon */
     border: 1px solid var(--border-color);
     border-radius: 8px;
     font-size: 0.9rem;
@@ -330,7 +364,7 @@ body {
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
 }
 
-.search-bar input:focus + .fa-search,
+.search-bar input:focus+.fa-search,
 .search-bar:focus-within .fa-search {
     color: var(--primary-color);
 }
@@ -341,12 +375,14 @@ body {
 .sidebar-header .app-version {
     margin: 0;
     font-size: 0.75rem;
-    color: #4f46e5; /* Primary color highlight */
+    color: #4f46e5;
+    /* Primary color highlight */
     font-weight: 500;
 }
 
 .sidebar-footer {
-    margin-top: auto; /* Push to the bottom */
+    margin-top: auto;
+    /* Push to the bottom */
     padding: 1rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -355,7 +391,8 @@ body {
     width: 100%;
     background: none;
     border: none;
-    color: #fca5a5; /* Light red/danger color */
+    color: #fca5a5;
+    /* Light red/danger color */
     text-align: left;
     display: flex;
     align-items: center;
@@ -368,7 +405,8 @@ body {
 
 .nav-logout-btn:hover {
     background-color: rgba(239, 68, 68, 0.2);
-    color: #ef4444; /* Stronger red */
+    color: #ef4444;
+    /* Stronger red */
 }
 
 
@@ -385,21 +423,27 @@ body {
     background-color: var(--color-bg-card);
     padding: 1.5rem;
     border-radius: var(--border-radius-md);
-    border-left: 5px solid var(--color-border); /* Subtle accent */
+    border-left: 5px solid var(--color-border);
+    /* Subtle accent */
     box-shadow: var(--shadow-md);
     display: flex;
     align-items: center;
     gap: 1rem;
-    text-decoration: none; /* Remove underline */
-    color: var(--color-text-dark); /* Inherit text color */
-    display: flex; /* Ensure the flex layout remains */
+    text-decoration: none;
+    /* Remove underline */
+    color: var(--color-text-dark);
+    /* Inherit text color */
+    display: flex;
+    /* Ensure the flex layout remains */
 }
 
 .stat-card:hover {
-    transform: translateY(-3px); /* LIFTING effect on hover */
+    transform: translateY(-3px);
+    /* LIFTING effect on hover */
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
     /* Increase border color opacity slightly for a premium feel */
-    border-left-width: 8px; /* Slight increase for visual impact */
+    border-left-width: 8px;
+    /* Slight increase for visual impact */
 }
 
 /* Ensure children colors are maintained on hover */
@@ -426,12 +470,29 @@ body {
 }
 
 /* Custom colors for stats */
-.stat-critical { border-left-color: #ef4444; }
-.stat-critical i { color: #ef4444; }
-.stat-secondary { border-left-color: #facc15; }
-.stat-secondary i { color: #facc15; }
-.stat-success { border-left-color: #10b981; }
-.stat-success i { color: #10b981; }
+.stat-critical {
+    border-left-color: #ef4444;
+}
+
+.stat-critical i {
+    color: #ef4444;
+}
+
+.stat-secondary {
+    border-left-color: #facc15;
+}
+
+.stat-secondary i {
+    color: #facc15;
+}
+
+.stat-success {
+    border-left-color: #10b981;
+}
+
+.stat-success i {
+    color: #10b981;
+}
 
 /* Quick Actions Card */
 .quick-actions-card {
