@@ -50,6 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Fills all the placeholder spans and images with data from the slip object.
      */
+    /**
+     * Fills all the placeholder spans and images with data from the slip object.
+     */
     function populateSlipDetails(slip) {
         const setText = (id, value) => {
             const el = document.getElementById(id);
@@ -60,7 +63,25 @@ document.addEventListener('DOMContentLoaded', () => {
             style: 'currency', currency: 'INR'
         });
 
-        // Header and Employee Info
+        // --- Get All Numeric Values ---
+        const monthlySalary = parseFloat(slip.MonthlySalary || 0);
+        const outstationTotal = parseFloat(slip.OutstationTotal || 0);
+        const outstationQty = parseFloat(slip.OutstationQty || 0);
+        const extraDutyTotal = parseFloat(slip.ExtraDutyTotal || 0);
+        const extraDutyQty = parseFloat(slip.ExtraDutyQty || 0);
+        const lopDeduction = parseFloat(slip.LOPDeduction || 0);
+        const lopDays = parseFloat(slip.LOPDays || 0);
+        const advanceDeduction = parseFloat(slip.AdvanceDeduction || 0);
+        const totalEarnings = parseFloat(slip.TotalEarnings || 0);
+        const totalDeductions = parseFloat(slip.TotalDeductions || 0);
+        const netPayable = parseFloat(slip.NetPayableAmount || 0);
+
+        // --- Calculate Rates for Context ---
+        // We use default rates from the form if Qty is 0, otherwise calculate
+        const outstationRate = outstationQty > 0 ? (outstationTotal / outstationQty) : 300;
+        const extraDutyRate = extraDutyQty > 0 ? (extraDutyTotal / extraDutyQty) : 100;
+
+        // --- Populate Header and Employee Info ---
         const payPeriodDate = new Date(`${slip.PayPeriod}-02`);
         setText('print-pay-period', payPeriodDate.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }));
         if (slip.DateGenerated) {
@@ -71,28 +92,58 @@ document.addEventListener('DOMContentLoaded', () => {
         setText('print-designation', slip.Designation);
         setText('print-payable-days', slip.PayableDays);
 
-        // Earnings
-        setText('print-monthly-salary', formatCurrency(slip.MonthlySalary));
-        setText('print-outstation-total', formatCurrency(slip.OutstationTotal));
-        setText('print-extraduty-total', formatCurrency(slip.ExtraDutyTotal));
-        setText('print-total-earnings', formatCurrency(slip.TotalEarnings));
+        // --- Populate Earnings Table ---
+        setText('print-monthly-salary', formatCurrency(monthlySalary));
+        setText('print-outstation-total', formatCurrency(outstationTotal));
+        setText('print-extraduty-total', formatCurrency(extraDutyTotal));
+        setText('print-total-earnings', formatCurrency(totalEarnings));
 
-        // Deductions
-        setText('print-lop-deduction', formatCurrency(slip.LOPDeduction));
-        setText('print-advance-deduction', formatCurrency(slip.AdvanceDeduction));
-        setText('print-total-deductions', formatCurrency(slip.TotalDeductions));
+        // --- Populate Earnings Context ---
+        setText('print-monthly-salary-context', `(For ${slip.PayableDays} Days)`);
+        setText('print-outstation-context', `(${outstationQty} Qty @ ${formatCurrency(outstationRate)})`);
+        setText('print-extraduty-context', `(${extraDutyQty} Qty @ ${formatCurrency(extraDutyRate)})`);
 
-        // Net Pay
-        const netPayable = parseFloat(slip.NetPayableAmount || 0);
+        // --- Populate Deductions Table ---
+        setText('print-lop-deduction', formatCurrency(lopDeduction));
+        setText('print-advance-deduction', formatCurrency(advanceDeduction));
+        setText('print-total-deductions', formatCurrency(totalDeductions));
+
+        // --- Populate Deductions Context ---
+        setText('print-lop-context', `(${lopDays} Days)`);
+        // No context needed for advance, but you could add one:
+        // setText('print-advance-context', '(As requested)'); 
+
+        // --- Populate Net Pay ---
         setText('print-net-payable', formatCurrency(netPayable));
         setText('print-net-payable-words', `(In Words: ${numberToWords(Math.round(netPayable))} Rupees Only)`);
 
-        // Signatures
+        // --- Populate Signatures ---
         const authSigImg = document.getElementById('print-auth-signature-image');
         if (authSigImg && slip.AuthSignature) authSigImg.src = slip.AuthSignature;
 
         const finalEmployeeSigImg = document.getElementById('print-employee-signature-image');
         if (finalEmployeeSigImg && slip.EmployeeSignature) finalEmployeeSigImg.src = slip.EmployeeSignature;
+
+        // --- Populate NEW Notes Section ---
+        const notesSection = document.getElementById('notes-section');
+        const approvalNotesDisplay = document.getElementById('approval-notes-display');
+        const employeeNotesDisplay = document.getElementById('employee-notes-display');
+        let notesExist = false;
+
+        if (slip.ApprovalNotes) {
+            setText('print-approval-notes', slip.ApprovalNotes);
+            approvalNotesDisplay.style.display = 'block';
+            notesExist = true;
+        }
+        if (slip.ENotes) {
+            setText('print-employee-notes', slip.ENotes);
+            employeeNotesDisplay.style.display = 'block';
+            notesExist = true;
+        }
+
+        if (notesExist) {
+            notesSection.style.display = 'block';
+        }
     }
 
     /**
