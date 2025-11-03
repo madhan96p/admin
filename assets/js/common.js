@@ -18,7 +18,7 @@ const driverData = {
     "AjithKumar": { 
         id: "SH007", 
         designation: "Senior Driver", 
-        monthlySalary: 21000, 
+        monthlySalary: 23000, 
         joinedDate: "25/09/2023", 
         mobile: "9047382896", 
         signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/Ajithkumar.jpg" 
