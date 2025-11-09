@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
             companyBarChartInstance.destroy();
         }
 
-        const labels = Object.keys(groupedData).map(groupKey => {
+        const labels = Object.keys(monthlyData).map(groupKey => {
             // --- NEW: Dynamic Label Formatting ---
             const parts = groupKey.split('-');
             let date;

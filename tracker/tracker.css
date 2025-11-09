@@ -96,3 +96,9 @@
     color: #4f46e5; /* --color-primary */
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
+
+/* --- 8. NEW: Donut Chart Size Fix --- */
+.chart-wrapper {
+    position: relative;
+    max-height: 300px; /* This controls the max height */
+}
