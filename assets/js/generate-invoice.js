@@ -496,7 +496,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 5. EVENT LISTENERS ---
     // Step 1 Buttons
     elements.loadTripButton.addEventListener('click', handleLoadTrip);
-    elements.manualEntryButton.addEventListener('click', handleManualEntry);
+    elements.manualStartDate.addEventListener('change', () => {
+        const startDate = elements.manualStartDate.value;
+        
+        if (startDate) {
+            // Set the minimum allowed date for the end date input
+            elements.manualEndDate.min = startDate;
+
+            // Check if the current end date is now invalid
+            const endDate = elements.manualEndDate.value;
+            if (endDate && endDate < startDate) {
+                // If the end date is now before the new start date, clear it
+                elements.manualEndDate.value = ''; 
+            }
+        }
+    });
 
     // Step 4 Buttons
     elements.saveInvoiceBtn.addEventListener('click', handleSaveInvoice);
