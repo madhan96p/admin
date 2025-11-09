@@ -1295,6 +1295,7 @@ textarea::placeholder {
     background: #f4f4f4 !important;
     /* Grey box like demo */
     -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   /* --- 7. FOOTER GRID (THE "ONE PAGE" FIX) --- */
@@ -1547,4 +1548,130 @@ textarea::placeholder {
 
 hr.footer-divider {
   display: none; /* We handle this with border-top now */
+}
+
+/* ========================================= */
+/* === NEW INVOICE FOOTER STYLES === */
+/* ========================================= */
+
+.invoice-footer {
+  background: var(--neutral-50);
+  padding: 2.5rem 2rem;
+  border-top: 1px solid var(--neutral-200);
+}
+
+.footer-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.total-due-card,
+.payment-methods-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--neutral-200);
+}
+
+.total-due-card h3,
+.payment-methods-card h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--neutral-200);
+}
+
+/* --- Column 1: Total Due Card --- */
+.total-due-amount {
+  font-size: 3rem; /* Big, bold amount */
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+}
+
+.amount-in-words-hero {
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--neutral-600);
+}
+
+/* --- Column 2: Payment Methods Card --- */
+.payment-options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.pay-option#qr-option {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: var(--neutral-50);
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--neutral-200);
+}
+
+.qr-code {
+  width: 100px; /* Fixed size for the QR */
+  height: 100px;
+  flex-shrink: 0; /* Prevent QR from shrinking */
+}
+
+.pay-option-text h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--neutral-800);
+  margin-bottom: 0.25rem;
+}
+
+.pay-option-text p {
+  font-size: 0.9rem;
+  color: var(--neutral-600);
+  margin: 0;
+}
+
+.btn#payment-link {
+  width: 100%; /* Make button full width */
+  font-size: 1rem;
+  padding: 1rem;
+}
+
+/* --- Media Query for Mobile --- */
+@media (max-width: 768px) {
+  .footer-main-grid {
+    grid-template-columns: 1fr; /* Stack columns on mobile */
+    gap: 1.5rem;
+  }
+
+  .total-due-card,
+  .payment-methods-card {
+    padding: 1.5rem;
+  }
+
+  .total-due-amount {
+    font-size: 2.5rem;
+  }
+
+  .pay-option#qr-option {
+    padding: 1rem;
+    gap: 1rem;
+  }
+}
+
+/* ========================================= */
+/* === CLEANUP OLD STYLES === */
+/* ========================================= */
+
+/* We can now hide the old, replaced elements */
+.payment-section,
+.payment-options,
+.amount-in-words {
+  display: none !important;
 }

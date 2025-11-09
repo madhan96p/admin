@@ -102,31 +102,37 @@
         </section>
 
         <section class="invoice-footer">
-            <div class="payment-section">
-                <h3>Pay Your Bill</h3>
-                <p>Choose your preferred method to pay <strong><span id="total-due-amount">₹ --.--</span></strong></p>
-                <div class="payment-options">
-                    <div class="pay-option">
-                        <h4>Scan to Pay</h4>
-                        <div id="qr-code-canvas" class="qr-code"></div>
-                        <p>Scan with any UPI app</p>
+            
+            <div class="footer-main-grid">
+                
+                <div class="total-due-card">
+                    <h3>Total Due</h3>
+                    <div class="total-due-amount" id="total-due-amount-hero">
+                        ₹ --.--
                     </div>
-                    <div class="pay-option">
-                        <h4>2. Pay with UPI App</h4>
+                    <p class="amount-in-words-hero" id="amount-in-words-hero">
+                        Loading...
+                    </p>
+                </div>
+                
+                <div class="payment-methods-card">
+                    <h3>Payment Methods</h3>
+                    <div class="payment-options-grid">
+                        <div class="pay-option" id="qr-option">
+                            <div id="qr-code-canvas" class="qr-code"></div>
+                            <div class="pay-option-text">
+                                <h4>Scan with any UPI app</h4>
+                                <p>Jeganraj Srinivasan</p>
+                            </div>
+                        </div>
                         <a href="#" class="btn btn-success" id="payment-link">
+                            <i class="fas fa-mobile-alt"></i> 
                             Pay ₹<span id="total-due-amount-button">--.--</span> with UPI
                         </a>
-                        <p>(For mobile users)</p>
-                    </div>
-                    <div class="pay-option">
-                        <h4>3. Copy UPI ID</h4>
-                        <input type="text" value="payments@shrish" id="upi-id-input" readonly>
-                        <button class="btn" id="copy-upi-btn">Copy UPI ID</button>
                     </div>
                 </div>
-            </div>
 
-            <div class="terms-section">
+            </div> <div class="terms-section">
                 <h3>Terms & Conditions</h3>
                 <ol>
                     <li>All charges (Kilometers & Time) are calculated on a "shed-to-shed" basis.</li>
@@ -155,6 +161,7 @@
                     <a href="https://www.shrishgroup.com" target="_blank">www.shrishgroup.com</a>
                 </div>
             </div>
+
         </section> <footer class="invoice-print-footer">
             <p>This is a system-generated invoice. | Shrish Travels | www.shrishgroup.com</p>
         </footer>

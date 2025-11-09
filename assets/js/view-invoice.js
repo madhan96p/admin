@@ -135,9 +135,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // 5. Populate Totals
         setText('grand-total', formatCurrency(grandTotal));
         setText('total-due-amount', formatCurrency(grandTotal));
-
+        
         // This sets the text on the "Click to Pay" button
         setText('total-due-amount-button', grandTotal.toFixed(2));
+
+        // --- ADD THESE TWO LINES ---
+        setText('total-due-amount-hero', formatCurrency(grandTotal));
+        setText('amount-in-words-hero', `Rupees ${amountInWords}`);
 
         // --- ⬇️ CORRECTED ORDER ⬇️ ---
         // 1. DEFINE the variable first
@@ -206,15 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
             qrCodeBox.setAttribute('data-payee-name-print', 'Jeganraj Srinivasan');
         }
         
-        // Remove logic for the old "Copy ID" box
-        const copyUpiBtn = document.getElementById('copy-upi-btn');
-        const upiIdInput = document.getElementById('upi-id-input');
-        if (copyUpiBtn) {
-            copyUpiBtn.style.display = 'none';
-        }
-        if (upiIdInput) {
-            upiIdInput.style.display = 'none';
-        }
     }
 
     // --- 5. EVENT LISTENERS ---
