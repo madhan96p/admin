@@ -30,6 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let companyBarChartInstance = null;
     let companyChartInstance = null;
     let personalChartInstance = null;
+    let barChartType = 'bar'; // 'bar' or 'line'
+    let barChartGrouping = 'monthly'; // 'daily', 'monthly', or 'yearly'
     
     // --- 3. Main Function to Fetch Data (Runs Once) ---
     
@@ -118,24 +120,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const companyProfit = companyIncome + companyExpense;
 
-        // --- 4.3. Process Data for Bar Chart (Monthly) ---
-        const monthlyData = {};
+        const monthlyData = {}; // This is now 'groupedData'
+        
         // Loop through filtered entries, reverse for chronological order
         for (const entry of filteredEntries.slice().reverse()) {
             if (entry.Account !== 'Company') continue;
+            
             const date = new Date(entry.Date);
-            const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-            if (!monthlyData[monthYear]) {
-                monthlyData[monthYear] = { income: 0, expense: 0 };
+            let groupKey = '';
+
+            // --- NEW GROUPING LOGIC ---
+            switch (barChartGrouping) {
+                case 'daily':
+                    // Group by 'YYYY-MM-DD'
+                    groupKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                    break;
+                case 'yearly':
+                    // Group by 'YYYY'
+                    groupKey = `${date.getFullYear()}`;
+                    break;
+                case 'monthly':
+                default:
+                    // Group by 'YYYY-MM'
+                    groupKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
             }
+            // --- END NEW GROUPING LOGIC ---
+
+            if (!monthlyData[groupKey]) {
+                monthlyData[groupKey] = { income: 0, expense: 0 };
+            }
+            
             const amount = parseFloat(entry.Amount) || 0;
             if (entry.Flow === 'Credit') {
-                monthlyData[monthYear].income += amount;
+                monthlyData[groupKey].income += amount;
             } else if (entry.Flow === 'Debit') {
-                monthlyData[monthYear].expense += Math.abs(amount);
+                monthlyData[groupKey].expense += Math.abs(amount);
             }
         }
-
         // --- 4.4. Update Summary Cards ---
         const formatCurrency = (num) => {
             return num.toLocaleString('en-IN', {
@@ -223,6 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: { position: 'top' },
                     tooltip: {
@@ -251,10 +273,20 @@ document.addEventListener('DOMContentLoaded', () => {
             companyBarChartInstance.destroy();
         }
 
-        const labels = Object.keys(monthlyData).map(monthYear => {
-            const [year, month] = monthYear.split('-');
-            const date = new Date(year, month - 1);
-            return date.toLocaleString('default', { month: 'short', year: 'numeric' });
+        const labels = Object.keys(groupedData).map(groupKey => {
+            // --- NEW: Dynamic Label Formatting ---
+            const parts = groupKey.split('-');
+            let date;
+            if (barChartGrouping === 'daily') {
+                date = new Date(parts[0], parts[1] - 1, parts[2]);
+                return date.toLocaleString('default', { day: 'numeric', month: 'short' }); // "10 Oct"
+            } else if (barChartGrouping === 'monthly') {
+                date = new Date(parts[0], parts[1] - 1);
+                return date.toLocaleString('default', { month: 'short', year: 'numeric' }); // "Oct 2025"
+            } else { // yearly
+                return groupKey; // "2025"
+            }
+            // --- END: Dynamic Label Formatting ---
         });
 
         const incomeData = Object.values(monthlyData).map(data => data.income);
@@ -321,6 +353,35 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Re-render the dashboard with the new range
             updateDashboardView(range);
+        });
+    });
+
+    // Type Toggle (Bar/Line)
+    document.querySelectorAll('#bar-chart-type button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const currentButton = e.target.closest('button');
+            barChartType = currentButton.dataset.type; // Set global state
+            
+            // Update active class
+            document.querySelectorAll('#bar-chart-type button').forEach(btn => btn.classList.remove('active'));
+            currentButton.classList.add('active');
+            
+            // Re-render dashboard
+            updateDashboardView(document.querySelector('.date-filter-group button.active').dataset.range);
+        });
+    });
+
+    // Grouping Toggle (Daily/Monthly/Yearly)
+    document.querySelectorAll('#bar-chart-grouping button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            barChartGrouping = e.target.dataset.group; // Set global state
+            
+            // Update active class
+            document.querySelectorAll('#bar-chart-grouping button').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            
+            // Re-render dashboard
+            updateDashboardView(document.querySelector('.date-filter-group button.active').dataset.range);
         });
     });
 

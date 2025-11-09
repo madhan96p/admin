@@ -75,17 +75,36 @@
             </div>
 
             <div class="content-card" style="margin-top: 2rem;">
-                <h3>Company Performance (Monthly)</h3>
+                
+                <div class="chart-header">
+                    <h3>Company Performance</h3>
+                    
+                    <div id="bar-chart-grouping" class="chart-toggle-group">
+                        <button data-group="daily">Daily</button>
+                        <button data-group="monthly" class="active">Monthly</button>
+                        <button data-group="yearly">Yearly</button>
+                    </div>
+                    
+                    <div id="bar-chart-type" class="chart-toggle-group">
+                        <button data-type="bar" class="active"><i class="fas fa-chart-bar"></i></button>
+                        <button data-type="line"><i class="fas fa-chart-line"></i></button>
+                    </div>
+                </div>
+
                 <canvas id="company-bar-chart"></canvas>
             </div>
             <div class="tracker-chart-grid">
                 <div class="content-card">
                     <h3>Company Expenses</h3>
-                    <canvas id="company-chart"></canvas>
+                    <div class="chart-wrapper">
+                        <canvas id="company-chart"></canvas>
+                    </div>
                 </div>
                 <div class="content-card">
                     <h3>Personal Expenses</h3>
-                    <canvas id="personal-chart"></canvas>
+                    <div class="chart-wrapper">
+                        <canvas id="personal-chart"></canvas>
+                    </div>
                 </div>
             </div>
 

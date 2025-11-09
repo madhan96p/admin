@@ -197,3 +197,9 @@
         margin-left: 0;
     }
 }
+
+/* --- 8. NEW: Donut Chart Size Fix --- */
+.chart-wrapper {
+    position: relative;
+    max-height: 300px; /* This controls the max height */
+}

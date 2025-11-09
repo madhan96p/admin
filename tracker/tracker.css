@@ -52,3 +52,47 @@
         padding-right: 8px;
     }
 }
+
+/* --- 7. NEW: Chart Header & Toggles --- */
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap; /* For mobile */
+    gap: 1rem;
+}
+
+.chart-header h3 {
+    margin: 0;
+    flex: 1 1 auto; /* Allow title to grow */
+}
+
+.chart-toggle-group {
+    display: flex;
+    background-color: #f3f4f6;
+    border-radius: 6px;
+    padding: 4px;
+}
+
+.chart-toggle-group button {
+    background: none;
+    border: none;
+    padding: 0.4rem 0.7rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #4b5563;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.chart-toggle-group button:hover {
+    background-color: #e5e7eb;
+}
+
+.chart-toggle-group button.active {
+    background-color: white;
+    color: #4f46e5; /* --color-primary */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
