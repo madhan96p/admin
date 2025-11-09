@@ -764,22 +764,6 @@ textarea::placeholder {
   margin-top: 1rem;
 }
 
-.summary-table td {
-  padding: 0.75rem 1rem;
-  /* border-bottom: 1px solid var(--neutral-200); */
-}
-
-.summary-table td:first-child {
-  font-weight: 600;
-  color: var(--neutral-600);
-  width: 40%;
-}
-
-.summary-table td:last-child {
-  color: var(--neutral-900);
-  font-weight: 600;
-}
-
 .charges-table thead th {
   background: var(--neutral-100);
   padding: 1rem;
@@ -1098,246 +1082,6 @@ textarea::placeholder {
   }
 }
 
-/* =================================================================== */
-/* === START: REFINED PRINT STYLESHEET (V9 - FINAL FIX) === */
-/* =================================================================== */
-
-@media print {
-  @page {
-    size: A4;
-    margin: 0.5in;
-  }
-
-  /* --- 1. Base Setup --- */
-  html,
-  body {
-    width: 100%;
-    height: auto;
-    min-height: 0;
-    background: white !important;
-    font-family: 'Helvetica', Arial, sans-serif;
-    font-size: 9pt;
-    line-height: 1.35;
-    color: #000;
-  }
-
-  /* --- 2. Element Hiding --- */
-  .no-print,
-  .invoice-actions,
-  .footer-divider,
-  .invoice-print-footer,
-  .document-title,
-  .payment-section>p,
-  .pay-option:nth-child(2),
-  .pay-option:nth-child(3),
-  /* .brand-contact, Hide web brand contact */
-  .branded-footer-content .footer-contact-links /* Hide web contact links */
-  {
-    display: none !important;
-  }
-
-  /* --- 3. Main Container --- */
-  .invoice-container {
-    box-shadow: none !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
-    max-width: 100% !important;
-    border: none;
-  }
-
-  /* --- 4. Header --- */
-  .brand-header {
-    display: grid;
-    grid-template-columns: 1fr 2fr; /* 2-col layout for print */
-    align-items: center;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #333;
-  }
-  .brand-title { text-align: left; padding-left: 1rem; }
-  .brand-logo img { width: 65px; }
-  .brand-title h1 { font-size: 1.9rem; }
-  .brand-title p { font-size: 0.9rem; }
-
-  /* --- 5. Meta Section (NEW LAYOUT) --- */
-  .invoice-meta {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #ccc;
-  }
-  .invoice-meta-table>tbody>tr {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: 100%;
-  }
-  .bill-to-cell, .details-cell {
-    width: 100% !important;
-    padding: 0.4rem 0 !important;
-  }
-  .bill-to-cell h3 {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    color: #555;
-    margin-bottom: 0.2rem;
-  }
-  .bill-to-cell p { font-size: 1.1rem; font-weight: bold; }
-  
-  /* STYLES FOR NEW .details-list */
-  .details-list {
-    text-align: right;
-    font-size: 0.9rem;
-    line-height: 1.5;
-  }
-  .details-list p { padding: 0.1rem 0; font-weight: normal; color: #333; }
-  .details-list p span { font-weight: bold; color: #000; }
-  .details-list p:first-child span { font-size: 0.95rem; }
-  .details-list p strong { color: #000; font-weight: bold; }
-
-  /* --- 6. Content Sections --- */
-  .invoice-section {
-    padding: 0.75rem 0;
-    border-bottom: 1px solid #ccc;
-    page-break-inside: avoid;
-  }
-  .invoice-section h3 {
-    font-size: 1.1rem;
-    font-family: 'Times New Roman', serif;
-    margin-bottom: 0.6rem;
-  }
-
-  /* STYLES FOR NEW .summary-table */
-  .summary-table { margin-top: 0; }
-  .summary-table td {
-    padding: 0.25rem 0.3rem;
-    font-size: 0.95rem;
-    width: 50%;
-  }
-  .summary-table td strong { font-weight: normal; color: #333; }
-
-  /* Table Styling (Demo PDF) */
-  .charges-table thead th {
-    background: #f4f4f4 !important;
-    padding: 0.5rem;
-    font-size: 0.8rem;
-    color: #333;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  .charges-table tbody td { padding: 0.5rem; font-size: 0.95rem; }
-  .charges-table tfoot .total-row {
-    background: #333 !important;
-    color: white !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  .charges-table tfoot td { font-size: 1rem; padding: 0.75rem 0.5rem; }
-  .charges-table tfoot .total-amount { font-size: 1.25rem; font-weight: bold; }
-  .amount-in-words {
-    margin-top: 0.5rem;
-    padding: 0.5rem;
-    font-size: 0.9rem;
-    text-align: right;
-    font-style: italic;
-    background: #f4f4f4 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  /* --- 7. FOOTER GRID (THE "ONE PAGE" FIX) --- */
-  .invoice-footer {
-    padding: 1rem 0 0 0;
-    page-break-inside: avoid;
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr; /* Give QR more space */
-    grid-template-areas:
-      "payment terms"
-      "branding branding";
-    gap: 0 1.5rem;
-  }
-
-  /* --- 8. Payment (Inside Grid) --- */
-  .payment-section { grid-area: payment; margin: 0; padding: 0; }
-  .payment-section h3 {
-    font-size: 1.3rem; /* BIGGER HEADER */
-    margin-bottom: 0.5rem;
-  }
-  .payment-options { grid-template-columns: 1fr; gap: 0; margin-bottom: 0; }
-  .pay-option:first-child {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.5rem;
-    border: 1px solid #aaa;
-    border-radius: 8px;
-  }
-  .qr-code {
-    margin: 0; padding: 0;
-    width: 115px; /* BIGGER QR */
-    height: 115px; /* BIGGER QR */
-  }
-  .qr-code svg {
-    display: block !important;
-    width: 115px !important; /* BIGGER QR */
-    height: 115px !important; /* BIGGER QR */
-  }
-  .pay-option:first-child h4 { font-size: 1.1rem; margin: 0; }
-  .pay-option:first-child p { font-size: 0.9rem; margin: 0; }
-  .pay-option:first-child::after {
-    /* === NEW CONTENT FOR PRINT === */
-    content: 'Phone: ' attr(data-upi-phone-print) '\A' 'Name: ' attr(data-payee-name-print);
-    white-space: pre; /* This makes the \A (newline) work */
-    line-height: 1.5; /* Adjust spacing */
-    /* --- End of new content --- */
-    
-    font-family: 'Courier New', monospace;
-    font-weight: 600;
-    font-size: 0.9rem;
-    padding: 0.5rem;
-    background: #f4f4f4;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-left: auto;
-    text-align: left; /* Align text left */
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  /* --- 9. Terms (Inside Grid) --- */
-  .terms-section { grid-area: terms; margin-top: 0 !important; padding: 0; }
-  .terms-section h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
-  .terms-section ol {
-    columns: 1;
-    font-size: 0.75rem;
-    line-height: 1.45;
-    padding-left: 1.1rem;
-    margin: 0;
-  }
-
-  /* --- 10. Final Footer (Inside Grid) --- */
-  .branded-footer-content {
-    grid-area: branding;
-    margin-top: 1rem !important;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: end;
-    padding-top: 0.5rem;
-    border-top: 2px solid #333;
-  }
-  .thank-you-note, .footer-address {
-    font-size: 0.8rem;
-    line-height: 1.4;
-  }
-  .thank-you-note { text-align: left; }
-  .footer-address { text-align: right; }
-  .thank-you-note p:last-child {
-    font-size: 0.9rem;
-    font-weight: bold;
-    font-style: italic;
-  }
-}
-
-/* =================================================================== */
-/* === END: REFINED PRINT STYLESHEET === */
-/* =================================================================== */
-
 .branded-footer-content {
   text-align: center;
   margin-top: 3rem;
@@ -1451,3 +1195,240 @@ textarea::placeholder {
 hr.footer-divider {
   display: none; /* We handle this with border-top now */
 }
+
+/* =================================================================== */
+/* === START: REFINED PRINT STYLESHEET (V10 - SINGLE PAGE FORCE) === */
+/* =================================================================== */
+
+@media print {
+  @page {
+    size: A4;
+    margin: 0.4in; /* Tighter margin */
+  }
+
+  /* --- 1. Base Setup --- */
+  html,
+  body {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    background: white !important;
+    font-family: 'Helvetica', Arial, sans-serif;
+    font-size: 8.5pt; /* Smaller base font */
+    line-height: 1.3; /* Tighter line height */
+    color: #000;
+  }
+
+  /* --- 2. Element Hiding --- */
+  .no-print,
+  .invoice-actions,
+  .footer-divider,
+  .invoice-print-footer,
+  .document-title,
+  .payment-section>p,
+  .pay-option:nth-child(2),
+  .pay-option:nth-child(3),
+  .brand-contact, /* Hide web brand contact */
+  .branded-footer-content .footer-contact-links /* Hide web contact links */
+  {
+    display: none !important;
+  }
+
+  /* --- 3. Main Container --- */
+  .invoice-container {
+    box-shadow: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    max-width: 100% !important;
+    border: none;
+  }
+
+  /* --- 4. Header --- */
+  .brand-header {
+    display: grid;
+    grid-template-columns: 1fr 2fr; /* 2-col layout for print */
+    align-items: center;
+    padding-bottom: 0.4rem; /* Squeezed */
+    border-bottom: 2px solid #333;
+  }
+  .brand-title { text-align: left; padding-left: 1rem; }
+  .brand-logo img { width: 60px; } /* Squeezed */
+  .brand-title h1 { font-size: 1.8rem; } /* Squeezed */
+  .brand-title p { font-size: 0.85rem; } /* Squeezed */
+
+  /* --- 5. Meta Section (NEW LAYOUT) --- */
+  .invoice-meta {
+    padding: 0.4rem 0; /* Squeezed */
+    border-bottom: 1px solid #ccc;
+  }
+  .invoice-meta-table>tbody>tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+  .bill-to-cell, .details-cell {
+    width: 100% !important;
+    padding: 0.3rem 0 !important; /* Squeezed */
+  }
+  .bill-to-cell h3 {
+    font-size: 0.8rem;
+    color: #555;
+    margin-bottom: 0.2rem;
+  }
+  .bill-to-cell p { font-size: 1rem; font-weight: bold; }
+  
+  /* STYLES FOR NEW .details-list */
+  .details-list {
+    text-align: right;
+    font-size: 0.85rem; /* Squeezed */
+    line-height: 1.4; /* Squeezed */
+  }
+  .details-list p { padding: 0; font-weight: normal; color: #333; } /* Squeezed */
+  .details-list p span { font-weight: bold; color: #000; }
+  .details-list p:first-child span { font-size: 0.9rem; } /* Squeezed */
+  .details-list p strong { color: #000; font-weight: bold; }
+
+  /* --- 6. Content Sections --- */
+  .invoice-section {
+    padding: 0.6rem 0; /* Squeezed */
+    border-bottom: 1px solid #ccc;
+    page-break-inside: avoid;
+  }
+  .invoice-section h3 {
+    font-size: 1.05rem; /* Squeezed */
+    font-family: 'Times New Roman', serif;
+    margin-bottom: 0.4rem; /* Squeezed */
+  }
+
+  /* STYLES FOR NEW .summary-table */
+  .summary-table { margin-top: 0; }
+  .summary-table td {
+    padding: 0.2rem 0.3rem; /* Squeezed */
+    font-size: 0.9rem; /* Squeezed */
+    width: 50%;
+  }
+  .summary-table td strong { font-weight: normal; color: #333; }
+
+  /* Table Styling (Demo PDF) */
+  .charges-table thead th {
+    background: #f4f4f4 !important;
+    padding: 0.4rem 0.5rem; /* Squeezed */
+    font-size: 0.75rem; /* Squeezed */
+    color: #333;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .charges-table tbody td { padding: 0.4rem 0.5rem; font-size: 0.9rem; } /* Squeezed */
+  .charges-table tfoot .total-row {
+    background: #333 !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .charges-table tfoot td { font-size: 0.95rem; padding: 0.6rem 0.5rem; } /* Squeezed */
+  .charges-table tfoot .total-amount { font-size: 1.15rem; font-weight: bold; } /* Squeezed */
+  
+  .amount-in-words {
+    margin-top: 0.4rem; /* Squeezed */
+    padding: 0.4rem; /* Squeezed */
+    font-size: 0.85rem; /* Squeezed */
+    text-align: right;
+    font-style: italic;
+    background: #f4f4f4 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* --- 7. FOOTER GRID (THE "ONE PAGE" FIX) --- */
+  .invoice-footer {
+    padding: 0.75rem 0 0 0; /* Squeezed */
+    page-break-inside: avoid;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr; /* Give QR more space */
+    grid-template-areas:
+      "payment terms"
+      "branding branding";
+    gap: 0 1.25rem; /* Squeezed */
+  }
+
+  /* --- 8. Payment (Inside Grid) --- */
+  .payment-section { grid-area: payment; margin: 0; padding: 0; }
+  .payment-section h3 {
+    font-size: 1.2rem; /* Squeezed */
+    margin-bottom: 0.3rem; /* Squeezed */
+  }
+  .payment-options { grid-template-columns: 1fr; gap: 0; margin-bottom: 0; }
+  .pay-option:first-child {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Squeezed */
+    padding: 0.4rem; /* Squeezed */
+    border: 1px solid #aaa;
+    border-radius: 8px;
+  }
+  .qr-code {
+    margin: 0; padding: 0;
+    width: 100px; /* Squeezed */
+    height: 100px; /* Squeezed */
+  }
+  .qr-code svg {
+    display: block !important;
+    width: 100px !important; /* Squeezed */
+    height: 100px !important; /* Squeezed */
+  }
+  .pay-option:first-child h4 { font-size: 1rem; margin: 0; } /* Squeezed */
+  .pay-option:first-child p { font-size: 0.8rem; margin: 0; } /* Squeezed */
+  .pay-option:first-child::after {
+    content: 'Phone: ' attr(data-upi-phone-print) '\A' 'Name: ' attr(data-payee-name-print);
+    white-space: pre; 
+    line-height: 1.4; /* Squeezed */
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    font-size: 0.85rem; /* Squeezed */
+    padding: 0.4rem; /* Squeezed */
+    background: #f4f4f4;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: auto;
+    text-align: left; 
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* --- 9. Terms (Inside Grid) --- */
+  .terms-section { grid-area: terms; margin-top: 0 !important; padding: 0; }
+  .terms-section h3 { font-size: 1rem; margin-bottom: 0.3rem; } /* Squeezed */
+  .terms-section ol {
+    columns: 1;
+    font-size: 0.7rem; /* Squeezed */
+    line-height: 1.35; /* Squeezed */
+    padding-left: 1rem; /* Squeezed */
+    margin: 0;
+  }
+
+  /* --- 10. Final Footer (Inside Grid) --- */
+  .branded-footer-content {
+    grid-area: branding;
+    margin-top: 0.75rem !important; /* Squeezed */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+    padding-top: 0.4rem; /* Squeezed */
+    border-top: 2px solid #333;
+  }
+  .thank-you-note, .footer-address {
+    font-size: 0.75rem; /* Squeezed */
+    line-height: 1.3; /* Squeezed */
+  }
+  .thank-you-note { text-align: left; }
+  .footer-address { text-align: right; }
+  .thank-you-note p:last-child {
+    font-size: 0.85rem; /* Squeezed */
+    font-weight: bold;
+    font-style: italic;
+  }
+}
+
+/* =================================================================== */
+/* === END: REFINED PRINT STYLESHEET === */
+/* =================================================================== */
