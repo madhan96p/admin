@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Get references to our chart elements
     const companyChartCtx = document.getElementById('company-chart')?.getContext('2d');
     const personalChartCtx = document.getElementById('personal-chart')?.getContext('2d');
+    const companyBarChartCtx = document.getElementById('company-bar-chart')?.getContext('2d'); // <-- ADD THIS
     
     // Get references to our summary card elements
     const companyProfitEl = document.getElementById('company-profit');
@@ -86,6 +87,28 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const companyProfit = companyIncome + companyExpense; // (e.g., 50000 + (-30000) = 20000)
 
+            // --- 2.5. Process Data for Bar Chart (Monthly) ---
+            const monthlyData = {}; // e.g., { "2025-10": { income: 500, expense: -300 } }
+            
+            // Loop through entries *backwards* to get chronological order
+            for (const entry of entries.slice().reverse()) {
+                if (entry.Account !== 'Company') continue; // Skip personal entries
+
+                const date = new Date(entry.Date);
+                const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`; // "2025-10"
+                
+                if (!monthlyData[monthYear]) {
+                    monthlyData[monthYear] = { income: 0, expense: 0 };
+                }
+                
+                const amount = parseFloat(entry.Amount) || 0;
+                if (entry.Flow === 'Credit') {
+                    monthlyData[monthYear].income += amount;
+                } else if (entry.Flow === 'Debit') {
+                    monthlyData[monthYear].expense += Math.abs(amount); // Use positive number for chart
+                }
+            }
+
             // --- 3. Update Summary Cards ---
             
             // Helper function to format numbers as Indian Rupees
@@ -137,6 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (personalChartCtx) {
                 renderDonutChart(personalChartCtx, 'personal', personalExpenseCategories);
             }
+
+            // --- START: NEW BAR CHART CALL ---
+            if (companyBarChartCtx) {
+                renderBarChart(companyBarChartCtx, monthlyData);
+            }
+            // --- END: NEW BAR CHART CALL ---
             
         } catch (error) {
             console.error('Failed to load dashboard:', error);
@@ -199,6 +228,87 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+    // --- 6. Helper Function to Create Charts --- (This function already exists)
+    function renderDonutChart(ctx, chartType, categoryData) {
+        // ... (your existing donut chart code) ...
+    }
+
+    // --- START: NEW BAR CHART FUNCTION ---
+    function renderBarChart(ctx, monthlyData) {
+        
+        const labels = Object.keys(monthlyData).map(monthYear => {
+            // Format "2025-10" to "Oct 2025"
+            const [year, month] = monthYear.split('-');
+            const date = new Date(year, month - 1);
+            return date.toLocaleString('default', { month: 'short', year: 'numeric' });
+        });
+
+        const incomeData = Object.values(monthlyData).map(data => data.income);
+        const expenseData = Object.values(monthlyData).map(data => data.expense);
+        
+        // Use the same currency formatter from your other function
+        const formatCurrency = (num) => {
+            return num.toLocaleString('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                minimumFractionDigits: 0,
+            });
+        };
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Income',
+                        data: incomeData,
+                        backgroundColor: '#10b981', // Green
+                        borderColor: '#059669',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Expense',
+                        data: expenseData,
+                        backgroundColor: '#ef4444', // Red
+                        borderColor: '#b91c1c',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            // Format the Y-axis (left side) as ₹
+                            callback: function(value) {
+                                return formatCurrency(value);
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            // Format the tooltip (hover) as ₹
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                let value = context.raw || 0;
+                                return `${label}: ${formatCurrency(value)}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    // --- END: NEW BAR CHART FUNCTION ---
+
     // --- 7. Initial Load ---
     loadDashboardData();
     
