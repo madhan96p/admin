@@ -105,17 +105,17 @@
                                 <div class="form-group">
                                     <label for="manualVehicleNo">Vehicle No</label>
                                     <input type="text" id="manualVehicleNo" class="form-control"
-                                        placeholder="e.g., TN01AB1234">
+                                        placeholder="e.g., TN01AB1234" 
+                                        style="text-transform: uppercase;" 
+                                        oninput="this.value = this.value.toUpperCase()">
                                 </div>
                                 <div class="form-group">
-                                    <label for="manualStartDate">Trip Start Date (dd/mm/yyyy)</label>
-                                    <input type="text" id="manualStartDate" class="form-control"
-                                        placeholder="e.g., 19/10/2025">
+                                    <label for="manualStartDate">Trip Start Date</label>
+                                    <input type="date" id="manualStartDate" class="form-control">
                                 </div>
                                 <div class="form-group">
-                                    <label for="manualEndDate">Trip End Date (dd/mm/yyyy)</label>
-                                    <input type="text" id="manualEndDate" class="form-control"
-                                        placeholder="e.g., 19/10/2025">
+                                    <label for="manualEndDate">Trip End Date</G/label>
+                                    <input type="date" id="manualEndDate" class="form-control">
                                 </div>
                             </div>
 
