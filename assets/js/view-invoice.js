@@ -132,22 +132,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
         tbody.innerHTML = rows;
 
-        // 5. Populate Totals
+// 5. Populate Totals
         setText('grand-total', formatCurrency(grandTotal));
         setText('total-due-amount', formatCurrency(grandTotal));
-        
+
         // This sets the text on the "Click to Pay" button
         setText('total-due-amount-button', grandTotal.toFixed(2));
 
         // --- ADD THESE TWO LINES ---
         setText('total-due-amount-hero', formatCurrency(grandTotal));
-        setText('amount-in-words-hero', `Rupees ${amountInWords}`);
+        // DELETED: setText('amount-in-words-hero', `Rupees ${amountInWords}`); 
 
         // --- ⬇️ CORRECTED ORDER ⬇️ ---
         // 1. DEFINE the variable first
         const amountInWords = toWords(grandTotal.toFixed(0));
         // 2. THEN use it
         setText('amount-in-words', `Rupees ${amountInWords}`);
+
+        // --- MOVED LINE ---
+        // Now it's safe to use the variable
+        setText('amount-in-words-hero', `Rupees ${amountInWords}`);
     }
 
     /**
