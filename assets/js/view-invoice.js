@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function populateMeta(invoice) {
         setText('guest-name', invoice.Guest_Name);
         setText('guest-mobile', invoice.Guest_Mobile);
-        setText('invoice-id', invoice.Invoice_ID);
+        setText('invoice-id', `#${invoice.Invoice_ID}`);
         setText('invoice-date', invoice.Invoice_Date);
         setText('invoice-date-main', invoice.Invoice_Date);
         const formattedTimestamp = (invoice.Last_Updated || 'N/A').replace(/:\d\d$/, '');
@@ -79,18 +79,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // IN: view-invoice.js
 
-function populateCharges(invoice) {
-    const tbody = document.getElementById('charges-tbody');
-    tbody.innerHTML = ''; // Clear "Loading..."
+    function populateCharges(invoice) {
+        const tbody = document.getElementById('charges-tbody');
+        tbody.innerHTML = ''; // Clear "Loading..."
 
-    let rows = '';
-    const extraKms = parseFloat(invoice.Calculated_Extra_KMs || 0);
-    const totalExpenses = parseFloat(invoice.Total_Expenses || 0);
-    const grandTotal = parseFloat(invoice.Grand_Total || 0);
+        let rows = '';
+        const extraKms = parseFloat(invoice.Calculated_Extra_KMs || 0);
+        const totalExpenses = parseFloat(invoice.Total_Expenses || 0);
+        const grandTotal = parseFloat(invoice.Grand_Total || 0);
 
-    // ... [your existing `rows +=` logic is perfect, keep it] ...
-    // 1. Package Cost Row
-    rows += `
+        // ... [your existing `rows +=` logic is perfect, keep it] ...
+        // 1. Package Cost Row
+        rows += `
         <tr>
             <td>Outstation Package</td>
             <td>${invoice.Billing_Slabs} Slab/s (${invoice.Included_KMs_per_Slab} Kms/Slab)</td>
@@ -99,9 +99,9 @@ function populateCharges(invoice) {
         </tr>
     `;
 
-    // 2. Extra KMs Row
-    if (extraKms > 0) {
-        rows += `
+        // 2. Extra KMs Row
+        if (extraKms > 0) {
+            rows += `
             <tr>
                 <td>Extra Kilometer Charge</td>
                 <td>${invoice.Calculated_Extra_KMs} Kms</td>
@@ -109,10 +109,10 @@ function populateCharges(invoice) {
                 <td>${formatCurrency(invoice.Extra_KM_Cost)}</td>
             </tr>
         `;
-    }
+        }
 
-    // 3. Driver Batta Row
-    rows += `
+        // 3. Driver Batta Row
+        rows += `
         <tr>
             <td>Driver Batta</td>
             <td>${invoice.Billing_Slabs} Slab/s</td>
@@ -121,9 +121,9 @@ function populateCharges(invoice) {
         </tr>
     `;
 
-    // 4. Expenses Row
-    if (totalExpenses > 0) {
-        rows += `
+        // 4. Expenses Row
+        if (totalExpenses > 0) {
+            rows += `
             <tr>
                 <td>Tolls, Parking & Permits</td>
                 <td>Charged as per actuals</td>
@@ -131,92 +131,93 @@ function populateCharges(invoice) {
                 <td>${formatCurrency(invoice.Total_Expenses)}</td>
             </tr>
         `;
-    }
-    // ... [end of your `rows +=` logic] ...
-
-    tbody.innerHTML = rows;
-
-    // 5. Populate Totals
-    setText('grand-total', formatCurrency(grandTotal));
-    setText('total-due-amount', formatCurrency(grandTotal));
-
-    // This sets the text on the "Click to Pay" button
-    setText('total-due-amount-button', grandTotal.toFixed(2));
-
-    // ⬇️ *** THIS IS THE FIX *** ⬇️
-    // OLD: setText('amount-in-words', `Rupees ${grandTotal.toFixed(0)} Only`);
-    const amountInWords = toWords(grandTotal.toFixed(0));
-    setText('amount-in-words', `Rupees ${amountInWords}`);
-}
-
-/**
- * Generates a dynamic, styled QR code and the "Click to Pay" link
- * @param {object} invoice - The fetched invoice data object
- */
-function populateQrCode(invoice) {
-    // 1. Get the dynamic data
-    const upiId = invoice.UPI_ID;
-    const amount = parseFloat(invoice.Grand_Total).toFixed(2);
-    const transactionNote = `From D.S #${invoice.Booking_ID}`; // Your new format
-    const payeeName = "Shrish Travels";
-
-    // 2. Build the UPI intent string
-    const upiString = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
-
-    // 3. Create the QR code with your exact style requirements
-    const qrCode = new QRCodeStyling({
-        width: 120,
-        height: 120,
-        type: "svg",
-        data: upiString,
-        image: "/assets/images/logo.webp", // Your logo
-        dotsOptions: {
-            type: "classy-rounded", // Your "Classy Rounded" style
-            gradient: {
-                type: "radial", // Your "Radial Gradient"
-                colorStops: [
-                    { offset: 0, color: "#ffffff" }, // Center white
-                    { offset: 1, color: "#000000" }  // Ends black
-                ]
-            }
-        },
-        backgroundOptions: {
-            color: "#ffffff",
-        },
-        imageOptions: {
-            crossOrigin: "anonymous",
-            margin: 4,
-            imageSize: 0.3
         }
-    });
+        // ... [end of your `rows +=` logic] ...
 
-    // 4. Find the placeholder div and display the QR code
-    const qrCanvas = document.getElementById("qr-code-canvas");
-    qrCanvas.innerHTML = ''; // Clear it first
-    qrCode.append(qrCanvas);
-    
-    // 5. Find the "Click to Pay" button and set its link
-    const paymentLinkButton = document.getElementById("payment-link");
-    if (paymentLinkButton) {
-        paymentLinkButton.href = upiString; // Set link to the same UPI string
+        tbody.innerHTML = rows;
+
+        // 5. Populate Totals
+        setText('grand-total', formatCurrency(grandTotal));
+        setText('total-due-amount', formatCurrency(grandTotal));
+
+        // This sets the text on the "Click to Pay" button
+        setText('total-due-amount-button', grandTotal.toFixed(2));
+
+        // ⬇️ *** THIS IS THE FIX *** ⬇️
+        // OLD: const amountInWords = toWords(grandTotal.toFixed(0));
+        setText('amount-in-words', `Rupees ${amountInWords}`);
+        const amountInWords = toWords(grandTotal.toFixed(0));
+        setText('amount-in-words', `Rupees ${amountInWords}`);
     }
 
-    // 6. Add UPI ID to the heading for print view
-    const copyUpiHeading = document.querySelector('.pay-option:nth-child(3) h4');
-    if (copyUpiHeading) {
-        copyUpiHeading.setAttribute('data-upi-id', invoice.UPI_ID); // Store ID in data attribute
-    }
-    // Set the input value explicitly too (for web view)
-    const upiIdInput = document.getElementById('upi-id-input');
-    if (upiIdInput) upiIdInput.value = invoice.UPI_ID;
+    /**
+     * Generates a dynamic, styled QR code and the "Click to Pay" link
+     * @param {object} invoice - The fetched invoice data object
+     */
+    function populateQrCode(invoice) {
+        // 1. Get the dynamic data
+        const upiId = invoice.UPI_ID;
+        const amount = parseFloat(invoice.Grand_Total).toFixed(2);
+        const transactionNote = `From D.S #${invoice.Booking_ID}`; // Your new format
+        const payeeName = "Shrish Travels";
 
-    // ⬇️ *** THIS IS THE NEW LINE *** ⬇️
-    // Add the UPI ID to the QR Code box for our new print style
-    const qrCodeBox = document.querySelector('.pay-option:first-child');
-    if (qrCodeBox) {
-        qrCodeBox.setAttribute('data-upi-id-print', invoice.UPI_ID);
+        // 2. Build the UPI intent string
+        const upiString = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
+
+        // 3. Create the QR code with your exact style requirements
+        const qrCode = new QRCodeStyling({
+            width: 120,
+            height: 120,
+            type: "svg",
+            data: upiString,
+            image: "/assets/images/logo.webp", // Your logo
+            dotsOptions: {
+                type: "classy-rounded", // Your "Classy Rounded" style
+                gradient: {
+                    type: "radial", // Your "Radial Gradient"
+                    colorStops: [
+                        { offset: 0, color: "#ffffff" }, // Center white
+                        { offset: 1, color: "#000000" }  // Ends black
+                    ]
+                }
+            },
+            backgroundOptions: {
+                color: "#ffffff",
+            },
+            imageOptions: {
+                crossOrigin: "anonymous",
+                margin: 4,
+                imageSize: 0.3
+            }
+        });
+
+        // 4. Find the placeholder div and display the QR code
+        const qrCanvas = document.getElementById("qr-code-canvas");
+        qrCanvas.innerHTML = ''; // Clear it first
+        qrCode.append(qrCanvas);
+
+        // 5. Find the "Click to Pay" button and set its link
+        const paymentLinkButton = document.getElementById("payment-link");
+        if (paymentLinkButton) {
+            paymentLinkButton.href = upiString; // Set link to the same UPI string
+        }
+
+        // 6. Add UPI ID to the heading for print view
+        const copyUpiHeading = document.querySelector('.pay-option:nth-child(3) h4');
+        if (copyUpiHeading) {
+            copyUpiHeading.setAttribute('data-upi-id', invoice.UPI_ID); // Store ID in data attribute
+        }
+        // Set the input value explicitly too (for web view)
+        const upiIdInput = document.getElementById('upi-id-input');
+        if (upiIdInput) upiIdInput.value = invoice.UPI_ID;
+
+        // ⬇️ *** ADD THIS BLOCK *** ⬇️
+        // Add the UPI ID to the QR Code box for our new print style
+        const qrCodeBox = document.querySelector('.pay-option:first-child');
+        if (qrCodeBox) {
+            qrCodeBox.setAttribute('data-upi-id-print', invoice.UPI_ID);
+        }
     }
-}
 
     // --- 5. EVENT LISTENERS ---
     const copyUpiBtn = document.getElementById('copy-upi-btn');

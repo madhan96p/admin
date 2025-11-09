@@ -1071,11 +1071,13 @@ textarea::placeholder {
   }
 }
 
-/* --- REPLACE YOUR OLD @media print BLOCK WITH THIS --- */
+/* --- 
+  ⬇️ REPLACE YOUR ENTIRE OLD @media print BLOCK WITH THIS ⬇️
+--- */
 @media print {
   @page {
     size: A4;
-    margin: 0.75in; /* ⬅️ FIXED: Standard, professional margins */
+    margin: 0.4in; /* ⬅️ CRITICAL: Tighter margins to pull everything up */
     orphans: 0;
     widows: 0;
   }
@@ -1087,194 +1089,253 @@ textarea::placeholder {
   }
 
   body {
-    font-size: 10pt;   /* ⬅️ FIXED: 10pt is standard, 12px is too small */
+    font-size: 9pt;   /* ⬅️ Reduced size slightly for more space */
     line-height: 1.4;
-    font-family: 'Arial', sans-serif; /* ⬅️ FIXED: Use a print-safe font */
+    font-family: 'Arial', sans-serif; 
     color: #333;
   }
   
-  /* --- Ensure all web-only styles are removed --- */
-  .invoice-container {
-    box-shadow: none;
-    margin: 0;
-    border-radius: 0;
-    max-width: 100%;
-    page-break-after: avoid;
-    border-top: 5px solid var(--primary); /* ⬅️ Added: Matches screenshot brand */
-  }
-
+  /* --- Hide all web-only elements --- */
   .no-print,
   .invoice-actions {
     display: none !important;
   }
 
-  /* --- HEADER FIXES --- */
-  .brand-header, .document-title {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid var(--neutral-300);
+  /* --- Main Container --- */
+  .invoice-container {
+    box-shadow: none;
+    margin: 0;
+    border-radius: 0;
+    max-width: 100%;
+    page-break-after: avoid; /* Try to keep it all on one page */
+    border-top: 5px solid var(--primary);
+  }
+
+  /* --- 1. HEADER --- */
+  .brand-header {
+    padding: 0 0 0.5rem 0;
+    border-bottom: 2px solid var(--neutral-300);
   }
   .brand-logo img {
-    width: 60px;
+    width: 65px;
   }
   .brand-title h1 {
-    font-size: 1.8rem;
+    font-size: 2rem; 
     font-family: 'Times New Roman', serif;
   }
   .brand-title p {
     font-size: 0.9rem;
   }
   .brand-contact {
-    font-size: 0.8rem;
-  }
-  .document-title h2 {
-    font-size: 1.1rem;
-    font-family: 'Times New Roman', serif;
-  }
-  .document-title p {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
   }
 
-  /* --- METADATA FIXES --- */
+  /* --- 2. DOCUMENT TITLE (Flex layout) --- */
+  .document-title {
+    display: flex;
+    justify-content: space-between; /* ⬅️ As requested: 2-column */
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--neutral-300);
+    background: none; 
+  }
+  .document-title h2 {
+    font-size: 1.2rem;
+    font-family: 'Times New Roman', serif;
+    margin: 0; 
+  }
+  .document-title p {
+    font-size: 0.9rem;
+    margin: 0; 
+  }
+
+  /* --- 3. BILL TO / DETAILS --- */
   .invoice-meta {
     padding: 0.5rem 0;
   }
   .bill-to-cell p {
-    font-size: 1.1rem; /* Make guest name slightly bigger */
+    font-size: 1rem; 
   }
   .invoice-details-nested-table td {
     padding: 0.2rem 0.4rem;
     font-size: 0.9rem;
   }
+  .value-cell {
+    text-align: right; /* ⬅️ As requested: "straight" alignment */
+    white-space: nowrap; 
+  }
 
-  /* --- SECTION & TABLE FIXES --- */
+  /* --- 4. TRIP SUMMARY --- */
   .invoice-section {
     padding: 0.8rem 0;
     border-bottom: 1px solid var(--neutral-300);
-    page-break-inside: avoid; /* Keep section content together */
+    page-break-inside: avoid; 
   }
   .invoice-section h3 {
     font-size: 1.1rem;
     margin-bottom: 0.6rem;
     padding-bottom: 0.3rem;
   }
-  .summary-table td, .charges-table tbody td {
-    padding: 0.4rem 0.5rem;
+  .summary-table {
+    text-align: left; /* ⬅️ As requested (from removed inline style) */
+  }
+  .summary-table td {
+    padding: 0.3rem 0.5rem;
     font-size: 0.9rem;
+    text-align: left; /* ⬅️ As requested */
+    border-bottom: 1px dotted var(--neutral-200);
+  }
+  .summary-table td:first-child {
+      font-weight: 600;
+      color: var(--neutral-600);
+      width: 30%; 
+  }
+
+  /* --- 5. ITEMIZED CHARGES & TOTALS --- */
+  .charges-table {
+     font-size: 0.9rem;
   }
   .charges-table thead th {
     padding: 0.5rem;
     font-size: 0.8rem;
   }
+  .charges-table tbody td {
+    padding: 0.4rem 0.5rem;
+  }
   .charges-table tfoot td {
-    font-size: 1rem;
+    font-size: 1.1rem; 
     padding: 0.8rem 0.5rem;
   }
+  
+  /* 5b. AMOUNT IN WORDS */
   .amount-in-words {
-    padding: 0.5rem;
-    font-size: 0.9rem;
-    background: var(--neutral-100);
-    text-align: left;
+    font-size: 0.8rem;      /* ⬅️ Smaller size */
+    text-align: right;    /* ⬅️ Aligned right */
+    margin-top: 0.25rem;  /* ⬅️ Reduced space */
+    padding: 0.25rem 0.5rem; /* ⬅️ Reduced space */
+    background: var(--neutral-50);
+    font-style: italic;
+    color: var(--neutral-600);
   }
 
-  /* --- 
-    ⬇️ NEW PAYMENT SECTION FIX (The most important part) ⬇️
-    This hides the web buttons and shows a clean, print-only layout.
-  --- */
+  /* --- 6. PAYMENT SECTION (Redesigned) --- */
   .invoice-footer {
     padding: 0.8rem 0 0 0;
     background: white;
+    page-break-inside: avoid; 
   }
   .payment-section {
-    page-break-inside: avoid; /* Don't split the payment section */
+    page-break-inside: avoid; 
+  }
+  .payment-section h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.6rem;
   }
   .payment-section p { /* Hide web-only text */
     display: none;
   }
   .payment-options {
-    grid-template-columns: 1fr; /* Stack options vertically */
-    gap: 0.5rem;
+    grid-template-columns: 1fr; 
+    gap: 0;
   }
   
-  /* 1. The QR Code Box */
+  /* The ONE visible box */
   .pay-option:first-child {
-    display: flex; /* Put QR and text side-by-side */
+    display: flex; 
     align-items: center;
     gap: 1.5rem;
-    padding: 0.8rem;
+    padding: 0.5rem;
     border: 1px solid #aaa;
   }
-  .pay-option:first-child h4 {
-    margin: 0;
-    font-size: 1.1rem;
+  .pay-option:first-child h4 { /* "1. Scan to Pay" */
+    display: none; 
   }
+  
   .qr-code {
     margin: 0;
   }
   .qr-code svg {
-    width: 90px !important;
-    height: 90px !important;
+    width: 90px !important;  /* ⬅️ Fixed "half hidding" */
+    height: 90px !important; /* ⬅️ Fixed "half hidding" */
   }
   
-  /* 2. HIDE the "Pay with UPI App" button */
-  .pay-option:nth-child(2) {
-    display: none;
-  }
-
-  /* 3. HIDE the "Copy UPI ID" button/input box */
+  /* HIDE the other two web boxes */
+  .pay-option:nth-child(2),
   .pay-option:nth-child(3) {
     display: none;
   }
 
-  /* 4. NEW: Add the UPI ID as plain text after the QR code */
+  /* Add the UPI ID as plain text */
   .pay-option:first-child::after {
-    content: 'UPI ID: ' attr(data-upi-id-print); /* We will add this data- */
+    content: 'UPI ID: ' attr(data-upi-id-print);
     display: block;
-    width: 100%;
-    text-align: left;
     font-family: 'Courier New', monospace;
-    font-size: 0.9rem;
+    font-size: 1rem; 
     font-weight: 600;
     color: #000;
-    padding: 0.5rem;
-    background: var(--neutral-100);
-    border-radius: 4px;
+  }
+
+  /* --- 7. TERMS & FOOTER (Merged) --- */
+  .terms-section {
     margin-top: 0.8rem;
   }
-
-  /* --- 
-    ⬇️ NEW FOOTER & TERMS FIX ⬇️
-    This un-merges the columns for terms and fixes footer display.
-  --- */
-  .terms-section {
-    margin-top: 1rem;
+  .terms-section h3 {
+     font-size: 1.1rem;
+     margin-bottom: 0.4rem;
   }
   .terms-section ol {
-    columns: 1; /* ⬅️ FIXED: 2-columns was messy */
+    columns: 1; 
     font-size: 0.8rem;
     line-height: 1.5;
+    list-style-position: inside;
+  }
+  .terms-section li {
+      margin-bottom: 0;
   }
 
-  /* Branded Footer */
+  /* 7b. MERGED BRANDED FOOTER */
   .branded-footer-content {
+    display: flex;
+    justify-content: space-between; /* ⬅️ Merged 2-column layout */
+    align-items: flex-start;
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid var(--neutral-300);
-    page-break-before: auto; /* Allow break if it won't fit */
+    border-top: 2px solid var(--neutral-300);
   }
+  
   .footer-divider {
-    margin: 1rem auto;
+    display: none; /* ⬅️ Hide orange lines */
   }
-  .footer-address, .footer-contact-links {
-    font-size: 0.8rem;
+  
+  .thank-you-note, .footer-address, .footer-contact-links {
+      font-size: 0.8rem; /* ⬅️ Smaller font */
+      line-height: 1.4;
+      text-align: left;
   }
+  
+  .thank-you-note p, .footer-address p {
+      margin: 0;
+  }
+
   .thank-you-note {
-    font-size: 1rem;
+      text-align: left;
   }
   .thank-you-note p:last-child {
-    font-size: 1.1rem;
+      font-size: 1rem; /* Keep tagline strong */
+  }
+  
+  .footer-address {
+      margin-top: 0;
+      text-align: right;
+  }
+  .footer-contact-links {
+      text-align: right;
+  }
+  .footer-contact-links span {
+      margin: 0 0 0 0.5rem; /* Space them out */
   }
 }
-/* --- END OF NEW PRINT BLOCK --- */
 
 /* --- New Branded Footer (from Screenshot) --- */
 .branded-footer-content {
