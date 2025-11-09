@@ -496,6 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 5. EVENT LISTENERS ---
     // Step 1 Buttons
     elements.loadTripButton.addEventListener('click', handleLoadTrip);
+    elements.manualEntryButton.addEventListener('click', handleManualEntry);
     elements.manualStartDate.addEventListener('change', () => {
         const startDate = elements.manualStartDate.value;
         
