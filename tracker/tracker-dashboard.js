@@ -116,9 +116,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 row.innerHTML = `
                     <td>${entry.Date || 'N/A'}</td>
-                    <td>${entry.Account || 'N/A'}</td>
+                    <td class="mobile-hide">${entry.Account || 'N/A'}</td>
                     <td>${entry.Category || 'N/A'}</td>
-                    <td>${entry.Particulars || 'N/A'}</td>
+                    <td class="mobile-hide">${entry.Particulars || 'N/A'}</td>
                     <td style="text-align: right; color: ${amountColor}; font-weight: 500;">
                         ${formatCurrency(amount)}
                     </td>

@@ -39,3 +39,16 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* --- 4. NEW: Mobile UI for Small Phones --- */
+@media (max-width: 576px) {
+    .mobile-hide {
+        display: none; /* Hides this element */
+    }
+
+    .tracker-table th,
+    .tracker-table td {
+        padding-left: 8px; /* Tighter padding */
+        padding-right: 8px;
+    }
+}
