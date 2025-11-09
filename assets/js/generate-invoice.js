@@ -246,11 +246,17 @@ document.addEventListener('DOMContentLoaded', () => {
      * Sets up the form for manual data entry.
      */
     function handleManualEntry() {
-        const bookingId = elements.bookingIdInput.value.trim();
-        if (!bookingId) return alert('Please enter a unique Booking ID (e.g., "MANUAL-101") first.');
+        // const bookingId = elements.bookingIdInput.value.trim();
+        // if (!bookingId) return alert('Please enter a unique Booking ID (e.g., "MANUAL-101") first.');
+        // ^^^ REMOVED THIS VALIDATION BLOCK
 
         isManualFlow = true; // Set mode to manual
         currentTripData = null; // No loaded data
+
+        if (!elements.bookingIdInput.value.trim()) {
+            const timestamp = Date.now().toString().slice(-6); 
+            elements.bookingIdInput.value = `MANUAL-${timestamp}`;
+        }
 
         // Configure Step 2 for manual input
         elements.tripSummary.style.display = 'none'; // Hide summary box
