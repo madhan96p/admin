@@ -1106,7 +1106,7 @@ textarea::placeholder {
   }
   
   /* RUTHLESS SPACE REMOVAL: Remove all vertical space */
-  .brand-header, .document-title, .invoice-meta, .invoice-section,
+  .brand-header, .document-title, .invoice-meta-table > tbody > tr, .invoice-section,
   .invoice-footer, .payment-section, .terms-section, .branded-footer-content,
   .invoice-section h3, .payment-section h3, .terms-section h3,
   .brand-title p, .brand-contact p, .document-title p,
@@ -1323,7 +1323,8 @@ textarea::placeholder {
 
 /* =================================================================== */
 /* === END: RECREATED PRINT STYLESHEET === */
-/* =================================================================== *//* --- New Branded Footer (from Screenshot) --- */
+/* =================================================================== */
+
 .branded-footer-content {
     text-align: center;
     margin-top: 3rem;
