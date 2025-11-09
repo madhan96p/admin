@@ -2,78 +2,89 @@
 
 /* --- New Brand Header (from Screenshot) --- */
 .brand-header {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr; /* Logo, Title, Contact */
-    align-items: center;
-    padding: 1.5rem 2rem;
-    border-bottom: 2px solid var(--neutral-200);
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  /* Logo, Title, Contact */
+  align-items: center;
+  padding: 1.5rem 2rem;
+  /* border-bottom: 2px solid var(--neutral-200); */
 }
 
 .brand-logo img {
-    width: 80px; /* Adjust size as needed */
-    height: auto;
+  width: 80px;
+  /* Adjust size as needed */
+  height: auto;
 }
 
 .brand-title {
-    text-align: center;
+  text-align: center;
 }
+
 .brand-title h1 {
-    font-family: 'Lora', serif;
-    font-size: 2.2rem;
-    color: var(--neutral-900);
-    font-weight: 700;
-    margin-bottom: 0.25rem;
-    letter-spacing: 1px;
+  font-family: 'Lora', serif;
+  font-size: 2.2rem;
+  color: var(--neutral-900);
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  letter-spacing: 1px;
 }
+
 .brand-title p {
-    font-size: 1rem;
-    color: var(--neutral-600);
-    font-style: italic;
-    margin: 0;
+  font-size: 1rem;
+  color: var(--neutral-600);
+  font-style: italic;
+  margin: 0;
 }
 
 .brand-contact {
-    text-align: right;
-    font-size: 0.95rem;
-    line-height: 1.6;
+  text-align: right;
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
+
 .brand-contact p {
-    color: var(--primary); /* Blue text like screenshot */
-    font-weight: 600;
-    margin: 0;
+  color: var(--primary);
+  /* Blue text like screenshot */
+  font-weight: 600;
+  margin: 0;
 }
 
 /* New Document Title Bar */
 .document-title {
-    text-align: center;
-    padding: 1.25rem;
-    border-bottom: 1px solid var(--neutral-200);
-    background: var(--neutral-50);
+  text-align: center;
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--neutral-200);
+  background: var(--neutral-50);
 }
+
 .document-title h2 {
-    font-family: 'Lora', serif;
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--neutral-800);
-    margin-bottom: 0.25rem;
+  font-family: 'Lora', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--neutral-800);
+  margin-bottom: 0.25rem;
 }
+
 .document-title p {
-    font-size: 0.9rem;
-    color: var(--neutral-600);
-    margin: 0;
+  font-size: 0.9rem;
+  color: var(--neutral-600);
+  margin: 0;
 }
 
 /* --- Adjust old styles --- */
 /* We don't need the old header at all */
 .invoice-header {
-    display: none; 
+  display: none;
 }
+
 /* We don't need the "INVOICE" text inside the meta table */
 .merged-header {
-    display: none;
+  display: none;
 }
+
 .invoice-meta {
-    background: none; /* Remove old background */
+  background: none;
+  /* Remove old background */
 }
 
 :root {
@@ -238,7 +249,7 @@ body {
   overflow: hidden;
 }
 
-.step.done + .step-divider {
+.step.done+.step-divider {
   background: var(--success);
 }
 
@@ -259,7 +270,7 @@ body {
   letter-spacing: -0.01em;
 }
 
-.step-content > p {
+.step-content>p {
   color: var(--neutral-600);
   margin-bottom: 2rem;
   font-size: 1rem;
@@ -658,7 +669,7 @@ textarea::placeholder {
 .invoice-meta {
   padding: 2rem;
   background: var(--neutral-50);
-  border-bottom: 1px solid var(--neutral-200);
+  /* border-bottom: 1px solid var(--neutral-200); */
 }
 
 .invoice-meta-table {
@@ -743,7 +754,7 @@ textarea::placeholder {
   color: var(--neutral-900);
   margin-bottom: 1.5rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--neutral-200);
+  /* border-bottom: 2px solid var(--neutral-200); */
 }
 
 .summary-table,
@@ -755,7 +766,7 @@ textarea::placeholder {
 
 .summary-table td {
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--neutral-200);
+  /* border-bottom: 1px solid var(--neutral-200); */
 }
 
 .summary-table td:first-child {
@@ -783,7 +794,7 @@ textarea::placeholder {
 
 .charges-table tbody td {
   padding: 1rem;
-  border-bottom: 1px solid var(--neutral-200);
+  /* border-bottom: 1px solid var(--neutral-200); */
   color: var(--neutral-700);
 }
 
@@ -844,9 +855,19 @@ textarea::placeholder {
 
 .payment-options {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
   margin-bottom: 2rem;
+}
+
+.payment-options .pay-option:first-child {
+  grid-column: 1 / -1;
+  /* This makes the first item (QR) span both columns */
+  display: flex;
+  /* This aligns the QR code and its text nicely */
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
 }
 
 .pay-option {
@@ -936,6 +957,7 @@ textarea::placeholder {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -946,6 +968,7 @@ textarea::placeholder {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -957,6 +980,7 @@ textarea::placeholder {
     opacity: 0;
     transform: translateY(-30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -970,9 +994,12 @@ textarea::placeholder {
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
   }
+
   50% {
     box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
   }
@@ -1078,39 +1105,53 @@ textarea::placeholder {
 @media print {
   @page {
     size: A4;
-    /* Aggressive margins to force single-page fit */
-    margin: 0.3in 0.4in;
+    margin: 0.25in;
+    /* Tighter margins on all sides */
   }
 
   /* --- 1. Base Setup --- */
-  html, body {
+  html,
+  body {
     width: 100%;
     height: 100%;
     background: white !important;
-    font-size: 9.5pt; /* Smaller base font */
+    font-size: 9.5pt;
+    /* Smaller base font */
     line-height: 1.3;
     font-family: 'Arial', sans-serif;
     color: #000;
   }
-  
+
   /* --- 2. Element Hiding & Reset --- */
   .no-print,
   .invoice-actions,
   .footer-divider,
   .footer-contact-links,
   .invoice-print-footer,
-  .payment-section > p,
+  .payment-section>p,
   .pay-option:nth-child(2),
   .pay-option:nth-child(3) {
     display: none !important;
   }
-  
+
   /* RUTHLESS SPACE REMOVAL: Remove all vertical space */
-  .brand-header, .document-title, .invoice-meta-table > tbody > tr, .invoice-section,
-  .invoice-footer, .payment-section, .terms-section, .branded-footer-content,
-  .invoice-section h3, .payment-section h3, .terms-section h3,
-  .brand-title p, .brand-contact p, .document-title p,
-  .summary-table td, .charges-table tbody td, .terms-section li {
+  .brand-header,
+  .document-title,
+  .invoice-meta-table>tbody>tr,
+  .invoice-section,
+  .invoice-footer,
+  .payment-section,
+  .terms-section,
+  .branded-footer-content,
+  .invoice-section h3,
+  .payment-section h3,
+  .terms-section h3,
+  .brand-title p,
+  .brand-contact p,
+  .document-title p,
+  .summary-table td,
+  .charges-table tbody td,
+  .terms-section li {
     margin: 0;
     padding: 0;
   }
@@ -1129,12 +1170,20 @@ textarea::placeholder {
     padding-bottom: 0.3rem;
     border-bottom: 1px solid #ccc;
   }
-  .brand-logo img { width: 60px; }
+
+  .brand-logo img {
+    width: 60px;
+  }
+
   .brand-title h1 {
     font-size: 1.6rem;
     font-family: 'Times New Roman', serif;
   }
-  .brand-contact { font-size: 0.75rem; line-height: 1.4; }
+
+  .brand-contact {
+    font-size: 0.75rem;
+    line-height: 1.4;
+  }
 
   .document-title {
     display: flex;
@@ -1143,40 +1192,52 @@ textarea::placeholder {
     padding: 0.4rem 0;
     border-bottom: 1px solid #ccc;
   }
+
   .document-title h2 {
     font-size: 1.1rem;
     font-family: 'Times New Roman', serif;
   }
-  .document-title p { font-size: 0.8rem; }
+
+  .document-title p {
+    font-size: 0.8rem;
+  }
 
   /* --- 
     5. CRITICAL FIX: "Bill To" 2-Column Grid 
     This forces the 2-column layout that was failing.
   --- */
-  .invoice-meta-table > tbody > tr {
+  .invoice-meta-table>tbody>tr {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* 50% 50% split */
+    grid-template-columns: 1fr 1fr;
+    /* 50% 50% split */
     width: 100%;
     padding: 0.5rem 0;
     border-bottom: 1px solid #ccc;
   }
-  .bill-to-cell, .details-cell {
-    width: 100% !important; /* Override inline styles */
+
+  .bill-to-cell,
+  .details-cell {
+    width: 100% !important;
+    /* Override inline styles */
     padding: 0 !important;
     vertical-align: top;
   }
+
   .bill-to-cell h3 {
     font-size: 0.9rem;
     margin-bottom: 0.2rem;
   }
+
   .bill-to-cell p {
     font-size: 1rem;
     font-weight: bold;
   }
+
   .invoice-details-nested-table td {
     padding: 0.1rem 0.2rem;
     font-size: 0.85rem;
   }
+
   .value-cell {
     text-align: right;
     font-weight: bold;
@@ -1188,6 +1249,7 @@ textarea::placeholder {
     border-bottom: 1px solid #ccc;
     page-break-inside: avoid;
   }
+
   .invoice-section h3 {
     font-size: 1rem;
     padding-bottom: 0.3rem;
@@ -1198,21 +1260,29 @@ textarea::placeholder {
     padding: 0.2rem 0.3rem;
     font-size: 0.85rem;
   }
-  .summary-table td:first-child { width: 30%; }
+
+  .summary-table td:first-child {
+    width: 30%;
+  }
 
   .charges-table thead th {
     padding: 0.3rem 0.5rem;
     font-size: 0.75rem;
   }
+
   .charges-table tbody td {
     padding: 0.3rem 0.5rem;
     font-size: 0.85rem;
   }
+
   .charges-table tfoot td {
     font-size: 0.9rem;
     padding: 0.5rem;
   }
-  .charges-table tfoot .total-amount { font-size: 1.1rem; }
+
+  .charges-table tfoot .total-amount {
+    font-size: 1.1rem;
+  }
 
   .amount-in-words {
     margin-top: 0.2rem;
@@ -1229,17 +1299,21 @@ textarea::placeholder {
   .invoice-footer {
     padding-top: 0.5rem;
   }
+
   .payment-section {
     page-break-inside: avoid;
   }
+
   .payment-section h3 {
     font-size: 1rem;
     margin-bottom: 0.3rem;
   }
+
   .payment-options {
     grid-template-columns: 1fr;
     gap: 0.3rem;
   }
+
   .pay-option:first-child {
     display: flex;
     align-items: center;
@@ -1247,6 +1321,7 @@ textarea::placeholder {
     padding: 0.5rem;
     border: 1px solid #aaa;
   }
+
   /* FORCES QR TO RENDER */
   .qr-code {
     margin: 0;
@@ -1254,18 +1329,24 @@ textarea::placeholder {
     width: 80px;
     height: 80px;
   }
+
   .qr-code svg {
     display: block !important;
-    width: 80px !important;
-    height: 80px !important;
+    width: 70px !important;
+    /* Made it smaller */
+    height: 70px !important;
+    /* Made it smaller */
   }
+
   .pay-option:first-child h4 {
     font-size: 1rem;
     margin: 0;
   }
+
   .pay-option:first-child p {
     font-size: 0.75rem;
   }
+
   .pay-option:first-child::after {
     content: 'UPI ID: ' attr(data-upi-id-print);
     font-family: 'Courier New', monospace;
@@ -1281,15 +1362,19 @@ textarea::placeholder {
     margin-top: 0.5rem;
     page-break-inside: avoid;
   }
+
   .terms-section h3 {
-     font-size: 1rem;
-     margin-bottom: 0.3rem;
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
   }
+
   .terms-section ol {
-    columns: 1;
+    columns: 2; /* This will split the list into two columns */
+    column-gap: 1rem; /* Adds space between the columns */
     font-size: 0.75rem;
     line-height: 1.4;
-    padding-left: 1.2rem; /* Keep list indentation */
+    padding-left: 1.2rem;
+    /* Keep list indentation */
   }
 
   /* --- 
@@ -1298,23 +1383,30 @@ textarea::placeholder {
   --- */
   .branded-footer-content {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* 50% 50% split */
+    grid-template-columns: 1fr 1fr;
+    /* 50% 50% split */
     align-items: end;
     margin-top: 0.5rem;
     padding-top: 0.5rem;
     border-top: 1px solid #ccc;
-    page-break-before: auto; /* Allow break only if absolutely necessary */
+    page-break-before: auto;
+    /* Allow break only if absolutely necessary */
   }
-  .thank-you-note, .footer-address {
+
+  .thank-you-note,
+  .footer-address {
     font-size: 0.7rem;
     line-height: 1.3;
   }
+
   .thank-you-note {
     text-align: left;
   }
+
   .footer-address {
     text-align: right;
   }
+
   .thank-you-note p:last-child {
     font-size: 0.8rem;
     font-weight: bold;
@@ -1326,49 +1418,54 @@ textarea::placeholder {
 /* =================================================================== */
 
 .branded-footer-content {
-    text-align: center;
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--neutral-300); /* Separator line */
+  text-align: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--neutral-300);
+  /* Separator line */
 }
 
 .thank-you-note {
-    font-size: 1.1rem;
-    color: var(--neutral-700);
-    line-height: 1.6;
+  font-size: 1.1rem;
+  color: var(--neutral-700);
+  line-height: 1.6;
 }
+
 .thank-you-note p:last-child {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--neutral-900);
-    font-style: italic;
-    margin-top: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  font-style: italic;
+  margin-top: 0.5rem;
 }
 
 .footer-divider {
-    border: none;
-    height: 1px;
-    background-color: #FF6600; /* Screenshot's Orange Color */
-    margin: 1.5rem auto;
-    width: 80%;
+  border: none;
+  height: 1px;
+  background-color: #FF6600;
+  /* Screenshot's Orange Color */
+  margin: 1.5rem auto;
+  width: 80%;
 }
 
 .footer-address {
-    font-size: 0.9rem;
-    color: var(--neutral-600);
-    line-height: 1.7;
+  font-size: 0.9rem;
+  color: var(--neutral-600);
+  line-height: 1.7;
 }
 
 .footer-contact-links {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--primary); /* Blue text */
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--primary);
+  /* Blue text */
 }
+
 .footer-contact-links span {
-    margin: 0 0.5rem;
+  margin: 0 0.5rem;
 }
 
 /* Hide the old print footer bar */
 .invoice-print-footer {
-    display: none;
+  display: none;
 }

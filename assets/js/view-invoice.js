@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 3. Create the QR code with your exact style requirements
         const qrCode = new QRCodeStyling({
-            width: 120,
+            width: 100,
             height: 120,
             type: "svg",
             data: upiString,
