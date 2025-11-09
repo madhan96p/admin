@@ -1663,11 +1663,141 @@ hr.footer-divider {
     padding: 1rem;
     gap: 1rem;
   }
+  /* ========================================= */
+/* === NEW MOBILE-FIRST FIXES v2 === */
+/* ========================================= */
+
+  /* --- 1. Fix the Header --- */
+  .brand-header {
+    grid-template-columns: 1fr; /* Stack header items */
+    gap: 1.5rem;
+    text-align: center;
+  }
+  .brand-logo {
+    justify-self: center; /* Center the logo */
+  }
+  .brand-contact {
+    text-align: center; /* Center contact info */
+  }
+
+  /* --- 2. Fix Meta Details --- */
+  .details-list {
+    text-align: left; /* Left-align details on mobile */
+    margin-top: 1.5rem;
+  }
+  .details-list p {
+    padding: 0.1rem 0;
+  }
+
+  /* --- 3. Fix Trip Summary Table --- */
+  .summary-table tr,
+  .summary-table td {
+    display: block; /* Stack summary items */
+    width: 100%;
+  }
+  .summary-table td {
+    padding: 0.5rem 0.25rem;
+  }
+  .summary-table tr:first-child td:last-child {
+     /* Add space between KMs and Dates */
+    margin-bottom: 1rem;
+  }
+
+  /* --- 4. Fix Charges Table (THE BIG ONE) --- */
+  .charges-table {
+    display: block;
+    width: 100%;
+  }
+  .charges-table thead {
+    display: none; /* Hide desktop header */
+  }
+  .charges-table tbody,
+  .charges-table tr,
+  .charges-table td {
+    display: block; /* Make everything a block */
+    width: 100% !important;
+  }
+  
+  /* Style each row as a 'card' */
+  .charges-table tbody tr {
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-md);
+    overflow: hidden; /* Contain the cells */
+    box-shadow: var(--shadow-sm);
+  }
+
+  .charges-table td {
+    padding: 0.75rem 1rem;
+    text-align: right; /* Default align */
+    border: none;
+    border-bottom: 1px dashed var(--neutral-200);
+  }
+  .charges-table td:last-child {
+    border-bottom: none;
+  }
+  
+  /* Create the "header" for each card */
+  .charges-table td:first-child {
+    background: var(--neutral-100);
+    font-weight: 700;
+    color: var(--neutral-900);
+    text-align: left;
+  }
+
+  /* Add data labels for context */
+  .charges-table td:nth-child(2)::before {
+    content: 'Details: ';
+    font-weight: 600;
+    color: var(--neutral-600);
+    float: left; /* Pulls label to the left */
+  }
+  .charges-table td:nth-child(3)::before {
+    content: 'Rate (₹): ';
+    font-weight: 600;
+    color: var(--neutral-600);
+    float: left;
+  }
+  .charges-table td:nth-child(4)::before {
+    content: 'Amount (₹): ';
+    font-weight: 700;
+    color: var(--primary); /* Highlight amount label */
+    float: left;
+  }
+  .charges-table td:nth-child(4) {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--primary); /* Highlight amount value */
+  }
+  
+  /* Fix the footer total row */
+  .charges-table tfoot tr {
+     border: none;
+     box-shadow: none;
+     background: var(--primary);
+     border-radius: var(--radius-md);
+     padding: 0.5rem;
+     color: white;
+  }
+  .charges-table tfoot td {
+    border: none;
+  }
+  .charges-table tfoot .total-label,
+  .charges-table tfoot .total-amount {
+    display: inline-block;
+    width: auto;
+    color: white;
+  }
+  .charges-table tfoot .total-label {
+    text-align: left;
+    font-size: 1.1rem;
+  }
+   .charges-table tfoot .total-amount {
+    float: right;
+    font-size: 1.25rem !important;
+  }
 }
 
-/* ========================================= */
-/* === CLEANUP OLD STYLES === */
-/* ========================================= */
 
 /* We can now hide the old, replaced elements */
 .payment-section,
