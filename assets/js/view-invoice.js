@@ -77,8 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setText('trip-total-duration', `${invoice.Total_Hours} Hrs (${invoice.Billing_Slabs} Slab/s)`);
     }
 
-    // IN: view-invoice.js
-
     function populateCharges(invoice) {
         const tbody = document.getElementById('charges-tbody');
         tbody.innerHTML = ''; // Clear "Loading..."
@@ -88,7 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalExpenses = parseFloat(invoice.Total_Expenses || 0);
         const grandTotal = parseFloat(invoice.Grand_Total || 0);
 
-        // ... [your existing `rows +=` logic is perfect, keep it] ...
         // 1. Package Cost Row
         rows += `
         <tr>
@@ -132,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </tr>
         `;
         }
-        // ... [end of your `rows +=` logic] ...
 
         tbody.innerHTML = rows;
 
@@ -143,10 +139,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // This sets the text on the "Click to Pay" button
         setText('total-due-amount-button', grandTotal.toFixed(2));
 
-        // ⬇️ *** THIS IS THE FIX *** ⬇️
-        // OLD: const amountInWords = toWords(grandTotal.toFixed(0));
-        setText('amount-in-words', `Rupees ${amountInWords}`);
+        // --- ⬇️ CORRECTED ORDER ⬇️ ---
+        // 1. DEFINE the variable first
         const amountInWords = toWords(grandTotal.toFixed(0));
+        // 2. THEN use it
         setText('amount-in-words', `Rupees ${amountInWords}`);
     }
 
