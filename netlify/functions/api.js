@@ -909,7 +909,7 @@ exports.handler = async function (event, context) {
                     }
                     // If Entry_ID is missing or malformed, it will safely use 1001
                 }
-                const newEntryId = `FIN-${nextId}`;
+                const newEntryId = `FIN-${NextId}`;
 
                 // 2. Add server-side data
                 data.Entry_ID = newEntryId;
