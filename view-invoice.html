@@ -7,7 +7,6 @@
     <title>Invoice - Shrish Travels</title>
     <link rel="stylesheet" href="/assets/css/common.css">
     <link rel="stylesheet" href="/assets/css/invoice.css">
-    <!-- <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script> -->
     <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
 </head>
 
@@ -28,20 +27,9 @@
                 <p>www.shrishgroup.com</p>
             </div>
         </header>
-<!-- 
-        <div class="document-title">
-            <h2>Invoice for Vehicle Hire Services</h2>
-            <p>Date Generated: <span id="invoice-date-main">Loading...</span></p>
-        </div> -->
 
         <section class="invoice-meta">
             <table class="invoice-meta-table">
-                <!-- <tr>
-                    <td colspan="2" class="merged-header">
-                        <h2>INVOICE</h2>
-                    </td>
-                </tr> -->
-
                 <tr>
                     <td class="bill-to-cell">
                         <h3>Bill To:</h3>
@@ -50,24 +38,12 @@
                     </td>
 
                     <td class="details-cell">
-                        <table class="invoice-details-nested-table">
-                            <tr>
-                                <td class="label-cell">Invoice:</td>
-                                <td class="value-cell"><span id="invoice-id">Loading...</span></td>
-                            </tr>
-                            <tr>
-                                <td class="label-cell">Invoice Date:</td>
-                                <td class="value-cell"><span id="invoice-date">Loading...</span></td>
-                            </tr>
-                            <tr>
-                                <td class="label-cell">Last Updated:</td>
-                                <td class="value-cell"><span id="last-updated">Loading...</span></td>
-                            </tr>
-                            <tr>
-                                <td class="label-cell">Due Date:</td>
-                                <td class="value-cell">Due Upon Receipt</td>
-                            </tr>
-                        </table>
+                        <div class="details-list">
+                            <p><span id="invoice-id">Loading...</span></p>
+                            <p>Date: <span id="invoice-date">Loading...</span></p>
+                            <p>Updated: <span id="last-updated">Loading...</span></p>
+                            <p>Due: <strong>Due Upon Receipt</strong></p>
+                        </div>
                     </td>
                 </tr>
             </table>
@@ -77,20 +53,12 @@
             <h3>Trip Summary</h3>
             <table class="summary-table">
                 <tr>
-                    <td><strong>Vehicle:</strong></td>
-                    <td id="trip-vehicle">Loading...</td>
+                    <td><strong>Vehicle:</strong> <span id="trip-vehicle">Loading...</span></td>
+                    <td><strong>Total KMs:</strong> <span id="trip-total-kms">Loading...</span></td>
                 </tr>
                 <tr>
-                    <td><strong>Trip Dates:</strong></td>
-                    <td id="trip-dates">Loading...</td>
-                </tr>
-                <tr>
-                    <td><strong>Total KMs:</strong></td>
-                    <td id="trip-total-kms">Loading...</td>
-                </tr>
-                <tr>
-                    <td><strong>Total Duration:</strong></td>
-                    <td id="trip-total-duration">Loading...</td>
+                    <td><strong>Trip Dates:</strong> <span id="trip-dates">Loading...</span></td>
+                    <td><strong>Total Duration:</strong> <span id="trip-total-duration">Loading...</span></td>
                 </tr>
             </table>
         </section>
@@ -127,7 +95,7 @@
                 <p>Choose your preferred method to pay <strong><span id="total-due-amount">₹ --.--</span></strong></p>
                 <div class="payment-options">
                     <div class="pay-option">
-                        <h4>1. Scan to Pay</h4>
+                        <h4>Scan to Pay</h4>
                         <div id="qr-code-canvas" class="qr-code"></div>
                         <p>Scan with any UPI app</p>
                     </div>
@@ -157,26 +125,25 @@
                     <li>Thank you for your business!</li>
                 </ol>
             </div>
+
             <div class="branded-footer-content">
                 <div class="thank-you-note">
                     <p>Thank You for Choosing - <strong>SHRISH Travels!</strong></p>
                     <p><strong>Your Journey, Our Responsibility</strong></p>
                 </div>
-            </div>
+                
+                <div class="footer-address">
+                    <p>SHRISH GROUP | Thiruvarur, Tamil Nadu, 610001</p>
+                </div>
 
-            <hr class="footer-divider"> <div class="footer-address">
-                <p>SHRISH GROUP | Thiruvarur, Tamil Nadu, 610001</p>
+                <div class="footer-contact-links">
+                    <a href="tel:+918883451668">+91 88834 51668</a>
+                    <span>&bull;</span> <a href="mailto:info@shrishgroup.com">info@shrishgroup.com</a>
+                    <span>&bull;</span>
+                    <a href="https://www.shrishgroup.com" target="_blank">www.shrishgroup.com</a>
+                </div>
             </div>
-
-            <div class="footer-contact-links">
-                <a href="tel:+918883451668">+91 88834 51668</a>
-                <span>&bull;</span> <a href="mailto:info@shrishgroup.com">info@shrishgroup.com</a>
-                <span>&bull;</span>
-                <a href="https://www.shrishgroup.com" target="_blank">www.shrishgroup.com</a>
-            </div>
-            </section>
-
-        <footer class="invoice-print-footer">
+        </section> <footer class="invoice-print-footer">
             <p>This is a system-generated invoice. | Shrish Travels | www.shrishgroup.com</p>
         </footer>
     </div>
@@ -190,6 +157,7 @@
         </button>
     </div>
 
-    <script src="/assets/js/toWords.js"></script> <script src="/assets/js/view-invoice.js"></script>
+    <script src="/assets/js/toWords.js"></script>
+    <script src="/assets/js/view-invoice.js"></script>
 </body>
 </html>
