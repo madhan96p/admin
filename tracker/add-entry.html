@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Transaction - Shrish Admin</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    
+    <link rel="stylesheet" href="add-entry.css"> 
+</head>
+<body>
+
+    <div id="admin-sidebar"></div>
+
+    <div class="admin-main-content">
+        
+        <div id="admin-header"></div>
+
+        <main class="page-content">
+            
+            <div id="step-1" class="content-card flow-chooser">
+                <h2>What kind of transaction is this?</h2>
+                <div class="flow-buttons">
+                    <button id="btn-debit" class="btn-flow btn-debit">
+                        <i class="fas fa-arrow-up"></i> DEBIT (Money Out)
+                    </button>
+                    <button id="btn-credit" class="btn-flow btn-credit">
+                        <i class="fas fa-arrow-down"></i> CREDIT (Money In)
+                    </button>
+                </div>
+                <a href="index.html" class="back-link">&larr; Back to Dashboard</a>
+            </div>
+
+            <form id="step-2" class="content-card" style="display: none;">
+                <h2 id="form-title">New Transaction</h2>
+                
+                <div class="form-grid">
+                    
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input type="date" id="date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount">Amount (₹)</label>
+                        <input type="number" id="amount" placeholder="e.g., 1500" step="0.01" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="account">Account</label>
+                        <select id="account" required>
+                            <option value="">-- Select Account --</option>
+                            <option value="Company">Company</option>
+                            <option value="Personal">Personal</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" required>
+                            <option value="">-- Select Account First --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sub-category">Sub-Category</label>
+                        <select id="sub-category" required>
+                            <option value="">-- Select Category First --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="payment-method">Payment Method</label>
+                        <select id="payment-method" required>
+                            <option value="">-- Select Method --</option>
+                            <option value="UPI">UPI</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="Credit Card">Credit Card</option>
+                            <option value="Fuel Card">Fuel Card</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group span-2">
+                        <label for="particulars">Particulars (Notes)</label>
+                        <textarea id="particulars" rows="3" placeholder="e.g., Fuel for DS-1234 Chennai trip"></textarea>
+                    </div>
+
+                </div>
+
+                <input type="hidden" id="flow">
+
+                <div class="form-actions">
+                    <button type="button" id="btn-back" class="btn-secondary">&larr; Back</button>
+                    <button type="submit" id="btn-submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Save Transaction
+                    </button>
+                </div>
+            </form>
+            
+            </main>
+        
+        <div id="admin-footer"></div>
+    </div>
+
+    <script src="/assets/js/common.js"></script>
+    
+    <script src="add-entry.js"></script>
+</body>
+</html>

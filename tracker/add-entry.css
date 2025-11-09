@@ -1,0 +1,136 @@
+/* --- Styles for Your New Entry Form --- */
+
+/* 1. Step 1: Debit/Credit Chooser */
+.flow-chooser {
+    max-width: 600px;
+    margin: 2rem auto;
+    text-align: center;
+}
+
+.flow-buttons {
+    display: flex;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.btn-flow {
+    flex: 1;
+    font-size: 1.2rem;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-debit {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+.btn-debit:hover {
+    background-color: #ef4444;
+    color: white;
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+}
+
+.btn-credit {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+.btn-credit:hover {
+    background-color: #22c55e;
+    color: white;
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(34, 197, 94, 0.3);
+}
+
+.back-link {
+    color: #6b7280;
+    text-decoration: none;
+}
+.back-link:hover {
+    color: #4f46e5;
+}
+
+
+/* 2. Step 2: Main Form Grid */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.span-2 {
+    grid-column: 1 / -1; /* Makes the element span both columns */
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #374151;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #d1d5db; /* --color-border */
+    border-radius: 6px;
+    background-color: white;
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #4f46e5; /* --color-primary */
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.form-group select:disabled {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1.5rem;
+}
+
+.btn-secondary {
+    background-color: #d1d5db;
+    color: #374151;
+    padding: 0.7rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+}
+.btn-secondary:hover {
+    background-color: #9ca3af;
+}
+
+/* 3. Mobile-friendly: Stacks the form fields */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr; /* Single column */
+    }
+    .form-group.span-2 {
+        grid-column: 1; /* Reset span */
+    }
+}

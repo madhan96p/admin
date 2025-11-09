@@ -1,0 +1,41 @@
+/* --- Styles for Your New Tracker --- */
+
+/* 1. Makes the two charts sit side-by-side on desktop */
+.tracker-chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+/* 2. Simple, clean table for recent transactions */
+.tracker-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+}
+
+.tracker-table th,
+.tracker-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e5e7eb; /* Matches --color-border */
+    text-align: left;
+}
+
+.tracker-table th {
+    background-color: #f8f9fa; /* Matches --color-bg-main */
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: #6b7280; /* Matches --color-text-muted */
+}
+
+.tracker-table td {
+    font-size: 0.95rem;
+}
+
+/* 3. Mobile-friendly: Stacks the charts on small screens */
+@media (max-width: 992px) {
+    .tracker-chart-grid {
+        grid-template-columns: 1fr;
+    }
+}

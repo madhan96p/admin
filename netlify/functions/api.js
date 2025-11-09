@@ -410,6 +410,7 @@ exports.handler = async function (event, context) {
     await doc.loadInfo();
     const sheet = doc.sheetsByTitle['duty_slips'];
     const salarySheet = doc.sheetsByTitle['salary_slips'];
+    const financialsSheet = doc.sheetsByTitle['Financials'];
     const { action } = event.queryStringParameters;
     let responseData = {};
 
@@ -630,7 +631,7 @@ exports.handler = async function (event, context) {
                 // Load headers and all rows to check for existing data
                 await invoiceSheet.loadHeaderRow();
                 const invoiceRows = await invoiceSheet.getRows();
-                
+
                 // Find the exact header names from your sheet (case-sensitive)
                 const bookingIdHeader = 'Booking_ID';
                 const publicIdHeader = 'Public_ID';
@@ -646,10 +647,10 @@ exports.handler = async function (event, context) {
                     // --- 1. IF YES (Overwrite) ---
                     // Get the existing Public_ID
                     publicId = foundRow[publicIdHeader];
-                    
+
                     // Construct the shareable link
                     shareableLink = `https://admin.shrishgroup.com/view-invoice.html?id=${publicId}`;
-                    
+
                     // Add the link to the data we're saving
                     invoiceData[shareableLinkHeader] = shareableLink;
 
@@ -660,7 +661,7 @@ exports.handler = async function (event, context) {
                         }
                     }
                     await foundRow.save(); // Save the updated row
-                
+
                 } else {
                     // --- 2. IF NO (New Invoice) ---
                     let isUnique = false;
@@ -684,10 +685,10 @@ exports.handler = async function (event, context) {
 
                 // --- 3. Finally (Return) ---
                 // Return the success message AND the new link for the frontend
-                responseData = { 
-                    success: true, 
+                responseData = {
+                    success: true,
                     shareableLink: shareableLink,
-                    message: `Invoice ${invoiceData.Invoice_ID} saved.` 
+                    message: `Invoice ${invoiceData.Invoice_ID} saved.`
                 };
                 break;
             }
@@ -703,10 +704,10 @@ exports.handler = async function (event, context) {
                     throw new Error('"invoices" sheet not found in Google Spreadsheet.');
                 }
 
-                await invoiceSheet.loadHeaderRow(); 
+                await invoiceSheet.loadHeaderRow();
                 const invoiceHeaders = invoiceSheet.headerValues;
                 const invoiceRows = await invoiceSheet.getRows();
-                
+
                 // Find the header name for Public_ID
                 const publicIdHeader = 'Public_ID';
 
@@ -764,7 +765,7 @@ exports.handler = async function (event, context) {
                 // 1. Get the Review
                 const reviewSheet = doc.sheetsByTitle['g_reviews'];
                 if (!reviewSheet) throw new Error('"g_reviews" sheet not found.');
-                
+
                 const reviewRows = await reviewSheet.getRows();
                 const foundReview = reviewRows.find(row => String(row.review_id) === String(reviewId));
                 if (!foundReview) {
@@ -783,21 +784,21 @@ exports.handler = async function (event, context) {
 
                     const slipRows = await dutySheet.getRows();
                     const foundSlip = slipRows.find(row => String(row.DS_No) === String(dsNo));
-                    
+
                     if (foundSlip) {
                         slipData = {};
                         dutySheet.headerValues.forEach(h => { slipData[h] = foundSlip[h]; });
                     }
                 }
-                
+
                 // 3. Combine and return
-                responseData = { 
-                    review: reviewData, 
+                responseData = {
+                    review: reviewData,
                     slip: slipData // Will be null if slip not found or no ds_no
                 };
                 break;
             }
-            
+
             case 'logNewReview': {
                 const formData = JSON.parse(event.body);
 
@@ -827,11 +828,11 @@ exports.handler = async function (event, context) {
                 };
 
                 await reviewSheet.addRow(dataToSave);
-                
+
                 responseData = { success: true, message: `Review #${nextId} saved.` };
                 break;
             }
-            
+
             case 'getAllReviews': {
                 const reviewSheet = doc.sheetsByTitle['g_reviews'];
                 if (!reviewSheet) {
@@ -850,10 +851,75 @@ exports.handler = async function (event, context) {
                     });
                     return reviewObject;
                 }).sort((a, b) => (parseInt(b.review_id, 10) || 0) - (parseInt(a.review_id, 10) || 0));
-                
+
                 responseData = { reviews: reviews };
                 break;
             }
+
+            case 'getFinancialData':
+                if (!financialsSheet) {
+                    throw new Error('"Financials" sheet not found in Google Spreadsheet.');
+                }
+                const financialRows = await financialsSheet.getRows();
+                const financialHeaders = financialsSheet.headerValues;
+
+                // Get all entries
+                const allEntries = financialRows.map(row => {
+                    const entry = {};
+                    financialHeaders.forEach(header => {
+                        // Clean up the Amount for calculations
+                        if (header === 'Amount' && typeof row[header] === 'string') {
+                            entry[header] = parseFloat(row[header].replace(/[^0-9.-]+/g, "")) || 0;
+                        } else {
+                            entry[header] = row[header];
+                        }
+                    });
+                    return entry;
+                });
+
+                // Sort by Date descending (newest first)
+                allEntries.sort((a, b) => new Date(b.Date) - new Date(a.Date));
+
+                responseData = { entries: allEntries };
+                break;
+
+            case 'saveFinancialEntry':
+                if (!financialsSheet) {
+                    throw new Error('"Financials" sheet not found in Google Spreadsheet.');
+                }
+                const data = JSON.parse(event.body);
+
+                // 1. Generate new Entry_ID
+                const AllRows = await financialsSheet.getRows();
+                let NextId = 1001; // Start at 1001
+                if (AllRows.length > 0) {
+                    const lastRow = AllRows[AllRows.length - 1];
+                    
+                    // --- FIX: Safely check if Entry_ID exists and is a string ---
+                    if (lastRow.Entry_ID && typeof lastRow.Entry_ID === 'string') {
+                        const idParts = lastRow.Entry_ID.split('-');
+                        
+                        // Check if split was successful (e.g., 'FIN-1001')
+                        if (idParts.length === 2) { 
+                            const lastId = parseInt(idParts[1]);
+                            if (!isNaN(lastId)) {
+                                NextId = lastId + 1;
+                            }
+                        }
+                    }
+                    // If Entry_ID is missing or malformed, it will safely use 1001
+                }
+                const newEntryId = `FIN-${nextId}`;
+
+                // 2. Add server-side data
+                data.Entry_ID = newEntryId;
+                data.Timestamp = new Date().toISOString();
+
+                // 3. Save to Google Sheet
+                await financialsSheet.addRow(data);
+
+                responseData = { success: true, newId: newEntryId };
+                break;
 
             default:
                 responseData = { error: 'Invalid action.' };
