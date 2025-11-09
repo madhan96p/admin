@@ -1130,7 +1130,7 @@ textarea::placeholder {
   .payment-section>p,
   .pay-option:nth-child(2),
   .pay-option:nth-child(3),
-  .brand-contact, /* Hide web brand contact */
+  /* .brand-contact, Hide web brand contact */
   .branded-footer-content .footer-contact-links /* Hide web contact links */
   {
     display: none !important;
