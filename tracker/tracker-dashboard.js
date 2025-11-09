@@ -302,14 +302,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         data: incomeData,
                         backgroundColor: '#10b981', // Green
                         borderColor: '#059669',
-                        borderWidth: 1
+                        borderWidth: 1,
+                        maxBarThickness: 80 // <-- ADD THIS
                     },
                     {
                         label: 'Expense',
                         data: expenseData,
                         backgroundColor: '#ef4444', // Red
                         borderColor: '#b91c1c',
-                        borderWidth: 1
+                        borderWidth: 1,
+                        maxBarThickness: 80 // <-- ADD THIS
                     }
                 ]
             },
