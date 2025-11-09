@@ -1,6 +1,81 @@
 @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
-/* --- Root Variables (Unchanged) --- */
+/* --- New Brand Header (from Screenshot) --- */
+.brand-header {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr; /* Logo, Title, Contact */
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 2px solid var(--neutral-200);
+}
+
+.brand-logo img {
+    width: 80px; /* Adjust size as needed */
+    height: auto;
+}
+
+.brand-title {
+    text-align: center;
+}
+.brand-title h1 {
+    font-family: 'Lora', serif;
+    font-size: 2.2rem;
+    color: var(--neutral-900);
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    letter-spacing: 1px;
+}
+.brand-title p {
+    font-size: 1rem;
+    color: var(--neutral-600);
+    font-style: italic;
+    margin: 0;
+}
+
+.brand-contact {
+    text-align: right;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+.brand-contact p {
+    color: var(--primary); /* Blue text like screenshot */
+    font-weight: 600;
+    margin: 0;
+}
+
+/* New Document Title Bar */
+.document-title {
+    text-align: center;
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--neutral-200);
+    background: var(--neutral-50);
+}
+.document-title h2 {
+    font-family: 'Lora', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--neutral-800);
+    margin-bottom: 0.25rem;
+}
+.document-title p {
+    font-size: 0.9rem;
+    color: var(--neutral-600);
+    margin: 0;
+}
+
+/* --- Adjust old styles --- */
+/* We don't need the old header at all */
+.invoice-header {
+    display: none; 
+}
+/* We don't need the "INVOICE" text inside the meta table */
+.merged-header {
+    display: none;
+}
+.invoice-meta {
+    background: none; /* Remove old background */
+}
+
 :root {
   --primary: #1a3a5c;
   --primary-dark: #0f2438;
@@ -28,1098 +103,1002 @@
   --transition: all 0.25s ease;
 }
 
-/* =================================================================== */
-/* === START: WEB-ONLY STYLES (SCREEN) === */
-/* =================================================================== */
-@media screen {
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    line-height: 1.5;
-    color: var(--neutral-700);
-    background: #f8f8f8;
-    min-height: 100vh;
-    font-size: 14px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  color: var(--neutral-700);
+  background: #f8f8f8;
+  min-height: 100vh;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-  .page-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem;
-  }
+.page-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
 
-  .page-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    animation: fadeInDown 0.6s ease-out;
-  }
+.page-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  animation: fadeInDown 0.6s ease-out;
+}
 
+.page-header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+  font-family: 'Lora', serif;
+}
+
+.page-header p {
+  font-size: 1.125rem;
+  color: var(--neutral-600);
+  font-weight: 400;
+}
+
+.card {
+  background: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: visible;
+  border-top: 4px solid var(--primary);
+}
+
+.stepper-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+  position: relative;
+  padding: 0 1rem;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+  z-index: 2;
+  transition: var(--transition);
+}
+
+.step-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--neutral-200);
+  border: 2px solid var(--neutral-400);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: var(--neutral-600);
+  transition: var(--transition);
+  position: relative;
+}
+
+.step.active .step-icon {
+  background: var(--primary);
+  border-color: var(--primary-dark);
+  color: white;
+  box-shadow: 0 2px 8px rgba(26, 58, 92, 0.25);
+}
+
+.step.done .step-icon {
+  background: var(--success);
+  border-color: var(--success-dark);
+  color: white;
+}
+
+.step.done .step-icon::after {
+  content: '✓';
+  position: absolute;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.step-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--neutral-600);
+  text-align: center;
+  transition: var(--transition);
+}
+
+.step.active .step-label {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.step.done .step-label {
+  color: var(--success-dark);
+}
+
+.step-divider {
+  flex: 1;
+  height: 3px;
+  background: var(--neutral-200);
+  margin: 0 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.step.done + .step-divider {
+  background: var(--success);
+}
+
+.step-content {
+  display: none;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.step-content.active {
+  display: block;
+}
+
+.step-content h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+.step-content > p {
+  color: var(--neutral-600);
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--neutral-700);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.01em;
+}
+
+.calc-context {
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: var(--neutral-500);
+  margin-left: 0.25rem;
+}
+
+.form-control,
+input[type="text"],
+input[type="number"],
+textarea {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid var(--neutral-200);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: var(--transition);
+  background: white;
+  color: var(--neutral-800);
+}
+
+.form-control:focus,
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-control::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: var(--neutral-400);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.75rem;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+  background: var(--neutral-600);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover {
+  background: var(--neutral-700);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-success {
+  background: var(--success);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-success:hover {
+  background: var(--success-dark);
+  box-shadow: var(--shadow-md);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.step1-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.or-divider {
+  font-weight: 600;
+  color: var(--neutral-400);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: relative;
+  padding: 0 1rem;
+}
+
+.or-divider::before,
+.or-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40px;
+  height: 2px;
+  background: var(--neutral-300);
+}
+
+.or-divider::before {
+  right: 100%;
+}
+
+.or-divider::after {
+  left: 100%;
+}
+
+.trip-summary-box {
+  background: var(--neutral-50);
+  border: 1px solid var(--neutral-300);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.trip-summary-box h4 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  margin-bottom: 1rem;
+}
+
+.trip-summary-box p {
+  margin-bottom: 0.5rem;
+  color: var(--neutral-700);
+  line-height: 1.8;
+}
+
+.section-divider {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  margin: 2rem 0 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--neutral-200);
+}
+
+.help-text {
+  background: var(--neutral-50);
+  border-left: 4px solid var(--primary);
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-md);
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--neutral-700);
+  line-height: 1.7;
+}
+
+.help-text i {
+  color: var(--primary);
+  margin-right: 0.5rem;
+}
+
+.running-total {
+  background: var(--neutral-50);
+  border: 2px solid var(--success);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--neutral-800);
+}
+
+.running-total strong {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--success-dark);
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.invoice-summary-preview {
+  margin: 2rem 0;
+}
+
+.summary-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: white;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--neutral-300);
+  transition: var(--transition);
+}
+
+.summary-item span {
+  font-size: 0.95rem;
+  color: var(--neutral-700);
+}
+
+.summary-item strong {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+}
+
+.summary-item.total {
+  background: var(--primary);
+  color: white;
+  margin-top: 1rem;
+  padding: 1.25rem;
+  border: none;
+}
+
+.summary-item.total span,
+.summary-item.total strong {
+  color: white;
+  font-size: 1.25rem;
+}
+
+.summary-item.total strong {
+  font-size: 1.75rem;
+  font-weight: 800;
+}
+
+.step-navigation {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--neutral-200);
+}
+
+.loader {
+  border: 4px solid var(--neutral-200);
+  border-top: 4px solid var(--primary);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  animation: spin 0.8s linear infinite;
+  margin: 2rem auto;
+}
+
+#generatedLinkContainer {
+  background: var(--neutral-50);
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--success);
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#generatedLinkContainer label {
+  font-weight: 700;
+  color: var(--success-dark);
+  font-size: 1rem;
+}
+
+#generatedLink {
+  flex: 1;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  background: white;
+}
+
+.invoice-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  background: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.invoice-header {
+  background: white;
+  color: var(--primary);
+  padding: 1.5rem 2rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 2rem;
+  align-items: center;
+  border-bottom: 2px solid var(--primary);
+}
+
+.header-logo img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  background: white;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+.header-title h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  letter-spacing: 0;
+  font-family: 'Lora', serif;
+  color: var(--primary);
+}
+
+.header-title p {
+  font-size: 0.9rem;
+  color: var(--neutral-600);
+  font-weight: 400;
+}
+
+.header-contact {
+  text-align: right;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--neutral-700);
+}
+
+.header-contact p {
+  margin-bottom: 0.2rem;
+}
+
+.header-contact i {
+  width: 14px;
+  margin-right: 0.4rem;
+  color: var(--primary);
+}
+
+.invoice-meta {
+  padding: 2rem;
+  background: var(--neutral-50);
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+.invoice-meta-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.merged-header {
+  text-align: center;
+  padding-bottom: 1.5rem;
+}
+
+.merged-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 0.08em;
+  font-family: 'Lora', serif;
+}
+
+.bill-to-cell {
+  vertical-align: top;
+  padding: 1rem;
+  width: 50%;
+}
+
+.bill-to-cell h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--neutral-600);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.bill-to-cell p {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--neutral-900);
+  margin-bottom: 0.25rem;
+}
+
+.details-cell {
+  vertical-align: top;
+  padding: 1rem;
+}
+
+.invoice-details-nested-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.invoice-details-nested-table td {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+}
+
+.label-cell {
+  font-weight: 600;
+  color: var(--neutral-600);
+  white-space: nowrap;
+}
+
+.value-cell {
+  font-weight: 600;
+  color: var(--neutral-900);
+  text-align: right;
+}
+
+.invoice-section {
+  padding: 2rem;
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+.invoice-section:last-of-type {
+  border-bottom: none;
+}
+
+.invoice-section h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--neutral-200);
+}
+
+.summary-table,
+.charges-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.summary-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+.summary-table td:first-child {
+  font-weight: 600;
+  color: var(--neutral-600);
+  width: 40%;
+}
+
+.summary-table td:last-child {
+  color: var(--neutral-900);
+  font-weight: 600;
+}
+
+.charges-table thead th {
+  background: var(--neutral-100);
+  padding: 1rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: var(--neutral-700);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--neutral-300);
+}
+
+.charges-table tbody td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--neutral-200);
+  color: var(--neutral-700);
+}
+
+.charges-table tbody tr:hover {
+  background: var(--neutral-50);
+}
+
+.charges-table tfoot .total-row {
+  background: var(--primary);
+  color: white;
+}
+
+.charges-table tfoot td {
+  padding: 1.25rem 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.total-label {
+  text-align: right;
+}
+
+.total-amount {
+  text-align: right;
+  font-size: 1.5rem !important;
+  font-weight: 800;
+}
+
+.amount-in-words {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--neutral-50);
+  border-radius: var(--radius-md);
+  font-style: italic;
+  color: var(--neutral-600);
+  text-align: center;
+}
+
+.invoice-footer {
+  background: var(--neutral-50);
+  padding: 2rem;
+}
+
+.payment-section h3,
+.terms-section h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  margin-bottom: 1rem;
+}
+
+.payment-section p {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--neutral-700);
+  font-size: 1rem;
+}
+
+.payment-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.pay-option {
+  background: white;
+  border: 2px solid var(--neutral-200);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  text-align: center;
+  transition: var(--transition);
+}
+
+.pay-option:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+}
+
+.pay-option h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--neutral-800);
+  margin-bottom: 1rem;
+}
+
+.qr-code {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.pay-option p {
+  font-size: 0.875rem;
+  color: var(--neutral-600);
+  margin-top: 0.5rem;
+}
+
+.pay-option input {
+  width: 100%;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.terms-section {
+  margin-top: 2rem;
+}
+
+.terms-section ol {
+  list-style-position: inside;
+  color: var(--neutral-700);
+  line-height: 2;
+}
+
+.terms-section li {
+  margin-bottom: 0.5rem;
+}
+
+.terms-section a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.terms-section a:hover {
+  text-decoration: underline;
+  color: var(--primary-dark);
+}
+
+.invoice-print-footer {
+  background: var(--neutral-800);
+  color: white;
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.invoice-actions {
+  text-align: center;
+  padding: 2rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+}
+
+@media (max-width: 768px) {
   .page-header h1 {
-    font-size: 2.2rem;
-    font-weight: 700;
-    color: var(--primary);
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.01em;
-    font-family: 'Lora', serif;
-  }
-
-  .page-header p {
-    font-size: 1.125rem;
-    color: var(--neutral-600);
-    font-weight: 400;
+    font-size: 1.875rem;
   }
 
   .card {
-    background: white;
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-md);
-    padding: 2rem;
-    margin-bottom: 2rem;
-    position: relative;
-    overflow: visible;
-    border-top: 4px solid var(--primary);
+    padding: 1.5rem;
   }
 
   .stepper-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 3rem;
-    position: relative;
-    padding: 0 1rem;
-  }
-
-  .step {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
-    position: relative;
-    z-index: 2;
-    transition: var(--transition);
+    padding: 0;
   }
 
   .step-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: var(--neutral-200);
-    border: 2px solid var(--neutral-400);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    color: var(--neutral-600);
-    transition: var(--transition);
-    position: relative;
-  }
-
-  .step.active .step-icon {
-    background: var(--primary);
-    border-color: var(--primary-dark);
-    color: white;
-    box-shadow: 0 2px 8px rgba(26, 58, 92, 0.25);
-  }
-
-  .step.done .step-icon {
-    background: var(--success);
-    border-color: var(--success-dark);
-    color: white;
-  }
-
-  .step.done .step-icon::after {
-    content: '✓';
-    position: absolute;
-    font-size: 1.5rem;
-    font-weight: bold;
-  }
-
-  .step-label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--neutral-600);
-    text-align: center;
-    transition: var(--transition);
-  }
-
-  .step.active .step-label {
-    color: var(--primary);
-    font-weight: 700;
-  }
-
-  .step.done .step-label {
-    color: var(--success-dark);
-  }
-
-  .step-divider {
-    flex: 1;
-    height: 3px;
-    background: var(--neutral-200);
-    margin: 0 1rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .step.done + .step-divider {
-    background: var(--success);
-  }
-
-  .step-content {
-    display: none;
-    animation: fadeIn 0.4s ease-out;
-  }
-
-  .step-content.active {
-    display: block;
-  }
-
-  .step-content h2 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--neutral-900);
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.01em;
-  }
-
-  .step-content > p {
-    color: var(--neutral-600);
-    margin-bottom: 2rem;
+    width: 48px;
+    height: 48px;
     font-size: 1rem;
   }
 
-  .form-group {
-    margin-bottom: 1.5rem;
+  .step-label {
+    font-size: 0.75rem;
   }
 
-  .form-group label {
-    display: block;
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--neutral-700);
-    margin-bottom: 0.5rem;
-    letter-spacing: 0.01em;
-  }
-
-  .calc-context {
-    font-weight: 400;
-    font-size: 0.85rem;
-    color: var(--neutral-500);
-    margin-left: 0.25rem;
-  }
-
-  .form-control,
-  input[type="text"],
-  input[type="number"],
-  textarea {
-    width: 100%;
-    padding: 0.875rem 1rem;
-    border: 2px solid var(--neutral-200);
-    border-radius: var(--radius-md);
-    font-size: 0.95rem;
-    font-family: inherit;
-    transition: var(--transition);
-    background: white;
-    color: var(--neutral-800);
-  }
-
-  .form-control:focus,
-  input[type="text"]:focus,
-  input[type="number"]:focus,
-  textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-  }
-
-  .form-control::placeholder,
-  input::placeholder,
-  textarea::placeholder {
-    color: var(--neutral-400);
+  .step-divider {
+    margin: 0 0.5rem;
   }
 
   .form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
-
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.875rem 1.75rem;
-    border: none;
-    border-radius: var(--radius-md);
-    font-size: 0.95rem;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    transition: var(--transition);
-    text-decoration: none;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    box-shadow: var(--shadow-sm);
-  }
-
-  .btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-  }
-
-  .btn:hover::before {
-    width: 300px;
-    height: 300px;
-  }
-
-  .btn-primary {
-    background: var(--primary);
-    color: white;
-    box-shadow: var(--shadow-sm);
-  }
-
-  .btn-primary:hover {
-    background: var(--primary-dark);
-    box-shadow: var(--shadow-md);
-  }
-
-  .btn-secondary {
-    background: var(--neutral-600);
-    color: white;
-    box-shadow: var(--shadow-sm);
-  }
-
-  .btn-secondary:hover {
-    background: var(--neutral-700);
-    box-shadow: var(--shadow-md);
-  }
-
-  .btn-success {
-    background: var(--success);
-    color: white;
-    box-shadow: var(--shadow-sm);
-  }
-
-  .btn-success:hover {
-    background: var(--success-dark);
-    box-shadow: var(--shadow-md);
-  }
-
-  .btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none !important;
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .step1-actions {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin-top: 2rem;
-    flex-wrap: wrap;
+    flex-direction: column;
+    width: 100%;
   }
 
-  .or-divider {
-    font-weight: 600;
-    color: var(--neutral-400);
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    position: relative;
-    padding: 0 1rem;
+  .step1-actions button {
+    width: 100%;
   }
 
   .or-divider::before,
   .or-divider::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    width: 40px;
-    height: 2px;
-    background: var(--neutral-300);
+    display: none;
   }
 
-  .or-divider::before {
-    right: 100%;
-  }
-
-  .or-divider::after {
-    left: 100%;
-  }
-
-  .trip-summary-box {
-    background: var(--neutral-50);
-    border: 1px solid var(--neutral-300);
-    border-left: 4px solid var(--primary);
-    border-radius: var(--radius-md);
-    padding: 1.25rem;
-    margin-bottom: 2rem;
-  }
-
-  .trip-summary-box h4 {
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: var(--neutral-900);
-    margin-bottom: 1rem;
-  }
-
-  .trip-summary-box p {
-    margin-bottom: 0.5rem;
-    color: var(--neutral-700);
-    line-height: 1.8;
-  }
-
-  .section-divider {
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: var(--neutral-900);
-    margin: 2rem 0 1.25rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--neutral-200);
-  }
-
-  .help-text {
-    background: var(--neutral-50);
-    border-left: 4px solid var(--primary);
-    padding: 1rem 1.25rem;
-    border-radius: var(--radius-md);
-    margin-top: 1.5rem;
-    font-size: 0.9rem;
-    color: var(--neutral-700);
-    line-height: 1.7;
-  }
-
-  .help-text i {
-    color: var(--primary);
-    margin-right: 0.5rem;
-  }
-
-  .running-total {
-    background: var(--neutral-50);
-    border: 2px solid var(--success);
-    border-radius: var(--radius-md);
-    padding: 1.25rem;
-    margin-top: 2rem;
+  .invoice-header {
+    grid-template-columns: 1fr;
     text-align: center;
-    font-size: 1.1rem;
-    color: var(--neutral-800);
+    gap: 1.5rem;
   }
 
-  .running-total strong {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--success-dark);
-    display: block;
-    margin-top: 0.5rem;
-  }
-
-  .invoice-summary-preview {
-    margin: 2rem 0;
-  }
-
-  .summary-grid {
-    display: grid;
-    gap: 1rem;
-  }
-
-  .summary-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.25rem;
-    background: white;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--neutral-300);
-    transition: var(--transition);
-  }
-
-  .summary-item span {
-    font-size: 0.95rem;
-    color: var(--neutral-700);
-  }
-
-  .summary-item strong {
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: var(--neutral-900);
-  }
-
-  .summary-item.total {
-    background: var(--primary);
-    color: white;
-    margin-top: 1rem;
-    padding: 1.25rem;
-    border: none;
-  }
-
-  .summary-item.total span,
-  .summary-item.total strong {
-    color: white;
-    font-size: 1.25rem;
-  }
-
-  .summary-item.total strong {
-    font-size: 1.75rem;
-    font-weight: 800;
-  }
-
-  .step-navigation {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 2px solid var(--neutral-200);
-  }
-
-  .loader {
-    border: 4px solid var(--neutral-200);
-    border-top: 4px solid var(--primary);
-    border-radius: 50%;
-    width: 48px;
-    height: 48px;
-    animation: spin 0.8s linear infinite;
-    margin: 2rem auto;
-  }
-
-  #generatedLinkContainer {
-    background: var(--neutral-50);
-    padding: 1.5rem;
-    border-radius: var(--radius-md);
-    border: 2px solid var(--success);
-    margin-top: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  #generatedLinkContainer label {
-    font-weight: 700;
-    color: var(--success-dark);
-    font-size: 1rem;
-  }
-
-  #generatedLink {
-    flex: 1;
-    font-family: 'Courier New', monospace;
-    font-size: 0.9rem;
-    background: white;
-  }
-
-  .invoice-container {
-    max-width: 900px;
-    margin: 2rem auto;
-    background: white;
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-md);
-    overflow: hidden;
-  }
-
-  .header-logo img {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-    background: white;
-    padding: 0.5rem;
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-lg);
-  }
-
-  .header-title h1 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    margin-bottom: 0.25rem;
-    letter-spacing: 0;
-    font-family: 'Lora', serif;
-    color: var(--primary);
-  }
-
-  .header-title p {
-    font-size: 0.9rem;
-    color: var(--neutral-600);
-    font-weight: 400;
+  .header-logo {
+    justify-self: center;
   }
 
   .header-contact {
-    text-align: right;
-    font-size: 0.8rem;
-    line-height: 1.6;
-    color: var(--neutral-700);
-  }
-
-  .header-contact p {
-    margin-bottom: 0.2rem;
-  }
-
-  .header-contact i {
-    width: 14px;
-    margin-right: 0.4rem;
-    color: var(--primary);
-  }
-
-  .invoice-meta {
-    padding: 2rem;
-    background: var(--neutral-50);
-    border-bottom: 1px solid var(--neutral-200);
-  }
-
-  .invoice-meta-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  .merged-header {
     text-align: center;
-    padding-bottom: 1.5rem;
   }
 
-  .merged-header h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary);
-    letter-spacing: 0.08em;
-    font-family: 'Lora', serif;
-  }
-
-  .bill-to-cell {
-    vertical-align: top;
-    padding: 1rem;
-    width: 50%;
-  }
-
-  .bill-to-cell h3 {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--neutral-600);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 0.75rem;
-  }
-
-  .bill-to-cell p {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--neutral-900);
-    margin-bottom: 0.25rem;
-  }
-
+  .bill-to-cell,
   .details-cell {
-    vertical-align: top;
-    padding: 1rem;
-  }
-
-  .invoice-details-nested-table {
+    display: block;
     width: 100%;
-    border-collapse: collapse;
+    padding: 1rem 0;
   }
 
-  .invoice-details-nested-table td {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.95rem;
+  .invoice-meta-table tr {
+    display: block;
   }
 
-  .label-cell {
-    font-weight: 600;
-    color: var(--neutral-600);
-    white-space: nowrap;
-  }
-
-  .value-cell {
-    font-weight: 600;
-    color: var(--neutral-900);
-    text-align: right;
-  }
-
-  .invoice-section {
-    padding: 2rem;
-    border-bottom: 1px solid var(--neutral-200);
-  }
-
-  .invoice-section:last-of-type {
-    border-bottom: none;
-  }
-
-  .invoice-section h3 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--neutral-900);
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--neutral-200);
-  }
-
-  .summary-table,
   .charges-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-  }
-
-  .summary-table td {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--neutral-200);
-  }
-
-  .summary-table td:first-child {
-    font-weight: 600;
-    color: var(--neutral-600);
-    width: 40%;
-  }
-
-  .summary-table td:last-child {
-    color: var(--neutral-900);
-    font-weight: 600;
-  }
-
-  .charges-table thead th {
-    background: var(--neutral-100);
-    padding: 1rem;
-    text-align: left;
-    font-weight: 700;
     font-size: 0.875rem;
-    color: var(--neutral-700);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-bottom: 2px solid var(--neutral-300);
   }
 
+  .charges-table thead th,
   .charges-table tbody td {
-    padding: 1rem;
-    border-bottom: 1px solid var(--neutral-200);
-    color: var(--neutral-700);
-  }
-
-  .charges-table tbody tr:hover {
-    background: var(--neutral-50);
-  }
-
-  .charges-table tfoot .total-row {
-    background: var(--primary);
-    color: white;
-  }
-
-  .charges-table tfoot td {
-    padding: 1.25rem 1rem;
-    font-size: 1.25rem;
-    font-weight: 700;
-  }
-
-  .total-label {
-    text-align: right;
-  }
-
-  .total-amount {
-    text-align: right;
-    font-size: 1.5rem !important;
-    font-weight: 800;
-  }
-
-  .amount-in-words {
-    margin-top: 1rem;
-    padding: 1rem;
-    background: var(--neutral-50);
-    border-radius: var(--radius-md);
-    font-style: italic;
-    color: var(--neutral-600);
-    text-align: center;
-  }
-
-  .invoice-footer {
-    background: var(--neutral-50);
-    padding: 2rem;
-  }
-
-  .payment-section h3,
-  .terms-section h3 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--neutral-900);
-    margin-bottom: 1rem;
-  }
-
-  .payment-section p {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    color: var(--neutral-700);
-    font-size: 1rem;
+    padding: 0.75rem 0.5rem;
   }
 
   .payment-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    grid-template-columns: 1fr;
   }
 
-  .pay-option {
-    background: white;
-    border: 2px solid var(--neutral-200);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    text-align: center;
-    transition: var(--transition);
+  .step-navigation {
+    flex-direction: column-reverse;
   }
 
-  .pay-option:hover {
-    border-color: var(--primary);
-    box-shadow: var(--shadow-md);
-  }
-
-  .pay-option h4 {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--neutral-800);
-    margin-bottom: 1rem;
-  }
-
-  .qr-code {
-    display: flex;
-    justify-content: center;
-    margin: 1rem 0;
-  }
-
-  .pay-option p {
-    font-size: 0.875rem;
-    color: var(--neutral-600);
-    margin-top: 0.5rem;
-  }
-
-  .pay-option input {
+  .step-navigation button {
     width: 100%;
-    margin-bottom: 1rem;
-    text-align: center;
-    font-weight: 600;
-  }
-
-  .terms-section {
-    margin-top: 2rem;
-  }
-
-  .terms-section ol {
-    list-style-position: inside;
-    color: var(--neutral-700);
-    line-height: 2;
-  }
-
-  .terms-section li {
-    margin-bottom: 0.5rem;
-  }
-
-  .terms-section a {
-    color: var(--primary);
-    font-weight: 600;
-    text-decoration: none;
-    transition: var(--transition);
-  }
-
-  .terms-section a:hover {
-    text-decoration: underline;
-    color: var(--primary-dark);
-  }
-
-  .invoice-print-footer {
-    background: var(--neutral-800);
-    color: white;
-    padding: 1.5rem;
-    text-align: center;
-    font-size: 0.875rem;
-  }
-
-  .invoice-actions {
-    text-align: center;
-    padding: 2rem;
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-
-  @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-    50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-  }
-
-  @media (max-width: 768px) {
-    .page-header h1 {
-      font-size: 1.875rem;
-    }
-    .card {
-      padding: 1.5rem;
-    }
-    .stepper-container {
-      padding: 0;
-    }
-    .step-icon {
-      width: 48px;
-      height: 48px;
-      font-size: 1rem;
-    }
-    .step-label {
-      font-size: 0.75rem;
-    }
-    .step-divider {
-      margin: 0 0.5rem;
-    }
-    .form-grid {
-      grid-template-columns: 1fr;
-      gap: 1rem;
-    }
-    .step1-actions {
-      flex-direction: column;
-      width: 100%;
-    }
-    .step1-actions button {
-      width: 100%;
-    }
-    .or-divider::before,
-    .or-divider::after {
-      display: none;
-    }
-    .invoice-header {
-      grid-template-columns: 1fr;
-      text-align: center;
-      gap: 1.5rem;
-    }
-    .header-logo {
-      justify-self: center;
-    }
-    .header-contact {
-      text-align: center;
-    }
-    .bill-to-cell,
-    .details-cell {
-      display: block;
-      width: 100%;
-      padding: 1rem 0;
-    }
-    .invoice-meta-table tr {
-      display: block;
-    }
-    .charges-table {
-      font-size: 0.875rem;
-    }
-    .charges-table thead th,
-    .charges-table tbody td {
-      padding: 0.75rem 0.5rem;
-    }
-    .payment-options {
-      grid-template-columns: 1fr;
-    }
-    .step-navigation {
-      flex-direction: column-reverse;
-    }
-    .step-navigation button {
-      width: 100%;
-    }
-  }
-
-  /* --- New Brand Header (from Screenshot) --- */
-  .brand-header {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr; /* Logo, Title, Contact */
-    align-items: center;
-    padding: 1.5rem 2rem;
-    border-bottom: 2px solid var(--neutral-200);
-  }
-
-  .brand-logo img {
-    width: 80px; /* Adjust size as needed */
-    height: auto;
-  }
-
-  .brand-title {
-    text-align: center;
-  }
-  .brand-title h1 {
-    font-family: 'Lora', serif;
-    font-size: 2.2rem;
-    color: var(--neutral-900);
-    font-weight: 700;
-    margin-bottom: 0.25rem;
-    letter-spacing: 1px;
-  }
-  .brand-title p {
-    font-size: 1rem;
-    color: var(--neutral-600);
-    font-style: italic;
-    margin: 0;
-  }
-
-  .brand-contact {
-    text-align: right;
-    font-size: 0.95rem;
-    line-height: 1.6;
-  }
-  .brand-contact p {
-    color: var(--primary); /* Blue text like screenshot */
-    font-weight: 600;
-    margin: 0;
-  }
-
-  /* New Document Title Bar */
-  .document-title {
-    text-align: center;
-    padding: 1.25rem;
-    border-bottom: 1px solid var(--neutral-200);
-    background: var(--neutral-50);
-  }
-  .document-title h2 {
-    font-family: 'Lora', serif;
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--neutral-800);
-    margin-bottom: 0.25rem;
-  }
-  .document-title p {
-    font-size: 0.9rem;
-    color: var(--neutral-600);
-    margin: 0;
-  }
-
-  /* --- Adjust old styles --- */
-  /* We don't need the old header at all */
-  .invoice-header {
-    display: none; 
-  }
-  /* We don't need the "INVOICE" text inside the meta table */
-  .merged-header {
-    display: none;
-  }
-  .invoice-meta {
-    background: none; /* Remove old background */
-  }
-
-  /* --- New Branded Footer (from Screenshot) --- */
-  .branded-footer-content {
-    text-align: center;
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--neutral-300); /* Separator line */
-  }
-
-  .thank-you-note {
-    font-size: 1.1rem;
-    color: var(--neutral-700);
-    line-height: 1.6;
-  }
-  .thank-you-note p:last-child {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--neutral-900);
-    font-style: italic;
-    margin-top: 0.5rem;
-  }
-
-  .footer-divider {
-    border: none;
-    height: 1px;
-    background-color: #FF6600; /* Screenshot's Orange Color */
-    margin: 1.5rem auto;
-    width: 80%;
-  }
-
-  .footer-address {
-    font-size: 0.9rem;
-    color: var(--neutral-600);
-    line-height: 1.7;
-  }
-
-  .footer-contact-links {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--primary); /* Blue text */
-  }
-  .footer-contact-links span {
-    margin: 0 0.5rem;
-  }
-
-  /* Hide the old print footer bar */
-  .invoice-print-footer {
-    display: none;
   }
 }
-/* =================================================================== */
-/* === END: WEB-ONLY STYLES (SCREEN) === */
-/* =================================================================== */
-
-
 
 /* =================================================================== */
-/* === START: PREMIUM PRINT RECREATION (V4 - CSS GRID) === */
+/* === START: RECREATED PRINT STYLESHEET (V3) === */
 /* =================================================================== */
 
 @media print {
   @page {
     size: A4;
-    /* Aggressive margins to force single-page fit */
-    margin: 0.3in 0.4in;
+    /* RUTHLESS MARGINS: This is the key to getting it on one page */
+    margin: 0.3in 0.4in; 
   }
 
-  /* --- 1. Base Setup --- */
   html, body {
     width: 100%;
     height: 100%;
-    background: white !important;
-    font-size: 9.5pt; /* Smaller, sharper font */
+    background: white !important; /* Force white background */
+  }
+
+  body {
+    font-size: 9.5pt; /* Smaller base font */
     line-height: 1.3;
     font-family: 'Arial', sans-serif;
     color: #000;
   }
-  
-  /* --- 2. Element Hiding & Reset --- */
-  .no-print,
-  .invoice-actions,
-  .footer-divider,
-  .footer-contact-links {
-    display: none !important;
-  }
-  
-  /* RUTHLESS SPACE REMOVAL: Remove all vertical space */
-  .brand-header, .document-title, .invoice-meta, .invoice-section,
-  .invoice-footer, .payment-section, .terms-section, .branded-footer-content,
-  .invoice-section h3, .payment-section h3, .terms-section h3,
-  .brand-title p, .brand-contact p, .document-title p,
-  .summary-table td, .charges-table tbody td, .terms-section li {
-    margin: 0;
-    padding: 0;
-  }
 
-  /* --- 3. Main Container --- */
+  /* --- 
+    1. GENERAL LAYOUT & SPACING FIXES 
+    (Aggressively remove all vertical space)
+  --- */
   .invoice-container {
     box-shadow: none !important;
     margin: 0 !important;
@@ -1128,56 +1107,81 @@
     border-top: 4px solid var(--primary);
   }
 
-  /* --- 4. Header & Title Sections --- */
-  .brand-header {
-    padding-bottom: 0.3rem;
+  .no-print,
+  .invoice-actions {
+    display: none !important;
+  }
+  
+  /* Remove all vertical padding */
+  .brand-header, .document-title, .invoice-meta, .invoice-section {
+    padding-top: 0.3rem !important;
+    padding-bottom: 0.3rem !important;
     border-bottom: 1px solid #ccc;
   }
+  .invoice-footer {
+    padding-top: 0.3rem !important;
+  }
+
+  /* --- 
+    2. HEADER & DOCUMENT TITLE FIXES 
+  --- */
   .brand-logo img { width: 60px; }
   .brand-title h1 {
     font-size: 1.6rem;
     font-family: 'Times New Roman', serif;
+    margin: 0;
   }
+  .brand-title p { font-size: 0.8rem; margin: 0; }
   .brand-contact { font-size: 0.75rem; line-height: 1.4; }
-
+  .brand-contact p { margin: 0; }
+  
+  /* 2-Column Document Title (Flexbox) */
   .document-title {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.4rem 0;
-    border-bottom: 1px solid #ccc;
   }
   .document-title h2 {
     font-size: 1.1rem;
     font-family: 'Times New Roman', serif;
+    margin: 0;
   }
-  .document-title p { font-size: 0.8rem; }
+  .document-title p {
+    font-size: 0.8rem;
+    margin: 0;
+  }
 
   /* --- 
-    5. CRITICAL FIX: "Bill To" 2-Column Grid 
-    This forces the 2-column layout that was failing.
+    3. BILL TO & INVOICE DETAILS FIXES 
+    (Force 2-column layout)
   --- */
+  .invoice-meta {
+     padding-top: 0.5rem !important;
+     padding-bottom: 0.5rem !important;
+  }
+  /* Force 2-column layout for Bill-To and Details */
   .invoice-meta-table > tbody > tr {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* 50% 50% split */
-    width: 100%;
-    padding: 0.5rem 0;
+      display: flex;
+      width: 100%;
   }
   .bill-to-cell, .details-cell {
-    width: 100% !important; /* Override inline styles */
-    padding: 0 !important;
-    vertical-align: top;
+      width: 50% !important;
+      padding: 0 !important;
+      vertical-align: top;
   }
   .bill-to-cell h3 {
-    font-size: 0.9rem;
-    margin-bottom: 0.2rem;
+      font-size: 0.9rem;
+      margin-bottom: 0.2rem;
   }
   .bill-to-cell p {
-    font-size: 1rem;
-    font-weight: bold;
+      font-size: 1rem;
+      font-weight: bold;
+      margin-bottom: 0.1rem;
   }
+  
+  .invoice-details-nested-table { width: 100%; }
   .invoice-details-nested-table td {
-    padding: 0.1rem 0.2rem;
+    padding: 0.1rem 0.2rem; /* Tighter padding */
     font-size: 0.85rem;
   }
   .value-cell {
@@ -1185,24 +1189,27 @@
     font-weight: bold;
   }
 
-  /* --- 6. Content Sections (Charges & Summary) --- */
+  /* --- 
+    4. SUMMARY & CHARGES TABLE FIXES
+  --- */
   .invoice-section {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #ccc;
     page-break-inside: avoid;
   }
   .invoice-section h3 {
     font-size: 1rem;
-    padding-bottom: 0.3rem;
+    margin-bottom: 0.4rem;
+    padding-bottom: 0.2rem;
   }
-
+  
   .summary-table td {
     text-align: left;
     padding: 0.2rem 0.3rem;
     font-size: 0.85rem;
+    border-bottom: none;
   }
   .summary-table td:first-child { width: 30%; }
 
+  /* Tighter Charges Table */
   .charges-table thead th {
     padding: 0.3rem 0.5rem;
     font-size: 0.75rem;
@@ -1215,57 +1222,69 @@
     font-size: 0.9rem;
     padding: 0.5rem;
   }
-  .charges-table tfoot .total-amount { font-size: 1.1rem; }
+  .charges-table tfoot .total-amount {
+    font-size: 1.1rem;
+  }
 
+  /* Amount in Words (Tucked) */
   .amount-in-words {
     margin-top: 0.2rem;
     padding: 0 0.5rem;
     font-size: 0.8rem;
+    font-style: italic;
     text-align: right;
+    background: transparent;
   }
 
   /* --- 
-    7. CRITICAL FIX: Payment & QR Code
-    This simplifies the layout and forces the QR to render.
+    5. PAYMENT SECTION FIX (QR CODE)
   --- */
   .payment-section {
-    padding-top: 0.5rem;
     page-break-inside: avoid;
   }
   .payment-section h3 {
     font-size: 1rem;
     margin-bottom: 0.3rem;
   }
+  .payment-section > p,
+  .pay-option:nth-child(2),
+  .pay-option:nth-child(3) {
+    display: none !important; /* HIDE ALL WEB JUNK */
+  }
+
   .payment-options {
     grid-template-columns: 1fr;
     gap: 0.3rem;
   }
+  
+  /* Redesign the one QR box */
   .pay-option:first-child {
-    display: flex;
+    display: flex; /* Simpler layout */
     align-items: center;
     gap: 1rem;
     padding: 0.5rem;
     border: 1px solid #aaa;
   }
-  /* FORCES QR TO RENDER */
   .qr-code {
     margin: 0;
-    padding: 0;
-    width: 85px;
-    height: 85px;
   }
+  /* FORCE QR TO BE VISIBLE */
   .qr-code svg {
     display: block !important;
-    width: 85px !important;
-    height: 85px !important;
+    width: 80px !important; 
+    height: 80px !important;
   }
   .pay-option:first-child h4 {
-    font-size: 1rem;
     margin: 0;
+    font-size: 1rem;
   }
   .pay-option:first-child p {
+    display: block;
+    margin: 0;
     font-size: 0.75rem;
   }
+  
+  /* Add the UPI ID (Stacked below) */
   .pay-option:first-child::after {
     content: 'UPI ID: ' attr(data-upi-id-print);
     font-family: 'Courier New', monospace;
@@ -1276,7 +1295,9 @@
     margin-left: 1rem;
   }
 
-  /* --- 8. Terms Section --- */
+  /* --- 
+    6. TERMS & FOOTER FIX (MERGE & SHRINK)
+  --- */
   .terms-section {
     margin-top: 0.5rem;
     page-break-inside: avoid;
@@ -1287,40 +1308,95 @@
   }
   .terms-section ol {
     columns: 1;
-    font-size: 0.75rem;
+    font-size: 0.75rem; /* Smaller font */
     line-height: 1.4;
-    padding-left: 1.2rem; /* Keep list indentation */
+  }
+  .terms-section li {
+      margin-bottom: 0.1rem;
   }
 
-  /* --- 
-    9. CRITICAL FIX: Footer 2-Column Grid
-    This forces the "merge" you requested.
-  --- */
+  /* MERGE FOOTER (Your Request) */
   .branded-footer-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* 50% 50% split */
-    align-items: end;
     margin-top: 0.5rem;
     padding-top: 0.5rem;
     border-top: 1px solid #ccc;
-    page-break-before: auto; /* Allow break only if absolutely necessary */
+    display: flex;
+    justify-content: space-between; /* 2-Column layout */
+    align-items: center;
+    page-break-before: auto;
   }
-  .thank-you-note, .footer-address {
-    font-size: 0.7rem;
+  .footer-divider {
+    display: none; /* HIDE orange lines */
+  }
+  
+  /* Make all footer text tiny to fit */
+  .thank-you-note,
+  .footer-address,
+  .footer-contact-links {
+    font-size: 0.7rem; /* Tiny */
     line-height: 1.3;
-  }
-  .thank-you-note {
     text-align: left;
   }
-  .footer-address {
-    text-align: right;
+  .thank-you-note p,
+  .footer-address p {
+    margin: 0;
   }
+  .footer-address { text-align: right; }
+  .footer-contact-links { display: none; } /* Hide this, too much text */
+  
   .thank-you-note p:last-child {
     font-size: 0.8rem;
-    font-weight: bold;
   }
 }
 
 /* =================================================================== */
-/* === END: PREMIUM PRINT RECREATION === */
+/* === END: RECREATED PRINT STYLESHEET === */
 /* =================================================================== */
+/* --- New Branded Footer (from Screenshot) --- */
+.branded-footer-content {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--neutral-300); /* Separator line */
+}
+
+.thank-you-note {
+    font-size: 1.1rem;
+    color: var(--neutral-700);
+    line-height: 1.6;
+}
+.thank-you-note p:last-child {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--neutral-900);
+    font-style: italic;
+    margin-top: 0.5rem;
+}
+
+.footer-divider {
+    border: none;
+    height: 1px;
+    background-color: #FF6600; /* Screenshot's Orange Color */
+    margin: 1.5rem auto;
+    width: 80%;
+}
+
+.footer-address {
+    font-size: 0.9rem;
+    color: var(--neutral-600);
+    line-height: 1.7;
+}
+
+.footer-contact-links {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--primary); /* Blue text */
+}
+.footer-contact-links span {
+    margin: 0 0.5rem;
+}
+
+/* Hide the old print footer bar */
+.invoice-print-footer {
+    display: none;
+}
