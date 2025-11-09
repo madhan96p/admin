@@ -1071,10 +1071,13 @@ textarea::placeholder {
   }
 }
 
+/* --- REPLACE YOUR OLD @media print BLOCK WITH THIS --- */
 @media print {
-  * {
-    margin: 0;
-    padding: 0;
+  @page {
+    size: A4;
+    margin: 0.75in; /* ⬅️ FIXED: Standard, professional margins */
+    orphans: 0;
+    widows: 0;
   }
 
   html, body {
@@ -1084,16 +1087,20 @@ textarea::placeholder {
   }
 
   body {
-    font-size: 12px;
-    line-height: 1.3;
+    font-size: 10pt;   /* ⬅️ FIXED: 10pt is standard, 12px is too small */
+    line-height: 1.4;
+    font-family: 'Arial', sans-serif; /* ⬅️ FIXED: Use a print-safe font */
+    color: #333;
   }
-
+  
+  /* --- Ensure all web-only styles are removed --- */
   .invoice-container {
     box-shadow: none;
     margin: 0;
     border-radius: 0;
     max-width: 100%;
     page-break-after: avoid;
+    border-top: 5px solid var(--primary); /* ⬅️ Added: Matches screenshot brand */
   }
 
   .no-print,
@@ -1101,222 +1108,173 @@ textarea::placeholder {
     display: none !important;
   }
 
-  .invoice-header {
-    padding: 0.8rem 1rem;
-    border-bottom: 1px solid var(--primary);
+  /* --- HEADER FIXES --- */
+  .brand-header, .document-title {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--neutral-300);
   }
-
-  .header-logo img {
+  .brand-logo img {
     width: 60px;
-    height: 60px;
+  }
+  .brand-title h1 {
+    font-size: 1.8rem;
+    font-family: 'Times New Roman', serif;
+  }
+  .brand-title p {
+    font-size: 0.9rem;
+  }
+  .brand-contact {
+    font-size: 0.8rem;
+  }
+  .document-title h2 {
+    font-size: 1.1rem;
+    font-family: 'Times New Roman', serif;
+  }
+  .document-title p {
+    font-size: 0.8rem;
   }
 
-  .header-title h1 {
-    font-size: 1.3rem;
-  }
-
-  .header-title p {
-    font-size: 0.75rem;
-  }
-
-  .header-contact {
-    font-size: 0.7rem;
-    line-height: 1.4;
-  }
-
+  /* --- METADATA FIXES --- */
   .invoice-meta {
-    padding: 0.8rem 1rem;
+    padding: 0.5rem 0;
   }
-
-  .merged-header {
-    padding-bottom: 0.5rem;
+  .bill-to-cell p {
+    font-size: 1.1rem; /* Make guest name slightly bigger */
   }
-
-  .merged-header h2 {
-    font-size: 1.2rem;
-  }
-
   .invoice-details-nested-table td {
     padding: 0.2rem 0.4rem;
-    font-size: 0.75rem;
-  }
-
-  .bill-to-cell {
-    padding: 0.5rem;
-  }
-
-  .bill-to-cell h3 {
-    font-size: 0.8rem;
-    margin-bottom: 0.3rem;
-  }
-
-  .bill-to-cell p {
     font-size: 0.9rem;
-    margin-bottom: 0.1rem;
   }
 
+  /* --- SECTION & TABLE FIXES --- */
   .invoice-section {
-    padding: 0.8rem 1rem;
+    padding: 0.8rem 0;
     border-bottom: 1px solid var(--neutral-300);
-    page-break-inside: avoid;
+    page-break-inside: avoid; /* Keep section content together */
   }
-
   .invoice-section h3 {
-    font-size: 1rem;
+    font-size: 1.1rem;
     margin-bottom: 0.6rem;
     padding-bottom: 0.3rem;
-    border-bottom: 1px solid var(--neutral-300);
   }
-
-  .summary-table td {
-    padding: 0.3rem 0.5rem;
-    font-size: 0.75rem;
-    border-bottom: none;
-  }
-
-  .charges-table {
-    margin-top: 0;
-    font-size: 0.75rem;
-  }
-
-  .charges-table thead th {
+  .summary-table td, .charges-table tbody td {
     padding: 0.4rem 0.5rem;
-    font-size: 0.7rem;
-    border-bottom: 1px solid var(--neutral-400);
-  }
-
-  .charges-table tbody td {
-    padding: 0.35rem 0.5rem;
-    border-bottom: 1px dotted var(--neutral-300);
-  }
-
-  .charges-table tfoot td {
-    padding: 0.6rem 0.5rem;
     font-size: 0.9rem;
   }
-
-  .amount-in-words {
-    margin-top: 0.5rem;
+  .charges-table thead th {
     padding: 0.5rem;
     font-size: 0.8rem;
-    background: transparent;
-    text-align: center;
+  }
+  .charges-table tfoot td {
+    font-size: 1rem;
+    padding: 0.8rem 0.5rem;
+  }
+  .amount-in-words {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    background: var(--neutral-100);
+    text-align: left;
   }
 
+  /* --- 
+    ⬇️ NEW PAYMENT SECTION FIX (The most important part) ⬇️
+    This hides the web buttons and shows a clean, print-only layout.
+  --- */
   .invoice-footer {
+    padding: 0.8rem 0 0 0;
     background: white;
-    padding: 0.8rem 1rem;
   }
-
   .payment-section {
-    page-break-inside: avoid;
+    page-break-inside: avoid; /* Don't split the payment section */
   }
-
-  .payment-section h3 {
-    font-size: 0.95rem;
-    margin-bottom: 0.4rem;
+  .payment-section p { /* Hide web-only text */
+    display: none;
   }
-
-  .payment-section p {
-    font-size: 0.75rem;
-    margin-bottom: 0.5rem;
-  }
-
   .payment-options {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.8rem;
-    margin-bottom: 0.8rem;
+    grid-template-columns: 1fr; /* Stack options vertically */
+    gap: 0.5rem;
   }
-
-  .pay-option {
-    background: white;
-    border: 1px solid var(--neutral-400);
-    border-radius: 2px;
-    padding: 0.6rem;
-    page-break-inside: avoid;
+  
+  /* 1. The QR Code Box */
+  .pay-option:first-child {
+    display: flex; /* Put QR and text side-by-side */
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.8rem;
+    border: 1px solid #aaa;
   }
-
-  .pay-option h4 {
-    font-size: 0.75rem;
-    margin-bottom: 0.4rem;
-    text-align: center;
+  .pay-option:first-child h4 {
+    margin: 0;
+    font-size: 1.1rem;
   }
-
   .qr-code {
-    margin: 0.3rem 0;
+    margin: 0;
   }
-
   .qr-code svg {
-    max-width: 100%;
-    height: auto !important;
-    width: 100px !important;
+    width: 90px !important;
+    height: 90px !important;
+  }
+  
+  /* 2. HIDE the "Pay with UPI App" button */
+  .pay-option:nth-child(2) {
+    display: none;
   }
 
-  .pay-option p {
-    font-size: 0.7rem;
-    margin-top: 0.2rem;
+  /* 3. HIDE the "Copy UPI ID" button/input box */
+  .pay-option:nth-child(3) {
+    display: none;
   }
 
-  .pay-option input {
-    width: 100%;
-    margin-bottom: 0.4rem;
-    padding: 0.2rem;
-    font-size: 0.65rem;
-  }
-
-  .pay-option h4::after {
-    content: attr(data-upi-id);
+  /* 4. NEW: Add the UPI ID as plain text after the QR code */
+  .pay-option:first-child::after {
+    content: 'UPI ID: ' attr(data-upi-id-print); /* We will add this data- */
     display: block;
+    width: 100%;
+    text-align: left;
     font-family: 'Courier New', monospace;
-    font-size: 0.65rem;
-    margin-top: 0.2rem;
+    font-size: 0.9rem;
     font-weight: 600;
+    color: #000;
+    padding: 0.5rem;
+    background: var(--neutral-100);
+    border-radius: 4px;
+    margin-top: 0.8rem;
   }
 
+  /* --- 
+    ⬇️ NEW FOOTER & TERMS FIX ⬇️
+    This un-merges the columns for terms and fixes footer display.
+  --- */
   .terms-section {
-    margin-top: 0.6rem;
+    margin-top: 1rem;
   }
-
-  .terms-section h3 {
-    font-size: 0.95rem;
-    margin-bottom: 0.4rem;
-  }
-
   .terms-section ol {
-    list-style-position: inside;
-    color: var(--neutral-700);
-    line-height: 1.4;
-    font-size: 0.7rem;
-    columns: 2;
-    column-gap: 1rem;
-    page-break-inside: avoid;
+    columns: 1; /* ⬅️ FIXED: 2-columns was messy */
+    font-size: 0.8rem;
+    line-height: 1.5;
   }
 
-  .terms-section li {
-    margin-bottom: 0.2rem;
-    break-inside: avoid;
+  /* Branded Footer */
+  .branded-footer-content {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--neutral-300);
+    page-break-before: auto; /* Allow break if it won't fit */
   }
-
-  .terms-section a {
-    color: var(--primary);
+  .footer-divider {
+    margin: 1rem auto;
   }
-
-  .invoice-print-footer {
-    background: var(--primary);
-    color: white;
-    padding: 0.4rem;
-    text-align: center;
-    font-size: 0.7rem;
+  .footer-address, .footer-contact-links {
+    font-size: 0.8rem;
   }
-
-  @page {
-    size: A4;
-    margin: 0.4in;
-    orphans: 0;
-    widows: 0;
+  .thank-you-note {
+    font-size: 1rem;
+  }
+  .thank-you-note p:last-child {
+    font-size: 1.1rem;
   }
 }
+/* --- END OF NEW PRINT BLOCK --- */
 
 /* --- New Branded Footer (from Screenshot) --- */
 .branded-footer-content {
