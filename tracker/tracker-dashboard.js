@@ -1,142 +1,165 @@
 /**
  * ====================================================================
- * Shrish Travels - Financial Dashboard Logic
+ * Shrish Travels - Financial Dashboard Logic (v2.0 with Filters)
  * ====================================================================
- * This script fetches, processes, and displays all financial data
- * for the dashboard page (tracker/index.html).
  */
 
-// Wait for the entire page to load before running any script
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Get references to our chart elements
+    // --- 1. Get All Page Elements ---
+    
+    // Charts
     const companyChartCtx = document.getElementById('company-chart')?.getContext('2d');
     const personalChartCtx = document.getElementById('personal-chart')?.getContext('2d');
-    const companyBarChartCtx = document.getElementById('company-bar-chart')?.getContext('2d'); // <-- ADD THIS
+    const companyBarChartCtx = document.getElementById('company-bar-chart')?.getContext('2d');
     
-    // Get references to our summary card elements
+    // Summary Cards
     const companyProfitEl = document.getElementById('company-profit');
     const companyIncomeEl = document.getElementById('company-income');
     const companyExpenseEl = document.getElementById('company-expense');
     const personalExpenseEl = document.getElementById('personal-expense');
     
-    // Get a reference to the recent transactions table body
+    // Table
     const transactionsTableBody = document.getElementById('recent-transactions-body');
 
-    // Store chart instances so we can destroy them before redrawing
+    // --- 2. Global Variables ---
+    
+    let allEntries = []; // This will store ALL data from the API
+    
+    // Chart instances (to destroy before redrawing)
+    let companyBarChartInstance = null;
     let companyChartInstance = null;
     let personalChartInstance = null;
     
-    // --- 1. Main Function to Fetch and Process Data ---
+    // --- 3. Main Function to Fetch Data (Runs Once) ---
     
     async function loadDashboardData() {
         try {
-            // Show loading state in the table
             transactionsTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Loading data...</td></tr>';
             
-            // Call our new API endpoint
             const response = await fetch('/.netlify/functions/api?action=getFinancialData');
             if (!response.ok) {
                 throw new Error(`API Error: ${response.statusText}`);
             }
             
             const data = await response.json();
-            
             if (data.error) {
                 throw new Error(data.error);
             }
 
-            const entries = data.entries || [];
+            allEntries = data.entries || []; // Store ALL entries globally
             
-            // If no data, show a message
-            if (entries.length === 0) {
+            if (allEntries.length === 0) {
                 transactionsTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No transactions found.</td></tr>';
                 return;
             }
             
-            // --- 2. Process Data and Calculate Totals ---
+            // --- CALL OUR NEW UPDATE FUNCTION ---
+            // This will show the default '1W' (7d) view
+            updateDashboardView('7d'); 
             
-            let companyIncome = 0;
-            let companyExpense = 0;
-            let personalExpense = 0;
-            
-            const companyExpenseCategories = {}; // { "Fuel": 1500, "Rent": 5000 }
-            const personalExpenseCategories = {}; // { "Groceries": 3000 }
+        } catch (error) {
+            console.error('Failed to load dashboard:', error);
+            transactionsTableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: red;">Error: ${error.message}</td></tr>`;
+        }
+    }
 
-            for (const entry of entries) {
-                const amount = parseFloat(entry.Amount) || 0;
-                
-                if (entry.Account === 'Company') {
-                    if (entry.Flow === 'Credit') {
-                        companyIncome += amount;
-                    } else if (entry.Flow === 'Debit') {
-                        companyExpense += amount; // Amount is already negative
-                        
-                        // Add to category totals
-                        const category = entry.Category || 'Uncategorized';
-                        companyExpenseCategories[category] = (companyExpenseCategories[category] || 0) + Math.abs(amount);
-                    }
-                } else if (entry.Account === 'Personal' && entry.Flow === 'Debit') {
-                    personalExpense += amount; // Amount is already negative
-                    
-                    // Add to category totals
-                    const category = entry.Category || 'Uncategorized';
-                    personalExpenseCategories[category] = (personalExpenseCategories[category] || 0) + Math.abs(amount);
-                }
-            }
-            
-            const companyProfit = companyIncome + companyExpense; // (e.g., 50000 + (-30000) = 20000)
+    // --- 4. Main Function to Filter and Update Dashboard ---
+    
+    function updateDashboardView(range = '7d') { // Default to '7d' (1 Week)
+        
+        // --- 4.1. Filter Entries by Date ---
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set to start of today for accurate comparison
+        let filteredEntries = [];
 
-            // --- 2.5. Process Data for Bar Chart (Monthly) ---
-            const monthlyData = {}; // e.g., { "2025-10": { income: 500, expense: -300 } }
-            
-            // Loop through entries *backwards* to get chronological order
-            for (const entry of entries.slice().reverse()) {
-                if (entry.Account !== 'Company') continue; // Skip personal entries
+        if (range === 'all') {
+            filteredEntries = allEntries;
+        } else if (range === '1d') {
+            filteredEntries = allEntries.filter(entry => {
+                const entryDate = new Date(entry.Date);
+                entryDate.setHours(0, 0, 0, 0);
+                return entryDate.getTime() === today.getTime();
+            });
+        } else {
+            // Handle 7d, 30d, 365d
+            const days = parseInt(range.replace('d', ''));
+            const cutoffDate = new Date(today);
+            cutoffDate.setDate(today.getDate() - (days - 1)); // -1 to include today
 
-                const date = new Date(entry.Date);
-                const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`; // "2025-10"
-                
-                if (!monthlyData[monthYear]) {
-                    monthlyData[monthYear] = { income: 0, expense: 0 };
-                }
-                
-                const amount = parseFloat(entry.Amount) || 0;
+            filteredEntries = allEntries.filter(entry => {
+                const entryDate = new Date(entry.Date);
+                return entryDate >= cutoffDate;
+            });
+        }
+        
+        // --- 4.2. Process Data and Calculate Totals ---
+        let companyIncome = 0;
+        let companyExpense = 0;
+        let personalExpense = 0;
+        const companyExpenseCategories = {};
+        const personalExpenseCategories = {};
+
+        for (const entry of filteredEntries) { // Use filteredEntries
+            const amount = parseFloat(entry.Amount) || 0;
+            if (entry.Account === 'Company') {
                 if (entry.Flow === 'Credit') {
-                    monthlyData[monthYear].income += amount;
+                    companyIncome += amount;
                 } else if (entry.Flow === 'Debit') {
-                    monthlyData[monthYear].expense += Math.abs(amount); // Use positive number for chart
+                    companyExpense += amount;
+                    const category = entry.Category || 'Uncategorized';
+                    companyExpenseCategories[category] = (companyExpenseCategories[category] || 0) + Math.abs(amount);
                 }
+            } else if (entry.Account === 'Personal' && entry.Flow === 'Debit') {
+                personalExpense += amount;
+                const category = entry.Category || 'Uncategorized';
+                personalExpenseCategories[category] = (personalExpenseCategories[category] || 0) + Math.abs(amount);
             }
+        }
+        const companyProfit = companyIncome + companyExpense;
 
-            // --- 3. Update Summary Cards ---
-            
-            // Helper function to format numbers as Indian Rupees
-            const formatCurrency = (num) => {
-                return num.toLocaleString('en-IN', {
-                    style: 'currency',
-                    currency: 'INR',
-                    minimumFractionDigits: 2,
-                });
-            };
+        // --- 4.3. Process Data for Bar Chart (Monthly) ---
+        const monthlyData = {};
+        // Loop through filtered entries, reverse for chronological order
+        for (const entry of filteredEntries.slice().reverse()) {
+            if (entry.Account !== 'Company') continue;
+            const date = new Date(entry.Date);
+            const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+            if (!monthlyData[monthYear]) {
+                monthlyData[monthYear] = { income: 0, expense: 0 };
+            }
+            const amount = parseFloat(entry.Amount) || 0;
+            if (entry.Flow === 'Credit') {
+                monthlyData[monthYear].income += amount;
+            } else if (entry.Flow === 'Debit') {
+                monthlyData[monthYear].expense += Math.abs(amount);
+            }
+        }
 
-            companyProfitEl.textContent = formatCurrency(companyProfit);
-            companyIncomeEl.textContent = formatCurrency(companyIncome);
-            companyExpenseEl.textContent = formatCurrency(Math.abs(companyExpense));
-            personalExpenseEl.textContent = formatCurrency(Math.abs(personalExpense));
-            
-            // --- 4. Populate Recent Transactions Table ---
-            
-            transactionsTableBody.innerHTML = ''; // Clear the loading message
-            const recentEntries = entries.slice(0, 10); // Get just the first 10
-            
+        // --- 4.4. Update Summary Cards ---
+        const formatCurrency = (num) => {
+            return num.toLocaleString('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                minimumFractionDigits: 2,
+            });
+        };
+        companyProfitEl.textContent = formatCurrency(companyProfit);
+        companyIncomeEl.textContent = formatCurrency(companyIncome);
+        companyExpenseEl.textContent = formatCurrency(Math.abs(companyExpense));
+        personalExpenseEl.textContent = formatCurrency(Math.abs(personalExpense));
+        
+        // --- 4.5. Populate Recent Transactions Table ---
+        transactionsTableBody.innerHTML = ''; // Clear the table
+        const recentEntries = filteredEntries.slice(0, 10); // Show top 10 of the filtered list
+
+        if (recentEntries.length === 0) {
+            transactionsTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No transactions found for this period.</td></tr>';
+        } else {
             for (const entry of recentEntries) {
                 const row = document.createElement('tr');
-                
-                // Format amount with color
                 const amount = parseFloat(entry.Amount) || 0;
                 const amountColor = amount < 0 ? 'red' : 'green';
-                
                 row.innerHTML = `
                     <td>${entry.Date || 'N/A'}</td>
                     <td class="mobile-hide">${entry.Account || 'N/A'}</td>
@@ -148,33 +171,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 transactionsTableBody.appendChild(row);
             }
+        }
 
-            // --- 5. Render Charts ---
-            
-            // Create Company Expense Chart
-            if (companyChartCtx) {
-                renderDonutChart(companyChartCtx, 'company', companyExpenseCategories);
-            }
-            
-            // Create Personal Expense Chart
-            if (personalChartCtx) {
-                renderDonutChart(personalChartCtx, 'personal', personalExpenseCategories);
-            }
-
-            // --- START: NEW BAR CHART CALL ---
-            if (companyBarChartCtx) {
-                renderBarChart(companyBarChartCtx, monthlyData);
-            }
-            // --- END: NEW BAR CHART CALL ---
-            
-        } catch (error) {
-            console.error('Failed to load dashboard:', error);
-            transactionsTableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: red;">Error: ${error.message}</td></tr>`;
+        // --- 4.6. Render All Charts ---
+        if (companyBarChartCtx) {
+            renderBarChart(companyBarChartCtx, monthlyData);
+        }
+        if (companyChartCtx) {
+            renderDonutChart(companyChartCtx, 'company', companyExpenseCategories);
+        }
+        if (personalChartCtx) {
+            renderDonutChart(personalChartCtx, 'personal', personalExpenseCategories);
         }
     }
+
+    // --- 5. Helper Functions to Create Charts ---
     
-    // --- 6. Helper Function to Create Charts ---
-    
+    // Helper to format currency for chart tooltips
+    const formatChartCurrency = (num) => {
+        return num.toLocaleString('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            minimumFractionDigits: 0,
+        });
+    };
+
     function renderDonutChart(ctx, chartType, categoryData) {
         // Destroy the old chart if it exists, to prevent flickering
         if (chartType === 'company' && companyChartInstance) {
@@ -186,7 +207,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const labels = Object.keys(categoryData);
         const data = Object.values(categoryData);
 
-        // Chart.js configuration
         const chartConfig = {
             type: 'doughnut',
             data: {
@@ -194,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 datasets: [{
                     label: 'Expenses',
                     data: data,
-                    backgroundColor: [ // Add more colors if you have more categories
+                    backgroundColor: [
                         '#4f46e5', '#ef4444', '#f59e0b', '#10b981',
                         '#3b82f6', '#6366f1', '#ec4899', '#8b5cf6'
                     ],
@@ -204,15 +224,13 @@ document.addEventListener('DOMContentLoaded', () => {
             options: {
                 responsive: true,
                 plugins: {
-                    legend: {
-                        position: 'top',
-                    },
+                    legend: { position: 'top' },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
                                 let label = context.label || '';
                                 let value = context.raw || 0;
-                                return `${label}: ${formatCurrency(value)}`;
+                                return `${label}: ${formatChartCurrency(value)}`;
                             }
                         }
                     }
@@ -220,7 +238,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        // Create the new chart
         if (chartType === 'company') {
             companyChartInstance = new Chart(ctx, chartConfig);
         } else if (chartType === 'personal') {
@@ -228,16 +245,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // --- 6. Helper Function to Create Charts --- (This function already exists)
-    function renderDonutChart(ctx, chartType, categoryData) {
-        // ... (your existing donut chart code) ...
-    }
-
-    // --- START: NEW BAR CHART FUNCTION ---
     function renderBarChart(ctx, monthlyData) {
         
+        if (companyBarChartInstance) {
+            companyBarChartInstance.destroy();
+        }
+
         const labels = Object.keys(monthlyData).map(monthYear => {
-            // Format "2025-10" to "Oct 2025"
             const [year, month] = monthYear.split('-');
             const date = new Date(year, month - 1);
             return date.toLocaleString('default', { month: 'short', year: 'numeric' });
@@ -246,16 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const incomeData = Object.values(monthlyData).map(data => data.income);
         const expenseData = Object.values(monthlyData).map(data => data.expense);
         
-        // Use the same currency formatter from your other function
-        const formatCurrency = (num) => {
-            return num.toLocaleString('en-IN', {
-                style: 'currency',
-                currency: 'INR',
-                minimumFractionDigits: 0,
-            });
-        };
-
-        new Chart(ctx, {
+        companyBarChartInstance = new Chart(ctx, { 
             type: 'bar',
             data: {
                 labels: labels,
@@ -282,24 +287,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            // Format the Y-axis (left side) as ₹
                             callback: function(value) {
-                                return formatCurrency(value);
+                                return formatChartCurrency(value);
                             }
                         }
                     }
                 },
                 plugins: {
-                    legend: {
-                        position: 'top',
-                    },
+                    legend: { position: 'top' },
                     tooltip: {
                         callbacks: {
-                            // Format the tooltip (hover) as ₹
                             label: function(context) {
                                 let label = context.dataset.label || '';
                                 let value = context.raw || 0;
-                                return `${label}: ${formatCurrency(value)}`;
+                                return `${label}: ${formatChartCurrency(value)}`;
                             }
                         }
                     }
@@ -307,7 +308,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    // --- END: NEW BAR CHART FUNCTION ---
+
+    // --- 6. Event Listeners for Date Filters ---
+    
+    document.querySelectorAll('.date-filter-group button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const range = e.target.dataset.range;
+            
+            // Update active button
+            document.querySelectorAll('.date-filter-group button').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            
+            // Re-render the dashboard with the new range
+            updateDashboardView(range);
+        });
+    });
 
     // --- 7. Initial Load ---
     loadDashboardData();
