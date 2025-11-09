@@ -154,8 +154,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // 1. Get the dynamic data
         const upiId = invoice.UPI_ID;
         const amount = parseFloat(invoice.Grand_Total).toFixed(2);
-        const transactionNote = `From D.S #${invoice.Booking_ID}`; // Your new format
-        const payeeName = "Shrish Travels";
+        const transactionNote = `From D.S #${invoice.Booking_ID}`;
+        const payeeName = "Jeganraj Srinivasan"; // Correct payee name
 
         // 2. Build the UPI intent string
         const upiString = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
@@ -168,12 +168,12 @@ document.addEventListener('DOMContentLoaded', () => {
             data: upiString,
             image: "/assets/images/logo.webp", // Your logo
             dotsOptions: {
-                type: "classy-rounded", // Your "Classy Rounded" style
+                type: "classy-rounded",
                 gradient: {
-                    type: "radial", // Your "Radial Gradient"
+                    type: "radial",
                     colorStops: [
-                        { offset: 0, color: "#ffffff" }, // Center white
-                        { offset: 1, color: "#000000" }  // Ends black
+                        { offset: 0, color: "#ffffff" },
+                        { offset: 1, color: "#000000" }
                     ]
                 }
             },
@@ -197,21 +197,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (paymentLinkButton) {
             paymentLinkButton.href = upiString; // Set link to the same UPI string
         }
-
-        // 6. Add UPI ID to the heading for print view
-        const copyUpiHeading = document.querySelector('.pay-option:nth-child(3) h4');
-        if (copyUpiHeading) {
-            copyUpiHeading.setAttribute('data-upi-id', invoice.UPI_ID); // Store ID in data attribute
-        }
-        // Set the input value explicitly too (for web view)
-        const upiIdInput = document.getElementById('upi-id-input');
-        if (upiIdInput) upiIdInput.value = invoice.UPI_ID;
-
-        // ⬇️ *** ADD THIS BLOCK *** ⬇️
-        // Add the UPI ID to the QR Code box for our new print style
+        
+        // 6. Set all data attributes for web and print
         const qrCodeBox = document.querySelector('.pay-option:first-child');
         if (qrCodeBox) {
-            qrCodeBox.setAttribute('data-upi-id-print', invoice.UPI_ID);
+            // This is the one the print CSS will use
+            qrCodeBox.setAttribute('data-upi-phone-print', '+91 8883451668');
+            qrCodeBox.setAttribute('data-payee-name-print', 'Jeganraj Srinivasan');
+        }
+        
+        // Remove logic for the old "Copy ID" box
+        const copyUpiBtn = document.getElementById('copy-upi-btn');
+        const upiIdInput = document.getElementById('upi-id-input');
+        if (copyUpiBtn) {
+            copyUpiBtn.style.display = 'none';
+        }
+        if (upiIdInput) {
+            upiIdInput.style.display = 'none';
         }
     }
 

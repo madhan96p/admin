@@ -855,19 +855,19 @@ textarea::placeholder {
 
 .payment-options {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr; /* This ensures 2 columns */
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
 
 .payment-options .pay-option:first-child {
-  grid-column: 1 / -1;
-  /* This makes the first item (QR) span both columns */
+  /* grid-column: 1 / -1; <-- REMOVED THIS LINE */
   display: flex;
-  /* This aligns the QR code and its text nicely */
   align-items: center;
   justify-content: center;
   gap: 2rem;
+  flex-direction: column; /* Stack vertically */
+  text-align: center;
 }
 
 .pay-option {
@@ -1281,15 +1281,21 @@ textarea::placeholder {
   .pay-option:first-child h4 { font-size: 1.1rem; margin: 0; }
   .pay-option:first-child p { font-size: 0.9rem; margin: 0; }
   .pay-option:first-child::after {
-    content: 'UPI: ' attr(data-upi-id-print); /* Changed to UPI: */
+    /* === NEW CONTENT FOR PRINT === */
+    content: 'Phone: ' attr(data-upi-phone-print) '\A' 'Name: ' attr(data-payee-name-print);
+    white-space: pre; /* This makes the \A (newline) work */
+    line-height: 1.5; /* Adjust spacing */
+    /* --- End of new content --- */
+    
     font-family: 'Courier New', monospace;
     font-weight: 600;
     font-size: 0.9rem;
-    padding: 0.4rem;
+    padding: 0.5rem;
     background: #f4f4f4;
     border: 1px solid #ccc;
     border-radius: 4px;
     margin-left: auto;
+    text-align: left; /* Align text left */
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
