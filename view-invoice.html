@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,23 +10,29 @@
     <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
 </head>
+
 <body>
     <div class="invoice-container">
-        <header class="invoice-header">
-            <div class="header-logo">
+        <header class="brand-header">
+            <div class="brand-logo">
                 <img src="/assets/images/logo.webp" alt="Shrish Group Logo">
             </div>
-            <div class="header-title">
-                <h1>ShRiSH Travels</h1>
+            <div class="brand-title">
+                <h1>SHRISH Travels</h1>
                 <p>Your Journey, Our Responsibility</p>
             </div>
-            <div class="header-contact">
-                <p><i class="fas fa-phone-alt"></i> +91 88834 51668</p>
-                <p><i class="fas fa-phone-alt"></i> +91 91765 00207</p>
-                <p><i class="fas fa-envelope"></i> info@shrishgroup.com</p>
-                <p><i class="fas fa-globe"></i> www.shrishgroup.com</p>
+            <div class="brand-contact">
+                <p>+91 88834 51668</p>
+                <p>+91 91765 00207</p>
+                <p>info@shrishgroup.com</p>
+                <p>www.shrishgroup.com</p>
             </div>
         </header>
+
+        <div class="document-title">
+            <h2>Invoice for Vehicle Hire Services</h2>
+            <p>Date Generated: <span id="invoice-date-main">Loading...</span></p>
+        </div>
 
         <section class="invoice-meta">
             <table class="invoice-meta-table">
@@ -34,7 +41,7 @@
                         <h2>INVOICE</h2>
                     </td>
                 </tr>
-                
+
                 <tr>
                     <td class="bill-to-cell">
                         <h3>Bill To:</h3>
@@ -156,13 +163,37 @@
                     </li>
                 </ol>
             </div>
+            <div class="branded-footer-content">
+        <div class="thank-you-note">
+            <p>Thank You for Choosing - <strong>SHRISH Travels!</strong></p>
+            <p>Reliable. Affordable. Comfortable.</p>
+            <p><strong>Your Journey, Our Responsibility</strong></p>
+        </div>
+        
+        <hr class="footer-divider">
+        
+        <div class="footer-address">
+            <p>Velachery, Chennai – 600042</p>
+            <p>24/7 Cabs | Local & Outstation | Reliable Service</p>
+            <p>For Bookings & Enquiries:</p>
+        </div>
+        
+        <hr class="footer-divider">
+        
+        <div class="footer-contact-links">
+            <span>+91 88834 51668</span> | 
+            <span>+91 91765 00207</span> | 
+            <span>Mail Us</span> | 
+            <span>Visit Our Sites</span>
+        </div>
+    </div>
         </section>
 
         <footer class="invoice-print-footer">
             <p>This is a system-generated invoice. | Shrish Travels | www.shrishgroup.com</p>
         </footer>
     </div>
-    
+
     <div class="invoice-actions no-print">
         <button class="btn btn-primary" onclick="window.print()">
             <i class="fas fa-print"></i> Print / Save as PDF
@@ -174,4 +205,5 @@
 
     <script src="/assets/js/view-invoice.js"></script>
 </body>
+
 </html>

@@ -1,5 +1,81 @@
 @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
+/* --- New Brand Header (from Screenshot) --- */
+.brand-header {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr; /* Logo, Title, Contact */
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 2px solid var(--neutral-200);
+}
+
+.brand-logo img {
+    width: 80px; /* Adjust size as needed */
+    height: auto;
+}
+
+.brand-title {
+    text-align: center;
+}
+.brand-title h1 {
+    font-family: 'Lora', serif;
+    font-size: 2.2rem;
+    color: var(--neutral-900);
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    letter-spacing: 1px;
+}
+.brand-title p {
+    font-size: 1rem;
+    color: var(--neutral-600);
+    font-style: italic;
+    margin: 0;
+}
+
+.brand-contact {
+    text-align: right;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+.brand-contact p {
+    color: var(--primary); /* Blue text like screenshot */
+    font-weight: 600;
+    margin: 0;
+}
+
+/* New Document Title Bar */
+.document-title {
+    text-align: center;
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--neutral-200);
+    background: var(--neutral-50);
+}
+.document-title h2 {
+    font-family: 'Lora', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--neutral-800);
+    margin-bottom: 0.25rem;
+}
+.document-title p {
+    font-size: 0.9rem;
+    color: var(--neutral-600);
+    margin: 0;
+}
+
+/* --- Adjust old styles --- */
+/* We don't need the old header at all */
+.invoice-header {
+    display: none; 
+}
+/* We don't need the "INVOICE" text inside the meta table */
+.merged-header {
+    display: none;
+}
+.invoice-meta {
+    background: none; /* Remove old background */
+}
+
 :root {
   --primary: #1a3a5c;
   --primary-dark: #0f2438;
@@ -1240,4 +1316,53 @@ textarea::placeholder {
     orphans: 0;
     widows: 0;
   }
+}
+
+/* --- New Branded Footer (from Screenshot) --- */
+.branded-footer-content {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--neutral-300); /* Separator line */
+}
+
+.thank-you-note {
+    font-size: 1.1rem;
+    color: var(--neutral-700);
+    line-height: 1.6;
+}
+.thank-you-note p:last-child {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--neutral-900);
+    font-style: italic;
+    margin-top: 0.5rem;
+}
+
+.footer-divider {
+    border: none;
+    height: 1px;
+    background-color: #FF6600; /* Screenshot's Orange Color */
+    margin: 1.5rem auto;
+    width: 80%;
+}
+
+.footer-address {
+    font-size: 0.9rem;
+    color: var(--neutral-600);
+    line-height: 1.7;
+}
+
+.footer-contact-links {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--primary); /* Blue text */
+}
+.footer-contact-links span {
+    margin: 0 0.5rem;
+}
+
+/* Hide the old print footer bar */
+.invoice-print-footer {
+    display: none;
 }
