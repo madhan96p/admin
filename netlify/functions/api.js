@@ -894,13 +894,13 @@ exports.handler = async function (event, context) {
                 let NextId = 1001; // Start at 1001
                 if (AllRows.length > 0) {
                     const lastRow = AllRows[AllRows.length - 1];
-                    
+
                     // --- FIX: Safely check if Entry_ID exists and is a string ---
                     if (lastRow.Entry_ID && typeof lastRow.Entry_ID === 'string') {
                         const idParts = lastRow.Entry_ID.split('-');
-                        
+
                         // Check if split was successful (e.g., 'FIN-1001')
-                        if (idParts.length === 2) { 
+                        if (idParts.length === 2) {
                             const lastId = parseInt(idParts[1]);
                             if (!isNaN(lastId)) {
                                 NextId = lastId + 1;
@@ -920,6 +920,120 @@ exports.handler = async function (event, context) {
 
                 responseData = { success: true, newId: newEntryId };
                 break;
+
+            case 'submitBooking': {
+                const data = JSON.parse(event.body);
+                // Connect to 'bookings' sheet (Create if missing)
+                let bookingSheet = doc.sheetsByTitle['bookings'];
+                if (!bookingSheet) bookingSheet = await doc.addSheet({ title: 'bookings' });
+
+                const now = new Date();
+                const day = String(now.getDate()).padStart(2, '0');
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const randomStr = Math.random().toString(36).substring(2, 6).toUpperCase();
+                const bookingID = `ST-${day}${month}-${randomStr}`;
+
+                await bookingSheet.addRow({
+                    Booking_ID: bookingID,
+                    Timestamp: now.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+                    Customer_Name: data.Customer_Name || 'Web User',
+                    Mobile_Number: data.Mobile_Number || 'Pending',
+                    Email: data.Email || 'N/A',
+                    Journey_Type: data.Journey_Type || 'One Way',
+                    Pickup_City: data.Pickup_City || 'Unknown',
+                    Drop_City: data.Drop_City || 'Unknown',
+                    Travel_Date: data.Travel_Date || 'N/A',
+                    Status: 'New Inquiry'
+                });
+                responseData = { success: true, message: "Booking Saved", id: bookingID };
+                break;
+            }
+
+            case 'submitLead': {
+                const data = JSON.parse(event.body);
+                let bookingSheet = doc.sheetsByTitle['bookings'];
+                if (!bookingSheet) bookingSheet = await doc.addSheet({ title: 'bookings' });
+
+                const now = new Date();
+                const day = String(now.getDate()).padStart(2, '0');
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const randomStr = Math.random().toString(36).substring(2, 6).toUpperCase();
+                const bookingID = `WA-${day}${month}-${randomStr}`;
+
+                await bookingSheet.addRow({
+                    Booking_ID: bookingID,
+                    Timestamp: now.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+                    Pickup_City: data.pickup || 'Unknown',
+                    Drop_City: data.drop || 'Unknown',
+                    Travel_Date: data.date || 'N/A',
+                    Mobile_Number: data.mobile || 'Pending',
+                    Journey_Type: data.type || 'One Way',
+                    Status: 'WhatsApp Estimate'
+                });
+                responseData = { success: true, message: "Lead Saved" };
+                break;
+            }
+
+            case 'getTariff': {
+                const localSheet = doc.sheetsByTitle['tariff_local'];
+                const outstationSheet = doc.sheetsByTitle['tariff_outstation'];
+
+                const cleanRow = (row) => {
+                    const obj = {};
+                    // Use headerValues to map data cleanly
+                    if (row._sheet && row._sheet.headerValues) {
+                        row._sheet.headerValues.forEach(h => obj[h] = row[h]);
+                    }
+                    return obj;
+                };
+
+                const localRows = localSheet ? await localSheet.getRows() : [];
+                const outstationRows = outstationSheet ? await outstationSheet.getRows() : [];
+
+                responseData = {
+                    local: localRows.map(cleanRow),
+                    outstation: outstationRows.map(cleanRow)
+                };
+                break;
+            }
+
+            case 'getRoutes': {
+                const routeSheet = doc.sheetsByTitle['routes'];
+                if (!routeSheet) {
+                    responseData = [];
+                } else {
+                    const rows = await routeSheet.getRows();
+                    const cleanRow = (row) => {
+                        const obj = {};
+                        if (row._sheet && row._sheet.headerValues) {
+                            row._sheet.headerValues.forEach(h => obj[h] = row[h]);
+                        }
+                        return obj;
+                    };
+                    responseData = rows.map(cleanRow);
+                }
+                break;
+            }
+
+            case 'getBookings': {
+                // Connect to 'bookings' sheet
+                let bookingSheet = doc.sheetsByTitle['bookings'];
+                if (!bookingSheet) {
+                    responseData = { bookings: [] };
+                } else {
+                    const rows = await bookingSheet.getRows();
+                    const cleanRow = (row) => {
+                        const obj = {};
+                        if (row._sheet && row._sheet.headerValues) {
+                            row._sheet.headerValues.forEach(h => obj[h] = row[h]);
+                        }
+                        return obj;
+                    };
+                    // Return newest first
+                    responseData = { bookings: rows.map(cleanRow).reverse() };
+                }
+                break;
+            }
 
             default:
                 responseData = { error: 'Invalid action.' };

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Bookings | Shrish Admin</title>
+    <link rel="stylesheet" href="/assets/css/common.css">
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <script src="assets/js/auth.js"></script> <div class="admin-layout">
+        <div id="admin-sidebar"></div>
+
+        <main class="admin-main-content">
+            <div id="admin-header"></div>
+
+            <div class="page-content">
+                <div class="page-header">
+                    <h1>Website Bookings & Leads</h1>
+                    <div class="header-actions">
+                        <button id="refresh-btn" class="btn-secondary"><i class="fas fa-sync-alt"></i> Refresh</button>
+                    </div>
+                </div>
+
+                <div class="tabs-container">
+                    <button class="tab-btn active" data-filter="all">All</button>
+                    <button class="tab-btn" data-filter="New Inquiry">New Bookings</button>
+                    <button class="tab-btn" data-filter="Inquiry">General Inquiries</button>
+                    <button class="tab-btn" data-filter="WhatsApp Estimate">WA Estimates</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Name / Contact</th>
+                                <th>Journey Details</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookings-table-body">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="admin-footer"></div>
+        </main>
+    </div>
+
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/website-bookings.js"></script> </body>
+</html>
