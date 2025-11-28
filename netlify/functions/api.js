@@ -1060,6 +1060,30 @@ exports.handler = async function (event, context) {
                 responseData = { success: true, message: "Route saved successfully." };
                 break;
             }
+            case 'submitCareer': {
+                const data = JSON.parse(event.body);
+                // Connect to 'travels_careers' sheet
+                let careerSheet = doc.sheetsByTitle['travels_careers'];
+                if (!careerSheet) careerSheet = await doc.addSheet({ title: 'travels_careers' });
+
+                const now = new Date();
+                
+                await careerSheet.addRow({
+                    Timestamp: now.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+                    Status: 'New',
+                    Full_Name: data.name,
+                    Phone_Number: data.phone,
+                    Email_Address: data.email || 'N/A',
+                    City_Area: data.city,
+                    Experience: data.experience,
+                    Application_Type: data.type, // Job or Attach
+                    License_Type: data.license,
+                    Vehicle_Details: data.vehicle || 'N/A'
+                });
+                
+                responseData = { success: true, message: "Application Saved" };
+                break;
+            }
             
             default:
                 responseData = { error: 'Invalid action.' };
