@@ -1035,6 +1035,32 @@ exports.handler = async function (event, context) {
                 break;
             }
 
+            case 'saveRoute': {
+                const routeData = JSON.parse(event.body);
+                const sheet = doc.sheetsByTitle['routes'];
+                if (!sheet) throw new Error("Routes sheet not found");
+
+                // Check if route exists (Update) or is new (Create)
+                const rows = await sheet.getRows();
+                const existingRow = rows.find(r => r.Route_Slug === routeData.Route_Slug);
+
+                if (existingRow) {
+                    // Update existing
+                    for (const key in routeData) {
+                        if (sheet.headerValues.includes(key)) {
+                            existingRow[key] = routeData[key];
+                        }
+                    }
+                    await existingRow.save();
+                } else {
+                    // Create new
+                    await sheet.addRow(routeData);
+                }
+
+                responseData = { success: true, message: "Route saved successfully." };
+                break;
+            }
+            
             default:
                 responseData = { error: 'Invalid action.' };
         }
