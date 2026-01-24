@@ -229,3 +229,4 @@ function initializeCreateSlipPage() {
   // --- 5. RUN INITIALIZATION ---
   initializePage();
 }
+

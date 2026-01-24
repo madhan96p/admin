@@ -340,28 +340,55 @@ document.addEventListener("DOMContentLoaded", () => {
    * Stores these calculations in `currentCalculations`.
    */
   function calculateAndShowSummary() {
-    // Read all potentially edited values from Steps 2 & 3
-    const rates = {
-      baseRate: parseFloat(elements.baseRate.value || 0),
-      includedKms: parseFloat(elements.includedKms.value || 0),
-      extraKmRate: parseFloat(elements.extraKmRate.value || 0),
-      battaRate: parseFloat(elements.battaRate.value || 0),
-      tolls: parseFloat(elements.tolls.value || 0),
-      permits: parseFloat(elements.permits.value || 0),
-    };
-    const totalHours = parseFloat(elements.calcTotalHours.value) || 0;
+    const category = currentTripData?.Trip_Category || "Local"; // Default to Local
     const totalKms = parseFloat(elements.calcTotalKms.value) || 0;
-    const billingSlabs = parseInt(elements.calcBillingSlabs.value) || 0;
+    const totalHours = parseFloat(elements.calcTotalHours.value) || 0;
+    const daysOrSlabs = parseInt(elements.calcBillingSlabs.value) || 1;
 
-    // Perform final calculations
-    const totalIncludedKms = billingSlabs * rates.includedKms;
-    const extraKms =
-      totalKms > totalIncludedKms ? totalKms - totalIncludedKms : 0;
-    const packageCost = billingSlabs * rates.baseRate;
-    const extraKmCost = extraKms * rates.extraKmRate;
-    const battaCost = billingSlabs * rates.battaRate;
-    const totalExpenses = rates.tolls + rates.permits;
-    const grandTotal = packageCost + extraKmCost + battaCost + totalExpenses;
+    // Standard Rates from Inputs
+    const rates = {
+      base: parseFloat(elements.baseRate.value) || 0,
+      extraKm: parseFloat(elements.extraKmRate.value) || 0,
+      extraHr: parseFloat(document.getElementById("extraHrRate")?.value) || 0,
+      batta: parseFloat(elements.battaRate.value) || 0,
+      incKm: parseFloat(elements.includedKms.value) || 0,
+      tolls: parseFloat(elements.tolls.value) || 0,
+      permits: parseFloat(elements.permits.value) || 0,
+    };
+
+    let packageCost = 0,
+      extraKmCost = 0,
+      extraHrCost = 0,
+      battaCost = 0;
+
+    if (category === "Local") {
+      // Logic 1: Local (Package + Both Overages)
+      packageCost = rates.base;
+      const extraKm = Math.max(0, totalKms - rates.incKm);
+      const extraHr = Math.max(0, totalHours - 5); // Assuming 5hr base, adjust if dynamic
+      extraKmCost = extraKm * rates.extraKm;
+      extraHrCost = extraHr * rates.extraHr;
+      battaCost = 0; // Local usually has no batta unless it's Night Batta
+    } else if (category === "Outstation") {
+      // Logic 2: Outstation (Min KM per Day + Batta)
+      const minAllowedKm = daysOrSlabs * 250;
+      const billableKm = Math.max(totalKms, minAllowedKm);
+      packageCost = billableKm * rates.extraKm; // Outstation is often purely KM-based
+      battaCost = daysOrSlabs * rates.batta;
+    } else {
+      // Logic 3: One-Way (Shed-to-Shed)
+      // We bill purely on the Driver_Total_Kms recorded in the slip
+      packageCost = totalKms * rates.extraKm;
+      battaCost = rates.batta; // Usually 1 day batta
+    }
+
+    const grandTotal =
+      packageCost +
+      extraKmCost +
+      extraHrCost +
+      battaCost +
+      rates.tolls +
+      rates.permits;
 
     // Store these final values for use in handleSaveInvoice
     currentCalculations = {
