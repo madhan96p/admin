@@ -77,34 +77,53 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* --- UI/UX Refinement --- */
+
+/* Remove bullet points and underlines globally for nav */
+.nav-links, .nav-dropdown {
+    list-style: none; /* Removes those dots */
+    padding: 0;
+    margin: 0;
+}
+
 .nav-links a {
-    margin: 4px 12px;
-    padding: 12px 16px;
-    border-radius: 14px; /* Soft rounded corners */
+    text-decoration: none !important; /* Removes the wired underlines */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px; /* Slightly tighter for better mobile fit */
+    font-size: 0.95rem;
     color: #94a3b8;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-weight: 500;
-}
-
-/* Hover & Active States with "Glow" */
-.nav-links a:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: #fff;
-    transform: translateX(4px);
-}
-
-.nav-links a.active {
-    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); /* Purple-Indigo Gradient */
-    color: #ffffff !important;
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
-}
-
-/* Submenu / Dropdown Improvements */
-.nav-dropdown {
-    background: rgba(0, 0, 0, 0.15);
     border-radius: 12px;
-    margin: 4px 12px 10px 40px; /* Indented look */
-    border-left: 2px solid rgba(99, 102, 241, 0.3);
+    transition: all 0.2s ease;
+}
+
+/* Mobile-friendly Button Scaling */
+.btn-primary, .logout-btn, .action-btn {
+    padding: 8px 16px; /* Reduced from bulky sizes */
+    font-size: 0.9rem;  /* Smaller, more premium text */
+    border-radius: 10px;
+    width: auto;       /* Prevents buttons from being too wide */
+}
+
+/* Sidebar Footer (Logout) Fix */
+.sidebar-footer {
+    padding: 1rem;
+    margin-top: auto;
+}
+
+.nav-logout-btn {
+    text-decoration: none;
+    justify-content: flex-start;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    background: rgba(239, 68, 68, 0.1); /* Subtle red tint */
+}
+
+/* Dropdown Sub-menu spacing fix */
+.nav-dropdown li a {
+    padding-left: 45px; /* Aligns text with the icons above */
+    font-size: 0.85rem;
 }
 
 .chevron-icon {
