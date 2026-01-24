@@ -21,8 +21,7 @@ const driverData = {
     monthlySalary: 23000,
     joinedDate: "25/09/2023",
     mobile: "9047382896",
-    signatureUrl:
-      "https://admin.shrishgroup.com/assets/images/signs/Ajithkumar.jpg",
+    signatureUrl: "/assets/images/signs/Ajithkumar.jpg",
   },
   // Raja
   Raja: {
@@ -31,7 +30,7 @@ const driverData = {
     monthlySalary: 19000,
     joinedDate: "01/03/2024",
     mobile: "8838750975",
-    signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/Raja.jpg",
+    signatureUrl: "/assets/images/signs/Raja.jpg",
   },
   // Jeganraj
   Jeganraj: {
@@ -40,8 +39,7 @@ const driverData = {
     monthlySalary: 25000,
     joinedDate: "15/01/2022",
     mobile: "8883451668",
-    signatureUrl:
-      "https://admin.shrishgroup.com/assets/images/signs/jeganraj.jpg",
+    signatureUrl: "/assets/images/signs/jeganraj.jpg",
   },
   // RAMAKRISHNAN
   Ramakrishnan: {
