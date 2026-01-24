@@ -83,6 +83,26 @@ function initializeCreateSlipPage() {
     inputsToWatch.forEach((id) =>
       document.getElementById(id)?.addEventListener("input", calculateTotals),
     );
+    // Monitor Trip Category for Outstation Logic
+    const categorySelect = document.getElementById("trip-category");
+    categorySelect?.addEventListener("change", (e) => {
+      const isOutstation = e.target.value === "Outstation";
+      const totalKmsField = document.getElementById("driver-total-kms");
+      const assignmentField = document.getElementById("assignment");
+
+      if (isOutstation) {
+        // CEO Strategy: Visually prompt for outstation requirements
+        assignmentField.placeholder =
+          "Enter destination (e.g., Chennai to Pondicherry)";
+        alert(
+          "Outstation Mode: Logic will now calculate based on 250km/day minimum.",
+        );
+      } else {
+        assignmentField.placeholder = "Local assignment details";
+      }
+      // Re-trigger calculation to update totals
+      calculateTotals();
+    });
 
     document
       .querySelectorAll("input, textarea")
