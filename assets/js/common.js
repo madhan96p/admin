@@ -351,6 +351,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   setActiveNavLink();
   setupGlobalEventListeners();
 
+  // After all common components are loaded, perform page-specific initializations.
+  if (document.getElementById("signature-canvas")) {
+    initializeSignaturePad("signature-canvas");
+  }
+
   // ** THE FIX **
   // After all common components are loaded, check if page-specific logic exists and run it.
   if (typeof initializeEditSlipPage === "function") {

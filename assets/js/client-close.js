@@ -11,13 +11,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const slipId = params.get("id");
 
   // --- Signature Pad Setup ---
-  const sigModal = document.getElementById("signature-modal");
-  const sigCanvas = document.getElementById("signature-canvas");
-  const signaturePad = new SignaturePad(sigCanvas);
-
-  document
-    .getElementById("guest-signature-box")
-    ?.addEventListener("click", () => openSignaturePad());
+  // The signature pad is now initialized and managed by common.js. We just need to trigger it.
+  document.getElementById("guest-signature-box")?.addEventListener("click", () => {
+      // The openSignaturePad function from common.js needs the ID of the <img> tag that will receive the signature.
+      openSignaturePad("guest-signature-link");
+  });
 
   // --- Data Population Function ---
   function populateField(id, value) {
@@ -149,33 +147,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initialize the page load
   loadInitialData();
-
-  // --- Signature Pad Window Functions ---
-  window.openSignaturePad = () => {
-    sigModal.style.display = "flex";
-    const ratio = Math.max(window.devicePixelRatio || 1, 1);
-    sigCanvas.width = sigCanvas.offsetWidth * ratio;
-    sigCanvas.height = sigCanvas.offsetHeight * ratio;
-    sigCanvas.getContext("2d").scale(ratio, ratio);
-    signaturePad.clear();
-  };
-
-  window.closeSignaturePad = () => (sigModal.style.display = "none");
-  window.clearSignature = () => signaturePad.clear();
-
-  window.saveSignature = () => {
-    if (signaturePad.isEmpty()) {
-      alert("Please provide a signature first.");
-      return;
-    }
-    const dataURL = signaturePad.toDataURL("image/png");
-    const targetImage = document.getElementById("guest-signature-link");
-    const placeholder = document.getElementById("guest-sig-placeholder");
-    if (targetImage) {
-      targetImage.src = dataURL;
-      targetImage.style.display = "block";
-      if (placeholder) placeholder.style.display = "none";
-    }
-    closeSignaturePad();
-  };
 });
