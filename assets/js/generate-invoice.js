@@ -520,11 +520,47 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       const result = await response.json();
 
+      // --- REPLACE THE SUCCESS BLOCK INSIDE handleSaveInvoice ---
       if (result.success && result.shareableLink) {
-        // Check for the link from the backend
-        elements.generatedLink.value = result.shareableLink; // Use the NEW secure link
-        elements.generatedLinkContainer.style.display = "block"; // Show link field
-        alert("Invoice saved successfully and link generated!");
+        const link = result.shareableLink;
+
+        // 1. Update UI
+        elements.generatedLink.value = link;
+        elements.generatedLinkContainer.style.display = "block";
+
+        // 2. Scroll to the share card so the user sees it
+        elements.generatedLinkContainer.scrollIntoView({ behavior: "smooth" });
+
+        // 3. Setup WhatsApp Button with the "Negotiation Shield" message
+        document.getElementById("whatsappShareBtn").onclick = () => {
+          const message = `🚗 *Shrish Travels | Digital Invoice*
+
+Hello *${invoiceData.Guest_Name}*,
+Thank you for choosing us! Your trip details (DS #${invoiceData.Booking_ID}) have been finalized.
+
+📅 *Date:* ${invoiceData.Invoice_Date}
+💰 *Total Amount:* ₹${invoiceData.Grand_Total}
+🔗 *View & Pay:* ${link}
+
+_Note: This is a system-calculated digital invoice based on actual GPS/KMs recorded. No manual adjustments allowed._
+
+Please complete the payment via the link or UPI to close your trip. We hope you enjoyed the ride!`;
+
+          const whatsappUrl = `https://wa.me/91${invoiceData.Guest_Mobile}?text=${encodeURIComponent(message)}`;
+          window.open(whatsappUrl, "_blank");
+        };
+
+        // 4. Setup Copy Button
+        document.getElementById("copyLinkBtn").onclick = () => {
+          navigator.clipboard.writeText(link);
+          const btn = document.getElementById("copyLinkBtn");
+          btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+          setTimeout(() => {
+            btn.innerHTML = '<i class="fas fa-copy"></i> Copy Link';
+          }, 2000);
+        };
+
+        alert("Invoice saved successfully!");
       } else {
         throw new Error(
           result.error || "Backend did not return a shareable link.",

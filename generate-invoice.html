@@ -235,12 +235,13 @@
                         <div id="generatedLinkContainer" class="share-hub-card" style="display: none;">
     <div class="success-icon-check">
         <i class="fas fa-check-circle"></i>
-        <h3>Invoice Generated!</h3>
+        <h3 style="font-family: 'Lora', serif; font-size: 1.8rem; margin-top: 10px;">Ready to Send!</h3>
+        <p style="color: #64748b;">The system-calculated invoice is ready for the guest.</p>
     </div>
     
     <div class="share-actions-grid">
         <button id="whatsappShareBtn" class="btn share-btn-whatsapp">
-            <i class="fab fa-whatsapp"></i> Share on WhatsApp
+            <i class="fab fa-whatsapp"></i> Share to WhatsApp
         </button>
 
         <button id="copyLinkBtn" class="btn share-btn-copy">
@@ -249,10 +250,8 @@
     </div>
 
     <div class="link-preview-box">
-        <label>Shareable URL:</label>
-        <div class="input-group-mini">
-            <input type="text" id="generatedLink" readonly>
-        </div>
+        <label style="font-size: 0.65rem; letter-spacing: 1px; color: #94a3b8; text-transform: uppercase;">Secure Invoice Link</label>
+        <input type="text" id="generatedLink" readonly>
     </div>
 </div>
                         <div id="save-loader" class="loader" style="display: none;"></div>
