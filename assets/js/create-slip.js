@@ -15,11 +15,17 @@ function initializeCreateSlipPage() {
       const response = await fetch("/api?action=getNextDutySlipId");
       const data = await response.json();
       if (data.nextId) {
+        // Populate the visible display element
+        document.getElementById("ds-no-display").textContent = data.nextId;
+        // Populate the hidden input for form submission
         document.getElementById("ds-no").value = data.nextId;
+        // Also populate the booking ID, which seems to be linked
         document.getElementById("booking-id").value = data.nextId;
       }
     } catch (error) {
       console.error("Failed to fetch next ID:", error);
+      // Fallback display
+      document.getElementById("ds-no-display").textContent = "Error";
     }
   }
 

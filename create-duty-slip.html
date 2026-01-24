@@ -60,36 +60,42 @@
         <div class="page-content">
           <form id="dutySlipForm">
             <div class="duty-slip-screen">
-              <header class="header">
-                <div class="company-info">
+                            <header class="header">
+                <div class="header-left">
                   <img
                     src="https://admin.shrishgroup.com/assets/images/logo.webp"
                     alt="Shrish Travels Logo"
                     class="logo-screen"
                   />
+                  <div class="header-title-block">
+                    <h1 class="page-title">Create Duty Slip</h1>
+                    <p class="page-subtitle">
+                      Voucher ID: <span id="ds-no-display">DS-####</span>
+                    </p>
+                    <input type="hidden" id="ds-no" />
+                  </div>
                 </div>
-                <div class="ds-info">
-                  <div class="form-group trip-category-group">
-                    <select id="trip-category" class="category-select">
-                      <option value="Local" selected>
-                        City / Local (5hrs/50km)
-                      </option>
-                      <option value="Outstation">
-                        Outstation (Min 250km/Day)
-                      </option>
-                    </select>
-                    <label for="trip-category">Trip Category</label>
-                  </div>
-                  <div class="form-group">
-                    <input type="text" id="ds-no" readonly />
-                    <label for="ds-no">D.S No (Auto)</label>
-                  </div>
+                <div class="header-right">
                   <div class="form-group">
                     <input type="date" id="date" />
                     <label for="date">Date</label>
                   </div>
                 </div>
               </header>
+
+              <div class="trip-category-container">
+                <div class="form-group trip-category-group">
+                  <select id="trip-category" class="category-select">
+                    <option value="Local" selected>
+                      City / Local (5hrs/50km)
+                    </option>
+                    <option value="Outstation">
+                      Outstation (Min 250km/Day)
+                    </option>
+                  </select>
+                  <label for="trip-category">Trip Category</label>
+                </div>
+              </div>
 
               <h3 class="section-header">Guest & Booking Details</h3>
               <div class="main-body-table">

@@ -67,44 +67,64 @@
     border-radius: 5px;
 }
 
-/* --- Header Specific --- */
+/* --- Enhanced Header --- */
 .header {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
     gap: var(--space-5);
 }
 
-.company-info {
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+}
+
+.logo-screen {
+    max-height: 60px; /* A slightly more refined size */
+}
+
+.header-title-block {
+    display: flex;
+    flex-direction: column;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--gray-900);
+    margin: 0;
+}
+
+.page-subtitle {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--gray-600);
+    margin: 0;
+    margin-top: 4px; /* A little space from the title */
+}
+
+#ds-no-display {
+    font-weight: 600;
+    color: var(--primary-blue);
+}
+
+.header-right {
     display: flex;
     align-items: center;
     gap: var(--space-4);
 }
 
-.logo-screen {
-    max-height: 80px;
-    align-items: center;
-}
-
-.ds-info {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-4);
-    width: 100%;
-    align-items: end;
-    /* Fixes alignment issue */
-}
-
-@media (min-width: 768px) {
-    .header {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .ds-info {
-        width: 40%;
-        max-width: 400px;
-    }
+/* --- Prominent Trip Category --- */
+.trip-category-container {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    padding: var(--space-5);
+    margin-bottom: var(--space-6);
+    border: 1px solid var(--gray-200);
+    box-shadow: var(--shadow-sm);
 }
 
 /* --- Modern Floating Label Form Group --- */
@@ -546,8 +566,7 @@
 
 /* --- TRIP CATEGORY SELECTOR STYLING --- */
 .trip-category-group {
-    grid-column: 1 / -1; /* Make it span full width if needed */
-    margin-bottom: var(--space-4);
+    margin-bottom: 0; /* No longer needed as it's in a container */
 }
 
 .category-select {
