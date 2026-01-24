@@ -301,15 +301,25 @@ function setupGlobalEventListeners() {
     toggles.forEach((toggle) => {
       toggle.addEventListener("click", (e) => {
         const parent = toggle.parentElement;
+        const dropdown = parent.querySelector(".nav-dropdown");
 
-        // Close other open dropdowns (Accordion style)
+        // Close others
         document
           .querySelectorAll(".nav-item-has-submenu.open")
           .forEach((openItem) => {
-            if (openItem !== parent) openItem.classList.remove("open");
+            if (openItem !== parent) {
+              openItem.classList.remove("open");
+              openItem.querySelector(".nav-dropdown").style.maxHeight = null;
+            }
           });
 
+        // Toggle current
         parent.classList.toggle("open");
+        if (parent.classList.contains("open")) {
+          dropdown.style.maxHeight = dropdown.scrollHeight + "px";
+        } else {
+          dropdown.style.maxHeight = null;
+        }
       });
     });
   }

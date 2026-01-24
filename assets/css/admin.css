@@ -60,12 +60,19 @@ body {
     top: 0;
     left: 0;
     height: 100vh;
-    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); /* Deep Navy Gradient */
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+    /* Deep Navy Gradient */
     border-right: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;
     flex-direction: column;
     box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px); /* Glass effect */
+    backdrop-filter: blur(10px);
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+#admin-sidebar::-webkit-scrollbar {
+    display: none;
 }
 
 /* Rounded "Bento" Header */
@@ -77,33 +84,69 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* --- UI/UX Refinement --- */
+.nav-dropdown {
+    list-style: none !important;
+    padding-left: 0 !important;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
 
+.nav-dropdown li a {
+    text-decoration: none !important; /* Kill the line */
+    padding: 8px 16px 8px 48px !important; /* Indent for icons */
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.nav-dropdown li a:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.05);
+}
 /* Remove bullet points and underlines globally for nav */
-.nav-links, .nav-dropdown {
-    list-style: none; /* Removes those dots */
+.nav-links,
+.nav-dropdown {
+    list-style: none;
+    /* Removes those dots */
     padding: 0;
     margin: 0;
 }
 
 .nav-links a {
-    text-decoration: none !important; /* Removes the wired underlines */
+    text-decoration: none !important;
+    /* Removes the wired underlines */
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 10px 16px; /* Slightly tighter for better mobile fit */
+    padding: 10px 16px;
+    /* Slightly tighter for better mobile fit */
     font-size: 0.95rem;
     color: #94a3b8;
     border-radius: 12px;
     transition: all 0.2s ease;
 }
 
+.nav-links a.active {
+    background: rgba(99, 102, 241, 0.15);
+    /* Soft transparent glow */
+    color: #818cf8 !important;
+    border-left: 4px solid #6366f1;
+    /* Strong side indicator */
+    font-weight: 600;
+    box-shadow: inset 10px 0 20px rgba(99, 102, 241, 0.05);
+}
+
 /* Mobile-friendly Button Scaling */
-.btn-primary, .logout-btn, .action-btn {
-    padding: 8px 16px; /* Reduced from bulky sizes */
-    font-size: 0.9rem;  /* Smaller, more premium text */
+.btn-primary,
+.logout-btn,
+.action-btn {
+    padding: 8px 16px;
+    /* Reduced from bulky sizes */
+    font-size: 0.9rem;
+    /* Smaller, more premium text */
     border-radius: 10px;
-    width: auto;       /* Prevents buttons from being too wide */
+    width: auto;
+    /* Prevents buttons from being too wide */
 }
 
 /* Sidebar Footer (Logout) Fix */
@@ -117,12 +160,14 @@ body {
     justify-content: flex-start;
     padding: 10px 16px;
     font-size: 0.9rem;
-    background: rgba(239, 68, 68, 0.1); /* Subtle red tint */
+    background: rgba(239, 68, 68, 0.1);
+    /* Subtle red tint */
 }
 
 /* Dropdown Sub-menu spacing fix */
 .nav-dropdown li a {
-    padding-left: 45px; /* Aligns text with the icons above */
+    padding-left: 45px;
+    /* Aligns text with the icons above */
     font-size: 0.85rem;
 }
 
@@ -233,13 +278,17 @@ body {
 
 /* --- A. DESKTOP: Collapsed Mini-Bar (NEW) --- */
 @media (min-width: 993px) {
-    body.sidebar-collapsed #admin-sidebar { /* MODIFIED */
-        width: 80px; /* New "mini-bar" width */
+    body.sidebar-collapsed #admin-sidebar {
+        /* MODIFIED */
+        width: 80px;
+        /* New "mini-bar" width */
     }
 
-    body.sidebar-collapsed .admin-main-content { /* MODIFIED */
+    body.sidebar-collapsed .admin-main-content {
+        /* MODIFIED */
         margin-left: 80px;
-        width: calc(100% - 80px); /* ADDED */
+        width: calc(100% - 80px);
+        /* ADDED */
     }
 
     /* --- ADDED THIS BLOCK --- */
@@ -250,26 +299,37 @@ body {
     }
 
     /* Hide text, keep icons */
-    body.sidebar-collapsed .sidebar-header h3, /* MODIFIED */
-    body.sidebar-collapsed .sidebar-header .app-version, /* MODIFIED */
-    body.sidebar-collapsed .nav-links a span, /* MODIFIED */
-    body.sidebar-collapsed .sidebar-footer .nav-logout-btn span { /* MODIFIED */
+    body.sidebar-collapsed .sidebar-header h3,
+    /* MODIFIED */
+    body.sidebar-collapsed .sidebar-header .app-version,
+    /* MODIFIED */
+    body.sidebar-collapsed .nav-links a span,
+    /* MODIFIED */
+    body.sidebar-collapsed .sidebar-footer .nav-logout-btn span {
+        /* MODIFIED */
         display: none;
     }
 
     /* Center logo and icons */
-    body.sidebar-collapsed .sidebar-header { /* MODIFIED */
-        padding: 1.5rem 0.5rem; 
+    body.sidebar-collapsed .sidebar-header {
+        /* MODIFIED */
+        padding: 1.5rem 0.5rem;
     }
-    body.sidebar-collapsed .sidebar-logo { /* MODIFIED */
-        max-width: 40px; 
+
+    body.sidebar-collapsed .sidebar-logo {
+        /* MODIFIED */
+        max-width: 40px;
     }
-    body.sidebar-collapsed .nav-links a { /* MODIFIED */
+
+    body.sidebar-collapsed .nav-links a {
+        /* MODIFIED */
         justify-content: center;
         padding-left: 1rem;
         padding-right: 1rem;
     }
-    body.sidebar-collapsed .nav-logout-btn { /* MODIFIED */
+
+    body.sidebar-collapsed .nav-logout-btn {
+        /* MODIFIED */
         justify-content: center;
     }
 }
@@ -277,9 +337,9 @@ body {
 /* --- B. MOBILE: Fly-out Menu (EXISTING, but cleaned up) --- */
 @media (max-width: 992px) {
     #admin-sidebar {
-        transform: translateX(-100%); 
+        transform: translateX(-100%);
         z-index: 1000;
-        width: var(--sidebar-width); 
+        width: var(--sidebar-width);
     }
 
     .admin-main-content {
@@ -294,13 +354,16 @@ body {
         margin-left: 0;
         width: 100%;
     }
-    
-    body.sidebar-collapsed #admin-sidebar { /* MODIFIED */
-        transform: translateX(0); /* Show sidebar */
+
+    body.sidebar-collapsed #admin-sidebar {
+        /* MODIFIED */
+        transform: translateX(0);
+        /* Show sidebar */
     }
 
     /* The overlay for mobile focus */
-    body.sidebar-collapsed::after { /* MODIFIED */
+    body.sidebar-collapsed::after {
+        /* MODIFIED */
         content: '';
         position: fixed;
         top: 0;
@@ -371,10 +434,13 @@ body {
 
 .sidebar-header .app-version {
     margin: 0;
-    font-size: 0.7rem; /* CHANGED */
-    color: var(--color-primary); /* CHANGED: Use variable */
+    font-size: 0.7rem;
+    /* CHANGED */
+    color: var(--color-primary);
+    /* CHANGED: Use variable */
     font-weight: 500;
-    line-height: 1; /* ADDED */
+    line-height: 1;
+    /* ADDED */
 }
 
 /* NEW rule for the sidebar title wrapper */
@@ -664,7 +730,7 @@ body {
 
 .tab-btn:hover {
     color: var(--primary);
-    background: rgba(0,0,0,0.02);
+    background: rgba(0, 0, 0, 0.02);
 }
 
 .tab-btn.active {
@@ -683,10 +749,30 @@ body {
     letter-spacing: 0.5px;
 }
 
-.badge-secondary { background: #e2e8f0; color: #475569; } /* Default */
-.badge-success   { background: #dcfce7; color: #166534; } /* New Booking / Yes */
-.badge-warning   { background: #fef9c3; color: #854d0e; } /* Inquiry */
-.badge-danger    { background: #fee2e2; color: #991b1b; } /* Cancelled */
+.badge-secondary {
+    background: #e2e8f0;
+    color: #475569;
+}
+
+/* Default */
+.badge-success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+/* New Booking / Yes */
+.badge-warning {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+/* Inquiry */
+.badge-danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Cancelled */
 
 /* --- 3. TABLE ACTIONS & ICONS --- */
 .btn-icon {
@@ -717,6 +803,7 @@ body {
     border-color: #10B981;
     background: #ecfdf5;
 }
+
 .btn-icon.success:hover {
     background: #10B981;
     color: white;
@@ -728,23 +815,39 @@ body {
     font-size: 0.9rem;
 }
 
-.text-muted { color: #94a3b8 !important; font-size: 0.85rem; }
-.text-center { text-align: center; }
-.text-danger { color: #ef4444; }
+.text-muted {
+    color: #94a3b8 !important;
+    font-size: 0.85rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-danger {
+    color: #ef4444;
+}
 
 /* --- 5. MODAL STYLES (Moves inline styles to CSS) --- */
 .modal {
     display: none;
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(15, 23, 42, 0.6); /* Darker backdrop */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.6);
+    /* Darker backdrop */
     z-index: 2000;
     justify-content: center;
     align-items: center;
     backdrop-filter: blur(2px);
 }
 
-.modal.active { display: flex; animation: fadeIn 0.2s; }
+.modal.active {
+    display: flex;
+    animation: fadeIn 0.2s;
+}
 
 .modal-box {
     background: white;
@@ -766,7 +869,11 @@ body {
     padding-bottom: 15px;
 }
 
-.modal-header h2 { font-size: 1.25rem; color: var(--primary); margin: 0; }
+.modal-header h2 {
+    font-size: 1.25rem;
+    color: var(--primary);
+    margin: 0;
+}
 
 .close-btn {
     background: none;
@@ -775,7 +882,10 @@ body {
     color: #94a3b8;
     cursor: pointer;
 }
-.close-btn:hover { color: #ef4444; }
+
+.close-btn:hover {
+    color: #ef4444;
+}
 
 /* Form inside Modal */
 .form-grid {
@@ -784,7 +894,9 @@ body {
     gap: 20px;
 }
 
-.full-width { grid-column: 1 / -1; }
+.full-width {
+    grid-column: 1 / -1;
+}
 
 .input-group label {
     display: block;
@@ -794,7 +906,9 @@ body {
     margin-bottom: 8px;
 }
 
-.input-group input, .input-group select, .input-group textarea {
+.input-group input,
+.input-group select,
+.input-group textarea {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid var(--border);
@@ -804,7 +918,8 @@ body {
     outline: none;
 }
 
-.input-group input:focus, .input-group textarea:focus {
+.input-group input:focus,
+.input-group textarea:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
