@@ -1495,21 +1495,25 @@ textarea::placeholder {
   font-size: 0.95rem;
   line-height: 1.6;
 }
+
 .details-list p {
   margin: 0;
   padding: 0.15rem 0.2rem;
   font-weight: 600;
   color: var(--neutral-600);
 }
+
 .details-list p span {
   color: var(--neutral-900);
 }
+
 .details-list p:first-child span {
   font-weight: 700;
   font-size: 1.05rem;
 }
+
 .details-list p strong {
-    color: var(--neutral-900);
+  color: var(--neutral-900);
 }
 
 
@@ -1519,12 +1523,15 @@ textarea::placeholder {
   border-collapse: collapse;
   margin-top: 1rem;
 }
+
 .summary-table td {
   padding: 0.75rem 0.5rem;
-  width: 50%; /* Each cell takes half the width */
+  width: 50%;
+  /* Each cell takes half the width */
   font-size: 0.95rem;
   color: var(--neutral-900);
 }
+
 .summary-table td strong {
   color: var(--neutral-600);
   margin-right: 0.5rem;
@@ -1542,12 +1549,13 @@ textarea::placeholder {
 /* Make sure this is hidden on web */
 .branded-footer-content .footer-address,
 .branded-footer-content .footer-contact-links {
-    display: block;
-    margin-top: 1rem;
+  display: block;
+  margin-top: 1rem;
 }
 
 hr.footer-divider {
-  display: none; /* We handle this with border-top now */
+  display: none;
+  /* We handle this with border-top now */
 }
 
 /* ========================================= */
@@ -1588,7 +1596,8 @@ hr.footer-divider {
 
 /* --- Column 1: Total Due Card --- */
 .total-due-amount {
-  font-size: 3rem; /* Big, bold amount */
+  font-size: 3rem;
+  /* Big, bold amount */
   font-weight: 800;
   color: var(--primary);
   line-height: 1.2;
@@ -1619,9 +1628,11 @@ hr.footer-divider {
 }
 
 .qr-code {
-  width: 100px; /* Fixed size for the QR */
+  width: 100px;
+  /* Fixed size for the QR */
   height: 100px;
-  flex-shrink: 0; /* Prevent QR from shrinking */
+  flex-shrink: 0;
+  /* Prevent QR from shrinking */
 }
 
 .pay-option-text h4 {
@@ -1638,7 +1649,8 @@ hr.footer-divider {
 }
 
 .btn#payment-link {
-  width: 100%; /* Make button full width */
+  width: 100%;
+  /* Make button full width */
   font-size: 1rem;
   padding: 1rem;
 }
@@ -1646,7 +1658,8 @@ hr.footer-divider {
 /* --- Media Query for Mobile --- */
 @media (max-width: 768px) {
   .footer-main-grid {
-    grid-template-columns: 1fr; /* Stack columns on mobile */
+    grid-template-columns: 1fr;
+    /* Stack columns on mobile */
     gap: 1.5rem;
   }
 
@@ -1663,28 +1676,36 @@ hr.footer-divider {
     padding: 1rem;
     gap: 1rem;
   }
+
   /* ========================================= */
-/* === NEW MOBILE-FIRST FIXES v2 === */
-/* ========================================= */
+  /* === NEW MOBILE-FIRST FIXES v2 === */
+  /* ========================================= */
 
   /* --- 1. Fix the Header --- */
   .brand-header {
-    grid-template-columns: 1fr; /* Stack header items */
+    grid-template-columns: 1fr;
+    /* Stack header items */
     gap: 1.5rem;
     text-align: center;
   }
+
   .brand-logo {
-    justify-self: center; /* Center the logo */
+    justify-self: center;
+    /* Center the logo */
   }
+
   .brand-contact {
-    text-align: center; /* Center contact info */
+    text-align: center;
+    /* Center contact info */
   }
 
   /* --- 2. Fix Meta Details --- */
   .details-list {
-    text-align: left; /* Left-align details on mobile */
+    text-align: left;
+    /* Left-align details on mobile */
     margin-top: 1.5rem;
   }
+
   .details-list p {
     padding: 0.1rem 0;
   }
@@ -1692,14 +1713,17 @@ hr.footer-divider {
   /* --- 3. Fix Trip Summary Table --- */
   .summary-table tr,
   .summary-table td {
-    display: block; /* Stack summary items */
+    display: block;
+    /* Stack summary items */
     width: 100%;
   }
+
   .summary-table td {
     padding: 0.5rem 0.25rem;
   }
+
   .summary-table tr:first-child td:last-child {
-     /* Add space between KMs and Dates */
+    /* Add space between KMs and Dates */
     margin-bottom: 1rem;
   }
 
@@ -1708,35 +1732,42 @@ hr.footer-divider {
     display: block;
     width: 100%;
   }
+
   .charges-table thead {
-    display: none; /* Hide desktop header */
+    display: none;
+    /* Hide desktop header */
   }
+
   .charges-table tbody,
   .charges-table tr,
   .charges-table td {
-    display: block; /* Make everything a block */
+    display: block;
+    /* Make everything a block */
     width: 100% !important;
   }
-  
+
   /* Style each row as a 'card' */
   .charges-table tbody tr {
     margin-bottom: 1.5rem;
     border: 1px solid var(--neutral-300);
     border-radius: var(--radius-md);
-    overflow: hidden; /* Contain the cells */
+    overflow: hidden;
+    /* Contain the cells */
     box-shadow: var(--shadow-sm);
   }
 
   .charges-table td {
     padding: 0.75rem 1rem;
-    text-align: right; /* Default align */
+    text-align: right;
+    /* Default align */
     border: none;
     border-bottom: 1px dashed var(--neutral-200);
   }
+
   .charges-table td:last-child {
     border-bottom: none;
   }
-  
+
   /* Create the "header" for each card */
   .charges-table td:first-child {
     background: var(--neutral-100);
@@ -1750,49 +1781,59 @@ hr.footer-divider {
     content: 'Details: ';
     font-weight: 600;
     color: var(--neutral-600);
-    float: left; /* Pulls label to the left */
+    float: left;
+    /* Pulls label to the left */
   }
+
   .charges-table td:nth-child(3)::before {
     content: 'Rate (₹): ';
     font-weight: 600;
     color: var(--neutral-600);
     float: left;
   }
+
   .charges-table td:nth-child(4)::before {
     content: 'Amount (₹): ';
     font-weight: 700;
-    color: var(--primary); /* Highlight amount label */
+    color: var(--primary);
+    /* Highlight amount label */
     float: left;
   }
+
   .charges-table td:nth-child(4) {
     font-weight: 700;
     font-size: 1.1rem;
-    color: var(--primary); /* Highlight amount value */
+    color: var(--primary);
+    /* Highlight amount value */
   }
-  
+
   /* Fix the footer total row */
   .charges-table tfoot tr {
-     border: none;
-     box-shadow: none;
-     background: var(--primary);
-     border-radius: var(--radius-md);
-     padding: 0.5rem;
-     color: white;
+    border: none;
+    box-shadow: none;
+    background: var(--primary);
+    border-radius: var(--radius-md);
+    padding: 0.5rem;
+    color: white;
   }
+
   .charges-table tfoot td {
     border: none;
   }
+
   .charges-table tfoot .total-label,
   .charges-table tfoot .total-amount {
     display: inline-block;
     width: auto;
     color: white;
   }
+
   .charges-table tfoot .total-label {
     text-align: left;
     font-size: 1.1rem;
   }
-   .charges-table tfoot .total-amount {
+
+  .charges-table tfoot .total-amount {
     float: right;
     font-size: 1.25rem !important;
   }
@@ -1804,4 +1845,52 @@ hr.footer-divider {
 .payment-options,
 .amount-in-words {
   display: none !important;
+}
+
+.share-hub-card {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  margin-top: 2rem;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.success-icon-check i {
+  font-size: 3rem;
+  color: #10b981;
+  margin-bottom: 1rem;
+}
+
+.share-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.share-btn-whatsapp {
+  background-color: #25D366 !important;
+  color: white !important;
+}
+
+.share-btn-copy {
+  background-color: #6366f1 !important;
+  color: white !important;
+}
+
+.link-preview-box {
+  text-align: left;
+  background: white;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+}
+
+.link-preview-box label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 700;
 }
