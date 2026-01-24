@@ -32,8 +32,8 @@ document.addEventListener("DOMContentLoaded", () => {
       tr.innerHTML = `
                 <td><b>${r.Destination}</b><br><small class="text-muted">${r.Origin}</small></td>
                 <td>${r.Distance_Km} km / ${r.Time_Hours} hrs</td>
-                <td>₹${r.Price_Sedan}</td>
-                <td>₹${r.Price_Innova}</td>
+                <td>${formatCurrency(r.Price_Sedan)}</td>
+                <td>${formatCurrency(r.Price_Innova)}</td>
                 <td>${r.Popular_Route === "Yes" ? '<span class="badge badge-success">Yes</span>' : "No"}</td>
                 <td>
                     <button class="btn-icon" onclick="openEdit('${r.Route_Slug}')"><i class="fas fa-edit"></i></button>

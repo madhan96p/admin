@@ -326,6 +326,26 @@ function setupGlobalEventListeners() {
   setupSidebarDropdowns();
 }
 
+function formatCurrency(amount) {
+  if (typeof amount !== "number") {
+    amount = parseFloat(amount) || 0;
+  }
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+  }).format(amount);
+}
+
+function formatCurrencyWithoutSymbol(amount) {
+  if (typeof amount !== 'number') {
+    amount = parseFloat(amount) || 0;
+  }
+  return new Intl.NumberFormat('en-IN', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
+}
+
 // --- 3. DOMCONTENTLOADED ---
 // This is the main entry point for all pages.
 document.addEventListener("DOMContentLoaded", async () => {

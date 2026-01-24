@@ -172,13 +172,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
     // --- 4.4. Update Summary Cards ---
-    const formatCurrency = (num) => {
-      return num.toLocaleString("en-IN", {
-        style: "currency",
-        currency: "INR",
-        minimumFractionDigits: 2,
-      });
-    };
     companyProfitEl.textContent = formatCurrency(companyProfit);
     companyIncomeEl.textContent = formatCurrency(companyIncome);
     companyExpenseEl.textContent = formatCurrency(Math.abs(companyExpense));
@@ -228,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return num.toLocaleString("en-IN", {
       style: "currency",
       currency: "INR",
-      minimumFractionDigits: 0,
+      minimumFractionDigits: 2,
     });
   };
 

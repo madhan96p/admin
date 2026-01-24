@@ -5,6 +5,13 @@ const { Resend } = require("resend");
 
 const SPREADSHEET_ID = "1eqSsdKzF71WR6KR7XFkEI8NW7ObtnxC16ZtavJeePq8";
 
+const formatCurrency = (num) =>
+  parseFloat(num || 0).toLocaleString("en-IN", {
+    style: "currency",
+    currency: "INR",
+    minimumFractionDigits: 2,
+  });
+
 // --- Helper Functions (Moved to top for scope and utility) ---
 
 /**
@@ -315,13 +322,6 @@ function generateSalaryActionButtons(data) {
 
 function sendNewSalarySlipEmail(data) {
   const subject = `💰 New Salary Slip Created for ${data.EmployeeName} (${data.PayPeriod})`;
-
-  // Helper to format numbers as currency
-  const formatCurrency = (num) =>
-    parseFloat(num || 0).toLocaleString("en-IN", {
-      style: "currency",
-      currency: "INR",
-    });
 
   const content = `
         <h2 style="color: #111827; text-align: center; margin-top: 0; font-size: 24px;">New Salary Slip Created</h2>

@@ -9,18 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // --- 2. HELPER FUNCTIONS ---
-  const formatCurrency = (num) => {
-    const numberValue = parseFloat(num);
-    if (isNaN(numberValue)) {
-      return "₹ --.--";
-    }
-    return numberValue.toLocaleString("en-IN", {
-      style: "currency",
-      currency: "INR",
-      minimumFractionDigits: 2,
-    });
-  };
-
   const setText = (id, text) => {
     const el = document.getElementById(id);
     if (el) {
@@ -146,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setText("total-due-amount", formatCurrency(grandTotal));
 
     // This sets the text on the "Click to Pay" button
-    setText("total-due-amount-button", grandTotal.toFixed(2));
+    setText("total-due-amount-button", formatCurrencyWithoutSymbol(grandTotal));
 
     // --- ADD THESE TWO LINES ---
     setText("total-due-amount-hero", formatCurrency(grandTotal));

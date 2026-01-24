@@ -199,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalDeductions = advanceDeduction + lopDeduction;
     const netPayable = totalEarnings - totalDeductions;
 
-    netPayableDisplay.textContent = `₹ ${netPayable.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    netPayableDisplay.textContent = formatCurrency(netPayable);
     return {
       totalEarnings,
       totalDeductions,

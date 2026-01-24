@@ -172,9 +172,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- Update Context Spans ---
     // Base Rate
     elements.baseRateSlabs.textContent = billingSlabs;
-    elements.baseRateValue.textContent = baseRate.toFixed(2);
+    elements.baseRateValue.textContent = formatCurrency(baseRate);
     const baseRateTotal = billingSlabs * baseRate;
-    elements.baseRateTotal.textContent = baseRateTotal.toFixed(2);
+    elements.baseRateTotal.textContent = formatCurrency(baseRateTotal);
 
     // Included KMs
     const totalIncludedKms = billingSlabs * includedKms;
@@ -187,20 +187,20 @@ document.addEventListener("DOMContentLoaded", () => {
       totalKms > totalIncludedKms ? totalKms - totalIncludedKms : 0;
     const extraKmCost = extraKms * extraKmRate;
     elements.extraKmCalcResult.textContent = extraKms.toFixed(1);
-    elements.extraKmRateValue.textContent = extraKmRate.toFixed(2);
-    elements.extraKmCostTotal.textContent = extraKmCost.toFixed(2);
+    elements.extraKmRateValue.textContent = formatCurrency(extraKmRate);
+    elements.extraKmCostTotal.textContent = formatCurrency(extraKmCost);
 
     // Batta Rate
     elements.battaRateSlabs.textContent = billingSlabs;
-    elements.battaRateValue.textContent = battaRate.toFixed(2);
+    elements.battaRateValue.textContent = formatCurrency(battaRate);
     const battaRateTotal = billingSlabs * battaRate;
-    elements.battaRateTotal.textContent = battaRateTotal.toFixed(2);
+    elements.battaRateTotal.textContent = formatCurrency(battaRateTotal);
 
     // --- Calculate and Display Running Grand Total ---
     const totalExpenses = tolls + permits;
     const grandTotal =
       baseRateTotal + extraKmCost + battaRateTotal + totalExpenses;
-    elements.runningGrandTotal.textContent = `₹ ${grandTotal.toFixed(2)}`;
+    elements.runningGrandTotal.textContent = formatCurrency(grandTotal);
     elements.runningTotalDisplay.style.display = "block"; // Make sure it's visible
   }
 
@@ -382,24 +382,24 @@ document.addEventListener("DOMContentLoaded", () => {
             <h4 class="section-divider">Final Invoice Summary</h4>
             <div class="summary-grid">
                 <div class="summary-item">
-                    <span>Package Cost (${billingSlabs} Slabs @ ₹${rates.baseRate.toFixed(2)})</span>
-                    <strong>₹${packageCost.toFixed(2)}</strong>
+                    <span>Package Cost (${billingSlabs} Slabs @ ${formatCurrency(rates.baseRate)})</span>
+                    <strong>${formatCurrency(packageCost)}</strong>
                 </div>
                 <div class="summary-item">
-                    <span>Extra KMs (${extraKms.toFixed(1)} KMs @ ₹${rates.extraKmRate.toFixed(2)})</span>
-                    <strong>₹${extraKmCost.toFixed(2)}</strong>
+                    <span>Extra KMs (${extraKms.toFixed(1)} KMs @ ${formatCurrency(rates.extraKmRate)})</span>
+                    <strong>${formatCurrency(extraKmCost)}</strong>
                 </div>
                 <div class="summary-item">
-                    <span>Driver Batta (${billingSlabs} Slabs @ ₹${rates.battaRate.toFixed(2)})</span>
-                    <strong>₹${battaCost.toFixed(2)}</strong>
+                    <span>Driver Batta (${billingSlabs} Slabs @ ${formatCurrency(rates.battaRate)})</span>
+                    <strong>${formatCurrency(battaCost)}</strong>
                 </div>
                 <div class="summary-item">
                     <span>Tolls & Permits</span>
-                    <strong>₹${totalExpenses.toFixed(2)}</strong>
+                    <strong>${formatCurrency(totalExpenses)}</strong>
                 </div>
                 <div class="summary-item total">
                     <span>Grand Total</span>
-                    <strong>₹${grandTotal.toFixed(2)}</strong>
+                    <strong>${formatCurrency(grandTotal)}</strong>
                 </div>
             </div>
         `;
@@ -549,7 +549,7 @@ Hello *${invoiceData.Guest_Name}*,
 Thank you for choosing us! Your trip details (DS #${invoiceData.Booking_ID}) have been finalized.
 
 📅 *Date:* ${invoiceData.Invoice_Date}
-💰 *Total Amount:* ₹${invoiceData.Grand_Total}
+💰 *Total Amount:* ${formatCurrency(invoiceData.Grand_Total)}
 🔗 *View & Pay:* ${link}
 
 ${selectedNote}

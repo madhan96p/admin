@@ -67,20 +67,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (el) el.textContent = value || "";
     };
 
-    const formatCurrency = (num, round = false) => {
-      const options = {
-        style: "currency",
-        currency: "INR",
-        minimumFractionDigits: round ? 0 : 2, // Set to 0 if rounding
-        maximumFractionDigits: round ? 0 : 2, // Set to 0 if rounding
-      };
-      // We use Math.round on the number *before* formatting
-      const numberToFormat = round
-        ? Math.round(parseFloat(num || 0))
-        : parseFloat(num || 0);
-      return numberToFormat.toLocaleString("en-IN", options);
-    };
-
     // --- Get All Numeric Values ---
     const monthlySalary = parseFloat(slip.MonthlySalary || 0);
     const outstationTotal = parseFloat(slip.OutstationTotal || 0);
@@ -150,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- Populate Net Pay ---
     // Pass 'true' to formatCurrency to activate rounding
-    setText("print-net-payable", formatCurrency(netPayable, true));
+    setText("print-net-payable", formatCurrency(netPayable));
 
     // Use the same Math.round for the words
     setText(

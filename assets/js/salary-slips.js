@@ -96,39 +96,18 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       // Format Net Pay as Indian Rupee currency
-      const formattedNetPay = parseFloat(
-        slip.NetPayableAmount || 0,
-      ).toLocaleString("en-IN", {
-        style: "currency",
-        currency: "INR",
-        minimumFractionDigits: 2,
-      });
+      const formattedNetPay = formatCurrency(slip.NetPayableAmount);
 
       // Calculate and Format Gross Pay
       const grossPay = parseFloat(slip.TotalEarnings || 0);
-      const formattedGrossPay = grossPay.toLocaleString("en-IN", {
-        style: "currency",
-        currency: "INR",
-        minimumFractionDigits: 2,
-      });
+      const formattedGrossPay = formatCurrency(grossPay);
 
       // Format Total Deductions
-      const formattedTotalDeductions = parseFloat(
-        slip.TotalDeductions || 0,
-      ).toLocaleString("en-IN", {
-        style: "currency",
-        currency: "INR",
-        minimumFractionDigits: 2,
-      });
+      const formattedTotalDeductions = formatCurrency(slip.TotalDeductions);
 
       // Create deduction breakdown for tooltip
-      const formattedAdvance = parseFloat(
-        slip.AdvanceDeduction || 0,
-      ).toLocaleString("en-IN", { style: "currency", currency: "INR" });
-      const formattedLOP = parseFloat(slip.LOPDeduction || 0).toLocaleString(
-        "en-IN",
-        { style: "currency", currency: "INR" },
-      );
+      const formattedAdvance = formatCurrency(slip.AdvanceDeduction);
+      const formattedLOP = formatCurrency(slip.LOPDeduction);
       const deductionTooltip = `Advance: ${formattedAdvance} | LOP: ${formattedLOP}`;
 
       row.innerHTML = `
