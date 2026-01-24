@@ -612,40 +612,6 @@ Please complete the payment via the link or UPI to close your trip. We hope you 
     }
   });
 
-  function shareToWhatsApp(invoiceData, link) {
-    const message = `🚗 *Shrish Travels | Digital Invoice*
-
-Hello *${invoiceData.Guest_Name}*,
-Thank you for choosing us! Your trip details (DS #${invoiceData.Booking_ID}) have been finalized.
-
-📅 *Date:* ${invoiceData.Invoice_Date}
-💰 *Total Amount:* ₹${invoiceData.Grand_Total}
-🔗 *View & Pay:* ${link}
-
-_Note: This is a system-calculated digital invoice based on actual GPS/KMs recorded. No manual adjustments allowed._
-
-Please complete the payment via the link or UPI to close your trip. We hope you enjoyed the ride!`;
-
-    const whatsappUrl = `https://wa.me/91${invoiceData.Guest_Mobile}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, "_blank");
-  }
-
-  // Inside handleSaveInvoice, after success:
-  // Replace the old link logic with this:
-  if (result.success && result.shareableLink) {
-    const link = result.shareableLink;
-    elements.generatedLink.value = link;
-    elements.generatedLinkContainer.style.display = "block";
-
-    // Setup the button listeners
-    document.getElementById("whatsappShareBtn").onclick = () =>
-      shareToWhatsApp(invoiceData, link);
-    document.getElementById("copyLinkBtn").onclick = () => {
-      navigator.clipboard.writeText(link);
-      alert("Link copied to clipboard!");
-    };
-  }
-
   // Step 4 Buttons
   elements.saveInvoiceBtn.addEventListener("click", handleSaveInvoice);
   elements.copyLinkButton.addEventListener("click", handleCopyLink);
