@@ -53,78 +53,58 @@ body {
     flex-grow: 1;
 }
 
-/* --- Modern Sidebar Upgrade --- */
+/* --- Gen-Z Premium Sidebar Upgrade --- */
 #admin-sidebar {
     width: var(--sidebar-width);
     position: fixed;
     top: 0;
     left: 0;
     height: 100vh;
-    background: #111827; /* Deep midnight */
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); /* Deep Navy Gradient */
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;
     flex-direction: column;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px); /* Glass effect */
 }
 
-/* Glassmorphism Section Header */
-.nav-section-label {
-    padding: 1.5rem 1.5rem 0.5rem;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #6b7280;
-    font-weight: 700;
+/* Rounded "Bento" Header */
+.sidebar-header {
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    margin: 10px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .nav-links a {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    color: #9ca3af;
-    text-decoration: none;
-    border-radius: 12px; /* Super rounded Gen-Z look */
     margin: 4px 12px;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 12px 16px;
+    border-radius: 14px; /* Soft rounded corners */
+    color: #94a3b8;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
 }
 
-/* The "Glow" Hover */
+/* Hover & Active States with "Glow" */
 .nav-links a:hover {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.05);
     color: #fff;
+    transform: translateX(4px);
 }
 
 .nav-links a.active {
-    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-    color: #fff;
-    box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); /* Purple-Indigo Gradient */
+    color: #ffffff !important;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
 }
 
-/* Active indicator dot */
-.nav-links a.active::after {
-    content: '';
-    position: absolute;
-    right: 12px;
-    width: 6px;
-    height: 6px;
-    background: #fff;
-    border-radius: 50%;
-}
-
-/* Dropdown styling */
+/* Submenu / Dropdown Improvements */
 .nav-dropdown {
-    overflow: hidden;
-    max-height: 0;
-    transition: max-height 0.3s ease-out;
-    background: rgba(0, 0, 0, 0.2);
-    margin: 0 12px;
-    border-radius: 8px;
-}
-
-.nav-item-has-submenu.open .nav-dropdown {
-    max-height: 500px;
-    margin-bottom: 8px;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    margin: 4px 12px 10px 40px; /* Indented look */
+    border-left: 2px solid rgba(99, 102, 241, 0.3);
 }
 
 .chevron-icon {

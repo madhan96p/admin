@@ -262,7 +262,7 @@ function setupGlobalEventListeners() {
       }
     });
   }
-  
+
   const sidebarToggle = document.getElementById("sidebar-toggle-btn");
   const sidebar = document.getElementById("admin-sidebar");
   // const layout = document.querySelector('.admin-layout'); // We don't need this anymore
@@ -301,6 +301,14 @@ function setupGlobalEventListeners() {
     toggles.forEach((toggle) => {
       toggle.addEventListener("click", (e) => {
         const parent = toggle.parentElement;
+
+        // Close other open dropdowns (Accordion style)
+        document
+          .querySelectorAll(".nav-item-has-submenu.open")
+          .forEach((openItem) => {
+            if (openItem !== parent) openItem.classList.remove("open");
+          });
+
         parent.classList.toggle("open");
       });
     });
