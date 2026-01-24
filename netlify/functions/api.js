@@ -1,4 +1,6 @@
 const { GoogleSpreadsheet } = require("google-spreadsheet");
+const ADMIN_URL = "https://admin.shrishgroup.com";
+const FALLBACK_URL = "https://velvety-lollipop-c51872.netlify.app";
 const { Resend } = require("resend");
 
 const SPREADSHEET_ID = "1eqSsdKzF71WR6KR7XFkEI8NW7ObtnxC16ZtavJeePq8";
@@ -81,7 +83,7 @@ function generateActionButtons(data) {
   const driverSignature = `\n\nRegards Shrish Group\nContact +91 8883451668 / 9176500207\n- Sent via Shrish Travels`;
 
   // 4. Modification: NEW WhatsApp Driver Message Format
-  const driverMessage = `*Duty Slip: #${data.DS_No}*\n\n👤 Guest: ${data.Guest_Name}\n⏰ Time: ${data.Reporting_Time}\n📍 Address: ${data.Reporting_Address}\n\n🔗 *Tap to Complete Duty Slip:* https://admin.shrishgroup.com/edit-slip.html?id=${data.DS_No}\n\n- Shrish Travels Team`;
+  const driverMessage = `*Duty Slip: #${data.DS_No}*\n\n👤 Guest: ${data.Guest_Name}\n⏰ Time: ${data.Reporting_Time}\n📍 Address: ${data.Reporting_Address}\n\n🔗 *Tap to Complete Duty Slip:* ${ADMIN_URL}/edit-slip.html?id=${data.DS_No}\n\n- Shrish Travels Team`;
 
   const driverLink = generateWhatsappLink(data.Driver_Mobile, driverMessage);
 
