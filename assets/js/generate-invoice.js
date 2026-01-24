@@ -520,19 +520,29 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       const result = await response.json();
 
-      // --- REPLACE THE SUCCESS BLOCK INSIDE handleSaveInvoice ---
+      // --- UPDATED SUCCESS BLOCK INSIDE handleSaveInvoice ---
       if (result.success && result.shareableLink) {
-        const link = result.shareableLink;
+        const link = result.shareableLink; // Explicitly define link here
 
-        // 1. Update UI
+        // 1. Show the Share Hub
         elements.generatedLink.value = link;
         elements.generatedLinkContainer.style.display = "block";
-
-        // 2. Scroll to the share card so the user sees it
         elements.generatedLinkContainer.scrollIntoView({ behavior: "smooth" });
 
-        // 3. Setup WhatsApp Button with the "Negotiation Shield" message
+        // 2. Setup WhatsApp Button Logic
         document.getElementById("whatsappShareBtn").onclick = () => {
+          const isShieldEnabled = document.getElementById(
+            "useNegotiationShield",
+          ).checked;
+
+          // Dynamic Notes based on Manager's choice
+          const shieldNote =
+            "_Note: This is a system-calculated digital invoice based on actual GPS/KMs recorded. No manual adjustments allowed._";
+          const manualNote =
+            "_Note: This invoice includes the custom rates/adjustments as per our discussion._";
+
+          const selectedNote = isShieldEnabled ? shieldNote : manualNote;
+
           const message = `🚗 *Shrish Travels | Digital Invoice*
 
 Hello *${invoiceData.Guest_Name}*,
@@ -542,7 +552,7 @@ Thank you for choosing us! Your trip details (DS #${invoiceData.Booking_ID}) hav
 💰 *Total Amount:* ₹${invoiceData.Grand_Total}
 🔗 *View & Pay:* ${link}
 
-_Note: This is a system-calculated digital invoice based on actual GPS/KMs recorded. No manual adjustments allowed._
+${selectedNote}
 
 Please complete the payment via the link or UPI to close your trip. We hope you enjoyed the ride!`;
 
@@ -550,7 +560,7 @@ Please complete the payment via the link or UPI to close your trip. We hope you 
           window.open(whatsappUrl, "_blank");
         };
 
-        // 4. Setup Copy Button
+        // 3. Setup Copy Button Logic
         document.getElementById("copyLinkBtn").onclick = () => {
           navigator.clipboard.writeText(link);
           const btn = document.getElementById("copyLinkBtn");

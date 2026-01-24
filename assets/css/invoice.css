@@ -1894,3 +1894,13 @@ hr.footer-divider {
   color: #64748b;
   font-weight: 700;
 }
+
+.negotiation-toggle-container {
+  transition: all 0.3s ease;
+}
+
+.negotiation-toggle-container:hover {
+  background: #fefce8;
+  /* Turns slightly yellow to warn the manager to double-check */
+  border-color: #fef08a;
+}
