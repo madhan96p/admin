@@ -262,7 +262,7 @@ function setupGlobalEventListeners() {
       }
     });
   }
-
+  
   const sidebarToggle = document.getElementById("sidebar-toggle-btn");
   const sidebar = document.getElementById("admin-sidebar");
   // const layout = document.querySelector('.admin-layout'); // We don't need this anymore
@@ -295,6 +295,17 @@ function setupGlobalEventListeners() {
       fabContainer.classList.toggle("is-open");
     });
   }
+
+  function setupSidebarDropdowns() {
+    const toggles = document.querySelectorAll(".dropdown-toggle");
+    toggles.forEach((toggle) => {
+      toggle.addEventListener("click", (e) => {
+        const parent = toggle.parentElement;
+        parent.classList.toggle("open");
+      });
+    });
+  }
+  setupSidebarDropdowns();
 }
 
 // --- 3. DOMCONTENTLOADED ---
