@@ -340,75 +340,72 @@ document.addEventListener("DOMContentLoaded", () => {
    * Stores these calculations in `currentCalculations`.
    */
   function calculateAndShowSummary() {
-    const category = currentTripData?.Trip_Category || "Local";
-    const totalKms = parseFloat(elements.calcTotalKms.value) || 0;
-    const totalHours = parseFloat(elements.calcTotalHours.value) || 0;
-    const days = parseInt(elements.calcBillingSlabs.value) || 1;
-
+    // Read all potentially edited values from Steps 2 & 3
     const rates = {
-      base: parseFloat(elements.baseRate.value) || 0,
-      km: parseFloat(elements.extraKmRate.value) || 0,
-      hr: parseFloat(document.getElementById("extraHrRate")?.value) || 0,
-      batta: parseFloat(elements.battaRate.value) || 0,
-      tolls: parseFloat(elements.tolls.value) || 0,
-      permits: parseFloat(elements.permits.value) || 0,
+      baseRate: parseFloat(elements.baseRate.value || 0),
+      includedKms: parseFloat(elements.includedKms.value || 0),
+      extraKmRate: parseFloat(elements.extraKmRate.value || 0),
+      battaRate: parseFloat(elements.battaRate.value || 0),
+      tolls: parseFloat(elements.tolls.value || 0),
+      permits: parseFloat(elements.permits.value || 0),
+    };
+    const totalHours = parseFloat(elements.calcTotalHours.value) || 0;
+    const totalKms = parseFloat(elements.calcTotalKms.value) || 0;
+    const billingSlabs = parseInt(elements.calcBillingSlabs.value) || 0;
+
+    // Perform final calculations
+    const totalIncludedKms = billingSlabs * rates.includedKms;
+    const extraKms =
+      totalKms > totalIncludedKms ? totalKms - totalIncludedKms : 0;
+    const packageCost = billingSlabs * rates.baseRate;
+    const extraKmCost = extraKms * rates.extraKmRate;
+    const battaCost = billingSlabs * rates.battaRate;
+    const totalExpenses = rates.tolls + rates.permits;
+    const grandTotal = packageCost + extraKmCost + battaCost + totalExpenses;
+
+    // Store these final values for use in handleSaveInvoice
+    currentCalculations = {
+      totalHours,
+      totalKms,
+      billingSlabs,
+      extraKms,
+      packageCost,
+      extraKmCost,
+      battaCost,
+      totalExpenses,
+      grandTotal,
+      rates, // Include the rates object itself
     };
 
-    let costs = { package: 0, kmOverage: 0, hrOverage: 0, batta: 0 };
-
-    if (category === "Local") {
-      costs.package = rates.base;
-      costs.kmOverage = Math.max(0, totalKms - 50) * rates.km;
-      costs.hrOverage = Math.max(0, totalHours - 5) * rates.hr;
-    } else if (category === "Outstation") {
-      const billableKm = Math.max(totalKms, days * 250);
-      costs.package = billableKm * rates.km;
-      costs.batta = days * rates.batta;
-    } else {
-      // One-Way Shed-to-Shed
-      costs.package = totalKms * rates.km;
-      costs.batta = rates.batta; // 1 Day
-    }
-
-    const grandTotal =
-      Object.values(costs).reduce((a, b) => a + b, 0) +
-      rates.tolls +
-      rates.permits;
-
-    // Update Step 4 Summary HTML with explicit labels for the Manager to verify
-    renderManagerAudit(category, costs, grandTotal, rates);
+    // Generate and display the HTML summary in Step 4
+    const summaryHtml = `
+            <h4 class="section-divider">Final Invoice Summary</h4>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span>Package Cost (${billingSlabs} Slabs @ ₹${rates.baseRate.toFixed(2)})</span>
+                    <strong>₹${packageCost.toFixed(2)}</strong>
+                </div>
+                <div class="summary-item">
+                    <span>Extra KMs (${extraKms.toFixed(1)} KMs @ ₹${rates.extraKmRate.toFixed(2)})</span>
+                    <strong>₹${extraKmCost.toFixed(2)}</strong>
+                </div>
+                <div class="summary-item">
+                    <span>Driver Batta (${billingSlabs} Slabs @ ₹${rates.battaRate.toFixed(2)})</span>
+                    <strong>₹${battaCost.toFixed(2)}</strong>
+                </div>
+                <div class="summary-item">
+                    <span>Tolls & Permits</span>
+                    <strong>₹${totalExpenses.toFixed(2)}</strong>
+                </div>
+                <div class="summary-item total">
+                    <span>Grand Total</span>
+                    <strong>₹${grandTotal.toFixed(2)}</strong>
+                </div>
+            </div>
+        `;
+    elements.finalInvoiceSummary.innerHTML = summaryHtml;
   }
 
-  function applyLogicUI() {
-    const category = currentTripData?.Trip_Category || "Local";
-    const logicText = document.getElementById("current-logic-text");
-    const visualizer = document.getElementById("logic-visualizer");
-
-    // UI Element Toggles
-    const groupExtraHr = document.getElementById("group-extraHrRate");
-    const labelBase = document.getElementById("label-baseRate");
-    const labelKm = document.getElementById("label-extraKmRate");
-
-    if (category === "Local") {
-      logicText.textContent = "Local (Package + Overages)";
-      groupExtraHr.style.display = "block";
-      labelBase.textContent = "Base Package Rate (5/50)";
-      labelKm.textContent = "Extra KM Rate";
-      visualizer.innerHTML = `<p>Formula: <strong>₹Base + (Extra KM * Rate) + (Extra HR * Rate)</strong></p>`;
-    } else if (category === "Outstation") {
-      logicText.textContent = "Outstation (Min 250km/Day)";
-      groupExtraHr.style.display = "none";
-      labelBase.textContent = "Min KM (250/Day)";
-      labelKm.textContent = "Per KM Rate";
-      visualizer.innerHTML = `<p>Formula: <strong>MAX(KMs, Days*250) * KM Rate + Batta</strong></p>`;
-    } else {
-      logicText.textContent = "One-Way (Shed-to-Shed)";
-      groupExtraHr.style.display = "none";
-      labelBase.textContent = "Manual Base (Optional)";
-      labelKm.textContent = "Shed-to-Shed KM Rate";
-      visualizer.innerHTML = `<p>Formula: <strong>Driver Total KMs * KM Rate + 1 Day Batta</strong></p>`;
-    }
-  }
   /**
    * Generates the simple shareable link (view-invoice.html?id=...).
    */

@@ -148,12 +148,6 @@
                                 <input type="number" id="calcTotalHours" step="0.01" class="form-control">
                             </div>
                             <div class="form-group">
-    <label for="extraHrRate">Extra Hour Rate (₹) 
-        <span class="calc-context">(Local Only: Extra Hrs * Rate)</span>
-    </label>
-    <input type="number" id="extraHrRate" value="0" class="form-control">
-</div>
-                            <div class="form-group">
                                 <label for="calcTotalKms">Total KMs (Editable)</label>
                                 <input type="number" id="calcTotalKms" step="0.1" class="form-control">
                             </div>
@@ -175,44 +169,60 @@
                     </div>
 
                     <div class="step-content" data-step-content="3">
-    <div id="active-logic-banner" class="logic-banner">
-        <i class="fas fa-brain"></i> Active Logic: <span id="current-logic-text">Detecting...</span>
-    </div>
+                        <h2>Step 3: Enter Billing Rates & Expenses</h2>
+                        <p>These values are pre-filled, but you can adjust them as needed.</p>
 
-    <div class="form-grid" id="rate-inputs-grid">
-        <div class="form-group">
-            <label id="label-baseRate" for="baseRate">Base/Package Rate (₹)</label>
-            <input type="number" id="baseRate" class="form-control">
-        </div>
-        
-        <div class="form-group" id="group-extraHrRate">
-            <label for="extraHrRate">Extra Hour Rate (₹)</label>
-            <input type="number" id="extraHrRate" class="form-control">
-        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="baseRate">Base Rate per Slab (₹)
+                                    <span class="calc-context">
+                                        (<span id="baseRateSlabs">--</span> Slabs * ₹<span id="baseRateValue">--.--</span> = ₹<span id="baseRateTotal">--.--</span>)
+                                    </span>
+                                </label>
+                                <input type="number" id="baseRate" value="3900" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="includedKms">Included KMs per Slab
+                                    <span class="calc-context">
+                                        (<span id="includedKmsSlabs">--</span> Slabs * <span id="includedKmsValue">--</span> KMs = <span id="includedKmsTotal">--</span> KMs)
+                                    </span>
+                                </label>
+                                <input type="number" id="includedKms" value="300" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="extraKmRate">Extra KM Rate (₹)
+                                    <span class="calc-context">
+                                       (<span id="extraKmCalcResult">--.--</span> KMs * ₹<span id="extraKmRateValue">--.--</span> = ₹<span id="extraKmCostTotal">--.--</span>)
+                                    </span>
+                                </label>
+                                <input type="number" id="extraKmRate" value="14" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="battaRate">Driver Batta per Slab (₹)
+                                    <span class="calc-context">
+                                        (<span id="battaRateSlabs">--</span> Slabs * ₹<span id="battaRateValue">--.--</span> = ₹<span id="battaRateTotal">--.--</span>)
+                                    </span>
+                                </label>
+                                <input type="number" id="battaRate" value="600" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="tolls">Tolls & Parking (₹)
+                                    <span class="calc-context">(Total amount for all tolls)</span>
+                                </label>
+                                <input type="number" id="tolls" placeholder="e.g., 700" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="permits">State Permits (₹)
+                                    <span class="calc-context">(Total amount for all permits)</span>
+                                </label>
+                                <input type="number" id="permits" value="0" class="form-control">
+                            </div>
+                        </div>
 
-        <div class="form-group">
-            <label id="label-extraKmRate" for="extraKmRate">KM Rate (₹)</label>
-            <input type="number" id="extraKmRate" class="form-control">
-        </div>
-
-        <div class="form-group" id="group-battaRate">
-            <label for="battaRate">Driver Batta (₹/Day)</label>
-            <input type="number" id="battaRate" class="form-control">
-        </div>
-
-        <div class="form-group">
-            <label for="tolls">Tolls & Parking (₹)</label>
-            <input type="number" id="tolls" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="permits">State Permits (₹)</label>
-            <input type="number" id="permits" class="form-control">
-        </div>
-    </div>
-
-    <div id="logic-visualizer" class="logic-visualizer-box">
-        </div>
-</div>
+                        <div id="runningTotalDisplay" class="running-total">
+                            Calculated Grand Total: <strong id="runningGrandTotal">₹ --.--</strong>
+                        </div>
+                    </div>
 
                     <div class="step-content" data-step-content="4">
                         <h2>Step 4: Review & Generate</h2>
