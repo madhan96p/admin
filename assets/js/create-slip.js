@@ -163,6 +163,7 @@ function initializeCreateSlipPage() {
       "Date",
       "Organisation",
       "Guest_Name",
+      "Trip_Category",
       "Guest_Mobile",
       "Booked_By",
       "Reporting_Time",
