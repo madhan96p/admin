@@ -543,3 +543,50 @@
     color: var(--primary-blue);
     cursor: pointer;
 }
+
+/* --- TRIP CATEGORY SELECTOR STYLING --- */
+.trip-category-group {
+    grid-column: 1 / -1; /* Make it span full width if needed */
+    margin-bottom: var(--space-4);
+}
+
+.category-select {
+    width: 100%;
+    padding: 22px var(--space-4) 8px var(--space-4);
+    border: 2px solid var(--primary-blue) !important; /* Bold border for the brain of the form */
+    border-radius: var(--radius-lg);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    background-color: var(--white);
+    cursor: pointer;
+    appearance: none; /* Modern reset */
+    transition: all var(--transition-fast);
+}
+
+.category-select:focus {
+    box-shadow: 0 0 0 4px var(--primary-light); /* Established primary light variable */
+    outline: none;
+}
+
+/* Logic Signal: Color changes based on category to prevent errors */
+#trip-category option[value="Outstation"] {
+    color: var(--secondary-teal); /* Distinct teal for Outstation */
+}
+
+#trip-category option[value="Local"] {
+    color: var(--primary-blue);
+}
+
+/* Strategic Warning: Applied via JS when Outstation Min KM isn't met */
+.outstation-warning {
+    border-color: var(--danger-color) !important;
+    background-color: #fff1f2 !important; /* Soft red alert */
+    animation: pulse-border 2s infinite;
+}
+
+@keyframes pulse-border {
+    0% { box-shadow: 0 0 0 0px rgba(239, 68, 68, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0px rgba(239, 68, 68, 0); }
+}
