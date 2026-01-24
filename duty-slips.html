@@ -1,212 +1,282 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>Duty Slips Dashboard | Shrish Admin</title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon/favicon-96x96.png">
-    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon/favicon.svg">
-    <link rel="icon" type="image/x-icon" href="/assets/images/favicon/favicon.ico">
-    <link rel="manifest" href="/assets/images/favicon/site.webmanifest">
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/assets/images/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="/assets/images/favicon/favicon-96x96.png"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/assets/images/favicon/favicon.svg"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="/assets/images/favicon/favicon.ico"
+    />
+    <link rel="manifest" href="/assets/images/favicon/site.webmanifest" />
     <meta property="og:title" content="Duty Slips Dashboard | Shrish Admin" />
     <meta property="og:type" content="website" />
-    <meta property="og:description" content="Admin panel for viewing and managing all Shrish Travels duty slips." />
-    <meta property="og:image" content="https://admin.shrishgroup.com/assets/images/logo.webp" /> 
+    <meta
+      property="og:description"
+      content="Admin panel for viewing and managing all Shrish Travels duty slips."
+    />
+    <meta
+      property="og:image"
+      content="https://admin.shrishgroup.com/assets/images/logo.webp"
+    />
     <meta name="twitter:card" content="summary" />
-    <link rel="stylesheet" href="/assets/css/admin.css">
-    <link rel="stylesheet" href="/assets/css/duty-slips.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-</head>
+    <link rel="stylesheet" href="/assets/css/admin.css" />
+    <link rel="stylesheet" href="/assets/css/duty-slips.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
 
-<body>
-
+  <body>
     <script src="/assets/js/auth.js"></script>
 
     <div class="admin-layout">
-        <div id="admin-sidebar"></div>
+      <div id="admin-sidebar"></div>
 
-        <main class="admin-main-content">
-            <div id="admin-header"></div>
+      <main class="admin-main-content">
+        <div id="admin-header"></div>
 
-            <div class="page-content">
-                <div class="page-title-bar">
-                    <h1>Duty Slips Dashboard</h1>
-                    <div class="title-bar-actions">
-                        <button id="log-review-btn" class="btn-secondary">
-                            <i class="fas fa-star-half-alt"></i> Log Review
-                        </button>
-                        <button id="create-new-slip-btn" class="btn-primary">
-                            <i class="fas fa-plus"></i> Create New Duty Slip
-                        </button>
-                    </div>
-                </div>
+        <div class="page-content">
+          <div class="page-title-bar">
+            <h1>Duty Slips Dashboard</h1>
+            <div class="title-bar-actions">
+              <button id="log-review-btn" class="btn-secondary">
+                <i class="fas fa-star-half-alt"></i> Log Review
+              </button>
+              <button id="create-new-slip-btn" class="btn-primary">
+                <i class="fas fa-plus"></i> Create New Duty Slip
+              </button>
+            </div>
+          </div>
 
-                <div class="stat-cards-container">
-                    <div class="stat-card">
-                        <i class="fas fa-receipt"></i>
-                        <div class="stat-info">
-                            <h3 id="stat-total-count">--</h3>
-                            <p>Total Slips</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-star"></i>
-                        <div class="stat-info">
-                            <h3 id="stat-new-count">--</h3>
-                            <p>New Slips</p>
-                        </div>
-                    </div>
-                    <!-- <div class="stat-card">
+          <div class="stat-cards-container">
+            <div class="stat-card">
+              <i class="fas fa-receipt"></i>
+              <div class="stat-info">
+                <h3 id="stat-total-count">--</h3>
+                <p>Total Slips</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <i class="fas fa-star"></i>
+              <div class="stat-info">
+                <h3 id="stat-new-count">--</h3>
+                <p>New Slips</p>
+              </div>
+            </div>
+            <!-- <div class="stat-card">
                         <i class="fas fa-hourglass-half"></i>
                         <div class="stat-info">
                             <h3 id="stat-pending-count">--</h3>
                             <p>Pending Closure</p>
                         </div>
                     </div> -->
-                    <div class="stat-card">
-                        <i class="fas fa-check-circle"></i>
-                        <div class="stat-info">
-                            <h3 id="stat-completed-count">--</h3>
-                            <p>Completed Trips</p>
-                        </div>
-                    </div>
+            <div class="stat-card">
+              <i class="fas fa-check-circle"></i>
+              <div class="stat-info">
+                <h3 id="stat-completed-count">--</h3>
+                <p>Completed Trips</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="content-card">
+            <div class="tabs-and-filters">
+              <div class="tabs">
+                <button class="tab-btn active" data-filter="All">
+                  All Slips
+                </button>
+                <button class="tab-btn" data-filter="Needs Action">
+                  Needs Action
+                </button>
+                <!-- <button class="tab-btn" data-filter="Closed by Driver">Pending</button> -->
+                <button class="tab-btn" data-filter="Closed by Client">
+                  Completed
+                </button>
+              </div>
+              <div class="filter-controls">
+                <div class="search-group">
+                  <i class="fas fa-search"></i>
+                  <input
+                    type="text"
+                    id="search-input"
+                    placeholder="Search by Guest or D.S. No..."
+                  />
                 </div>
-
-                <div class="content-card">
-                    <div class="tabs-and-filters">
-                        <div class="tabs">
-                            <button class="tab-btn active" data-filter="All">All Slips</button>
-                            <button class="tab-btn" data-filter="Needs Action">Needs Action</button>
-                            <!-- <button class="tab-btn" data-filter="Closed by Driver">Pending</button> -->
-                            <button class="tab-btn" data-filter="Closed by Client">Completed</button>
-                        </div>
-                        <div class="filter-controls">
-                            <div class="search-group">
-                                <i class="fas fa-search"></i>
-                                <input type="text" id="search-input" placeholder="Search by Guest or D.S. No...">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="results-container" aria-live="polite">
-                        <div class="table-container" style="display: none;">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Status</th>
-                                        <th>D.S. No</th>
-                                        <th>Guest & Date</th>
-                                        <th>Driver & Vehicle</th>
-                                        <th style="text-align: right;">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="slips-table-body">
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div id="skeleton-loader" class="skeleton-loader">
-                            <div class="skeleton-row"></div>
-                            <div class="skeleton-row"></div>
-                            <div class="skeleton-row"></div>
-                            <div class="skeleton-row"></div>
-                        </div>
-
-                        <div id="empty-state" class="empty-state" style="display: none;">
-                            <i class="fas fa-folder-open"></i>
-                            <h3>No Duty Slips Found</h3>
-                            <p>There are no slips that match your current filters.</p>
-                        </div>
-
-                        <div id="error-state" class="error-state" style="display: none;">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <h3>Could Not Load Data</h3>
-                            <p>Something went wrong while fetching the duty slips. Please try again.</p>
-                            <button id="retry-fetch-btn" class="btn-secondary" style="margin-top: 1rem;">
-                                <i class="fas fa-redo"></i> Retry
-                            </button>
-                        </div>
-                    </div>
-                </div>
+              </div>
             </div>
 
-            <div id="admin-footer"></div>
-        </main>
+            <div id="results-container" aria-live="polite">
+              <div class="table-container" style="display: none">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Status</th>
+                      <th>D.S. No</th>
+                      <th>Guest & Date</th>
+                      <th>Driver & Vehicle</th>
+                      <th style="text-align: right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="slips-table-body"></tbody>
+                </table>
+              </div>
+
+              <div id="skeleton-loader" class="skeleton-loader">
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+                <div class="skeleton-row"></div>
+              </div>
+
+              <div id="empty-state" class="empty-state" style="display: none">
+                <i class="fas fa-folder-open"></i>
+                <h3>No Duty Slips Found</h3>
+                <p>There are no slips that match your current filters.</p>
+              </div>
+
+              <div id="error-state" class="error-state" style="display: none">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Could Not Load Data</h3>
+                <p>
+                  Something went wrong while fetching the duty slips. Please try
+                  again.
+                </p>
+                <button
+                  id="retry-fetch-btn"
+                  class="btn-secondary"
+                  style="margin-top: 1rem"
+                >
+                  <i class="fas fa-redo"></i> Retry
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="admin-footer"></div>
+      </main>
     </div>
 
     <div id="quick-view-modal" class="modal-wrapper">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modal-title">Duty Slip Preview</h3>
-                <button id="modal-close-btn" class="modal-close-btn" aria-label="Close modal"><i
-                        class="fas fa-times"></i></button>
-            </div>
-            <div id="modal-body" class="modal-body">
-            </div>
-            <div id="modal-footer" class="modal-footer">
-                <a href="#" id="modal-edit-link" class="btn-primary"><i class="fas fa-edit"></i> Go to Full Edit
-                    Page</a>
-            </div>
+      <div class="modal-overlay"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modal-title">Duty Slip Preview</h3>
+          <button
+            id="modal-close-btn"
+            class="modal-close-btn"
+            aria-label="Close modal"
+          >
+            <i class="fas fa-times"></i>
+          </button>
         </div>
+        <div id="modal-body" class="modal-body"></div>
+        <div id="modal-footer" class="modal-footer">
+          <a href="#" id="modal-edit-link" class="btn-primary"
+            ><i class="fas fa-edit"></i> Go to Full Edit Page</a
+          >
+        </div>
+      </div>
     </div>
 
     <div id="log-review-modal" class="modal-wrapper">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Log New Google Review</h3>
-                <button id="review-modal-close-btn" class="modal-close-btn" aria-label="Close modal"><i
-                        class="fas fa-times"></i></button>
-            </div>
-            <form id="log-review-form">
-                <div class="modal-body">
-                    <p class="modal-help-text">
-                        Enter the review details. The `review_id` will be auto-generated.
-                        Your Google Sheet formulas will auto-find the mobile number.
-                    </p>
-                    <div class="form-group">
-                        <label for="review-ds-no">D.S. No (Optional, but recommended)</label>
-                        <input type="text" id="review-ds-no" placeholder="e.g., 151 (Helps find the *exact* client)">
-                        
-                        <div id="review-guest-name-display" class="guest-name-display"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="review-name">Reviewer Name</label>
-                        <input type="text" id="review-name" placeholder="Name as seen on Google" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="review-rating">Rating</label>
-                        <select id="review-rating" required>
-                            <option value="" disabled selected>-- Select a star rating --</option>
-                            <option value="5">⭐⭐⭐⭐⭐ (5 Stars)</option>
-                            <option value="4">⭐⭐⭐⭐ (4 Stars)</option>
-                            <option value="3">⭐⭐⭐ (3 Stars)</option>
-                            <option value="2">⭐⭐ (2 Stars)</option>
-                            <option value="1">⭐ (1 Star)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="review-comment">Comment</label>
-                        <textarea id="review-comment" rows="4"
-                            placeholder="Paste the review comment here..."></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" id="review-submit-btn" class="btn-primary">
-                        <span class="btn-text">Save Review</span>
-                        <span class="btn-spinner" style="display: none;"><i class="fas fa-spinner fa-spin"></i></span>
-                    </button>
-                </div>
-            </form>
+      <div class="modal-overlay"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Log New Google Review</h3>
+          <button
+            id="review-modal-close-btn"
+            class="modal-close-btn"
+            aria-label="Close modal"
+          >
+            <i class="fas fa-times"></i>
+          </button>
         </div>
+        <form id="log-review-form">
+          <div class="modal-body">
+            <p class="modal-help-text">
+              Enter the review details. The `review_id` will be auto-generated.
+              Your Google Sheet formulas will auto-find the mobile number.
+            </p>
+            <div class="form-group">
+              <label for="review-ds-no"
+                >D.S. No (Optional, but recommended)</label
+              >
+              <input
+                type="text"
+                id="review-ds-no"
+                placeholder="e.g., 151 (Helps find the *exact* client)"
+              />
+
+              <div
+                id="review-guest-name-display"
+                class="guest-name-display"
+              ></div>
+            </div>
+            <div class="form-group">
+              <label for="review-name">Reviewer Name</label>
+              <input
+                type="text"
+                id="review-name"
+                placeholder="Name as seen on Google"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="review-rating">Rating</label>
+              <select id="review-rating" required>
+                <option value="" disabled selected>
+                  -- Select a star rating --
+                </option>
+                <option value="5">⭐⭐⭐⭐⭐ (5 Stars)</option>
+                <option value="4">⭐⭐⭐⭐ (4 Stars)</option>
+                <option value="3">⭐⭐⭐ (3 Stars)</option>
+                <option value="2">⭐⭐ (2 Stars)</option>
+                <option value="1">⭐ (1 Star)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="review-comment">Comment</label>
+              <textarea
+                id="review-comment"
+                rows="4"
+                placeholder="Paste the review comment here..."
+              ></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" id="review-submit-btn" class="btn-primary">
+              <span class="btn-text">Save Review</span>
+              <span class="btn-spinner" style="display: none"
+                ><i class="fas fa-spinner fa-spin"></i
+              ></span>
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
     <script src="/assets/js/common.js"></script>
     <script src="/assets/js/duty-slips.js"></script>
-</body>
-
+  </body>
 </html>

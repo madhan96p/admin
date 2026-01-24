@@ -14,286 +14,303 @@
 
 // NEW: Updated driverData object in common.js
 const driverData = {
-    // AjithKunar
-    "AjithKumar": { 
-        id: "SH007", 
-        designation: "Senior Driver", 
-        monthlySalary: 23000, 
-        joinedDate: "25/09/2023", 
-        mobile: "9047382896", 
-        signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/Ajithkumar.jpg" 
-    },
-    // Raja
-    "Raja": { 
-        id: "SH004", 
-        designation: "Driver", 
-        monthlySalary: 19000, 
-        joinedDate: "01/03/2024", 
-        mobile: "8838750975", 
-        signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/Raja.jpg" 
-    },
-    // Jeganraj
-    "Jeganraj": { 
-        id: "SH001", 
-        designation: "Manager", 
-        monthlySalary: 25000, 
-        joinedDate: "15/01/2022", 
-        mobile: "8883451668", 
-        signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/jeganraj.jpg" 
-    },
-    // RAMAKRISHNAN 
-    "Ramakrishnan": {
-        id: "SH008",
-    },
-    // Chandru K
-    "Chandru": { 
-        id: "SH009", 
-        designation: "Professional Driver", 
-        monthlySalary: 22000, 
-        joinedDate: "03/11/2025", 
-        mobile: "7418613632", 
-        signatureUrl: "" 
-    },
+  // AjithKunar
+  AjithKumar: {
+    id: "SH007",
+    designation: "Senior Driver",
+    monthlySalary: 23000,
+    joinedDate: "25/09/2023",
+    mobile: "9047382896",
+    signatureUrl:
+      "https://admin.shrishgroup.com/assets/images/signs/Ajithkumar.jpg",
+  },
+  // Raja
+  Raja: {
+    id: "SH004",
+    designation: "Driver",
+    monthlySalary: 19000,
+    joinedDate: "01/03/2024",
+    mobile: "8838750975",
+    signatureUrl: "https://admin.shrishgroup.com/assets/images/signs/Raja.jpg",
+  },
+  // Jeganraj
+  Jeganraj: {
+    id: "SH001",
+    designation: "Manager",
+    monthlySalary: 25000,
+    joinedDate: "15/01/2022",
+    mobile: "8883451668",
+    signatureUrl:
+      "https://admin.shrishgroup.com/assets/images/signs/jeganraj.jpg",
+  },
+  // RAMAKRISHNAN
+  Ramakrishnan: {
+    id: "SH008",
+  },
+  // Chandru K
+  Chandru: {
+    id: "SH009",
+    designation: "Professional Driver",
+    monthlySalary: 22000,
+    joinedDate: "03/11/2025",
+    mobile: "7418613632",
+    signatureUrl: "",
+  },
 };
 
 let signaturePad;
 let currentSignatureTarget;
 
 function initializeSignaturePad(canvasId) {
-    const canvas = document.getElementById(canvasId);
-    if (canvas) {
-        signaturePad = new SignaturePad(canvas, { backgroundColor: 'rgb(255, 255, 255)' });
-    }
+  const canvas = document.getElementById(canvasId);
+  if (canvas) {
+    signaturePad = new SignaturePad(canvas, {
+      backgroundColor: "rgb(255, 255, 255)",
+    });
+  }
 }
 
 function openSignaturePad(targetImageId) {
-    currentSignatureTarget = document.getElementById(targetImageId);
-    const sigModal = document.getElementById("signature-modal");
-    const sigCanvas = document.getElementById("signature-canvas");
-    if (sigModal && sigCanvas && signaturePad) {
-        sigModal.style.display = "flex";
-        const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        sigCanvas.width = sigCanvas.offsetWidth * ratio;
-        sigCanvas.height = sigCanvas.offsetHeight * ratio;
-        sigCanvas.getContext("2d").scale(ratio, ratio);
-        signaturePad.clear();
-    }
+  currentSignatureTarget = document.getElementById(targetImageId);
+  const sigModal = document.getElementById("signature-modal");
+  const sigCanvas = document.getElementById("signature-canvas");
+  if (sigModal && sigCanvas && signaturePad) {
+    sigModal.style.display = "flex";
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    sigCanvas.width = sigCanvas.offsetWidth * ratio;
+    sigCanvas.height = sigCanvas.offsetHeight * ratio;
+    sigCanvas.getContext("2d").scale(ratio, ratio);
+    signaturePad.clear();
+  }
 }
 
 function closeSignaturePad() {
-    document.getElementById("signature-modal").style.display = "none";
+  document.getElementById("signature-modal").style.display = "none";
 }
 
 function clearSignature() {
-    if (signaturePad) signaturePad.clear();
+  if (signaturePad) signaturePad.clear();
 }
 
 function saveSignature() {
-    if (signaturePad && signaturePad.isEmpty()) {
-        return alert("Please provide a signature first.");
+  if (signaturePad && signaturePad.isEmpty()) {
+    return alert("Please provide a signature first.");
+  }
+  const dataURL = signaturePad.toDataURL("image/png");
+  if (currentSignatureTarget) {
+    currentSignatureTarget.src = dataURL;
+    currentSignatureTarget.style.display = "block";
+    if (currentSignatureTarget.previousElementSibling) {
+      currentSignatureTarget.previousElementSibling.style.display = "none";
     }
-    const dataURL = signaturePad.toDataURL("image/png");
-    if (currentSignatureTarget) {
-        currentSignatureTarget.src = dataURL;
-        currentSignatureTarget.style.display = 'block';
-        if (currentSignatureTarget.previousElementSibling) {
-            currentSignatureTarget.previousElementSibling.style.display = 'none';
-        }
-    }
-    closeSignaturePad();
+  }
+  closeSignaturePad();
 }
 
 function calculateTotals() {
-    const dateOutVal = document.getElementById('date-out').value;
-    const dateInVal = document.getElementById('date-in').value;
-    if (dateOutVal && dateInVal) {
-        const dateOut = new Date(dateOutVal);
-        const dateIn = new Date(dateInVal);
-        if (dateIn >= dateOut) {
-            const diffTime = Math.abs(dateIn - dateOut);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-            document.getElementById('total-days').value = diffDays;
-        } else {
-            document.getElementById('total-days').value = '';
-        }
+  const dateOutVal = document.getElementById("date-out").value;
+  const dateInVal = document.getElementById("date-in").value;
+  if (dateOutVal && dateInVal) {
+    const dateOut = new Date(dateOutVal);
+    const dateIn = new Date(dateInVal);
+    if (dateIn >= dateOut) {
+      const diffTime = Math.abs(dateIn - dateOut);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+      document.getElementById("total-days").value = diffDays;
     } else {
-        document.getElementById('total-days').value = '';
+      document.getElementById("total-days").value = "";
     }
+  } else {
+    document.getElementById("total-days").value = "";
+  }
 
-    const timeOutVal = document.getElementById('driver-time-out').value;
-    const timeInVal = document.getElementById('driver-time-in').value;
-    if (timeOutVal && timeInVal) {
-        const timeOut = new Date(`1970-01-01T${timeOutVal}`);
-        let timeIn = new Date(`1970-01-01T${timeInVal}`);
-        if (timeIn < timeOut) timeIn.setDate(timeIn.getDate() + 1);
-        const diffMs = timeIn - timeOut;
-        const diffHrs = Math.floor(diffMs / 3600000);
-        const diffMins = Math.round((diffMs % 3600000) / 60000);
-        document.getElementById('driver-total-hrs').value = `${diffHrs} hrs ${diffMins} mins`;
-    } else {
-        document.getElementById('driver-total-hrs').value = '';
-    }
+  const timeOutVal = document.getElementById("driver-time-out").value;
+  const timeInVal = document.getElementById("driver-time-in").value;
+  if (timeOutVal && timeInVal) {
+    const timeOut = new Date(`1970-01-01T${timeOutVal}`);
+    let timeIn = new Date(`1970-01-01T${timeInVal}`);
+    if (timeIn < timeOut) timeIn.setDate(timeIn.getDate() + 1);
+    const diffMs = timeIn - timeOut;
+    const diffHrs = Math.floor(diffMs / 3600000);
+    const diffMins = Math.round((diffMs % 3600000) / 60000);
+    document.getElementById("driver-total-hrs").value =
+      `${diffHrs} hrs ${diffMins} mins`;
+  } else {
+    document.getElementById("driver-total-hrs").value = "";
+  }
 
-    const kmOut = parseFloat(document.getElementById('driver-km-out').value) || 0;
-    const kmIn = parseFloat(document.getElementById('driver-km-in').value) || 0;
-    if (kmIn > kmOut) {
-        document.getElementById('driver-total-kms').value = `${(kmIn - kmOut).toFixed(1)} Kms`;
-    } else {
-        document.getElementById('driver-total-kms').value = '';
-    }
+  const kmOut = parseFloat(document.getElementById("driver-km-out").value) || 0;
+  const kmIn = parseFloat(document.getElementById("driver-km-in").value) || 0;
+  if (kmIn > kmOut) {
+    document.getElementById("driver-total-kms").value =
+      `${(kmIn - kmOut).toFixed(1)} Kms`;
+  } else {
+    document.getElementById("driver-total-kms").value = "";
+  }
 }
 
 function validateMobileInput(inputId) {
-    const mobileInput = document.getElementById(inputId);
-    if (!mobileInput) return;
-    mobileInput.addEventListener('input', function () {
-        this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10);
-    });
+  const mobileInput = document.getElementById(inputId);
+  if (!mobileInput) return;
+  mobileInput.addEventListener("input", function () {
+    this.value = this.value.replace(/[^0-9]/g, "").substring(0, 10);
+  });
 }
 
 function validateAllInputs() {
-    let isValid = true;
-    const fields = {
-        dateOut: document.getElementById('date-out'),
-        dateIn: document.getElementById('date-in'),
-        driverTimeOut: document.getElementById('driver-time-out'),
-        driverTimeIn: document.getElementById('driver-time-in'),
-        driverKmOut: document.getElementById('driver-km-out'),
-        driverKmIn: document.getElementById('driver-km-in'),
-        customerTimeOut: document.getElementById('time-out'),
-        customerTimeIn: document.getElementById('time-in'),
-        customerKmOut: document.getElementById('km-out'),
-        customerKmIn: document.getElementById('km-in')
-    };
+  let isValid = true;
+  const fields = {
+    dateOut: document.getElementById("date-out"),
+    dateIn: document.getElementById("date-in"),
+    driverTimeOut: document.getElementById("driver-time-out"),
+    driverTimeIn: document.getElementById("driver-time-in"),
+    driverKmOut: document.getElementById("driver-km-out"),
+    driverKmIn: document.getElementById("driver-km-in"),
+    customerTimeOut: document.getElementById("time-out"),
+    customerTimeIn: document.getElementById("time-in"),
+    customerKmOut: document.getElementById("km-out"),
+    customerKmIn: document.getElementById("km-in"),
+  };
 
-    const setError = (el, message) => {
-        if (el) {
-            el.classList.remove('input-error');
-            void el.offsetWidth;
-            el.classList.add('input-error');
-            isValid = false;
-        }
-    };
+  const setError = (el, message) => {
+    if (el) {
+      el.classList.remove("input-error");
+      void el.offsetWidth;
+      el.classList.add("input-error");
+      isValid = false;
+    }
+  };
 
-    Object.values(fields).forEach(el => el ? el.classList.remove('input-error') : null);
+  Object.values(fields).forEach((el) =>
+    el ? el.classList.remove("input-error") : null,
+  );
 
-    const createDateTime = (d, t) => (d.value && t.value) ? new Date(`${d.value}T${t.value}`) : null;
-    const driverStart = createDateTime(fields.dateOut, fields.driverTimeOut);
-    const driverEnd = createDateTime(fields.dateIn, fields.driverTimeIn);
-    const customerStart = createDateTime(fields.dateOut, fields.customerTimeOut);
-    const customerEnd = createDateTime(fields.dateIn, fields.customerTimeIn);
-    const drKmOut = parseFloat(fields.driverKmOut.value) || 0;
-    const drKmIn = parseFloat(fields.driverKmIn.value) || 0;
-    const custKmOut = parseFloat(fields.customerKmOut.value) || 0;
-    const custKmIn = parseFloat(fields.customerKmIn.value) || 0;
+  const createDateTime = (d, t) =>
+    d.value && t.value ? new Date(`${d.value}T${t.value}`) : null;
+  const driverStart = createDateTime(fields.dateOut, fields.driverTimeOut);
+  const driverEnd = createDateTime(fields.dateIn, fields.driverTimeIn);
+  const customerStart = createDateTime(fields.dateOut, fields.customerTimeOut);
+  const customerEnd = createDateTime(fields.dateIn, fields.customerTimeIn);
+  const drKmOut = parseFloat(fields.driverKmOut.value) || 0;
+  const drKmIn = parseFloat(fields.driverKmIn.value) || 0;
+  const custKmOut = parseFloat(fields.customerKmOut.value) || 0;
+  const custKmIn = parseFloat(fields.customerKmIn.value) || 0;
 
-    if (driverEnd && driverStart && driverEnd < driverStart) setError(fields.driverTimeIn);
-    if (drKmIn > 0 && drKmIn < drKmOut) setError(fields.driverKmIn);
-    if (custKmIn > 0 && custKmIn < custKmOut) setError(fields.customerKmIn);
-    if (customerStart && driverStart && customerStart < driverStart) setError(fields.customerTimeOut);
-    if (customerEnd && driverEnd && customerEnd > driverEnd) setError(fields.customerTimeIn);
-    if (custKmOut > 0 && custKmOut < drKmOut) setError(fields.customerKmOut);
-    if (custKmIn > 0 && custKmIn > drKmIn) setError(fields.customerKmIn);
+  if (driverEnd && driverStart && driverEnd < driverStart)
+    setError(fields.driverTimeIn);
+  if (drKmIn > 0 && drKmIn < drKmOut) setError(fields.driverKmIn);
+  if (custKmIn > 0 && custKmIn < custKmOut) setError(fields.customerKmIn);
+  if (customerStart && driverStart && customerStart < driverStart)
+    setError(fields.customerTimeOut);
+  if (customerEnd && driverEnd && customerEnd > driverEnd)
+    setError(fields.customerTimeIn);
+  if (custKmOut > 0 && custKmOut < drKmOut) setError(fields.customerKmOut);
+  if (custKmIn > 0 && custKmIn > drKmIn) setError(fields.customerKmIn);
 
-    return isValid;
+  return isValid;
 }
 
 function handleDriverSelection() {
-    const selected = driverData[this.value];
-    if (selected) {
-        document.getElementById('driver-mobile').value = selected.mobile;
-        const img = document.getElementById('auth-signature-link');
-        img.src = selected.signatureUrl;
-        img.style.display = 'block';
-        document.getElementById('auth-sig-placeholder').style.display = 'none';
-    }
+  const selected = driverData[this.value];
+  if (selected) {
+    document.getElementById("driver-mobile").value = selected.mobile;
+    const img = document.getElementById("auth-signature-link");
+    img.src = selected.signatureUrl;
+    img.style.display = "block";
+    document.getElementById("auth-sig-placeholder").style.display = "none";
+  }
 }
 
 // --- 2. GLOBAL COMPONENT & EVENT MANAGEMENT ---
 
 async function loadComponents() {
-    const components = [
-        { id: 'admin-sidebar', path: '/components/_sidebar.html' },
-        { id: 'admin-header', path: '/components/_header.html' },
-        { id: 'admin-footer', path: '/components/_footer.html' }
-    ];
+  const components = [
+    { id: "admin-sidebar", path: "/components/_sidebar.html" },
+    { id: "admin-header", path: "/components/_header.html" },
+    { id: "admin-footer", path: "/components/_footer.html" },
+  ];
 
-    for (const { id, path } of components) {
-        const element = document.getElementById(id);
-        if (element) {
-            try {
-                const response = await fetch(path);
-                if (response.ok) element.innerHTML = await response.text();
-            } catch (error) { console.error(`Error loading ${path}:`, error); }
-        }
+  for (const { id, path } of components) {
+    const element = document.getElementById(id);
+    if (element) {
+      try {
+        const response = await fetch(path);
+        if (response.ok) element.innerHTML = await response.text();
+      } catch (error) {
+        console.error(`Error loading ${path}:`, error);
+      }
     }
+  }
 }
 
 function setActiveNavLink() {
-    const currentPath = window.location.pathname;
-    document.querySelectorAll('.sidebar-nav .nav-links a').forEach(link => {
-        if (link.pathname === currentPath) {
-            link.classList.add('active');
-        }
-    });
+  const currentPath = window.location.pathname;
+  document.querySelectorAll(".sidebar-nav .nav-links a").forEach((link) => {
+    if (link.pathname === currentPath) {
+      link.classList.add("active");
+    }
+  });
 }
 
 function setupGlobalEventListeners() {
-    const header = document.getElementById('admin-header');
-    if (header) {
-        header.addEventListener('click', (event) => {
-            if (event.target.classList.contains('logout-btn')) {
-                sessionStorage.removeItem('shrish-admin-auth');
-                window.location.href = '/login.html'; 
-            }
-        });
-    }
-    
-    const sidebarToggle = document.getElementById('sidebar-toggle-btn');
-    const sidebar = document.getElementById('admin-sidebar');
-    // const layout = document.querySelector('.admin-layout'); // We don't need this anymore
+  const header = document.getElementById("admin-header");
+  if (header) {
+    header.addEventListener("click", (event) => {
+      if (event.target.classList.contains("logout-btn")) {
+        sessionStorage.removeItem("shrish-admin-auth");
+        window.location.href = "/login.html";
+      }
+    });
+  }
 
-    if (sidebarToggle && sidebar) { // Removed 'layout' from check
-        sidebarToggle.addEventListener('click', (event) => {
-            event.stopPropagation();
-            document.body.classList.toggle('sidebar-collapsed'); // Apply to <body>
-        });
+  const sidebarToggle = document.getElementById("sidebar-toggle-btn");
+  const sidebar = document.getElementById("admin-sidebar");
+  // const layout = document.querySelector('.admin-layout'); // We don't need this anymore
 
-        document.addEventListener('click', (event) => {
-            const isClickInsideSidebar = sidebar.contains(event.target);
-            const isClickOnToggleButton = sidebarToggle.contains(event.target);
-            const isSidebarOpen = document.body.classList.contains('sidebar-collapsed'); // Check <body>
+  if (sidebarToggle && sidebar) {
+    // Removed 'layout' from check
+    sidebarToggle.addEventListener("click", (event) => {
+      event.stopPropagation();
+      document.body.classList.toggle("sidebar-collapsed"); // Apply to <body>
+    });
 
-            if (isSidebarOpen && !isClickInsideSidebar && !isClickOnToggleButton) {
-                document.body.classList.remove('sidebar-collapsed'); // Remove from <body>
-            }
-        });
-    }
+    document.addEventListener("click", (event) => {
+      const isClickInsideSidebar = sidebar.contains(event.target);
+      const isClickOnToggleButton = sidebarToggle.contains(event.target);
+      const isSidebarOpen =
+        document.body.classList.contains("sidebar-collapsed"); // Check <body>
 
-    const fabContainer = document.querySelector('.action-buttons-container');
-    const fabToggle = document.getElementById('fab-main-toggle');
+      if (isSidebarOpen && !isClickInsideSidebar && !isClickOnToggleButton) {
+        document.body.classList.remove("sidebar-collapsed"); // Remove from <body>
+      }
+    });
+  }
 
-    if (fabContainer && fabToggle) {
-        fabToggle.addEventListener('click', () => {
-            // This toggles the 'is-open' class on the container
-            fabContainer.classList.toggle('is-open');
-        });
-    }
+  const fabContainer = document.querySelector(".action-buttons-container");
+  const fabToggle = document.getElementById("fab-main-toggle");
+
+  if (fabContainer && fabToggle) {
+    fabToggle.addEventListener("click", () => {
+      // This toggles the 'is-open' class on the container
+      fabContainer.classList.toggle("is-open");
+    });
+  }
 }
 
 // --- 3. DOMCONTENTLOADED ---
 // This is the main entry point for all pages.
-document.addEventListener('DOMContentLoaded', async () => {
-    await loadComponents();
-    setActiveNavLink();
-    setupGlobalEventListeners();
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadComponents();
+  setActiveNavLink();
+  setupGlobalEventListeners();
 
-    // ** THE FIX **
-    // After all common components are loaded, check if page-specific logic exists and run it.
-    if (typeof initializeEditSlipPage === 'function') {
-        initializeEditSlipPage();
-    }
-    if (typeof initializeCreateSlipPage === 'function') { // You should do this for create-slip.js too!
-        initializeCreateSlipPage();
-    }
+  // ** THE FIX **
+  // After all common components are loaded, check if page-specific logic exists and run it.
+  if (typeof initializeEditSlipPage === "function") {
+    initializeEditSlipPage();
+  }
+  if (typeof initializeCreateSlipPage === "function") {
+    // You should do this for create-slip.js too!
+    initializeCreateSlipPage();
+  }
 });

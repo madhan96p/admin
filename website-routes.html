@@ -1,135 +1,193 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Route Manager | Shrish Admin</title>
-    <link rel="stylesheet" href="/assets/css/common.css">
-    <link rel="stylesheet" href="/assets/css/admin.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+    <link rel="stylesheet" href="/assets/css/common.css" />
+    <link rel="stylesheet" href="/assets/css/admin.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
     <style>
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; }
-        .modal.active { display: flex; }
-        .modal-box { background: white; padding: 30px; border-radius: 12px; width: 600px; max-height: 90vh; overflow-y: auto; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .full-width { grid-column: 1 / -1; }
-        .modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
-        .close-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; }
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+      }
+      .modal.active {
+        display: flex;
+      }
+      .modal-box {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+      .full-width {
+        grid-column: 1 / -1;
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <script src="assets/js/auth.js"></script>
 
     <div class="admin-layout">
-        <div id="admin-sidebar"></div>
+      <div id="admin-sidebar"></div>
 
-        <main class="admin-main-content">
-            <div id="admin-header"></div>
+      <main class="admin-main-content">
+        <div id="admin-header"></div>
 
-            <div class="page-content">
-                <div class="page-header">
-                    <h1>Route Manager</h1>
-                    <div class="header-actions">
-                        <button id="add-route-btn" class="btn-primary"><i class="fas fa-plus"></i> Add New Route</button>
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Route Name</th>
-                                <th>Distance / Time</th>
-                                <th>Sedan Price</th>
-                                <th>Innova Price</th>
-                                <th>Popular?</th>
-                                <th>Edit</th>
-                            </tr>
-                        </thead>
-                        <tbody id="routes-table-body">
-                            <tr><td colspan="6" class="text-center">Loading routes...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+        <div class="page-content">
+          <div class="page-header">
+            <h1>Route Manager</h1>
+            <div class="header-actions">
+              <button id="add-route-btn" class="btn-primary">
+                <i class="fas fa-plus"></i> Add New Route
+              </button>
             </div>
-        </main>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Route Name</th>
+                  <th>Distance / Time</th>
+                  <th>Sedan Price</th>
+                  <th>Innova Price</th>
+                  <th>Popular?</th>
+                  <th>Edit</th>
+                </tr>
+              </thead>
+              <tbody id="routes-table-body">
+                <tr>
+                  <td colspan="6" class="text-center">Loading routes...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
     </div>
 
     <div id="route-modal" class="modal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h2 id="modal-title">Edit Route</h2>
-                <button class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
-            </div>
-            
-            <form id="route-form">
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label>Origin</label>
-                        <input type="text" name="Origin" required value="Chennai">
-                    </div>
-                    <div class="input-group">
-                        <label>Destination</label>
-                        <input type="text" name="Destination" required>
-                    </div>
-
-                    <div class="input-group full-width">
-                        <label>URL Slug (Unique ID)</label>
-                        <input type="text" name="Route_Slug" id="slug-input" placeholder="e.g. chennai-to-trichy" required>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Distance (Km)</label>
-                        <input type="number" name="Distance_Km" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Time (Hours)</label>
-                        <input type="number" step="0.5" name="Time_Hours" required>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Price Sedan (₹)</label>
-                        <input type="number" name="Price_Sedan" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Price Innova (₹)</label>
-                        <input type="number" name="Price_Innova" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Price Crysta (₹)</label>
-                        <input type="number" name="Price_Crysta" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Price Tempo (₹)</label>
-                        <input type="number" name="Price_Tempo" required>
-                    </div>
-
-                    <div class="input-group full-width">
-                        <label>Description (SEO)</label>
-                        <textarea name="Description" rows="2" placeholder="Short description for Google..."></textarea>
-                    </div>
-                    <div class="input-group full-width">
-                        <label>Image URL</label>
-                        <input type="text" name="Image_URL" placeholder="https://source.unsplash.com/...">
-                    </div>
-                    <div class="input-group">
-                        <label>Is Popular?</label>
-                        <select name="Popular_Route">
-                            <option value="No">No</option>
-                            <option value="Yes">Yes</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-actions" style="margin-top: 20px; text-align: right;">
-                    <button type="submit" class="btn-primary">Save Route</button>
-                </div>
-            </form>
+      <div class="modal-box">
+        <div class="modal-header">
+          <h2 id="modal-title">Edit Route</h2>
+          <button class="close-btn" onclick="closeModal()">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
+
+        <form id="route-form">
+          <div class="form-grid">
+            <div class="input-group">
+              <label>Origin</label>
+              <input type="text" name="Origin" required value="Chennai" />
+            </div>
+            <div class="input-group">
+              <label>Destination</label>
+              <input type="text" name="Destination" required />
+            </div>
+
+            <div class="input-group full-width">
+              <label>URL Slug (Unique ID)</label>
+              <input
+                type="text"
+                name="Route_Slug"
+                id="slug-input"
+                placeholder="e.g. chennai-to-trichy"
+                required
+              />
+            </div>
+
+            <div class="input-group">
+              <label>Distance (Km)</label>
+              <input type="number" name="Distance_Km" required />
+            </div>
+            <div class="input-group">
+              <label>Time (Hours)</label>
+              <input type="number" step="0.5" name="Time_Hours" required />
+            </div>
+
+            <div class="input-group">
+              <label>Price Sedan (₹)</label>
+              <input type="number" name="Price_Sedan" required />
+            </div>
+            <div class="input-group">
+              <label>Price Innova (₹)</label>
+              <input type="number" name="Price_Innova" required />
+            </div>
+            <div class="input-group">
+              <label>Price Crysta (₹)</label>
+              <input type="number" name="Price_Crysta" required />
+            </div>
+            <div class="input-group">
+              <label>Price Tempo (₹)</label>
+              <input type="number" name="Price_Tempo" required />
+            </div>
+
+            <div class="input-group full-width">
+              <label>Description (SEO)</label>
+              <textarea
+                name="Description"
+                rows="2"
+                placeholder="Short description for Google..."
+              ></textarea>
+            </div>
+            <div class="input-group full-width">
+              <label>Image URL</label>
+              <input
+                type="text"
+                name="Image_URL"
+                placeholder="https://source.unsplash.com/..."
+              />
+            </div>
+            <div class="input-group">
+              <label>Is Popular?</label>
+              <select name="Popular_Route">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-actions" style="margin-top: 20px; text-align: right">
+            <button type="submit" class="btn-primary">Save Route</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <script src="assets/js/common.js"></script>
     <script src="assets/js/website-routes.js"></script>
-</body>
+  </body>
 </html>

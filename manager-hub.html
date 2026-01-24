@@ -1,81 +1,124 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Manager Hub | Shrish Admin</title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon/favicon-96x96.png">
-    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon/favicon.svg">
-    <link rel="icon" type="image/x-icon" href="/assets/images/favicon/favicon.ico">
-    <link rel="manifest" href="/assets/images/favicon/site.webmanifest">
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/assets/images/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="/assets/images/favicon/favicon-96x96.png"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/assets/images/favicon/favicon.svg"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="/assets/images/favicon/favicon.ico"
+    />
+    <link rel="manifest" href="/assets/images/favicon/site.webmanifest" />
     <meta property="og:title" content="Manager Hub | Shrish Admin" />
     <meta property="og:type" content="website" />
-    <meta property="og:description" content="Admin panel for manager-level operations at Shrish Group." />
-    <meta property="og:image" content="https://admin.shrishgroup.com/assets/images/logo.webp" /> 
+    <meta
+      property="og:description"
+      content="Admin panel for manager-level operations at Shrish Group."
+    />
+    <meta
+      property="og:image"
+      content="https://admin.shrishgroup.com/assets/images/logo.webp"
+    />
     <meta name="twitter:card" content="summary" />
-    <link rel="stylesheet" href="/assets/css/admin.css">
-    <link rel="stylesheet" href="/assets/css/manager-hub.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-</head>
-<body>
-
+    <link rel="stylesheet" href="/assets/css/admin.css" />
+    <link rel="stylesheet" href="/assets/css/manager-hub.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
     <script src="/assets/js/auth.js"></script>
 
     <div class="admin-layout">
-        <div id="admin-sidebar"></div>
+      <div id="admin-sidebar"></div>
 
-        <main class="admin-main-content">
-            <div id="admin-header"></div>
+      <main class="admin-main-content">
+        <div id="admin-header"></div>
 
-            <div class="page-content">
-                <div class="page-title-bar">
-                    <h1>Manager Hub</h1>
-                </div>
+        <div class="page-content">
+          <div class="page-title-bar">
+            <h1>Manager Hub</h1>
+          </div>
 
-                <div class="content-card">
-                    <h2>Find a Duty Slip</h2>
-                    <form id="search-form" class="filter-controls">
-                        <div class="search-group">
-                            <label for="search-ds-no">Find D.S. No:</label>
-                            <input type="text" id="search-ds-no" placeholder="Enter D.S. No...">
-                        </div>
-                        <div class="search-group">
-                            <label for="search-guest">Search by Guest:</label>
-                            <input type="text" id="search-guest" placeholder="Enter guest name...">
-                        </div>
-                        <div class="search-group">
-                            <label for="search-date">Filter by Date:</label>
-                            <input type="date" id="search-date">
-                        </div>
-                        <button type="submit" id="find-slip-btn" class="btn-primary">Find Slips</button>
-                    </form>
-                </div>
+          <div class="content-card">
+            <h2>Find a Duty Slip</h2>
+            <form id="search-form" class="filter-controls">
+              <div class="search-group">
+                <label for="search-ds-no">Find D.S. No:</label>
+                <input
+                  type="text"
+                  id="search-ds-no"
+                  placeholder="Enter D.S. No..."
+                />
+              </div>
+              <div class="search-group">
+                <label for="search-guest">Search by Guest:</label>
+                <input
+                  type="text"
+                  id="search-guest"
+                  placeholder="Enter guest name..."
+                />
+              </div>
+              <div class="search-group">
+                <label for="search-date">Filter by Date:</label>
+                <input type="date" id="search-date" />
+              </div>
+              <button type="submit" id="find-slip-btn" class="btn-primary">
+                Find Slips
+              </button>
+            </form>
+          </div>
 
-                <div id="results-container">
-                    </div>
+          <div id="results-container"></div>
+        </div>
 
-            </div>
-
-            <div id="admin-footer"></div>
-        </main>
+        <div id="admin-footer"></div>
+      </main>
     </div>
 
     <div id="image-modal">
-        <div id="modal-overlay"></div>
-        <div class="modal-content">
-            <img id="modal-img" src="" alt="Full Signature View">
-            <div class="modal-actions">
-                <a id="modal-download-btn" href="#" download="signature.png" class="action-link"><i class="fas fa-download"></i> Download</a>
-                <button id="modal-copy-btn" class="action-link"><i class="fas fa-copy"></i> Copy Link</button>
-                <button id="modal-close-btn" class="action-link close-btn"><i class="fas fa-times"></i> Close</button>
-            </div>
+      <div id="modal-overlay"></div>
+      <div class="modal-content">
+        <img id="modal-img" src="" alt="Full Signature View" />
+        <div class="modal-actions">
+          <a
+            id="modal-download-btn"
+            href="#"
+            download="signature.png"
+            class="action-link"
+            ><i class="fas fa-download"></i> Download</a
+          >
+          <button id="modal-copy-btn" class="action-link">
+            <i class="fas fa-copy"></i> Copy Link
+          </button>
+          <button id="modal-close-btn" class="action-link close-btn">
+            <i class="fas fa-times"></i> Close
+          </button>
         </div>
+      </div>
     </div>
 
     <script src="/assets/js/common.js"></script>
     <script src="/assets/js/manager-hub.js"></script>
-</body>
+  </body>
 </html>

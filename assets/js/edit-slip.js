@@ -1,164 +1,200 @@
 function initializeEditSlipPage() {
-    // ADD THIS NEW HELPER FUNCTION HERE
-    function formatDateForInput(dateString) {
-        if (!dateString) return ''; // Return empty if no date is provided
-        const date = new Date(dateString);
-        // Check if the date is valid. If not, return empty.
-        if (isNaN(date.getTime())) {
-            return '';
+  // ADD THIS NEW HELPER FUNCTION HERE
+  function formatDateForInput(dateString) {
+    if (!dateString) return ""; // Return empty if no date is provided
+    const date = new Date(dateString);
+    // Check if the date is valid. If not, return empty.
+    if (isNaN(date.getTime())) {
+      return "";
+    }
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  // --- 1. INITIALIZATION ---
+  function initializePage() {
+    populateDriverDatalist();
+    setupEventListeners();
+    loadSlipDataForEditing();
+    initializeSignaturePad("signature-canvas"); // From common.js
+  }
+
+  // --- 2. PAGE-SPECIFIC SETUP ---
+  function populateDriverDatalist() {
+    const datalist = document.getElementById("driver-list");
+    Object.keys(driverData).forEach((driverName) => {
+      const option = document.createElement("option");
+      option.value = driverName;
+      datalist.appendChild(option);
+    });
+  }
+
+  function setupEventListeners() {
+    document
+      .querySelectorAll("#save-slip-button, #mobile-save-slip-button")
+      .forEach((btn) => btn.addEventListener("click", updateDutySlip));
+    document
+      .querySelectorAll("#whatsapp-button, #mobile-whatsapp-button")
+      .forEach((btn) => btn.addEventListener("click", handleWhatsAppShare));
+    document
+      .querySelectorAll("#generate-link-button, #mobile-generate-link-button")
+      .forEach((btn) => btn.addEventListener("click", handleGenerateLink));
+
+    const inputsToWatch = [
+      "driver-time-out",
+      "driver-time-in",
+      "driver-km-out",
+      "driver-km-in",
+      "date",
+      "date-out",
+      "date-in",
+      "time-out",
+      "time-in",
+      "km-out",
+      "km-in",
+    ];
+    inputsToWatch.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener("input", calculateTotals);
+        el.addEventListener("input", validateAllInputs);
+      }
+    });
+
+    validateMobileInput("guest-mobile");
+    validateMobileInput("driver-mobile");
+
+    document
+      .getElementById("driver-name")
+      ?.addEventListener("input", handleDriverSelection);
+    document
+      .getElementById("auth-signature-box")
+      ?.addEventListener("click", () =>
+        openSignaturePad("auth-signature-link"),
+      );
+    document
+      .getElementById("guest-signature-box")
+      ?.addEventListener("click", () =>
+        openSignaturePad("guest-signature-link"),
+      );
+    // NEW LOGIC: PDF Download Button
+    const pdfButtons = document.querySelectorAll(
+      "#download-pdf-button, #mobile-download-pdf-button",
+    );
+    pdfButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const dsNo = document.getElementById("ds-no").value;
+        if (dsNo) {
+          // Open the view page in a new tab
+          const viewUrl = `${window.location.origin}/view.html?id=${dsNo}`;
+          const printWindow = window.open(viewUrl, "_blank");
+
+          // Once the new window loads, trigger its print function
+          printWindow.onload = function () {
+            printWindow.print();
+          };
+        } else {
+          alert("Please save the duty slip first to generate a PDF.");
         }
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+      });
+    });
+  }
+
+  async function loadSlipDataForEditing() {
+    const slipId = new URLSearchParams(window.location.search).get("id");
+    if (!slipId) {
+      // On the create page, there's no ID, so we just stop.
+      // On the edit page, we should show an error.
+      if (window.location.pathname.includes("edit-slip.html")) {
+        alert("Error: No Duty Slip ID provided.");
+      }
+      return;
     }
 
-    // --- 1. INITIALIZATION ---
-    function initializePage() {
-        populateDriverDatalist();
-        setupEventListeners();
-        loadSlipDataForEditing();
-        initializeSignaturePad('signature-canvas'); // From common.js
-    }
+    try {
+      const response = await fetch(`/api?action=getDutySlipById&id=${slipId}`);
+      const data = await response.json();
+      if (data.error || !data.slip)
+        throw new Error(data.error || "Slip data not found.");
 
-    // --- 2. PAGE-SPECIFIC SETUP ---
-    function populateDriverDatalist() {
-        const datalist = document.getElementById('driver-list');
-        Object.keys(driverData).forEach(driverName => {
-            const option = document.createElement('option');
-            option.value = driverName;
-            datalist.appendChild(option);
-        });
-    }
+      const slip = data.slip;
+      console.log("Data received for this slip:", slip);
 
-    function setupEventListeners() {
-        document.querySelectorAll('#save-slip-button, #mobile-save-slip-button').forEach(btn => btn.addEventListener('click', updateDutySlip));
-        document.querySelectorAll('#whatsapp-button, #mobile-whatsapp-button').forEach(btn => btn.addEventListener('click', handleWhatsAppShare));
-        document.querySelectorAll('#generate-link-button, #mobile-generate-link-button').forEach(btn => btn.addEventListener('click', handleGenerateLink));
+      // This enhanced loop now handles all data types correctly
+      // This enhanced loop now handles all data types correctly
+      for (const key in slip) {
+        const inputId = key.toLowerCase().replace(/_/g, "-");
+        const inputElement = document.getElementById(inputId);
 
-        const inputsToWatch = [
-            'driver-time-out', 'driver-time-in', 'driver-km-out', 'driver-km-in', 'date', 'date-out', 'date-in', 'time-out', 'time-in', 'km-out', 'km-in'
-        ];
-        inputsToWatch.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.addEventListener('input', calculateTotals);
-                el.addEventListener('input', validateAllInputs);
+        if (inputElement) {
+          // Handles signatures
+          if (inputElement.tagName === "IMG") {
+            const signatureData = slip[key];
+            if (
+              (signatureData && signatureData.length > 100) ||
+              (signatureData && signatureData.startsWith("http"))
+            ) {
+              inputElement.src = signatureData;
+              inputElement.style.display = "block";
+              const placeholderId = inputId.replace(
+                "signature-link",
+                "sig-placeholder",
+              );
+              const placeholder = document.getElementById(placeholderId);
+              if (placeholder) placeholder.style.display = "none";
             }
-        });
+            // Handles dates
+          } else if (inputElement.type === "date") {
+            inputElement.value = formatDateForInput(slip[key]);
+            // NEW FIX: Handles time inputs by ensuring HH:mm format
+          } else if (inputElement.type === "time") {
+            const timeValue = slip[key];
+            if (timeValue && timeValue.includes(":")) {
+              let [hour, minute] = timeValue.split(":");
+              // Ensure both hour and minute have two digits (e.g., 6:30 -> 06:30)
+              inputElement.value = `${hour.padStart(2, "0")}:${minute.padStart(2, "0")}`;
+            } else {
+              inputElement.value = "";
+            }
+            // Handles all other inputs
+          } else {
+            inputElement.value = slip[key] || "";
+          }
+        }
+      }
+      // After populating, run calculations to fill in total fields
+      calculateTotals();
+    } catch (error) {
+      alert(`Failed to load duty slip data: ${error.message}`);
+    }
+  }
+  // ... inside initializeEditSlipPage function, after loadSlipDataForEditing ...
 
-        validateMobileInput('guest-mobile');
-        validateMobileInput('driver-mobile');
+  // --- 5. SHARING & UTILITY FUNCTIONS ---
+  function handleWhatsAppShare() {
+    // Gather data from the form fields
+    const bookingId = document.getElementById("booking-id").value;
+    const guestName = document.getElementById("guest-name").value;
+    const guestMobile = document.getElementById("guest-mobile").value;
+    const vehicleType = document.getElementById("vehicle-type").value;
+    const vehicleNo = document.getElementById("vehicle-no").value;
+    const date = document.getElementById("date").value;
+    const reportingTime = document.getElementById("reporting-time").value;
+    const reportingAddress = document.getElementById("reporting-address").value;
+    const driverMobile = document.getElementById("driver-mobile").value;
+    const dsNo = document.getElementById("ds-no").value;
 
-        document.getElementById('driver-name')?.addEventListener('input', handleDriverSelection);
-        document.getElementById('auth-signature-box')?.addEventListener('click', () => openSignaturePad('auth-signature-link'));
-        document.getElementById('guest-signature-box')?.addEventListener('click', () => openSignaturePad('guest-signature-link'));
-        // NEW LOGIC: PDF Download Button
-        const pdfButtons = document.querySelectorAll('#download-pdf-button, #mobile-download-pdf-button');
-        pdfButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const dsNo = document.getElementById('ds-no').value;
-                if (dsNo) {
-                    // Open the view page in a new tab
-                    const viewUrl = `${window.location.origin}/view.html?id=${dsNo}`;
-                    const printWindow = window.open(viewUrl, '_blank');
-
-                    // Once the new window loads, trigger its print function
-                    printWindow.onload = function () {
-                        printWindow.print();
-                    };
-                } else {
-                    alert("Please save the duty slip first to generate a PDF.");
-                }
-            });
-        });
+    // Ensure a driver mobile number is present
+    if (!driverMobile || driverMobile.length < 10) {
+      return alert(
+        "Please enter a valid 10-digit driver mobile number before sharing.",
+      );
     }
 
-    async function loadSlipDataForEditing() {
-        const slipId = new URLSearchParams(window.location.search).get('id');
-        if (!slipId) {
-            // On the create page, there's no ID, so we just stop.
-            // On the edit page, we should show an error.
-            if (window.location.pathname.includes('edit-slip.html')) {
-                alert('Error: No Duty Slip ID provided.');
-            }
-            return;
-        }
-
-        try {
-            const response = await fetch(`/api?action=getDutySlipById&id=${slipId}`);
-            const data = await response.json();
-            if (data.error || !data.slip) throw new Error(data.error || "Slip data not found.");
-
-            const slip = data.slip;
-            console.log("Data received for this slip:", slip);
-
-            // This enhanced loop now handles all data types correctly
-            // This enhanced loop now handles all data types correctly
-            for (const key in slip) {
-                const inputId = key.toLowerCase().replace(/_/g, '-');
-                const inputElement = document.getElementById(inputId);
-
-                if (inputElement) {
-                    // Handles signatures
-                    if (inputElement.tagName === 'IMG') {
-                        const signatureData = slip[key];
-                        if ((signatureData && signatureData.length > 100) || (signatureData && signatureData.startsWith('http'))) {
-                            inputElement.src = signatureData;
-                            inputElement.style.display = 'block';
-                            const placeholderId = inputId.replace('signature-link', 'sig-placeholder');
-                            const placeholder = document.getElementById(placeholderId);
-                            if (placeholder) placeholder.style.display = 'none';
-                        }
-                        // Handles dates
-                    } else if (inputElement.type === 'date') {
-                        inputElement.value = formatDateForInput(slip[key]);
-                        // NEW FIX: Handles time inputs by ensuring HH:mm format
-                    } else if (inputElement.type === 'time') {
-                        const timeValue = slip[key];
-                        if (timeValue && timeValue.includes(':')) {
-                            let [hour, minute] = timeValue.split(':');
-                            // Ensure both hour and minute have two digits (e.g., 6:30 -> 06:30)
-                            inputElement.value = `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}`;
-                        } else {
-                            inputElement.value = '';
-                        }
-                        // Handles all other inputs
-                    } else {
-                        inputElement.value = slip[key] || '';
-                    }
-                }
-            }
-            // After populating, run calculations to fill in total fields
-            calculateTotals();
-
-        } catch (error) {
-            alert(`Failed to load duty slip data: ${error.message}`);
-        }
-    }
-    // ... inside initializeEditSlipPage function, after loadSlipDataForEditing ...
-
-    // --- 5. SHARING & UTILITY FUNCTIONS ---
-    function handleWhatsAppShare() {
-        // Gather data from the form fields
-        const bookingId = document.getElementById('booking-id').value;
-        const guestName = document.getElementById('guest-name').value;
-        const guestMobile = document.getElementById('guest-mobile').value;
-        const vehicleType = document.getElementById('vehicle-type').value;
-        const vehicleNo = document.getElementById('vehicle-no').value;
-        const date = document.getElementById('date').value;
-        const reportingTime = document.getElementById('reporting-time').value;
-        const reportingAddress = document.getElementById('reporting-address').value;
-        const driverMobile = document.getElementById('driver-mobile').value;
-        const dsNo = document.getElementById('ds-no').value;
-
-        // Ensure a driver mobile number is present
-        if (!driverMobile || driverMobile.length < 10) {
-            return alert('Please enter a valid 10-digit driver mobile number before sharing.');
-        }
-
-        // Construct the message
-        const message = `
+    // Construct the message
+    const message = `
 Booking: DS#${bookingId}
 Passenger: *${guestName}* / +91 ${guestMobile}
 Vehicle: ${vehicleType}/ *${vehicleNo}*
@@ -173,132 +209,176 @@ Contact +91 8883451668 / +91 9176500207
 - Sent via Shrish Travels
         `;
 
-        // Generate and open the WhatsApp link
-        const whatsappUrl = `https://wa.me/91${driverMobile}?text=${encodeURIComponent(message.trim())}`;
-        window.open(whatsappUrl, '_blank');
+    // Generate and open the WhatsApp link
+    const whatsappUrl = `https://wa.me/91${driverMobile}?text=${encodeURIComponent(message.trim())}`;
+    window.open(whatsappUrl, "_blank");
+  }
+
+  function handleGenerateLink() {
+    const dsNo = document.getElementById("ds-no").value;
+    if (!dsNo) {
+      return alert("Cannot generate a link for an unsaved slip.");
     }
 
-    function handleGenerateLink() {
-        const dsNo = document.getElementById('ds-no').value;
-        if (!dsNo) {
-            return alert('Cannot generate a link for an unsaved slip.');
-        }
+    const viewUrl = `${window.location.origin}/view.html?id=${dsNo}`;
 
-        const viewUrl = `${window.location.origin}/view.html?id=${dsNo}`;
+    // Use the Clipboard API to copy the link
+    navigator.clipboard
+      .writeText(viewUrl)
+      .then(() => {
+        alert("View link copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy link: ", err);
+        alert("Failed to copy link. Please copy it manually.");
+      });
+  }
 
-        // Use the Clipboard API to copy the link
-        navigator.clipboard.writeText(viewUrl).then(() => {
-            alert('View link copied to clipboard!');
-        }).catch(err => {
-            console.error('Failed to copy link: ', err);
-            alert('Failed to copy link. Please copy it manually.');
-        });
+  // --- 3. CORE UPDATE HANDLER ---
+  async function updateDutySlip(event) {
+    event.preventDefault();
+
+    if (!validateAllInputs()) {
+      alert("Please fix the validation errors before saving.");
+      return;
     }
 
-    // --- 3. CORE UPDATE HANDLER ---
-    async function updateDutySlip(event) {
-        event.preventDefault();
+    const button = event.currentTarget;
+    const originalButtonContent = button.innerHTML; // Store original content to restore on failure
 
-        if (!validateAllInputs()) {
-            alert('Please fix the validation errors before saving.');
-            return;
-        }
+    button.disabled = true;
 
-        const button = event.currentTarget;
-        const originalButtonContent = button.innerHTML; // Store original content to restore on failure
+    // --- UPDATED Loading Animation ---
+    button.classList.add("is-loading");
+    if (button.id === "mobile-save-slip-button") {
+      // Mobile button spinner
+      let loadingHTML =
+        '<span class="icon"><i class="fas fa-spinner fa-spin"></i></span><span class="text">Saving...</span>';
+      if (window.innerWidth <= 360) {
+        // Adjust for icon-only small screen
+        loadingHTML =
+          '<span class="icon"><i class="fas fa-spinner fa-spin"></i></span>';
+      }
+      button.innerHTML = loadingHTML;
+    } else {
+      // Desktop button spinner
+      button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+    }
 
-        button.disabled = true;
+    // --- Collect Form Data (Same as before) ---
+    const headers = [
+      "DS_No",
+      "Booking_ID",
+      "Date",
+      "Organisation",
+      "Guest_Name",
+      "Guest_Mobile",
+      "Booked_By",
+      "Reporting_Time",
+      "Reporting_Address",
+      "Spl_Instruction",
+      "Vehicle_Type",
+      "Vehicle_No",
+      "Driver_Name",
+      "Driver_Mobile",
+      "Assignment",
+      "Routing",
+      "Date_Out",
+      "Date_In",
+      "Total_Days",
+      "Time_Out",
+      "Time_In",
+      "Km_Out",
+      "Km_In",
+      "Driver_Time_Out",
+      "Driver_Time_In",
+      "Driver_Km_Out",
+      "Driver_Km_In",
+      "Driver_Total_Hrs",
+      "Driver_Total_Kms",
+      "Auth_Signature_Link",
+      "Guest_Signature_Link",
+      "Status",
+    ];
+    const formData = {};
+    headers.forEach((header) => {
+      const inputId = header.toLowerCase().replace(/_/g, "-");
+      const inputElement = document.getElementById(inputId);
+      if (inputElement) {
+        formData[header] =
+          inputElement.tagName === "IMG"
+            ? inputElement.src
+            : inputElement.value;
+      } else {
+        formData[header] = "";
+      }
+    });
 
-        // --- UPDATED Loading Animation ---
-        button.classList.add('is-loading');
-        if (button.id === 'mobile-save-slip-button') {
-            // Mobile button spinner
-            let loadingHTML = '<span class="icon"><i class="fas fa-spinner fa-spin"></i></span><span class="text">Saving...</span>';
-            if (window.innerWidth <= 360) { // Adjust for icon-only small screen
-                loadingHTML = '<span class="icon"><i class="fas fa-spinner fa-spin"></i></span>';
-            }
-            button.innerHTML = loadingHTML;
+    // --- !! CRITICAL LOGIC FIX: Set Status by Role ---
+    // We check sessionStorage, which is set by auth.js for managers
+    const isAdmin = sessionStorage.getItem("shrish-admin-auth") === "true";
+    if (isAdmin) {
+      formData["Status"] = "Updated by Manager";
+    } else {
+      // If not an admin, they are a driver using the public link
+      formData["Status"] = "Closed by Driver";
+    }
+    // --- End Logic Fix ---
+
+    try {
+      const response = await fetch("/api?action=updateDutySlip", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const result = await response.json();
+
+      if (result.success) {
+        // --- UPDATED Celebration Animation ---
+        button.classList.remove("is-loading");
+        button.classList.add("is-success"); // Makes it green
+
+        if (button.id === "mobile-save-slip-button") {
+          // Mobile button success
+          let successHTML =
+            '<span class="icon"><i class="fas fa-check"></i></span><span class="text">Saved!</span>';
+          if (window.innerWidth <= 360) {
+            // Adjust for icon-only
+            successHTML =
+              '<span class="icon"><i class="fas fa-check"></i></span>';
+          }
+          button.innerHTML = successHTML;
         } else {
-            // Desktop button spinner
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+          // Desktop button success
+          button.innerHTML = '<i class="fas fa-check"></i> Updated!';
         }
 
-        // --- Collect Form Data (Same as before) ---
-        const headers = ['DS_No', 'Booking_ID', 'Date', 'Organisation', 'Guest_Name', 'Guest_Mobile', 'Booked_By', 'Reporting_Time', 'Reporting_Address', 'Spl_Instruction', 'Vehicle_Type', 'Vehicle_No', 'Driver_Name', 'Driver_Mobile', 'Assignment', 'Routing', 'Date_Out', 'Date_In', 'Total_Days', 'Time_Out', 'Time_In', 'Km_Out', 'Km_In', 'Driver_Time_Out', 'Driver_Time_In', 'Driver_Km_Out', 'Driver_Km_In', 'Driver_Total_Hrs', 'Driver_Total_Kms', 'Auth_Signature_Link', 'Guest_Signature_Link', 'Status'];
-        const formData = {};
-        headers.forEach(header => {
-            const inputId = header.toLowerCase().replace(/_/g, '-');
-            const inputElement = document.getElementById(inputId);
-            if (inputElement) {
-                formData[header] = inputElement.tagName === 'IMG' ? inputElement.src : inputElement.value;
-            } else {
-                formData[header] = '';
-            }
-        });
+        // Wait 2 seconds, then redirect based on role
+        setTimeout(() => {
+          if (isAdmin) {
+            // Managers go back to the dashboard
+            window.location.href = "/duty-slips.html";
+          } else {
+            // Drivers get an alert and go to the main public site
+            alert("Success! Your slip has been submitted.");
+            window.location.href = "https://shrishgroup.netlify.app/";
+          }
+        }, 2000);
+        // --- End Updated Animation ---
+      } else {
+        throw new Error(result.error || "Unknown error during update.");
+      }
+    } catch (error) {
+      console.error("Update failed:", error);
+      alert(`Error: Could not update the duty slip. ${error.message}`);
 
-        // --- !! CRITICAL LOGIC FIX: Set Status by Role ---
-        // We check sessionStorage, which is set by auth.js for managers
-        const isAdmin = sessionStorage.getItem('shrish-admin-auth') === 'true';
-        if (isAdmin) {
-            formData['Status'] = 'Updated by Manager';
-        } else {
-            // If not an admin, they are a driver using the public link
-            formData['Status'] = 'Closed by Driver';
-        }
-        // --- End Logic Fix ---
-
-        try {
-            const response = await fetch('/api?action=updateDutySlip', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-            });
-            const result = await response.json();
-
-            if (result.success) {
-                // --- UPDATED Celebration Animation ---
-                button.classList.remove('is-loading');
-                button.classList.add('is-success'); // Makes it green
-
-                if (button.id === 'mobile-save-slip-button') {
-                    // Mobile button success
-                    let successHTML = '<span class="icon"><i class="fas fa-check"></i></span><span class="text">Saved!</span>';
-                    if (window.innerWidth <= 360) { // Adjust for icon-only
-                        successHTML = '<span class="icon"><i class="fas fa-check"></i></span>';
-                    }
-                    button.innerHTML = successHTML;
-                } else {
-                    // Desktop button success
-                    button.innerHTML = '<i class="fas fa-check"></i> Updated!';
-                }
-
-                // Wait 2 seconds, then redirect based on role
-                setTimeout(() => {
-                    if (isAdmin) {
-                        // Managers go back to the dashboard
-                        window.location.href = '/duty-slips.html';
-                    } else {
-                        // Drivers get an alert and go to the main public site
-                        alert('Success! Your slip has been submitted.');
-                        window.location.href = 'https://shrishgroup.netlify.app/';
-                    }
-                }, 2000);
-                // --- End Updated Animation ---
-
-            } else {
-                throw new Error(result.error || 'Unknown error during update.');
-            }
-        } catch (error) {
-            console.error("Update failed:", error);
-            alert(`Error: Could not update the duty slip. ${error.message}`);
-
-            // --- UPDATED Button Reset ---
-            button.disabled = false;
-            button.classList.remove('is-loading');
-            button.innerHTML = originalButtonContent; // Restore original content
-        }
+      // --- UPDATED Button Reset ---
+      button.disabled = false;
+      button.classList.remove("is-loading");
+      button.innerHTML = originalButtonContent; // Restore original content
     }
+  }
 
-    // --- 4. RUN INITIALIZATION ---
-    initializePage();
+  // --- 4. RUN INITIALIZATION ---
+  initializePage();
 }

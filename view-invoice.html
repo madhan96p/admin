@@ -1,182 +1,228 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>Invoice - Shrish Travels</title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon/favicon-96x96.png">
-    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon/favicon.svg">
-    <link rel="icon" type="image/x-icon" href="/assets/images/favicon/favicon.ico">
-    <link rel="manifest" href="/assets/images/favicon/site.webmanifest">
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/assets/images/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="/assets/images/favicon/favicon-96x96.png"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/assets/images/favicon/favicon.svg"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="/assets/images/favicon/favicon.ico"
+    />
+    <link rel="manifest" href="/assets/images/favicon/site.webmanifest" />
     <meta property="og:title" content="Invoice - Shrish Travels" />
     <meta property="og:type" content="website" />
-    <meta property="og:description" content="View your official invoice from Shrish Travels." />
-    <meta property="og:image" content="https://admin.shrishgroup.com/assets/images/logo.webp" /> 
+    <meta
+      property="og:description"
+      content="View your official invoice from Shrish Travels."
+    />
+    <meta
+      property="og:image"
+      content="https://admin.shrishgroup.com/assets/images/logo.webp"
+    />
     <meta name="twitter:card" content="summary" />
-    <link rel="stylesheet" href="/assets/css/common.css">
-    <link rel="stylesheet" href="/assets/css/invoice.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/common.css" />
+    <link rel="stylesheet" href="/assets/css/invoice.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
     <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div class="invoice-container">
-        <header class="brand-header">
-            <div class="brand-logo">
-                <img src="/assets/images/logo.webp" alt="Shrish Group Logo">
+      <header class="brand-header">
+        <div class="brand-logo">
+          <img src="/assets/images/logo.webp" alt="Shrish Group Logo" />
+        </div>
+        <div class="brand-title">
+          <h1>SHRISH Travels</h1>
+          <p>Your Journey, Our Responsibility</p>
+        </div>
+        <div class="brand-contact">
+          <p>+91 88834 51668</p>
+          <p>+91 91765 00207</p>
+          <p>info@shrishgroup.com</p>
+          <p>www.shrishgroup.com</p>
+        </div>
+      </header>
+
+      <section class="invoice-meta">
+        <table class="invoice-meta-table">
+          <tr>
+            <td class="bill-to-cell">
+              <h3>Bill To:</h3>
+              <p id="guest-name">Loading...</p>
+              <p id="guest-mobile">Loading...</p>
+            </td>
+
+            <td class="details-cell">
+              <div class="details-list">
+                <p><span id="invoice-id">Loading...</span></p>
+                <p>Date: <span id="invoice-date">Loading...</span></p>
+                <p>Updated: <span id="last-updated">Loading...</span></p>
+                <p>Due: <strong>Due Upon Receipt</strong></p>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </section>
+
+      <section class="invoice-section">
+        <h3>Trip Summary</h3>
+        <table class="summary-table">
+          <tr>
+            <td>
+              <strong>Vehicle:</strong>
+              <span id="trip-vehicle">Loading...</span>
+            </td>
+            <td>
+              <strong>Total KMs:</strong>
+              <span id="trip-total-kms">Loading...</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Trip Dates:</strong>
+              <span id="trip-dates">Loading...</span>
+            </td>
+            <td>
+              <strong>Total Duration:</strong>
+              <span id="trip-total-duration">Loading...</span>
+            </td>
+          </tr>
+        </table>
+      </section>
+
+      <section class="invoice-section">
+        <h3>Itemized Charges</h3>
+        <table class="charges-table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Details</th>
+              <th>Rate (₹)</th>
+              <th>Amount (₹)</th>
+            </tr>
+          </thead>
+          <tbody id="charges-tbody">
+            <tr>
+              <td colspan="4" style="text-align: center">Loading charges...</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td colspan="3" class="total-label">Grand Total</td>
+              <td class="total-amount" id="grand-total">₹ --.--</td>
+            </tr>
+          </tfoot>
+        </table>
+        <p class="amount-in-words" id="amount-in-words">Loading...</p>
+      </section>
+
+      <section class="invoice-footer">
+        <div class="footer-main-grid">
+          <div class="total-due-card">
+            <h3>Total Due</h3>
+            <div class="total-due-amount" id="total-due-amount-hero">
+              ₹ --.--
             </div>
-            <div class="brand-title">
-                <h1>SHRISH Travels</h1>
-                <p>Your Journey, Our Responsibility</p>
+            <p class="amount-in-words-hero" id="amount-in-words-hero">
+              Loading...
+            </p>
+          </div>
+
+          <div class="payment-methods-card">
+            <h3>Payment Methods</h3>
+            <div class="payment-options-grid">
+              <div class="pay-option" id="qr-option">
+                <div id="qr-code-canvas" class="qr-code"></div>
+                <div class="pay-option-text">
+                  <h4>Scan with any UPI app</h4>
+                  <p>Jeganraj Srinivasan</p>
+                </div>
+              </div>
+              <a href="#" class="btn btn-success" id="payment-link">
+                <i class="fas fa-mobile-alt"></i>
+                Pay ₹<span id="total-due-amount-button">--.--</span> with UPI
+              </a>
             </div>
-            <div class="brand-contact">
-                <p>+91 88834 51668</p>
-                <p>+91 91765 00207</p>
-                <p>info@shrishgroup.com</p>
-                <p>www.shrishgroup.com</p>
-            </div>
-        </header>
+          </div>
+        </div>
+        <div class="terms-section">
+          <h3>Terms & Conditions</h3>
+          <ol>
+            <li>
+              All charges (Kilometers & Time) are calculated on a "shed-to-shed"
+              basis.
+            </li>
+            <li>
+              Billing is based on 12-hour slabs. Any usage into the next slab
+              will be billed as a full slab.
+            </li>
+            <li>Toll, parking, and state permit charges are as per actuals.</li>
+            <li>Full payment is due upon receipt of this invoice.</li>
+            <li>Thank you for your business!</li>
+          </ol>
+        </div>
 
-        <section class="invoice-meta">
-            <table class="invoice-meta-table">
-                <tr>
-                    <td class="bill-to-cell">
-                        <h3>Bill To:</h3>
-                        <p id="guest-name">Loading...</p>
-                        <p id="guest-mobile">Loading...</p>
-                    </td>
+        <div class="branded-footer-content">
+          <div class="thank-you-note">
+            <p>Thank You for Choosing - <strong>SHRISH Travels!</strong></p>
+            <p><strong>Your Journey, Our Responsibility</strong></p>
+          </div>
 
-                    <td class="details-cell">
-                        <div class="details-list">
-                            <p><span id="invoice-id">Loading...</span></p>
-                            <p>Date: <span id="invoice-date">Loading...</span></p>
-                            <p>Updated: <span id="last-updated">Loading...</span></p>
-                            <p>Due: <strong>Due Upon Receipt</strong></p>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </section>
+          <div class="footer-address">
+            <p>SHRISH GROUP | Thiruvarur, Tamil Nadu, 610001</p>
+          </div>
 
-        <section class="invoice-section">
-            <h3>Trip Summary</h3>
-            <table class="summary-table">
-                <tr>
-                    <td><strong>Vehicle:</strong> <span id="trip-vehicle">Loading...</span></td>
-                    <td><strong>Total KMs:</strong> <span id="trip-total-kms">Loading...</span></td>
-                </tr>
-                <tr>
-                    <td><strong>Trip Dates:</strong> <span id="trip-dates">Loading...</span></td>
-                    <td><strong>Total Duration:</strong> <span id="trip-total-duration">Loading...</span></td>
-                </tr>
-            </table>
-        </section>
-
-        <section class="invoice-section">
-            <h3>Itemized Charges</h3>
-            <table class="charges-table">
-                <thead>
-                    <tr>
-                        <th>Description</th>
-                        <th>Details</th>
-                        <th>Rate (₹)</th>
-                        <th>Amount (₹)</th>
-                    </tr>
-                </thead>
-                <tbody id="charges-tbody">
-                    <tr>
-                        <td colspan="4" style="text-align: center;">Loading charges...</td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr class="total-row">
-                        <td colspan="3" class="total-label">Grand Total</td>
-                        <td class="total-amount" id="grand-total">₹ --.--</td>
-                    </tr>
-                </tfoot>
-            </table>
-            <p class="amount-in-words" id="amount-in-words">Loading...</p>
-        </section>
-
-        <section class="invoice-footer">
-            
-            <div class="footer-main-grid">
-                
-                <div class="total-due-card">
-                    <h3>Total Due</h3>
-                    <div class="total-due-amount" id="total-due-amount-hero">
-                        ₹ --.--
-                    </div>
-                    <p class="amount-in-words-hero" id="amount-in-words-hero">
-                        Loading...
-                    </p>
-                </div>
-                
-                <div class="payment-methods-card">
-                    <h3>Payment Methods</h3>
-                    <div class="payment-options-grid">
-                        <div class="pay-option" id="qr-option">
-                            <div id="qr-code-canvas" class="qr-code"></div>
-                            <div class="pay-option-text">
-                                <h4>Scan with any UPI app</h4>
-                                <p>Jeganraj Srinivasan</p>
-                            </div>
-                        </div>
-                        <a href="#" class="btn btn-success" id="payment-link">
-                            <i class="fas fa-mobile-alt"></i> 
-                            Pay ₹<span id="total-due-amount-button">--.--</span> with UPI
-                        </a>
-                    </div>
-                </div>
-
-            </div> <div class="terms-section">
-                <h3>Terms & Conditions</h3>
-                <ol>
-                    <li>All charges (Kilometers & Time) are calculated on a "shed-to-shed" basis.</li>
-                    <li>Billing is based on 12-hour slabs. Any usage into the next slab will be billed as a full slab.
-                    </li>
-                    <li>Toll, parking, and state permit charges are as per actuals.</li>
-                    <li>Full payment is due upon receipt of this invoice.</li>
-                    <li>Thank you for your business!</li>
-                </ol>
-            </div>
-
-            <div class="branded-footer-content">
-                <div class="thank-you-note">
-                    <p>Thank You for Choosing - <strong>SHRISH Travels!</strong></p>
-                    <p><strong>Your Journey, Our Responsibility</strong></p>
-                </div>
-                
-                <div class="footer-address">
-                    <p>SHRISH GROUP | Thiruvarur, Tamil Nadu, 610001</p>
-                </div>
-
-                <div class="footer-contact-links">
-                    <a href="tel:+918883451668">+91 88834 51668</a>
-                    <span>&bull;</span> <a href="mailto:info@shrishgroup.com">info@shrishgroup.com</a>
-                    <span>&bull;</span>
-                    <a href="https://www.shrishgroup.com" target="_blank">www.shrishgroup.com</a>
-                </div>
-            </div>
-
-        </section> <footer class="invoice-print-footer">
-            <p>This is a system-generated invoice. | Shrish Travels | www.shrishgroup.com</p>
-        </footer>
+          <div class="footer-contact-links">
+            <a href="tel:+918883451668">+91 88834 51668</a>
+            <span>&bull;</span>
+            <a href="mailto:info@shrishgroup.com">info@shrishgroup.com</a>
+            <span>&bull;</span>
+            <a href="https://www.shrishgroup.com" target="_blank"
+              >www.shrishgroup.com</a
+            >
+          </div>
+        </div>
+      </section>
+      <footer class="invoice-print-footer">
+        <p>
+          This is a system-generated invoice. | Shrish Travels |
+          www.shrishgroup.com
+        </p>
+      </footer>
     </div>
 
     <div class="invoice-actions no-print">
-        <button class="btn btn-primary" onclick="window.print()">
-            <i class="fas fa-print"></i> Print / Save as PDF
-        </button>
-        <button class="btn" onclick="window.close()">
-            <i class="fas fa-times"></i> Close
-        </button>
+      <button class="btn btn-primary" onclick="window.print()">
+        <i class="fas fa-print"></i> Print / Save as PDF
+      </button>
+      <button class="btn" onclick="window.close()">
+        <i class="fas fa-times"></i> Close
+      </button>
     </div>
 
     <script src="/assets/js/toWords.js"></script>
     <script src="/assets/js/view-invoice.js"></script>
-</body>
+  </body>
 </html>

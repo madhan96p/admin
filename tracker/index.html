@@ -1,150 +1,179 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>Financial Dashboard - Shrish Admin</title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon/favicon-96x96.png">
-    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon/favicon.svg">
-    <link rel="icon" type="image/x-icon" href="/assets/images/favicon/favicon.ico">
-    <link rel="manifest" href="/assets/images/favicon/site.webmanifest">
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/assets/images/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="/assets/images/favicon/favicon-96x96.png"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/assets/images/favicon/favicon.svg"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="/assets/images/favicon/favicon.ico"
+    />
+    <link rel="manifest" href="/assets/images/favicon/site.webmanifest" />
     <meta property="og:title" content="Shrish Admin - Financial Dashboard" />
     <meta property="og:type" content="website" />
-    <meta property="og:description" content="Secure admin panel for managing Shrish Group finances, duty slips, and invoices." />
-    <meta property="og:image" content="https://admin.shrishgroup.com/assets/images/logo.webp" /> 
+    <meta
+      property="og:description"
+      content="Secure admin panel for managing Shrish Group finances, duty slips, and invoices."
+    />
+    <meta
+      property="og:image"
+      content="https://admin.shrishgroup.com/assets/images/logo.webp"
+    />
     <meta name="twitter:card" content="summary" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="/assets/css/admin.css">
-    <link rel="stylesheet" href="tracker.css"> 
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/assets/css/admin.css" />
+    <link rel="stylesheet" href="tracker.css" />
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <div id="admin-sidebar"></div>
 
     <div class="admin-main-content">
-        
-        <div id="admin-header"></div>
+      <div id="admin-header"></div>
 
-        <main class="page-content">
-            
-            <div class="page-title-bar">
-                <h1>Financial Dashboard</h1>
-                
-                <div class="date-filter-group">
-                    <button data-range="1d">1D</button>
-                    <button data-range="7d" class="active">1W</button>
-                    <button data-range="30d">1M</button>
-                    <button data-range="365d">1Y</button>
-                    <button data-range="all">All</button>
-                </div>
-                <a href="add-entry.html" class="btn-primary" style="text-decoration: none;">
-                    <i class="fas fa-plus"></i> Add Transaction
-                </a>
+      <main class="page-content">
+        <div class="page-title-bar">
+          <h1>Financial Dashboard</h1>
+
+          <div class="date-filter-group">
+            <button data-range="1d">1D</button>
+            <button data-range="7d" class="active">1W</button>
+            <button data-range="30d">1M</button>
+            <button data-range="365d">1Y</button>
+            <button data-range="all">All</button>
+          </div>
+          <a
+            href="add-entry.html"
+            class="btn-primary"
+            style="text-decoration: none"
+          >
+            <i class="fas fa-plus"></i> Add Transaction
+          </a>
+        </div>
+
+        <div class="stat-cards-container">
+          <div class="stat-card stat-success">
+            <i class="fas fa-landmark"></i>
+            <div class="stat-info">
+              <h3 id="company-profit">₹0.00</h3>
+              <p>Company Net Profit</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <i class="fas fa-arrow-down"></i>
+            <div class="stat-info">
+              <h3 id="company-income">₹0.00</h3>
+              <p>Company Income (Credit)</p>
+            </div>
+          </div>
+
+          <div class="stat-card stat-critical">
+            <i class="fas fa-arrow-up"></i>
+            <div class="stat-info">
+              <h3 id="company-expense">₹0.00</h3>
+              <p>Company Expense (Debit)</p>
+            </div>
+          </div>
+
+          <div class="stat-card stat-secondary">
+            <i class="fas fa-user-shield"></i>
+            <div class="stat-info">
+              <h3 id="personal-expense">₹0.00</h3>
+              <p>Personal Expense (Debit)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-card" style="margin-top: 2rem">
+          <div class="chart-header">
+            <h3>Company Performance</h3>
+
+            <div id="bar-chart-grouping" class="chart-toggle-group">
+              <button data-group="daily">Daily</button>
+              <button data-group="monthly" class="active">Monthly</button>
+              <button data-group="yearly">Yearly</button>
             </div>
 
-            <div class="stat-cards-container">
-                <div class="stat-card stat-success">
-                    <i class="fas fa-landmark"></i>
-                    <div class="stat-info">
-                        <h3 id="company-profit">₹0.00</h3>
-                        <p>Company Net Profit</p>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <i class="fas fa-arrow-down"></i>
-                    <div class="stat-info">
-                        <h3 id="company-income">₹0.00</h3>
-                        <p>Company Income (Credit)</p>
-                    </div>
-                </div>
-
-                <div class="stat-card stat-critical">
-                    <i class="fas fa-arrow-up"></i>
-                    <div class="stat-info">
-                        <h3 id="company-expense">₹0.00</h3>
-                        <p>Company Expense (Debit)</p>
-                    </div>
-                </div>
-
-                <div class="stat-card stat-secondary">
-                    <i class="fas fa-user-shield"></i>
-                    <div class="stat-info">
-                        <h3 id="personal-expense">₹0.00</h3>
-                        <p>Personal Expense (Debit)</p>
-                    </div>
-                </div>
+            <div id="bar-chart-type" class="chart-toggle-group">
+              <button data-type="bar" class="active">
+                <i class="fas fa-chart-bar"></i>
+              </button>
+              <button data-type="line">
+                <i class="fas fa-chart-line"></i>
+              </button>
             </div>
+          </div>
 
-            <div class="content-card" style="margin-top: 2rem;">
-                
-                <div class="chart-header">
-                    <h3>Company Performance</h3>
-                    
-                    <div id="bar-chart-grouping" class="chart-toggle-group">
-                        <button data-group="daily">Daily</button>
-                        <button data-group="monthly" class="active">Monthly</button>
-                        <button data-group="yearly">Yearly</button>
-                    </div>
-                    
-                    <div id="bar-chart-type" class="chart-toggle-group">
-                        <button data-type="bar" class="active"><i class="fas fa-chart-bar"></i></button>
-                        <button data-type="line"><i class="fas fa-chart-line"></i></button>
-                    </div>
-                </div>
+          <canvas id="company-bar-chart"></canvas>
+        </div>
+        <div class="tracker-chart-grid">
+          <div class="content-card">
+            <h3>Company Expenses</h3>
+            <div class="chart-wrapper">
+              <canvas id="company-chart"></canvas>
+            </div>
+          </div>
+          <div class="content-card">
+            <h3>Personal Expenses</h3>
+            <div class="chart-wrapper">
+              <canvas id="personal-chart"></canvas>
+            </div>
+          </div>
+        </div>
 
-                <canvas id="company-bar-chart"></canvas>
-            </div>
-            <div class="tracker-chart-grid">
-                <div class="content-card">
-                    <h3>Company Expenses</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="company-chart"></canvas>
-                    </div>
-                </div>
-                <div class="content-card">
-                    <h3>Personal Expenses</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="personal-chart"></canvas>
-                    </div>
-                </div>
-            </div>
+        <div class="content-card" style="margin-top: 2rem">
+          <h3>Recent Transactions</h3>
+          <table class="tracker-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th class="mobile-hide">Account</th>
+                <th>Category</th>
+                <th class="mobile-hide">Particulars</th>
+                <th style="text-align: right">Amount</th>
+              </tr>
+            </thead>
+            <tbody id="recent-transactions-body">
+              <tr>
+                <td colspan="5" style="text-align: center">
+                  Loading transactions...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
 
-            <div class="content-card" style="margin-top: 2rem;">
-                <h3>Recent Transactions</h3>
-                <table class="tracker-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th class="mobile-hide">Account</th>
-                            <th>Category</th>
-                            <th class="mobile-hide">Particulars</th>
-                            <th style="text-align: right;">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody id="recent-transactions-body">
-                        <tr>
-                            <td colspan="5" style="text-align: center;">Loading transactions...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            </main>
-        
-        <div id="admin-footer"></div>
+      <div id="admin-footer"></div>
     </div>
 
     <script src="/assets/js/common.js"></script>
-    
-    <script src="tracker-dashboard.js"></script>
-</body>
 
+    <script src="tracker-dashboard.js"></script>
+  </body>
 </html>

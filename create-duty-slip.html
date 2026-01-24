@@ -1,192 +1,345 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>Create Duty Slip | Shrish Admin</title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon/favicon-96x96.png">
-    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon/favicon.svg">
-    <link rel="icon" type="image/x-icon" href="/assets/images/favicon/favicon.ico">
-    <link rel="manifest" href="/assets/images/favicon/site.webmanifest">
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/assets/images/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="/assets/images/favicon/favicon-96x96.png"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/assets/images/favicon/favicon.svg"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="/assets/images/favicon/favicon.ico"
+    />
+    <link rel="manifest" href="/assets/images/favicon/site.webmanifest" />
     <meta property="og:title" content="Create Duty Slip | Shrish Admin" />
     <meta property="og:type" content="website" />
-    <meta property="og:description" content="Admin panel for creating a new Shrish Travels duty slip." />
-    <meta property="og:image" content="https://admin.shrishgroup.com/assets/images/logo.webp" /> 
+    <meta
+      property="og:description"
+      content="Admin panel for creating a new Shrish Travels duty slip."
+    />
+    <meta
+      property="og:image"
+      content="https://admin.shrishgroup.com/assets/images/logo.webp"
+    />
     <meta name="twitter:card" content="summary" />
-    <link rel="stylesheet" href="/assets/css/common.css">
-    <link rel="stylesheet" href="/assets/css/admin.css">
-    <link rel="stylesheet" href="/assets/css/duty_slip_form.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
+    <link rel="stylesheet" href="/assets/css/common.css" />
+    <link rel="stylesheet" href="/assets/css/admin.css" />
+    <link rel="stylesheet" href="/assets/css/duty_slip_form.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
 
-<body>
-
+  <body>
     <script src="/assets/js/auth.js"></script>
 
     <div class="admin-layout">
-        <div id="admin-sidebar"></div>
+      <div id="admin-sidebar"></div>
 
-        <main class="admin-main-content">
-            <div id="admin-header"></div>
+      <main class="admin-main-content">
+        <div id="admin-header"></div>
 
-            <div class="page-content">
+        <div class="page-content">
+          <form id="dutySlipForm">
+            <div class="duty-slip-screen">
+              <header class="header">
+                <div class="company-info">
+                  <img
+                    src="https://admin.shrishgroup.com/assets/images/logo.webp"
+                    alt="Shrish Travels Logo"
+                    class="logo-screen"
+                  />
+                </div>
+                <div class="ds-info">
+                  <div class="form-group">
+                    <input type="text" id="ds-no" readonly />
+                    <label for="ds-no">D.S No (Auto)</label>
+                  </div>
+                  <div class="form-group">
+                    <input type="date" id="date" />
+                    <label for="date">Date</label>
+                  </div>
+                </div>
+              </header>
 
+              <h3 class="section-header">Guest & Booking Details</h3>
+              <div class="main-body-table">
+                <div class="left-details">
+                  <div class="form-group">
+                    <input type="text" id="guest-name" placeholder=" " /><label
+                      for="guest-name"
+                      >Guest Name</label
+                    >
+                  </div>
+                  <div class="form-group">
+                    <input type="tel" id="guest-mobile" placeholder=" " /><label
+                      for="guest-mobile"
+                      >Guest Mobile No</label
+                    >
+                  </div>
+                  <div class="form-group">
+                    <input type="text" id="booked-by" placeholder=" " /><label
+                      for="booked-by"
+                      >Booked By</label
+                    >
+                  </div>
+                  <div class="form-group">
+                    <input type="time" id="reporting-time" /><label
+                      for="rep-time"
+                      >Reporting Time</label
+                    >
+                  </div>
+                  <div class="form-group">
+                    <textarea
+                      id="reporting-address"
+                      rows="2"
+                      placeholder=" "
+                    ></textarea
+                    ><label for="reporting-address">Reporting Address</label>
+                  </div>
+                  <div class="form-group">
+                    <textarea
+                      id="spl-instruction"
+                      rows="2"
+                      placeholder=" "
+                    ></textarea
+                    ><label for="spl-instruction">Spl. Instruction</label>
+                  </div>
+                </div>
+                <div class="right-details">
+                  <div class="form-group">
+                    <input type="text" id="booking-id" placeholder=" " /><label
+                      for="booking-id"
+                      >Booking ID</label
+                    >
+                  </div>
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      id="organisation"
+                      placeholder=" "
+                    /><label for="organisation">Organisation</label>
+                  </div>
+                  <hr />
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      id="vehicle-type"
+                      placeholder=" "
+                    /><label for="vehicle-type">Vehicle Type</label>
+                  </div>
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      id="vehicle-no"
+                      placeholder=" "
+                      style="text-transform: uppercase"
+                    /><label for="vehicle-no">Vehicle No</label>
+                  </div>
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      id="driver-name"
+                      list="driver-list"
+                      placeholder=" "
+                    /><label for="driver-name">Driver Name</label
+                    ><datalist id="driver-list"></datalist>
+                  </div>
+                  <div class="form-group">
+                    <input
+                      type="tel"
+                      id="driver-mobile"
+                      placeholder=" "
+                    /><label for="driver-mobile">Driver Mobile</label>
+                  </div>
+                  <div class="form-group">
+                    <textarea
+                      id="assignment"
+                      rows="2"
+                      placeholder=" "
+                    ></textarea
+                    ><label for="assignment">Assignment</label>
+                  </div>
+                  <div class="form-group">
+                    <input type="text" id="routing" placeholder=" " /><label
+                      for="routing"
+                      >Routing</label
+                    >
+                  </div>
+                </div>
+              </div>
 
-                <form id="dutySlipForm">
-                    <div class="duty-slip-screen">
-                        <header class="header">
-                            <div class="company-info">
-                                <img src="https://admin.shrishgroup.com/assets/images/logo.webp"
-                                    alt="Shrish Travels Logo" class="logo-screen">
-                            </div>
-                            <div class="ds-info">
-                                <div class="form-group">
-                                    <input type="text" id="ds-no" readonly>
-                                    <label for="ds-no">D.S No (Auto)</label>
-                                </div>
-                                <div class="form-group">
-                                    <input type="date" id="date">
-                                    <label for="date">Date</label>
-                                </div>
-                            </div>
-                        </header>
+              <h3 class="section-header">
+                Usage & Meter Reading (Shed to Shed)
+              </h3>
+              <div class="usage-table">
+                <div class="usage-row">
+                  <div class="form-group">
+                    <input type="date" id="date-out" /><label for="date-out"
+                      >Date Out</label
+                    >
+                  </div>
+                  <div class="form-group">
+                    <input type="date" id="date-in" /><label for="date-in"
+                      >Date In</label
+                    >
+                  </div>
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      id="total-days"
+                      placeholder="e.g., 2"
+                    /><label for="total-days">No. of Days</label>
+                  </div>
+                </div>
+                <div class="usage-row">
+                  <div class="form-group">
+                    <input type="time" id="driver-time-out" /><label
+                      for="driver-time-out"
+                      >Op. Time</label
+                    >
+                  </div>
+                  <div class="form-group">
+                    <input type="time" id="driver-time-in" /><label
+                      for="driver-time-in"
+                      >Cl. Time</label
+                    >
+                  </div>
+                  <div class="form-group">
+                    <input type="text" id="driver-total-hrs" readonly /><label
+                      for="driver-total-hrs"
+                      >Total Hrs</label
+                    >
+                  </div>
+                </div>
+                <div class="usage-row">
+                  <div class="form-group">
+                    <input type="number" id="driver-km-out" min="0" /><label
+                      for="driver-km-out"
+                      >Op. Km</label
+                    >
+                  </div>
+                  <div class="form-group">
+                    <input type="number" id="driver-km-in" min="0" /><label
+                      for="driver-km-in"
+                      >Cl. Km</label
+                    >
+                  </div>
+                  <div class="form-group">
+                    <input type="text" id="driver-total-kms" readonly /><label
+                      for="driver-total-kms"
+                      >Total Kms</label
+                    >
+                  </div>
+                </div>
+              </div>
 
-                        <h3 class="section-header">Guest & Booking Details</h3>
-                        <div class="main-body-table">
-                            <div class="left-details">
-                                <div class="form-group"><input type="text" id="guest-name" placeholder=" "><label
-                                        for="guest-name">Guest Name</label></div>
-                                <div class="form-group"><input type="tel" id="guest-mobile" placeholder=" "><label
-                                        for="guest-mobile">Guest Mobile No</label></div>
-                                <div class="form-group"><input type="text" id="booked-by" placeholder=" "><label
-                                        for="booked-by">Booked By</label></div>
-                                <div class="form-group"><input type="time" id="reporting-time"><label
-                                        for="rep-time">Reporting
-                                        Time</label></div>
-                                <div class="form-group"><textarea id="reporting-address" rows="2"
-                                        placeholder=" "></textarea><label for="reporting-address">Reporting
-                                        Address</label></div>
-                                <div class="form-group"><textarea id="spl-instruction" rows="2"
-                                        placeholder=" "></textarea><label for="spl-instruction">Spl. Instruction</label>
-                                </div>
-                            </div>
-                            <div class="right-details">
-                                <div class="form-group"><input type="text" id="booking-id" placeholder=" "><label
-                                        for="booking-id">Booking ID</label></div>
-                                <div class="form-group"><input type="text" id="organisation" placeholder=" "><label
-                                        for="organisation">Organisation</label></div>
-                                <hr>
-                                <div class="form-group"><input type="text" id="vehicle-type" placeholder=" "><label
-                                        for="vehicle-type">Vehicle Type</label></div>
-                                <div class="form-group"><input type="text" id="vehicle-no" placeholder=" "
-                                        style="text-transform: uppercase;"><label for="vehicle-no">Vehicle No</label>
-                                </div>
-                                <div class="form-group"><input type="text" id="driver-name" list="driver-list"
-                                        placeholder=" "><label for="driver-name">Driver Name</label><datalist
-                                        id="driver-list"></datalist></div>
-                                <div class="form-group"><input type="tel" id="driver-mobile" placeholder=" "><label
-                                        for="driver-mobile">Driver Mobile</label></div>
-                                <div class="form-group"><textarea id="assignment" rows="2"
-                                        placeholder=" "></textarea><label for="assignment">Assignment</label></div>
-                                <div class="form-group"><input type="text" id="routing" placeholder=" "><label
-                                        for="routing">Routing</label></div>
-                            </div>
-                        </div>
+              <h3 class="section-header">Customer Pickup & Drop Details</h3>
+              <div class="usage-table customer-table">
+                <div class="usage-row">
+                  <div class="form-group">
+                    <input type="time" id="time-out" /><label for="time-out"
+                      >Customer Op.Time</label
+                    >
+                  </div>
+                  <div class="form-group">
+                    <input type="time" id="time-in" /><label for="time-in"
+                      >Customer Cl.Time</label
+                    >
+                  </div>
+                  <div class="form-group">
+                    <input type="number" id="km-out" min="0" /><label
+                      for="km-out"
+                      >Customer Op.Km</label
+                    >
+                  </div>
+                  <div class="form-group">
+                    <input type="number" id="km-in" min="0" /><label for="km-in"
+                      >Customer Cl.Km</label
+                    >
+                  </div>
+                </div>
+              </div>
 
-                        <h3 class="section-header">Usage & Meter Reading (Shed to Shed)</h3>
-                        <div class="usage-table">
-                            <div class="usage-row">
-                                <div class="form-group"><input type="date" id="date-out"><label for="date-out">Date
-                                        Out</label></div>
-                                <div class="form-group"><input type="date" id="date-in"><label for="date-in">Date
-                                        In</label></div>
-                                <div class="form-group"><input type="text" id="total-days" placeholder="e.g., 2"><label
-                                        for="total-days">No. of Days</label></div>
-                            </div>
-                            <div class="usage-row">
-                                <div class="form-group"><input type="time" id="driver-time-out"><label
-                                        for="driver-time-out">Op. Time</label></div>
-                                <div class="form-group"><input type="time" id="driver-time-in"><label
-                                        for="driver-time-in">Cl. Time</label></div>
-                                <div class="form-group"><input type="text" id="driver-total-hrs" readonly><label
-                                        for="driver-total-hrs">Total Hrs</label></div>
-                            </div>
-                            <div class="usage-row">
-                                <div class="form-group"><input type="number" id="driver-km-out" min="0"><label
-                                        for="driver-km-out">Op. Km</label></div>
-                                <div class="form-group"><input type="number" id="driver-km-in" min="0"><label
-                                        for="driver-km-in">Cl. Km</label></div>
-                                <div class="form-group"><input type="text" id="driver-total-kms" readonly><label
-                                        for="driver-total-kms">Total Kms</label></div>
-                            </div>
-                        </div>
-
-                        <h3 class="section-header">Customer Pickup & Drop Details</h3>
-                        <div class="usage-table customer-table">
-                            <div class="usage-row">
-                                <div class="form-group"><input type="time" id="time-out"><label for="time-out">Customer
-                                        Op.Time</label></div>
-                                <div class="form-group"><input type="time" id="time-in"><label for="time-in">Customer
-                                        Cl.Time</label></div>
-                                <div class="form-group"><input type="number" id="km-out" min="0"><label
-                                        for="km-out">Customer Op.Km</label></div>
-                                <div class="form-group"><input type="number" id="km-in" min="0"><label
-                                        for="km-in">Customer Cl.Km</label></div>
-                            </div>
-                        </div>
-
-                        <h3 class="section-header">Signatures</h3>
-                        <footer class="footer">
-                            <div class="signature-area">
-                                Driver Signature
-                                <div class="signature-box" id="auth-signature-box">
-                                    <span class="placeholder" id="auth-sig-placeholder">
-                                        Click to Sign
-                                        <br>
-                                        <small>(For Shrish Travels)</small>
-                                    </span>
-                                    <img id="auth-signature-link" class="signature-image" src="" alt="Driver Signature">
-                                </div>
-                            </div>
-                            <div class="signature-area">
-                                Guest Signature
-                                <div class="signature-box" id="guest-signature-box"><span id="guest-sig-placeholder">Tap
-                                        to sign</span><img id="guest-signature-link" class="signature-image"
-                                        alt="Guest Signature"></div>
-                            </div>
-                        </footer>
-                    </div>
-                </form>
+              <h3 class="section-header">Signatures</h3>
+              <footer class="footer">
+                <div class="signature-area">
+                  Driver Signature
+                  <div class="signature-box" id="auth-signature-box">
+                    <span class="placeholder" id="auth-sig-placeholder">
+                      Click to Sign
+                      <br />
+                      <small>(For Shrish Travels)</small>
+                    </span>
+                    <img
+                      id="auth-signature-link"
+                      class="signature-image"
+                      src=""
+                      alt="Driver Signature"
+                    />
+                  </div>
+                </div>
+                <div class="signature-area">
+                  Guest Signature
+                  <div class="signature-box" id="guest-signature-box">
+                    <span id="guest-sig-placeholder">Tap to sign</span
+                    ><img
+                      id="guest-signature-link"
+                      class="signature-image"
+                      alt="Guest Signature"
+                    />
+                  </div>
+                </div>
+              </footer>
             </div>
+          </form>
+        </div>
 
-            <div id="admin-footer"></div>
-        </main>
+        <div id="admin-footer"></div>
+      </main>
     </div>
 
     <div class="action-buttons-container-simplified">
-        <button type="button" class="action-button-single" id="save-slip-button">
-            <span class="icon"><i class="fas fa-save"></i></span>
-            <span class="text">Save Slip</span>
-        </button>
+      <button type="button" class="action-button-single" id="save-slip-button">
+        <span class="icon"><i class="fas fa-save"></i></span>
+        <span class="text">Save Slip</span>
+      </button>
     </div>
     <div id="signature-modal">
-        <div id="signature-modal-content">
-            <p>Please sign in the box below</p>
-            <canvas id="signature-canvas"></canvas>
-            <div class="modal-buttons">
-                <button class="btn-clear" onclick="clearSignature()">Clear</button>
-                <button class="btn-cancel" onclick="closeSignaturePad()">Cancel</button>
-                <button class="btn-save" onclick="saveSignature()">Save Signature</button>
-            </div>
+      <div id="signature-modal-content">
+        <p>Please sign in the box below</p>
+        <canvas id="signature-canvas"></canvas>
+        <div class="modal-buttons">
+          <button class="btn-clear" onclick="clearSignature()">Clear</button>
+          <button class="btn-cancel" onclick="closeSignaturePad()">
+            Cancel
+          </button>
+          <button class="btn-save" onclick="saveSignature()">
+            Save Signature
+          </button>
         </div>
+      </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     <script src="/assets/js/common.js"></script>
     <script src="/assets/js/create-slip.js"></script>
-</body>
-
+  </body>
 </html>
