@@ -202,12 +202,14 @@ function generateEmailBase(title, contentHtml) {
 }
 
 /**
- * Generates a 6-character random alphanumeric ID.
+ * Generates a more unique, non-guessable public ID to minimize collision risk.
  * Not cryptographically secure, but sufficient for a unique, non-guessable URL.
- * @returns {string} A 6-character random ID (e.g., "ax9t4b").
+ * @returns {string} A ~13-character random ID (e.g., "k1m92babc123xyz").
  */
 function generatePublicId() {
-  return Math.random().toString(36).substring(2, 8);
+  const timePart = Date.now().toString(36).slice(-6); // Last 6 chars of timestamp in base36
+  const randomPart = Math.random().toString(36).substring(2, 9); // 7 random base36 chars
+  return `${timePart}${randomPart}`;
 }
 
 const resend = new Resend(process.env.RESEND_API_KEY);
