@@ -65,13 +65,33 @@ document.addEventListener("DOMContentLoaded", () => {
   
   function parseDdmmyyyy(dateString) {
       if (!dateString || typeof dateString !== 'string') return null;
-      const parts = dateString.split('/');
+      
+      // Trim whitespace and handle potential date-time values from sheets
+      const trimmedDateString = dateString.split(' ')[0].trim();
+
+      const parts = trimmedDateString.split('/');
       if (parts.length === 3) {
-          const date = new Date(parts[2], parts[1] - 1, parts[0]);
-          if (!isNaN(date.getTime())) return date;
+          const day = parseInt(parts[0], 10);
+          const month = parseInt(parts[1], 10);
+          const year = parseInt(parts[2], 10);
+          
+          // Strict validation for DD/MM/YYYY format
+          if (day > 0 && day <= 31 && month > 0 && month <= 12 && year > 1990) {
+              const date = new Date(year, month - 1, day);
+              // Final check to ensure date is valid and wasn't rolled over by constructor (e.g., 31/04/2024)
+              if (date && date.getFullYear() === year && date.getMonth() === month - 1) {
+                  return date;
+              }
+          }
       }
-      const directDate = new Date(dateString);
-      if (!isNaN(directDate.getTime())) return directDate;
+      
+      // Fallback for other formats like YYYY-MM-DD or native JS formats
+      const directDate = new Date(trimmedDateString);
+      if (!isNaN(directDate.getTime())) {
+          return directDate;
+      }
+      
+      console.warn(`Could not parse date: "${dateString}"`);
       return null;
   }
   
@@ -96,8 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
       activeTariff = null;
       tripCategory = null;
       currentCalculations = {};
-      
-      // Don't reset isManualFlow here, it's set by the calling function
+      isManualFlow = false; 
 
       // Reset UI inputs in Step 2 & 3
       const fieldsToClear = [
@@ -226,7 +245,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateBillingSlabs() {
     const totalHours = parseFloat(elements.calcTotalHours.value) || 0;
-    const billingSlabs = totalHours > 0 ? Math.ceil(totalHours / 12) : 0;
+    const gracePeriod = 0.25; // 15-minute grace period
+    let billingSlabs = 0;
+    if (totalHours > 0) {
+        billingSlabs = Math.ceil((totalHours - gracePeriod) / 12);
+        if (billingSlabs <= 0) {
+            billingSlabs = 1;
+        }
+    }
     elements.calcBillingSlabs.value = billingSlabs;
     updateRateContext();
   }
@@ -261,16 +287,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const baseRate = parseFloat(elements.baseRate.value) || 0;
         const includedKms = parseFloat(elements.includedKms.value) || 0;
         const extraKmRate = parseFloat(elements.extraKmRate.value) || 0;
-        const battaRate = parseFloat(elements.battaRate.value) || 0;
+        const driverAllowance = parseFloat(elements.battaRate.value) || 0;
         const totalIncludedKms = billingSlabs * includedKms;
         const extraKms = totalKms > totalIncludedKms ? totalKms - totalIncludedKms : 0;
         packageCost = billingSlabs * baseRate;
         extraKmCost = extraKms * extraKmRate;
-        battaCost = billingSlabs * battaRate;
+        battaCost = billingSlabs * driverAllowance;
         elements.baseRateLabel.innerHTML = `Base Rate per Slab (₹) <span class="calc-context">(${billingSlabs} Slabs * ${formatCurrency(baseRate)} = ${formatCurrency(packageCost)})</span>`;
         elements.includedKmsLabel.innerHTML = `Included KMs per Slab <span class="calc-context">(${billingSlabs} Slabs * ${includedKms} KMs = ${totalIncludedKms} KMs)</span>`;
         elements.extraKmRateLabel.innerHTML = `Extra KM Rate (₹) <span class="calc-context">(${extraKms.toFixed(1)} KMs * ${formatCurrency(extraKmRate)} = ${formatCurrency(extraKmCost)})</span>`;
-        elements.battaRateLabel.innerHTML = `Driver Batta per Slab (₹) <span class="calc-context">(${billingSlabs} Slabs * ${formatCurrency(battaRate)} = ${formatCurrency(battaCost)})</span>`;
+        elements.battaRateLabel.innerHTML = `Driver Allowance per Slab (₹) <span class="calc-context">(${billingSlabs} Slabs * ${formatCurrency(driverAllowance)} = ${formatCurrency(battaCost)})</span>`;
     }
     const totalExpenses = tolls + permits;
     grandTotal = packageCost + extraKmCost + battaCost + totalExpenses;
