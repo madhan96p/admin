@@ -1,4 +1,26 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // --- Start of added functions ---
+  function formatCurrency(amount) {
+    if (typeof amount !== "number") {
+      amount = parseFloat(amount) || 0;
+    }
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+    }).format(amount);
+  }
+
+  function formatCurrencyWithoutSymbol(amount) {
+    if (typeof amount !== 'number') {
+      amount = parseFloat(amount) || 0;
+    }
+    return new Intl.NumberFormat('en-IN', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount);
+  }
+  // --- End of added functions ---
+
   // --- 1. GET DATA FROM URL ---
   const params = new URLSearchParams(window.location.search);
   const publicId = params.get("id"); // This is now the Public_ID (e.g., "ax9T4b")
@@ -11,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- 2. HELPER FUNCTIONS ---
   const setText = (id, text) => {
     const el = document.getElementById(id);
-    if (el) {
+    if (el) { 
       el.textContent = text || "-"; // Use '-' as a fallback
     }
   };

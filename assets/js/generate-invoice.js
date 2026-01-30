@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
   function formatCurrency(amount) {
       return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount || 0);
-  }
+  } 
 
   // --- 4. STATE & UI RESET ---
   function resetStateForNewOperation() {
