@@ -25,10 +25,19 @@ document.addEventListener("DOMContentLoaded", () => {
     timeInContext: document.getElementById("time-in-context"),
     totalHrsContext: document.getElementById("total-hrs-context"),
 
-    baseRateLabel: document.querySelector('label[for="baseRate"]'),
-    includedKmsLabel: document.querySelector('label[for="includedKms"]'),
-    extraKmRateLabel: document.querySelector('label[for="extraKmRate"]'),
-    battaRateLabel: document.querySelector('label[for="battaRate"]'),
+    baseRateSlabs: document.getElementById("baseRateSlabs"),
+    baseRateValue: document.getElementById("baseRateValue"),
+    baseRateTotal: document.getElementById("baseRateTotal"),
+    includedKmsSlabs: document.getElementById("includedKmsSlabs"),
+    includedKmsValue: document.getElementById("includedKmsValue"),
+    includedKmsTotal: document.getElementById("includedKmsTotal"),
+    extraKmCalcResult: document.getElementById("extraKmCalcResult"),
+    extraKmRateValue: document.getElementById("extraKmRateValue"),
+    extraKmCostTotal: document.getElementById("extraKmCostTotal"),
+    battaRateSlabs: document.getElementById("battaRateSlabs"),
+    battaRateValue: document.getElementById("battaRateValue"),
+    battaRateTotal: document.getElementById("battaRateTotal"),
+
     baseRate: document.getElementById("baseRate"),
     includedKms: document.getElementById("includedKms"),
     extraKmRate: document.getElementById("extraKmRate"),
@@ -274,10 +283,23 @@ document.addEventListener("DOMContentLoaded", () => {
         packageCost = finalChargeableKms * ratePerKm;
         extraKmCost = 0; 
         battaCost = totalDays * driverBata;
-        elements.baseRateLabel.innerHTML = `Rate per KM (₹) <span class="calc-context">(${finalChargeableKms.toFixed(1)} KMs * ${formatCurrency(ratePerKm)} = ${formatCurrency(packageCost)})</span>`;
-        elements.includedKmsLabel.innerHTML = `Min KMs / Day <span class="calc-context">(${totalDays} Days * ${minKmPerDay} KMs = ${minChargeableKms} KMs)</span>`;
-        elements.extraKmRateLabel.innerHTML = `Extra KM Rate (₹) <span class="calc-context">(Included in Rate per KM)</span>`;
-        elements.battaRateLabel.innerHTML = `Driver Batta / Day (₹) <span class="calc-context">(${totalDays} Days * ${formatCurrency(driverBata)} = ${formatCurrency(battaCost)})</span>`;
+
+        elements.baseRateSlabs.textContent = finalChargeableKms.toFixed(1);
+        elements.baseRateValue.textContent = formatCurrency(ratePerKm);
+        elements.baseRateTotal.textContent = formatCurrency(packageCost);
+        
+        elements.includedKmsSlabs.textContent = totalDays;
+        elements.includedKmsValue.textContent = minKmPerDay;
+        elements.includedKmsTotal.textContent = minChargeableKms;
+
+        elements.extraKmCalcResult.textContent = "0";
+        elements.extraKmRateValue.textContent = "0";
+        elements.extraKmCostTotal.textContent = formatCurrency(0);
+
+        elements.battaRateSlabs.textContent = totalDays;
+        elements.battaRateValue.textContent = formatCurrency(driverBata);
+        elements.battaRateTotal.textContent = formatCurrency(battaCost);
+
     } else {
         const billingSlabs = parseInt(elements.calcBillingSlabs.value) || 0;
         const baseRate = parseFloat(elements.baseRate.value) || 0;
@@ -286,13 +308,26 @@ document.addEventListener("DOMContentLoaded", () => {
         const driverAllowance = parseFloat(elements.battaRate.value) || 0;
         const totalIncludedKms = billingSlabs * includedKms;
         const extraKms = totalKms > totalIncludedKms ? totalKms - totalIncludedKms : 0;
+
         packageCost = billingSlabs * baseRate;
         extraKmCost = extraKms * extraKmRate;
         battaCost = billingSlabs * driverAllowance;
-        elements.baseRateLabel.innerHTML = `Base Rate per Slab (₹) <span class="calc-context">(${billingSlabs} Slabs * ${formatCurrency(baseRate)} = ${formatCurrency(packageCost)})</span>`;
-        elements.includedKmsLabel.innerHTML = `Included KMs per Slab <span class="calc-context">(${billingSlabs} Slabs * ${includedKms} KMs = ${totalIncludedKms} KMs)</span>`;
-        elements.extraKmRateLabel.innerHTML = `Extra KM Rate (₹) <span class="calc-context">(${extraKms.toFixed(1)} KMs * ${formatCurrency(extraKmRate)} = ${formatCurrency(extraKmCost)})</span>`;
-        elements.battaRateLabel.innerHTML = `Driver Allowance per Slab (₹) <span class="calc-context">(${billingSlabs} Slabs * ${formatCurrency(driverAllowance)} = ${formatCurrency(battaCost)})</span>`;
+
+        elements.baseRateSlabs.textContent = billingSlabs;
+        elements.baseRateValue.textContent = formatCurrency(baseRate);
+        elements.baseRateTotal.textContent = formatCurrency(packageCost);
+
+        elements.includedKmsSlabs.textContent = billingSlabs;
+        elements.includedKmsValue.textContent = includedKms;
+        elements.includedKmsTotal.textContent = totalIncludedKms;
+
+        elements.extraKmCalcResult.textContent = extraKms.toFixed(1);
+        elements.extraKmRateValue.textContent = formatCurrency(extraKmRate);
+        elements.extraKmCostTotal.textContent = formatCurrency(extraKmCost);
+
+        elements.battaRateSlabs.textContent = billingSlabs;
+        elements.battaRateValue.textContent = formatCurrency(driverAllowance);
+        elements.battaRateTotal.textContent = formatCurrency(battaCost);
     }
     const totalExpenses = tolls + permits;
     grandTotal = packageCost + extraKmCost + battaCost + totalExpenses;
@@ -432,87 +467,104 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.saveInvoiceBtn.disabled = false;
       return;
     }
+
     try {
-        if (!isManualFlow) {
-            console.log("Re-fetching trip data before saving...");
-            currentTripData = await getDutySlip(bookingId);
+      // Check if invoice already exists
+      const checkResponse = await fetch(`/.netlify/functions/api?action=checkInvoiceExists&bookingId=${bookingId}`);
+      const { exists } = await checkResponse.json();
+
+      if (exists) {
+        if (!window.confirm("An invoice for this duty slip already exists. Do you want to overwrite it?")) {
+          elements.saveLoader.style.display = "none";
+          elements.saveInvoiceBtn.disabled = false;
+          return; // Abort if user cancels
         }
-        calculateAndShowSummary();
-        const { grandTotal, rates } = currentCalculations;
-        if (!rates || grandTotal === undefined) {
-          throw new Error("Calculation data missing.");
-        }
-        let invoiceData = {
-          ...currentCalculations,
-          Invoice_ID: `ST-${bookingId}`, Booking_ID: bookingId,
-          Invoice_Date: new Date().toLocaleDateString("en-GB"),
-          Last_Updated: new Date().toLocaleString("en-GB", { hour12: false }),
-          Invoice_Note: elements.invoiceNote.value.trim(), Status: "Generated",
-          UPI_ID: elements.upiId.value.trim() || "drumsjega5466-1@okhdfcbank",
-          Trip_Category: isManualFlow ? "Manual" : tripCategory,
+      }
+
+      if (!isManualFlow) {
+        console.log("Re-fetching trip data before saving...");
+        currentTripData = await getDutySlip(bookingId);
+      }
+      calculateAndShowSummary();
+      const { grandTotal, rates } = currentCalculations;
+      if (!rates || grandTotal === undefined) {
+        throw new Error("Calculation data missing.");
+      }
+      let invoiceData = {
+        ...currentCalculations,
+        Invoice_ID: `ST-${bookingId}`,
+        Booking_ID: bookingId,
+        Invoice_Date: new Date().toLocaleDateString("en-GB"),
+        Last_Updated: new Date().toLocaleString("en-GB", { hour12: false }),
+        Invoice_Note: elements.invoiceNote.value.trim(),
+        Status: "Generated",
+        UPI_ID: elements.upiId.value.trim() || "drumsjega5466-1@okhdfcbank",
+        Trip_Category: isManualFlow ? "Manual" : tripCategory,
+      };
+      invoiceData = { ...invoiceData, ...invoiceData.rates };
+      delete invoiceData.rates;
+      if (isManualFlow) {
+        invoiceData.Guest_Name = elements.manualGuestName.value.trim();
+        invoiceData.Guest_Mobile = elements.manualGuestMobile.value.trim();
+        invoiceData.Vehicle_Type = elements.manualVehicleType.value.trim();
+        invoiceData.Vehicle_No = elements.manualVehicleNo.value.trim().toUpperCase();
+        invoiceData.Trip_Start_Date = elements.manualStartDate.value.trim();
+        invoiceData.Trip_End_Date = elements.manualEndDate.value.trim();
+      } else if (currentTripData) {
+        invoiceData.Guest_Name = currentTripData.Guest_Name;
+        invoiceData.Guest_Mobile = currentTripData.Guest_Mobile;
+        invoiceData.Vehicle_Type = currentTripData.Vehicle_Type;
+        invoiceData.Vehicle_No = currentTripData.Vehicle_No;
+        invoiceData.Trip_Start_Date = currentTripData.Date_Out || currentTripData.Date;
+        invoiceData.Trip_End_Date = currentTripData.Date_In || currentTripData.Date;
+      } else {
+        throw new Error("Critical trip data is missing.");
+      }
+
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('The request timed out. Please check the Google Sheet to confirm if the data was saved.')), 15000));
+      const fetchPromise = fetch("/.netlify/functions/api?action=saveInvoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(invoiceData),
+      });
+
+      const response = await Promise.race([fetchPromise, timeoutPromise]);
+      const result = await response.json();
+
+      if (result.success && result.shareableLink) {
+        const link = result.shareableLink;
+        elements.generatedLink.value = link;
+        elements.generatedLinkContainer.style.display = "block";
+        elements.generatedLinkContainer.scrollIntoView({ behavior: "smooth" });
+
+        const guestName = invoiceData.Guest_Name || 'Guest';
+        const tripDate = formatDate(invoiceData.Trip_Start_Date);
+        const totalAmount = formatCurrency(grandTotal);
+
+        document.getElementById("whatsappShareBtn").onclick = () => {
+          const message = `Shrish Travels | Digital Invoice\n\nHello *${guestName}*,\nThank you for choosing us! Your trip details (DS #${bookingId}) have been finalized.\n\nDate: ${tripDate}\nTotal Amount: ${totalAmount}\nView & Pay: ${link}\n\nNote: This invoice includes the custom rates/adjustments as per our discussion.\n\nPlease complete the payment via the link or UPI to close your trip. We hope you enjoyed the ride!`;
+          const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+          window.open(whatsappUrl, '_blank');
         };
-        invoiceData = { ...invoiceData, ...invoiceData.rates };
-        delete invoiceData.rates;
-        if (isManualFlow) {
-          invoiceData.Guest_Name = elements.manualGuestName.value.trim();
-          invoiceData.Guest_Mobile = elements.manualGuestMobile.value.trim();
-          invoiceData.Vehicle_Type = elements.manualVehicleType.value.trim();
-          invoiceData.Vehicle_No = elements.manualVehicleNo.value.trim().toUpperCase();
-          invoiceData.Trip_Start_Date = elements.manualStartDate.value.trim();
-          invoiceData.Trip_End_Date = elements.manualEndDate.value.trim();
-        } else if (currentTripData) {
-          invoiceData.Guest_Name = currentTripData.Guest_Name;
-          invoiceData.Guest_Mobile = currentTripData.Guest_Mobile;
-          invoiceData.Vehicle_Type = currentTripData.Vehicle_Type;
-          invoiceData.Vehicle_No = currentTripData.Vehicle_No;
-          invoiceData.Trip_Start_Date = currentTripData.Date_Out || currentTripData.Date;
-          invoiceData.Trip_End_Date = currentTripData.Date_In || currentTripData.Date;
-        } else {
-            throw new Error("Critical trip data is missing.");
-        }
 
-        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('The request timed out. Please check the Google Sheet to confirm if the data was saved.')), 15000));
-        const fetchPromise = fetch("/.netlify/functions/api?action=saveInvoice", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(invoiceData),
-        });
+        document.getElementById("copyLinkBtn").onclick = () => {
+          navigator.clipboard.writeText(link).then(() => {
+            const copyBtn = document.getElementById("copyLinkBtn");
+            const originalText = copyBtn.innerHTML;
+            copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => {
+              copyBtn.innerHTML = originalText;
+            }, 2000);
+          }).catch(err => {
+            console.error('Failed to copy text: ', err);
+            alert('Failed to copy link to clipboard.');
+          });
+        };
 
-        const response = await Promise.race([fetchPromise, timeoutPromise]);
-        const result = await response.json();
-
-        if (result.success && result.shareableLink) {
-            const link = result.shareableLink;
-            elements.generatedLink.value = link;
-            elements.generatedLinkContainer.style.display = "block";
-            elements.generatedLinkContainer.scrollIntoView({ behavior: "smooth" });
-            
-            const guestName = isManualFlow ? elements.manualGuestName.value.trim() : (currentTripData ? currentTripData.Guest_Name : 'Guest');
-
-            document.getElementById("whatsappShareBtn").onclick = () => {
-                const message = encodeURIComponent(`Dear ${guestName},\n\nPlease find your invoice from Shrish Travels by clicking on the link below:\n\n${link}\n\nThank you for choosing us!`);
-                const whatsappUrl = `https://api.whatsapp.com/send?text=${message}`;
-                window.open(whatsappUrl, '_blank');
-            };
-            
-            document.getElementById("copyLinkBtn").onclick = () => {
-                const link = elements.generatedLink.value;
-                navigator.clipboard.writeText(link).then(() => {
-                    const originalText = elements.copyLinkButton.innerHTML;
-                    elements.copyLinkButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                    setTimeout(() => {
-                        elements.copyLinkButton.innerHTML = originalText;
-                    }, 2000);
-                }).catch(err => {
-                    console.error('Failed to copy text: ', err);
-                    alert('Failed to copy link to clipboard.');
-                });
-            };
-
-            alert("Invoice saved successfully!");
-        } else {
-            throw new Error(result.error || "Backend did not return a shareable link.");
-        }
+        alert("Invoice saved successfully!");
+      } else {
+        throw new Error(result.error || "Backend did not return a shareable link.");
+      }
     } catch (error) {
       alert(`Error saving invoice: ${error.message}`);
       console.error("Save Invoice Error:", error);

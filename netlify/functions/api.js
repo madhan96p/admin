@@ -721,6 +721,22 @@ exports.handler = async function (event, context) {
         break;
       }
 
+      case "checkInvoiceExists": {
+        const { bookingId } = event.queryStringParameters;
+        const invoiceSheet = doc.sheetsByTitle["invoices"];
+        if (!invoiceSheet) {
+          throw new Error('"invoices" sheet not found in Google Spreadsheet.');
+        }
+        await invoiceSheet.loadHeaderRow();
+        const invoiceRows = await invoiceSheet.getRows();
+        const bookingIdHeader = "Booking_ID";
+        const foundRow = invoiceRows.find(
+          (row) => String(row[bookingIdHeader]) === String(bookingId)
+        );
+        responseData = { exists: !!foundRow };
+        break;
+      }
+
       case "saveInvoice": {
         const invoiceData = JSON.parse(event.body);
         const invoiceSheet = doc.sheetsByTitle["invoices"];
