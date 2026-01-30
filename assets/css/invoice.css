@@ -1904,3 +1904,24 @@ hr.footer-divider {
   /* Turns slightly yellow to warn the manager to double-check */
   border-color: #fef08a;
 }
+
+.running-total.sticky {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    background: var(--primary-dark);
+    color: white;
+    box-shadow: var(--shadow-xl);
+    border: none;
+    border-radius: var(--radius-lg);
+    z-index: 1000;
+    padding: 1.5rem;
+    text-align: left;
+}
+
+.running-total.sticky strong {
+    font-size: 2rem;
+    color: white;
+    margin-top: 0.5rem;
+}

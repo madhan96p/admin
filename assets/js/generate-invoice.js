@@ -258,10 +258,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   
   function updateRateContext() {
-    if (!activeTariff && !isManualFlow) {
-        elements.runningTotalDisplay.style.display = "none";
-        return;
-    }
     const totalKms = parseFloat(elements.calcTotalKms.value) || 0;
     const tolls = parseFloat(elements.tolls.value) || 0;
     const permits = parseFloat(elements.permits.value) || 0;
@@ -302,6 +298,7 @@ document.addEventListener("DOMContentLoaded", () => {
     grandTotal = packageCost + extraKmCost + battaCost + totalExpenses;
     elements.runningGrandTotal.textContent = formatCurrency(grandTotal);
     elements.runningTotalDisplay.style.display = "block";
+    elements.runningTotalDisplay.classList.add("sticky");
   }
 
   async function getDutySlip(id) {
