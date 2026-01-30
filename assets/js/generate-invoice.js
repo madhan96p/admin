@@ -486,12 +486,13 @@ document.addEventListener("DOMContentLoaded", () => {
         currentTripData = await getDutySlip(bookingId);
       }
       calculateAndShowSummary();
-      const { grandTotal, rates } = currentCalculations;
+      const { grandTotal, rates, totalKms, totalHours, billingSlabs, packageCost, extraKmCost, battaCost, totalExpenses } = currentCalculations;
       if (!rates || grandTotal === undefined) {
         throw new Error("Calculation data missing.");
       }
+      
+      // Map frontend data to sheet headers
       let invoiceData = {
-        ...currentCalculations,
         Invoice_ID: `ST-${bookingId}`,
         Booking_ID: bookingId,
         Invoice_Date: new Date().toLocaleDateString("en-GB"),
@@ -500,9 +501,22 @@ document.addEventListener("DOMContentLoaded", () => {
         Status: "Generated",
         UPI_ID: elements.upiId.value.trim() || "drumsjega5466-1@okhdfcbank",
         Trip_Category: isManualFlow ? "Manual" : tripCategory,
+        Total_KMs: totalKms,
+        Total_Hours: totalHours,
+        Billing_Slabs: billingSlabs,
+        Package_Cost: packageCost,
+        Extra_KM_Cost: extraKmCost,
+        Batta_Cost: battaCost,
+        Total_Expenses: totalExpenses,
+        Grand_Total: grandTotal,
+        Base_Rate: rates.baseRate,
+        Included_KMs_per_Slab: rates.includedKms,
+        Extra_KM_Rate: rates.extraKmRate,
+        Batta_Rate: rates.battaRate,
+        Total_Tolls: rates.tolls,
+        Total_Permits: rates.permits,
       };
-      invoiceData = { ...invoiceData, ...invoiceData.rates };
-      delete invoiceData.rates;
+
       if (isManualFlow) {
         invoiceData.Guest_Name = elements.manualGuestName.value.trim();
         invoiceData.Guest_Mobile = elements.manualGuestMobile.value.trim();
