@@ -486,8 +486,29 @@ document.addEventListener("DOMContentLoaded", () => {
             elements.generatedLink.value = link;
             elements.generatedLinkContainer.style.display = "block";
             elements.generatedLinkContainer.scrollIntoView({ behavior: "smooth" });
-            document.getElementById("whatsappShareBtn").onclick = () => { /* ... whatsapp logic ... */ };
-            document.getElementById("copyLinkBtn").onclick = () => { /* ... copy logic ... */ };
+            
+            const guestName = isManualFlow ? elements.manualGuestName.value.trim() : (currentTripData ? currentTripData.Guest_Name : 'Guest');
+
+            document.getElementById("whatsappShareBtn").onclick = () => {
+                const message = encodeURIComponent(`Dear ${guestName},\n\nPlease find your invoice from Shrish Travels by clicking on the link below:\n\n${link}\n\nThank you for choosing us!`);
+                const whatsappUrl = `https://api.whatsapp.com/send?text=${message}`;
+                window.open(whatsappUrl, '_blank');
+            };
+            
+            document.getElementById("copyLinkBtn").onclick = () => {
+                const link = elements.generatedLink.value;
+                navigator.clipboard.writeText(link).then(() => {
+                    const originalText = elements.copyLinkButton.innerHTML;
+                    elements.copyLinkButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    setTimeout(() => {
+                        elements.copyLinkButton.innerHTML = originalText;
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy text: ', err);
+                    alert('Failed to copy link to clipboard.');
+                });
+            };
+
             alert("Invoice saved successfully!");
         } else {
             throw new Error(result.error || "Backend did not return a shareable link.");
