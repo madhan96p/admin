@@ -232,28 +232,6 @@
                             <div class="loader"></div>
                         </div>
 
-                        <div id="generatedLinkContainer" class="share-hub-card" style="display: none;">
-    <div class="success-icon-check">
-        <i class="fas fa-check-circle"></i>
-        <h3 style="font-family: 'Lora', serif; font-size: 1.8rem; margin-top: 10px;">Ready to Send!</h3>
-        <p style="color: #64748b;">The system-calculated invoice is ready for the guest.</p>
-    </div>
-    
-    <div class="share-actions-grid">
-        <button id="whatsappShareBtn" class="btn share-btn-whatsapp">
-            <i class="fab fa-whatsapp"></i> Share to WhatsApp
-        </button>
-
-        <button id="copyLinkBtn" class="btn share-btn-copy">
-            <i class="fas fa-copy"></i> Copy Link
-        </button>
-    </div>
-
-    <div class="link-preview-box">
-        <label style="font-size: 0.65rem; letter-spacing: 1px; color: #94a3b8; text-transform: uppercase;">Secure Invoice Link</label>
-        <input type="text" id="generatedLink" readonly>
-    </div>
-</div>
                         <div id="save-loader" class="loader" style="display: none;"></div>
                     </div>
 
@@ -282,6 +260,35 @@
             </div>
             
         </main>
+        
+        <div id="successModal" class="modal-overlay" style="display: none;">
+            <div class="modal-content">
+                <button id="closeModalBtn" class="modal-close-btn">&times;</button>
+                <div id="generatedLinkContainer" class="share-hub-card">
+                    <div class="success-icon-check">
+                        <i class="fas fa-check-circle"></i>
+                        <h3 style="font-family: 'Lora', serif; font-size: 1.8rem; margin-top: 10px;">Ready to Send!</h3>
+                        <p style="color: #64748b;">The system-calculated invoice is ready for the guest.</p>
+                    </div>
+                    
+                    <div class="share-actions-grid">
+                        <button id="whatsappShareBtn" class="btn share-btn-whatsapp">
+                            <i class="fab fa-whatsapp"></i> Share to WhatsApp
+                        </button>
+                
+                        <button id="copyLinkBtn" class="btn share-btn-copy">
+                            <i class="fas fa-copy"></i> Copy Link
+                        </button>
+                    </div>
+                
+                    <div class="link-preview-box">
+                        <label style="font-size: 0.65rem; letter-spacing: 1px; color: #94a3b8; text-transform: uppercase;">Secure Invoice Link</label>
+                        <input type="text" id="generatedLink" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 <div id="admin-footer"></div>
 
     </div> <script src="/assets/js/common.js"></script>

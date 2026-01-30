@@ -218,8 +218,8 @@ async function sendEmail(subject, htmlBody) {
   try {
     await resend.emails.send({
       from: "Shrish Travels <travels@shrishgroup.com>",
-      to: ["travels@shrishgroup.com"],
-      cc: ["shrishtravels1@gmail.com"],
+      to: ["shrishtravels1@gmail.com"],
+      cc: ["travels@shrishgroup.com"],
       subject: subject,
       html: htmlBody,
     });
@@ -295,9 +295,45 @@ function sendClientClosedEmail(data) {
   return sendEmail(subject, htmlBody);
 }
 
+function generateInvoiceActionButtons(data) {
+  const viewInvoiceLink = data.Shareable_Link || `${ADMIN_URL}/view-invoice.html?id=${data.Public_ID}`;
+  const editSlipLink = `${ADMIN_URL}/edit-slip.html?id=${data.Booking_ID}`;
+
+  return `
+        <div style="margin: 40px 0 0 0; padding-top: 30px; border-top: 1px solid #e5e7eb;">
+            <h3 style="color: #111827; text-align: center; margin: 0 0 25px 0; font-size: 18px; font-weight: 600; letter-spacing: 0.5px;">QUICK ACTIONS</h3>
+            <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 14px;">
+                <tr>
+                    <td style="padding: 6px;"><a href="${viewInvoiceLink}" style="background-color: #4338CA; color: white; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: 600; display: block; letter-spacing: 0.5px;">View Invoice</a></td>
+                    <td style="padding: 6px;"><a href="${editSlipLink}" style="background-color: #374151; color: white; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: 600; display: block; letter-spacing: 0.5px;">Edit Duty Slip</a></td>
+                </tr>
+            </table>
+            <div style="text-align:center; margin-top: 25px; font-size: 14px;">
+                <a href="https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/edit" style="color: #4338CA; text-decoration: none; font-weight: 500;">Open Google Sheet</a>
+            </div>
+        </div>`;
+}
+
+function sendNewInvoiceEmail(data) {
+  const subject = `🧾 New Invoice Generated: #${data.Invoice_ID} for ${data.Guest_Name || "N/A"}`;
+  const content = `
+        <h2 style="color: #111827; text-align: center; margin-top: 0; margin-bottom: 10px; font-size: 24px; font-weight: 700;">New Invoice Generated</h2>
+        <p style="color: #4b5563; text-align: center; font-size: 20px; margin-top: 0; margin-bottom: 30px;">Invoice No: <strong>#${data.Invoice_ID}</strong></p>
+        <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; padding: 20px; border-radius: 8px; margin-top: 20px; text-align: left; font-size: 16px; line-height: 1.6;">
+            <p style="margin: 0 0 12px 0;"><strong>Guest:</strong> ${data.Guest_Name || "N/A"} (${data.Guest_Mobile || "N/A"})</p>
+            <p style="margin: 0 0 12px 0;"><strong>Trip Date:</strong> ${data.Trip_Start_Date ? formatToDdmmyyyy(data.Trip_Start_Date) : "N/A"}</p>
+            <p style="margin: 0; font-size: 18px; font-weight: 700;"><strong>Grand Total: ${formatCurrency(data.Grand_Total)}</strong></p>
+        </div>
+        ${generateInvoiceActionButtons(data)}
+    `;
+  const htmlBody = generateEmailBase(subject, content);
+  return sendEmail(subject, htmlBody);
+}
+
 function generateSalaryActionButtons(data) {
   // Generate the unique slip ID
   const slipId = `${data.EmployeeID}-${data.PayPeriod}`;
+
 
   // 1. WhatsApp message for the Founder
   const founderReviewLink = `https://admin.shrishgroup.com/salary-form.html?id=${slipId}`;
@@ -801,6 +837,9 @@ exports.handler = async function (event, context) {
           // Add the new row to the sheet
           await invoiceSheet.addRow(invoiceData);
         }
+
+        // Send the email notification
+        await sendNewInvoiceEmail(invoiceData);
 
         // --- 3. Finally (Return) ---
         // Return the success message AND the new link for the frontend

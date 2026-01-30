@@ -54,6 +54,9 @@ document.addEventListener("DOMContentLoaded", () => {
     copyLinkButton: document.getElementById("copyLinkButton"),
     saveLoader: document.getElementById("save-loader"),
 
+    successModal: document.getElementById("successModal"),
+    closeModalBtn: document.getElementById("closeModalBtn"),
+
     steps: document.querySelectorAll(".step"),
     stepContents: document.querySelectorAll(".step-content"),
     prevStepBtn: document.getElementById("prevStepBtn"),
@@ -548,8 +551,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (result.success && result.shareableLink) {
         const link = result.shareableLink;
         elements.generatedLink.value = link;
-        elements.generatedLinkContainer.style.display = "block";
-        elements.generatedLinkContainer.scrollIntoView({ behavior: "smooth" });
+        // Show the modal
+        elements.successModal.style.display = "flex";
 
         const guestName = invoiceData.Guest_Name || 'Guest';
         const tripDate = formatDate(invoiceData.Trip_Start_Date);
@@ -575,7 +578,6 @@ document.addEventListener("DOMContentLoaded", () => {
           });
         };
 
-        alert("Invoice saved successfully!");
       } else {
         throw new Error(result.error || "Backend did not return a shareable link.");
       }
@@ -608,6 +610,17 @@ document.addEventListener("DOMContentLoaded", () => {
       input.addEventListener('input', updateRateContext);
   });
   elements.calcTotalHours.addEventListener('input', updateBillingSlabs);
+
+  // Modal closing logic
+  elements.closeModalBtn.addEventListener('click', () => {
+    elements.successModal.style.display = 'none';
+  });
+
+  elements.successModal.addEventListener('click', (e) => {
+    if (e.target === elements.successModal) {
+        elements.successModal.style.display = 'none';
+    }
+  });
 
   // --- 8. INITIALIZATION ---
   goToStep(1);
