@@ -184,6 +184,7 @@ body {
 /* --- 4. Component Styling: Header & Footer --- */
 .admin-header {
     height: var(--header-height);
+    min-height: var(--header-height);
     display: flex;
     align-items: center;
     padding: 0 2rem;
@@ -213,6 +214,7 @@ body {
     margin-left: var(--sidebar-width);
     width: calc(100% - var(--sidebar-width));
     transition: margin-left var(--transition-speed), width var(--transition-speed);
+    min-height: 75px;
 }
 
 /* --- 5. Content Styling: Cards, Titles, etc. --- */
