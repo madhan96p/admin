@@ -38,26 +38,34 @@ document.addEventListener("DOMContentLoaded", () => {
       const tr = document.createElement("tr");
 
       // Determine Status Color
-      let badgeClass = "badge-secondary";
-      if (row.Status.includes("New")) badgeClass = "badge-success";
-      if (row.Status.includes("Inquiry")) badgeClass = "badge-warning";
+      let badgeClass = "badge-secondary"; // default
+        if (row.Status.includes("New Inquiry")) {
+            badgeClass = "badge-new-booking";
+        } else if (row.Status.includes("WhatsApp Estimate")) {
+            badgeClass = "badge-wa-estimate";
+        } else if (row.Status.includes("Inquiry")) { // General inquiry
+            badgeClass = "badge-inquiry";
+        } else if (row.Status.includes("Cancelled")) {
+            badgeClass = "badge-cancelled";
+        }
 
       tr.innerHTML = `
-                <td><span class="badge ${badgeClass}">${row.Status}</span></td>
-                <td>${row.Timestamp || ""}</td>
-                <td>
-                    <strong>${row.Customer_Name || "Guest"}</strong><br>
-                    <small>${row.Mobile_Number}</small>
+                <td class="status-cell"><span class="badge ${badgeClass}">${row.Status}</span></td>
+                <td class="date-cell">${row.Timestamp || ""}</td>
+                <td class="contact-cell">
+                    <strong>${row.Customer_Name || "Guest"}</strong>
+                    <span>${row.Mobile_Number}</span>
                 </td>
-                <td>
+                <td class="journey-cell">
                     <div class="journey-info">
                         <strong>Type:</strong> ${row.Journey_Type}<br>
-                        ${row.Pickup_City} <i class="fas fa-arrow-right"></i> ${row.Drop_City}
+                        <strong>From:</strong> ${row.Pickup_City}<br>
+                        <strong>To:</strong> ${row.Drop_City}
                     </div>
                 </td>
-                <td>
-                    <a href="tel:${row.Mobile_Number}" class="btn-icon"><i class="fas fa-phone"></i></a>
-                    <a href="https://wa.me/91${row.Mobile_Number}" target="_blank" class="btn-icon success"><i class="fab fa-whatsapp"></i></a>
+                <td class="actions-cell">
+                    <a href="tel:${row.Mobile_Number}" class="btn-icon" title="Call Customer"><i class="fas fa-phone-alt"></i></a>
+                    <a href="https://wa.me/91${row.Mobile_Number}" target="_blank" class="btn-icon success" title="WhatsApp Customer"><i class="fab fa-whatsapp"></i></a>
                 </td>
             `;
       tableBody.appendChild(tr);

@@ -60,6 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // NEW: Render the statistics cards
+    renderStats();
+
     const filteredSlips = getFilteredSlips();
     emptyState.style.display = filteredSlips.length === 0 ? "flex" : "none";
     tableContainer.style.display = filteredSlips.length > 0 ? "block" : "none";
@@ -68,6 +71,32 @@ document.addEventListener("DOMContentLoaded", () => {
       renderTable(filteredSlips);
     }
   }
+
+  /**
+   * NEW: Calculates and renders the statistics cards.
+   */
+  function renderStats() {
+    const totalSlips = state.allSlips.length;
+    const pendingApproval = state.allSlips.filter(s => (s.Status || 'Pending Approval') === 'Pending Approval').length;
+    
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    const disbursedThisMonth = state.allSlips
+      .filter(s => {
+        const slipDate = new Date(s.DateGenerated);
+        return s.Status === 'Finalized' &&
+               slipDate.getMonth() === currentMonth &&
+               slipDate.getFullYear() === currentYear;
+      })
+      .reduce((sum, s) => sum + parseFloat(s.NetPayableAmount || 0), 0);
+
+    document.querySelector('#stat-total-slips h3').textContent = totalSlips;
+    document.querySelector('#stat-pending h3').textContent = pendingApproval;
+    document.querySelector('#stat-disbursed h3').textContent = formatCurrency(disbursedThisMonth);
+  }
+
 
   function getFilteredSlips() {
     const lowerCaseSearch = state.searchTerm.toLowerCase();

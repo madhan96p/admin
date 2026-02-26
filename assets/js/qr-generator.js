@@ -63,8 +63,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const stylePresets = {
     default: {
       dotsType: "classy-rounded",
-      dotsColor1: "#0d1117",
-      dotsColor2: "#0052cc",
+      dotsColor1: "#ffffff",
+      dotsColor2: "#000000",
       dotsGradientType: "radial",
       cornersColor1: "#0d1117",
       cornersColor2: "#0052cc",
@@ -383,6 +383,37 @@ document.addEventListener("DOMContentLoaded", function () {
     }),
   );
   elements.resetBtn.addEventListener("click", resetAll);
+
+  elements.copyLinkBtn.addEventListener("click", () => {
+    const textToCopy = elements.liveLinkText.textContent;
+    if (!textToCopy) return;
+
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        // --- Success feedback ---
+        const buttonSpan = elements.copyLinkBtn.querySelector("span");
+        const buttonIcon = elements.copyLinkBtn.querySelector("i");
+        const originalText = buttonSpan.textContent;
+        const originalIcon = buttonIcon.className;
+
+        buttonSpan.textContent = "COPIED!";
+        buttonIcon.className = "fas fa-check";
+        elements.copyLinkBtn.classList.add("copied");
+
+        setTimeout(() => {
+            buttonSpan.textContent = originalText;
+            buttonIcon.className = originalIcon;
+            elements.copyLinkBtn.classList.remove("copied");
+        }, 2000);
+    }).catch(err => {
+        console.error("Failed to copy text: ", err);
+        const buttonSpan = elements.copyLinkBtn.querySelector("span");
+        const originalText = buttonSpan.textContent;
+        buttonSpan.textContent = "Error!";
+        setTimeout(() => {
+            buttonSpan.textContent = originalText;
+        }, 2000);
+    });
+  });
 
   // --- 7. Initialization ---
   qrCode = new QRCodeStyling({

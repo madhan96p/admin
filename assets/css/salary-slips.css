@@ -1,0 +1,296 @@
+/* =================================================================== */
+/* ===     PREMIUM SALARY SLIP DASHBOARD STYLES (Consolidated)     === */
+/* =================================================================== */
+
+/* --- 1. Page Header & Actions --- */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.search-bar {
+    position: relative;
+}
+
+.search-bar .fa-search {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-muted);
+}
+
+.search-bar input {
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--color-border);
+    min-width: 300px;
+    transition: all var(--transition-speed);
+    font-size: 0.95rem;
+}
+.search-bar input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+/* --- 2. Stat Cards --- */
+.stat-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all var(--transition-speed);
+}
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary);
+}
+
+.stat-card-icon {
+    font-size: 1.8rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stat-card-info h3 {
+    margin: 0 0 0.25rem 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text-dark);
+}
+.stat-card-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+/* Stat card specific colors */
+#stat-total-slips .stat-card-icon { background-color: #e0e7ff; color: #4338ca; }
+#stat-pending .stat-card-icon { background-color: #fef3c7; color: #b45309; }
+#stat-disbursed .stat-card-icon { background-color: #dcfce7; color: #166534; }
+
+
+/* --- 3. Results Container & States (Empty, Error, Loader) --- */
+.table-container {
+    background-color: var(--color-bg-card);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+}
+
+.empty-state, .error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    background-color: var(--color-bg-card);
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--color-border);
+}
+.empty-state i, .error-state i {
+    font-size: 3rem;
+    color: #cbd5e1;
+    margin-bottom: 1rem;
+}
+.empty-state h3, .error-state h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+}
+.empty-state p, .error-state p {
+    margin: 0;
+    color: var(--color-text-muted);
+    max-width: 400px;
+}
+.error-state i { color: #fca5a5; }
+
+/* Skeleton Loader */
+#skeleton-loader {
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+}
+.skeleton-row {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+    background-color: var(--color-bg-card);
+    border-bottom: 1px solid var(--color-border);
+}
+.skeleton-row:last-child { border-bottom: none; }
+.skeleton-item {
+    background-color: #e5e7eb;
+    border-radius: 4px;
+    animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+/* Define widths for skeleton items to match table columns */
+.skeleton-item.w-15 { width: 15%; height: 20px; }
+.skeleton-item.w-20 { width: 20%; height: 20px; }
+.skeleton-item.w-10 { width: 10%; height: 20px; }
+.skeleton-item.w-full { width: 100%; height: 12px; margin-top: 8px; }
+
+
+/* --- 4. Premium Data Table --- */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead th {
+    background-color: #f9fafb;
+    padding: 1rem 1.5rem;
+    text-align: left;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.data-table tbody tr {
+    transition: background-color var(--transition-speed);
+}
+.data-table tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+.data-table td {
+    padding: 1.25rem 1.5rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--color-border);
+}
+.data-table tbody tr:last-child td { border-bottom: none; }
+
+/* Cell-specific styles */
+.cell-primary {
+    font-weight: 600;
+    color: var(--color-text-dark);
+}
+.cell-secondary {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 9999px; /* Pill shape */
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+.status-pending-approval { background-color: #fef3c7; color: #b45309; }
+.status-approved { background-color: #dbeafe; color: #1e40af; }
+.status-finalized { background-color: #dcfce7; color: #166534; }
+
+/* Actions */
+.actions-cell-content {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+.action-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f3f4f6;
+    color: var(--color-text-muted);
+    border: 1px solid #e5e7eb;
+    transition: all var(--transition-speed);
+}
+.action-btn:hover {
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.action-btn.edit:hover { background-color: #fbbf24; border-color: #f59e0b; }
+.action-btn.print:hover, .action-btn.view-final:hover { background-color: #3b82f6; border-color: #2563eb; }
+.action-btn.share:hover { background-color: #25d366; border-color: #16a34a; }
+
+
+/* --- 5. Mobile Responsive (Card View) --- */
+@media (max-width: 992px) {
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    .search-bar input { min-width: 100%; }
+
+    .table-container {
+        border: none;
+        box-shadow: none;
+        background-color: transparent;
+    }
+
+    .data-table thead { display: none; }
+    .data-table, .data-table tbody, .data-table tr, .data-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .data-table tr {
+        background-color: var(--color-bg-card);
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius-md);
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .data-table td {
+        padding: 0.75rem 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: right;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    .data-table td:last-child {
+        border-bottom: none;
+        padding-top: 1rem;
+    }
+
+    .data-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--color-text-dark);
+        text-align: left;
+    }
+    
+    .actions-cell-content { justify-content: flex-end; }
+}
