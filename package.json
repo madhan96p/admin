@@ -1,10 +1,7 @@
 {
   "name": "shrish-admin-functions",
   "version": "1.0.0",
-  "description": "Admin functions for Shrish Travels",
-  "main": "index.js",
   "dependencies": {
-    "dotenv": "^17.3.1",
     "google-spreadsheet": "^3.3.0",
     "googleapis": "^105.0.0",
     "resend": "^6.1.2"

@@ -148,8 +148,6 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.tripSummary.style.display = "none";
       elements.manualEntryFields.style.display = "none";
       elements.runningTotalDisplay.style.display = "none";
-      elements.runningTotalDisplay.classList.remove("sticky");
-      document.body.classList.remove('sticky-total-visible');
       elements.generatedLinkContainer.style.display = "none";
       
       setRateFields(false); // Unlock and clear rate fields
@@ -339,7 +337,6 @@ document.addEventListener("DOMContentLoaded", () => {
     elements.runningGrandTotal.textContent = formatCurrency(grandTotal);
     elements.runningTotalDisplay.style.display = "block";
     elements.runningTotalDisplay.classList.add("sticky");
-    document.body.classList.add('sticky-total-visible');
   }
 
   async function getDutySlip(id) {

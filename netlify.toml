@@ -4,11 +4,7 @@
 [build]
   # This tells Netlify where our serverless functions are located.
   functions = "netlify/functions/"
-  
-[functions]
-  node_bundler = "esbuild"
-  external_node_modules = ["google-spreadsheet"]
-  
+
 # --- Asset Optimization Settings ---
 [build.processing]
   skip_processing = false
