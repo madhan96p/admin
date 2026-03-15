@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const categoryData = {
     Common: {
       Debit: {
-        "Office & Utilities": ["Office Rent", "Electricity (EB)", "Internet", "Mobile Recharge", "Maintenance", "Furniture/Office Exp", "Other"],
+        "Office & Utilities": ["Rent", "Electricity (EB)", "Internet", "Mobile Recharge", "Maintenance", "Furniture/Office Exp", "Other"],
         "Human Resources": ["Salaries", "Advance", "Jegan", "Pragadeesh", "Other"],
         "Financial": ["Credit Card Bill", "EMI Payment", "Bank Charges", "Taxes/GST", "Other"],
         "Lifestyle & Admin": ["Food & Drinks", "General Travel", "Other"]
@@ -11,10 +11,12 @@ document.addEventListener("DOMContentLoaded", () => {
     Travels: {
       Debit: {
         "Vehicle Operations": ["Fuel", "Fastag", "Permit/Tax", "Maintenance", "Vehicle EMI", "Insurance", "Parking", "Other"],
-        "Travels": ["Saradha Travels", "ATC Travels", "Bee Cabs", "Other"]
+        "Travels": ["Saradha Travels", "ATC Travels", "Bee Cabs", "Other"],
+        "Personal Expenses": ["Rent", "Utilities (EB, Gas...)", "Other"]
       },
       Credit: { "Client Revenue": ["Direct Revenue", "Other Income"],
-        "Travels": ["Saradha Travels", "ATC Travels", "Bee Cabs", "Online Duty", "Other"]
+        "Travels": ["Saradha Travels", "ATC Travels", "Bee Cabs", "Online Duty", "Other"],
+        "Operational Recovery": ["Room Rent Collection", "Driver Contribution", "Other"]
        }
     },
     Company: {
@@ -44,6 +46,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const accountSelect = document.getElementById("account");
   const categorySelect = document.getElementById("category");
   const subCategorySelect = document.getElementById("sub-category");
+
+  // Initialize date to today on fresh load only
+  const dateInput = document.getElementById("date");
+  if (dateInput && !dateInput.value) {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    dateInput.value = `${yyyy}-${mm}-${dd}`;
+  }
 
   // Step 1: Picking Flow (Debit/Credit/Transfer)
   flowButtons.forEach(btn => {
@@ -102,6 +114,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   accountSelect.addEventListener("change", updateDropdowns);
 
+  // Track which submit button was clicked (Save vs Save & Add)
+  let isSaveAndAdd = false;
+  entryForm.addEventListener("click", (e) => {
+    const btn = e.target.closest('button[type="submit"]');
+    if (btn) {
+      isSaveAndAdd = btn.id === 'btn-save-add' || btn.textContent.toLowerCase().includes('add');
+    }
+  });
+
   // Form Submit
   entryForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -110,8 +131,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if ((flow === "Debit" || flow === "Transfer") && amount > 0) amount *= -1;
 
+    // Convert "YYYY-MM-DD" from UI to "dd/MMM/yyyy" for storage
+    const dateVal = document.getElementById("date").value;
+    let formattedDate = dateVal;
+    if (dateVal && dateVal.includes("-")) {
+      const [yyyy, mm, dd] = dateVal.split('-');
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      formattedDate = `${dd}/${monthNames[parseInt(mm, 10) - 1]}/${yyyy}`;
+    }
+
     const data = {
-      Date: document.getElementById("date").value,
+      Date: formattedDate,
       Flow: flow,
       Account: accountSelect.value,
       Category: categorySelect.value,
@@ -123,6 +153,10 @@ document.addEventListener("DOMContentLoaded", () => {
       Timestamp: new Date().toISOString()
     };
 
+    // Disable submit buttons to prevent double clicking
+    const submitButtons = entryForm.querySelectorAll('button[type="submit"]');
+    submitButtons.forEach(btn => btn.disabled = true);
+
     try {
       const response = await fetch("/.netlify/functions/api?action=saveFinancialEntry", {
         method: "POST",
@@ -130,11 +164,24 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify(data),
       });
       if (response.ok) {
-        alert("Saved!");
-        window.location.href = "index.html";
+        if (isSaveAndAdd) {
+          alert("Transaction saved! You can add another one.");
+          // Clear specific fields, but retain Date, Flow, Account, Category
+          document.getElementById("amount").value = "";
+          document.getElementById("reference").value = "";
+          document.getElementById("particulars").value = "";
+        } else {
+          alert("Saved!");
+          window.location.href = "index.html";
+        }
+      } else {
+        const errData = await response.json();
+        throw new Error(errData.error || "Failed to save entry");
       }
     } catch (err) {
       alert("Error saving: " + err.message);
+    } finally {
+      submitButtons.forEach(btn => btn.disabled = false);
     }
   });
 });
