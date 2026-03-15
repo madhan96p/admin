@@ -486,3 +486,34 @@
     .stat-cards-container { grid-template-columns: 1fr; }
     .mobile-hide { display: none; }
 }
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.chart-toggle-group {
+    display: flex;
+    gap: 0.5rem;
+    background: #f1f5f9;
+    padding: 0.25rem;
+    border-radius: 0.5rem;
+}
+
+.chart-toggle-group button {
+    padding: 0.4rem 1rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.chart-toggle-group button.active {
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    color: var(--primary);
+}

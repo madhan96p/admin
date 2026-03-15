@@ -58,14 +58,25 @@ document.addEventListener("DOMContentLoaded", () => {
    * Orchestrates the filtering and rendering process.
    * @param {string} range - Days to look back (e.g., "7", "30", "all")
    */
-  function updateDashboardView(range) {
-    const filtered = filterByRange(allEntries, range);
-    
-    // Update UI Components
-    calculateMetrics(filtered);
-    renderTable(filtered);
-    renderChart(filtered, currentChartGroup);
-  }
+  function updateDashboardView(range = "all") {
+  const filtered = filterByDate(allEntries, range);
+  
+  // Use the new logic to calculate distinct totals
+  const totals = processFinancialData(filtered);
+
+  // Update the UI cards with correct, categorized numbers
+  const totalRevenueEl = document.getElementById("total-revenue");
+  const totalExpensesEl = document.getElementById("total-expenses");
+  const totalProfitEl = document.getElementById("total-profit");
+
+  if (totalRevenueEl) totalRevenueEl.innerText = formatCurrency(totals.revenue);
+  if (totalExpensesEl) totalExpensesEl.innerText = formatCurrency(totals.expenses);
+  if (totalProfitEl) totalProfitEl.innerText = formatCurrency(totals.netProfit);
+
+  // Update the charts and table with filtered data
+  updateCharts(filtered);
+  updateTable(filtered);
+}
 
   /**
    * Filters entries based on the 'Date' field.

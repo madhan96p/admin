@@ -18,28 +18,34 @@
         gap: 15px;
         text-align: center;
       }
+
       .date-filter-group {
         justify-content: center;
         flex-wrap: wrap;
       }
+
       .stat-cards-container {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 15px;
       }
+
       .chart-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
       }
+
       .content-card {
         padding: 15px;
         overflow-x: auto;
       }
+
       .mobile-hide {
         display: none !important;
       }
     }
+
     @media (max-width: 480px) {
       .stat-cards-container {
         grid-template-columns: 1fr;
@@ -132,15 +138,14 @@
       <div class="content-card" style="margin-top: 2rem">
         <div class="chart-header">
           <h3>Group Performance</h3>
-          <div id="bar-chart-grouping" class="chart-toggle-group">
-            <button data-group="daily">Daily</button>
+          <div id="bar-chart-grouping" class="chart-toggle-group"> <button data-group="daily">Daily</button>
             <button data-group="monthly" class="active">Monthly</button>
             <button data-group="yearly">Yearly</button>
           </div>
         </div>
         <canvas id="main-performance-chart" height="100"></canvas>
       </div>
-
+      
       <div class="content-card" style="margin-top: 2rem">
         <h3>Recent Activity</h3>
         <table class="tracker-table">
