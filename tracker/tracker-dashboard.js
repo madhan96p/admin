@@ -189,14 +189,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Initialize bucket
       if (!aggregatedData[sortKey]) {
-        aggregatedData[sortKey] = { label: displayLabel, income: 0, expense: 0 };
+        aggregatedData[sortKey] = { label: displayLabel, income: 0, expense: 0, transfer: 0 };
       }
 
-      // Calculate separation
-      if (amt >= 0) {
+      // Calculate separation based on actual Flow rather than just amount polarity
+      const flow = e.Flow;
+      if (flow === "Credit") {
         aggregatedData[sortKey].income += amt;
-      } else {
-        aggregatedData[sortKey].expense += Math.abs(amt);
+      } else if (flow === "Debit") {
+        aggregatedData[sortKey].expense += Math.abs(amt); // Debits are negative, chart uses positive bars
+      } else if (flow === "Transfer") {
+        aggregatedData[sortKey].transfer += amt;
       }
     });
 
@@ -205,27 +208,83 @@ document.addEventListener("DOMContentLoaded", () => {
     const labels = sortedKeys.map(k => aggregatedData[k].label);
     const incomeData = sortedKeys.map(k => aggregatedData[k].income);
     const expenseData = sortedKeys.map(k => aggregatedData[k].expense);
+    const transferData = sortedKeys.map(k => aggregatedData[k].transfer);
 
     chartInstance = new Chart(canvas.getContext("2d"), {
       type: 'bar',
       data: {
         labels: labels,
         datasets: [
-          { label: 'Income', data: incomeData, backgroundColor: '#10b981', borderRadius: 4 },
-          { label: 'Expense', data: expenseData, backgroundColor: '#ef4444', borderRadius: 4 }
+          { 
+            label: 'Revenue (Credits)', 
+            data: incomeData, 
+            backgroundColor: 'rgba(16, 185, 129, 0.85)', 
+            hoverBackgroundColor: '#10b981',
+            borderRadius: 4, 
+            maxBarThickness: 35
+          },
+          { 
+            label: 'Expenses (Debits)', 
+            data: expenseData, 
+            backgroundColor: 'rgba(239, 68, 68, 0.85)', 
+            hoverBackgroundColor: '#ef4444',
+            borderRadius: 4, 
+            maxBarThickness: 35
+          },
+          { 
+            label: 'Net Transfers', 
+            data: transferData, 
+            backgroundColor: 'rgba(59, 130, 246, 0.85)', 
+            hoverBackgroundColor: '#3b82f6',
+            borderRadius: 4, 
+            maxBarThickness: 35
+          }
         ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
+        layout: {
+          padding: 10
+        },
         scales: {
+          x: {
+            grid: { display: false, drawBorder: false },
+            ticks: { font: { family: "'Inter', sans-serif" } }
+          },
           y: {
             beginAtZero: true,
-            ticks: { callback: value => '₹' + value }
+            grid: {
+              color: '#e5e7eb',
+              borderDash: [5, 5],
+              drawBorder: false
+            },
+            ticks: {
+              font: { family: "'Inter', sans-serif" },
+              callback: value => '₹' + value.toLocaleString('en-IN')
+            }
           }
         },
         plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              usePointStyle: true,
+              padding: 20,
+              font: { family: "'Inter', sans-serif", size: 12 }
+            }
+          },
           tooltip: {
+            backgroundColor: 'rgba(17, 24, 39, 0.9)',
+            titleFont: { family: "'Inter', sans-serif", size: 13 },
+            bodyFont: { family: "'Inter', sans-serif", size: 13 },
+            padding: 12,
+            usePointStyle: true,
+            boxPadding: 6,
             callbacks: { 
               label: context => context.dataset.label + ': ' + formatCurrency(context.parsed.y) 
             }

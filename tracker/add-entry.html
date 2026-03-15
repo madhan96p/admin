@@ -20,6 +20,37 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
   <link rel="stylesheet" href="/assets/css/admin.css" />
   <link rel="stylesheet" href="add-entry.css" />
+  <style>
+    /* Mobile Responsiveness Overrides */
+    @media (max-width: 768px) {
+      .flow-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .btn-flow {
+        width: 100%;
+        padding: 20px;
+      }
+      .form-grid {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 15px;
+      }
+      .form-actions {
+        display: flex;
+        flex-direction: column-reverse; /* Stacks primary action at the top */
+        gap: 10px;
+      }
+      .form-actions button {
+        width: 100%;
+        margin: 0 !important;
+      }
+      .content-card {
+        padding: 20px 15px;
+      }
+    }
+  </style>
 </head>
 
 <body>
