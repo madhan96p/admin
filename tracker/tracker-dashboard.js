@@ -8,9 +8,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let allEntries = []; // Stores the master list from API
   let chartInstance = null;
   let currentChartGroup = "monthly";
-  
+
   // --- Utilities ---
-  
+
   /**
    * Formats numbers into Indian Rupee currency format.
    * @param {number} num - The value to format.
@@ -29,22 +29,22 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   async function loadDashboard() {
     const tableBody = document.getElementById("recent-transactions-body");
-    
+
     try {
       // Show a loading state in the table
       if (tableBody) tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center">Loading data...</td></tr>';
 
       const response = await fetch("/.netlify/functions/api?action=getFinancialData");
-      
+
       if (!response.ok) throw new Error(` HTTP error! status: ${response.status}`);
-      
+
       const data = await response.json();
 
       if (data && data.entries) {
         allEntries = data.entries;
         // Fetch the currently active range directly from the DOM
         const activeRangeBtn = document.querySelector(".date-filter-group button.active");
-        updateDashboardView(activeRangeBtn ? activeRangeBtn.getAttribute("data-range") : "30d"); 
+        updateDashboardView(activeRangeBtn ? activeRangeBtn.getAttribute("data-range") : "30d");
       } else {
         throw new Error("Invalid data format received");
       }
@@ -53,30 +53,70 @@ document.addEventListener("DOMContentLoaded", () => {
       if (tableBody) tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red">Error: ${err.message}</td></tr>`;
     }
   }
+  /**
+   * Filters an array of transactions based on the selected time range.
+   * @param {Array} transactions - The list of transaction objects.
+   * @param {string} range - The time range (e.g., '1d', '7d', '30d', '365d', 'all').
+   * @returns {Array} - The filtered list of transactions.
+   */
+  function filterByDate(transactions, range) {
+    if (range === 'all') {
+      return transactions;
+    }
+
+    const today = new Date();
+    const cutoffDate = new Date(today);
+
+    // Set the time to midnight for more accurate date comparisons
+    cutoffDate.setHours(0, 0, 0, 0);
+
+    switch (range) {
+      case '1d':
+        cutoffDate.setDate(today.getDate() - 1);
+        break;
+      case '7d':
+        cutoffDate.setDate(today.getDate() - 7);
+        break;
+      case '30d':
+        cutoffDate.setDate(today.getDate() - 30);
+        break;
+      case '365d':
+        cutoffDate.setFullYear(today.getFullYear() - 1);
+        break;
+      default:
+        return transactions; // Return all if range is unrecognized
+    }
+
+    return transactions.filter(transaction => {
+      // Make sure 'transaction.date' matches the key you use for the date in your data
+      const transactionDate = new Date(transaction.date);
+      return transactionDate >= cutoffDate;
+    });
+  }
 
   /**
    * Orchestrates the filtering and rendering process.
    * @param {string} range - Days to look back (e.g., "7", "30", "all")
    */
   function updateDashboardView(range = "all") {
-  const filtered = filterByDate(allEntries, range);
-  
-  // Use the new logic to calculate distinct totals
-  const totals = processFinancialData(filtered);
+    const filtered = filterByDate(allEntries, range);
 
-  // Update the UI cards with correct, categorized numbers
-  const totalRevenueEl = document.getElementById("total-revenue");
-  const totalExpensesEl = document.getElementById("total-expenses");
-  const totalProfitEl = document.getElementById("total-profit");
+    // Use the new logic to calculate distinct totals
+    const totals = processFinancialData(filtered);
 
-  if (totalRevenueEl) totalRevenueEl.innerText = formatCurrency(totals.revenue);
-  if (totalExpensesEl) totalExpensesEl.innerText = formatCurrency(totals.expenses);
-  if (totalProfitEl) totalProfitEl.innerText = formatCurrency(totals.netProfit);
+    // Update the UI cards with correct, categorized numbers
+    const totalRevenueEl = document.getElementById("total-revenue");
+    const totalExpensesEl = document.getElementById("total-expenses");
+    const totalProfitEl = document.getElementById("total-profit");
 
-  // Update the charts and table with filtered data
-  updateCharts(filtered);
-  updateTable(filtered);
-}
+    if (totalRevenueEl) totalRevenueEl.innerText = formatCurrency(totals.revenue);
+    if (totalExpensesEl) totalExpensesEl.innerText = formatCurrency(totals.expenses);
+    if (totalProfitEl) totalProfitEl.innerText = formatCurrency(totals.netProfit);
+
+    // Update the charts and table with filtered data
+    updateCharts(filtered);
+    updateTable(filtered);
+  }
 
   /**
    * Filters entries based on the 'Date' field.
@@ -99,9 +139,9 @@ document.addEventListener("DOMContentLoaded", () => {
    * Calculates sums for Business Units and Operational categories.
    */
   function calculateMetrics(entries) {
-    const m = { 
-        travels: 0, marketing: 0, company: 0, associates: 0, 
-        fuel: 0, jegan: 0, pragadeesh: 0, staff: 0 
+    const m = {
+      travels: 0, marketing: 0, company: 0, associates: 0,
+      fuel: 0, jegan: 0, pragadeesh: 0, staff: 0
     };
 
     entries.forEach(e => {
@@ -124,8 +164,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Helper to safely update text content
     const setTxt = (id, val) => {
-        const el = document.getElementById(id);
-        if (el) el.innerText = formatCurrency(val);
+      const el = document.getElementById(id);
+      if (el) el.innerText = formatCurrency(val);
     };
 
     setTxt("travels-profit", m.travels);
@@ -146,8 +186,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!body) return;
 
     if (entries.length === 0) {
-        body.innerHTML = '<tr><td colspan="5" style="text-align:center">No data found for this period.</td></tr>';
-        return;
+      body.innerHTML = '<tr><td colspan="5" style="text-align:center">No data found for this period.</td></tr>';
+      return;
     }
 
     body.innerHTML = entries.slice(0, 15).map(e => {
@@ -172,7 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderChart(entries, grouping) {
     const canvas = document.getElementById("main-performance-chart");
     if (!canvas) return;
-    
+
     if (chartInstance) {
       chartInstance.destroy(); // Clear old chart to prevent overlap bugs
     }
@@ -185,7 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isNaN(date.getTime())) return; // Skip invalid dates
 
       let sortKey, displayLabel;
-      
+
       // Determine bucketing strategy
       if (grouping === 'daily') {
         sortKey = date.toISOString().split('T')[0]; // Outputs YYYY-MM-DD for clean sorting
@@ -226,28 +266,28 @@ document.addEventListener("DOMContentLoaded", () => {
       data: {
         labels: labels,
         datasets: [
-          { 
-            label: 'Revenue (Credits)', 
-            data: incomeData, 
-            backgroundColor: 'rgba(16, 185, 129, 0.85)', 
+          {
+            label: 'Revenue (Credits)',
+            data: incomeData,
+            backgroundColor: 'rgba(16, 185, 129, 0.85)',
             hoverBackgroundColor: '#10b981',
-            borderRadius: 4, 
+            borderRadius: 4,
             maxBarThickness: 35
           },
-          { 
-            label: 'Expenses (Debits)', 
-            data: expenseData, 
-            backgroundColor: 'rgba(239, 68, 68, 0.85)', 
+          {
+            label: 'Expenses (Debits)',
+            data: expenseData,
+            backgroundColor: 'rgba(239, 68, 68, 0.85)',
             hoverBackgroundColor: '#ef4444',
-            borderRadius: 4, 
+            borderRadius: 4,
             maxBarThickness: 35
           },
-          { 
-            label: 'Net Transfers', 
-            data: transferData, 
-            backgroundColor: 'rgba(59, 130, 246, 0.85)', 
+          {
+            label: 'Net Transfers',
+            data: transferData,
+            backgroundColor: 'rgba(59, 130, 246, 0.85)',
             hoverBackgroundColor: '#3b82f6',
-            borderRadius: 4, 
+            borderRadius: 4,
             maxBarThickness: 35
           }
         ]
@@ -296,8 +336,8 @@ document.addEventListener("DOMContentLoaded", () => {
             padding: 12,
             usePointStyle: true,
             boxPadding: 6,
-            callbacks: { 
-              label: context => context.dataset.label + ': ' + formatCurrency(context.parsed.y) 
+            callbacks: {
+              label: context => context.dataset.label + ': ' + formatCurrency(context.parsed.y)
             }
           }
         }
@@ -312,7 +352,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Toggle active class
       document.querySelectorAll(".date-filter-group button").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      
+
       // Update data view based on data-range attribute
       updateDashboardView(btn.getAttribute("data-range"));
     });
