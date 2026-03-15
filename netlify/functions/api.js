@@ -457,10 +457,11 @@ exports.handler = async function (event, context) {
   await doc.loadInfo();
   const sheet = doc.sheetsByTitle["duty_slips"];
   const salarySheet = doc.sheetsByTitle["salary_slips"];
-  const financialsSheet = doc.sheetsByTitle["Financials"];
+  const financialsSheet = doc.sheetsByTitle["financial_tracker"];
   const { action } = event.queryStringParameters;
   let responseData = {};
 
+  
   try {
     // --- 2. API Actions (Switch Statement) ---
     switch (action) {
