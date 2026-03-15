@@ -101,21 +101,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateDashboardView(range = "all") {
     const filtered = filterByDate(allEntries, range);
 
-    // Use the new logic to calculate distinct totals
-    const totals = processFinancialData(filtered);
-
-    // Update the UI cards with correct, categorized numbers
-    const totalRevenueEl = document.getElementById("total-revenue");
-    const totalExpensesEl = document.getElementById("total-expenses");
-    const totalProfitEl = document.getElementById("total-profit");
-
-    if (totalRevenueEl) totalRevenueEl.innerText = formatCurrency(totals.revenue);
-    if (totalExpensesEl) totalExpensesEl.innerText = formatCurrency(totals.expenses);
-    if (totalProfitEl) totalProfitEl.innerText = formatCurrency(totals.netProfit);
-
-    // Update the charts and table with filtered data
-    updateCharts(filtered);
-    updateTable(filtered);
+    // Calculate and update the stat cards (Business Unit Totals and Operational Metrics)
+    calculateMetrics(filtered);
+    renderChart(filtered, currentChartGroup);
+    renderTable(filtered);
   }
 
   /**
@@ -139,8 +128,12 @@ document.addEventListener("DOMContentLoaded", () => {
    * Calculates sums for Business Units and Operational categories.
    */
   function calculateMetrics(entries) {
+    // Separate metrics by flow type to prevent "Cash Flow Summation" collapse
     const m = {
-      travels: 0, marketing: 0, company: 0, associates: 0,
+      travels: { revenue: 0, expense: 0, transfer: 0 },
+      marketing: { revenue: 0, expense: 0, transfer: 0 },
+      company: { revenue: 0, expense: 0, transfer: 0 },
+      associates: { revenue: 0, expense: 0, transfer: 0 },
       fuel: 0, jegan: 0, pragadeesh: 0, staff: 0
     };
 
@@ -148,18 +141,28 @@ document.addEventListener("DOMContentLoaded", () => {
       const amt = parseFloat(e.Amount) || 0;
       const acc = e.Account;
       const sub = e.Sub_Category;
+      const flow = e.Flow; // "Credit", "Debit", or "Transfer"
 
       // Logic for Business Unit Totals
-      if (acc === "Travels") m.travels += amt;
-      if (acc === "Marketing") m.marketing += amt;
-      if (acc === "Company") m.company += amt;
-      if (acc === "Associates") m.associates += amt;
+      let target = null;
+      if (acc === "Travels") target = m.travels;
+      if (acc === "Marketing") target = m.marketing;
+      if (acc === "Company") target = m.company;
+      if (acc === "Associates") target = m.associates;
+
+      if (target) {
+        if (flow === "Credit") target.revenue += amt;
+        else if (flow === "Debit") target.expense += Math.abs(amt);
+        else if (flow === "Transfer") target.transfer += amt;
+      }
 
       // Logic for Operational Deep-Dive (Absolute values for costs)
-      if (sub === "Fuel") m.fuel += Math.abs(amt);
-      if (sub === "Jegan") m.jegan += Math.abs(amt);
-      if (sub === "Pragadeesh") m.pragadeesh += Math.abs(amt);
-      if (sub === "Salaries" || sub === "Advance") m.staff += Math.abs(amt);
+      if (flow === "Debit") {
+        if (sub === "Fuel") m.fuel += Math.abs(amt);
+        if (sub === "Jegan") m.jegan += Math.abs(amt);
+        if (sub === "Pragadeesh") m.pragadeesh += Math.abs(amt);
+        if (sub === "Salaries" || sub === "Advance") m.staff += Math.abs(amt);
+      }
     });
 
     // Helper to safely update text content
@@ -168,10 +171,27 @@ document.addEventListener("DOMContentLoaded", () => {
       if (el) el.innerText = formatCurrency(val);
     };
 
-    setTxt("travels-profit", m.travels);
-    setTxt("marketing-profit", m.marketing);
-    setTxt("company-profit", m.company);
-    setTxt("associates-profit", m.associates);
+    // Helper to dynamically update the labels below the numbers
+    const setLabel = (id, labelText) => {
+      const el = document.getElementById(id);
+      if (el && el.nextElementSibling) {
+        el.nextElementSibling.innerText = labelText;
+      }
+    };
+
+    // Display Operational Profit (Revenue - Expense), ignoring Transfers
+    setTxt("travels-profit", m.travels.revenue - m.travels.expense);
+    setLabel("travels-profit", "Travels Op. Profit");
+
+    setTxt("marketing-profit", m.marketing.revenue - m.marketing.expense);
+    setLabel("marketing-profit", "Marketing Op. Profit");
+
+    setTxt("company-profit", m.company.revenue - m.company.expense);
+    setLabel("company-profit", "Company Op. Profit");
+
+    setTxt("associates-profit", m.associates.revenue - m.associates.expense);
+    setLabel("associates-profit", "Associates Op. Profit");
+
     setTxt("total-fuel", m.fuel);
     setTxt("cost-jegan", m.jegan);
     setTxt("cost-pragadeesh", m.pragadeesh);
