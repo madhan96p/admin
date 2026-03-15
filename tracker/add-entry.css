@@ -224,3 +224,20 @@
     max-height: 300px;
     /* This controls the max height */
 }
+
+.btn-transfer {
+    background-color: #e0f2fe;
+    color: #0369a1;
+}
+
+.btn-transfer:hover {
+    background-color: #0ea5e9;
+    color: white;
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(14, 165, 233, 0.3);
+}
+
+.btn-flow.active[data-flow="Transfer"] {
+    background-color: #0ea5e9;
+    color: white;
+}
