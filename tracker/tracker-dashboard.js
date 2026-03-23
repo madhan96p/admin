@@ -22,6 +22,21 @@ document.addEventListener("DOMContentLoaded", () => {
       minimumFractionDigits: 2,
     }).format(num || 0);
 
+  /**
+   * Safely parses a Date from the Google Sheets string (e.g., dd/MMM/yyyy or YYYY-MM-DD).
+   */
+  const parseSheetDate = (dateString) => {
+    if (!dateString) return new Date(0);
+    let d = new Date(dateString);
+    if (isNaN(d.getTime()) && typeof dateString === 'string') {
+      const parts = dateString.split('/');
+      if (parts.length === 3) {
+        d = new Date(`${parts[1]} ${parts[0]}, ${parts[2]}`);
+      }
+    }
+    return d;
+  };
+
   // --- Core Functions ---
 
   /**
@@ -41,7 +56,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await response.json();
 
       if (data && data.entries) {
-        allEntries = data.entries;
+        // Filter out empty rows that might come from the sheet
+        allEntries = data.entries.filter(e => e.Date && e.Amount !== undefined);
         // Fetch the currently active range directly from the DOM
         const activeRangeBtn = document.querySelector(".date-filter-group button.active");
         updateDashboardView(activeRangeBtn ? activeRangeBtn.getAttribute("data-range") : "30d");
@@ -88,8 +104,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     return transactions.filter(transaction => {
-      // Make sure 'transaction.date' matches the key you use for the date in your data
-      const transactionDate = new Date(transaction.date);
+      if (!transaction.Date) return false;
+      const transactionDate = parseSheetDate(transaction.Date);
       return transactionDate >= cutoffDate;
     });
   }
@@ -105,23 +121,6 @@ document.addEventListener("DOMContentLoaded", () => {
     calculateMetrics(filtered);
     renderChart(filtered, currentChartGroup);
     renderTable(filtered);
-  }
-
-  /**
-   * Filters entries based on the 'Date' field.
-   */
-  function filterByRange(entries, range) {
-    if (range === "all") return entries;
-
-    const days = parseInt(range);
-    const cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - days);
-    cutoff.setHours(0, 0, 0, 0); // Reset time to start of day for accurate comparison
-
-    return entries.filter(e => {
-      const entryDate = new Date(e.Date);
-      return entryDate >= cutoff;
-    });
   }
 
   /**
@@ -210,7 +209,10 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    body.innerHTML = entries.slice(0, 15).map(e => {
+    // Sort entries by Date descending (newest first)
+    const sortedEntries = [...entries].sort((a, b) => parseSheetDate(b.Date) - parseSheetDate(a.Date));
+
+    body.innerHTML = sortedEntries.slice(0, 15).map(e => {
       const isNegative = parseFloat(e.Amount) < 0;
       return `
         <tr>
@@ -241,7 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     entries.forEach(e => {
       const amt = parseFloat(e.Amount) || 0;
-      const date = new Date(e.Date);
+      const date = parseSheetDate(e.Date);
       if (isNaN(date.getTime())) return; // Skip invalid dates
 
       let sortKey, displayLabel;
