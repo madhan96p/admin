@@ -90,8 +90,7 @@ function generateActionButtons(data) {
   const driverSignature = `\n\nRegards Shrish Group\nContact +91 8883451668 / 9176500207\n- Sent via Shrish Travels`;
 
   // 4. Modification: NEW WhatsApp Driver Message Format
-  const driverMessage = `*Duty Slip: #${data.DS_No}*\n\n👤 Guest: ${data.Guest_Name}\n⏰ Time: ${data.Reporting_Time}\n📍 Address: ${data.Reporting_Address}\n\n🔗 *Tap to Complete Duty Slip:* ${ADMIN_URL}/edit-slip.html?id=${data.DS_No}\n\n- Shrish Travels Team`;
-
+  const driverMessage = `*Duty Slip: #${data.DS_No}*\n\n👤 Guest: ${data.Guest_Name}\n📞 Guest Contact: +91 ${data.Guest_Mobile}\n⏰ Time: ${data.Reporting_Time}\n📍 Address: ${data.Reporting_Address}\n\n🔗 *Tap to Complete Duty Slip:* ${ADMIN_URL}/edit-slip.html?id=${data.DS_No}\n\n- Shrish Travels Team`;
   const driverLink = generateWhatsappLink(data.Driver_Mobile, driverMessage);
 
   // 2. Message for the Guest with chauffeur information
