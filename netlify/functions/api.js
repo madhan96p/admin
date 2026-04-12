@@ -458,10 +458,11 @@ exports.handler = async function (event, context) {
   await doc.loadInfo();
   const sheet = doc.sheetsByTitle["duty_slips"];
   const salarySheet = doc.sheetsByTitle["salary_slips"];
-  const financialsSheet = doc.sheetsByTitle["Financials"];
+  const financialsSheet = doc.sheetsByTitle["financial_tracker"];
   const { action } = event.queryStringParameters;
   let responseData = {};
 
+  
   try {
     // --- 2. API Actions (Switch Statement) ---
     switch (action) {
@@ -1076,46 +1077,30 @@ exports.handler = async function (event, context) {
         responseData = { entries: allEntries };
         break;
 
-      case "saveFinancialEntry":
-        if (!financialsSheet) {
-          throw new Error(
-            '"Financials" sheet not found in Google Spreadsheet.',
-          );
-        }
+      case "saveFinancialEntry": {
         const data = JSON.parse(event.body);
+        // Connect to your specific financial sheet
+        const sheet = doc.sheetsByTitle["financial_tracker"];
+        if (!sheet) throw new Error("Financial tracker sheet not found.");
 
-        // 1. Generate new Entry_ID
-        const AllRows = await financialsSheet.getRows();
-        let NextId = 1001; // Start at 1001
-        if (AllRows.length > 0) {
-          const lastRow = AllRows[AllRows.length - 1];
+        // Add the row with the new Reference field
+        await sheet.addRow({
+          Entry_ID: `FIN-${Date.now().toString().slice(-4)}`, // Generates a simple ID
+          Date: data.Date,
+          Flow: data.Flow,
+          Account: data.Account,
+          Category: data.Category,
+          Sub_Category: data.Sub_Category,
+          Amount: data.Amount,
+          Payment_Method: data.Payment_Method,
+          Reference: data.Reference || "", // CAPTURES VEHICLE NO / CARD NAME
+          Particulars: data.Particulars,
+          Timestamp: data.Timestamp
+        });
 
-          // --- FIX: Safely check if Entry_ID exists and is a string ---
-          if (lastRow.Entry_ID && typeof lastRow.Entry_ID === "string") {
-            const idParts = lastRow.Entry_ID.split("-");
-
-            // Check if split was successful (e.g., 'FIN-1001')
-            if (idParts.length === 2) {
-              const lastId = parseInt(idParts[1]);
-              if (!isNaN(lastId)) {
-                NextId = lastId + 1;
-              }
-            }
-          }
-          // If Entry_ID is missing or malformed, it will safely use 1001
-        }
-        const newEntryId = `FIN-${NextId}`;
-
-        // 2. Add server-side data
-        data.Entry_ID = newEntryId;
-        data.Timestamp = new Date().toISOString();
-
-        // 3. Save to Google Sheet
-        await financialsSheet.addRow(data);
-
-        responseData = { success: true, newId: newEntryId };
+        responseData = { success: true, message: "Entry saved successfully." };
         break;
-
+      }
       case "submitBooking": {
         const data = JSON.parse(event.body);
         // Connect to 'bookings' sheet (Create if missing)

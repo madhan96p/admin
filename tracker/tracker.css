@@ -183,3 +183,337 @@
     max-height: 300px;
     /* This controls the max height */
 }
+
+/* --- Dashboard Layout & Stat Cards --- */
+.stat-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    border: 1px solid #f3f4f6;
+}
+
+.stat-card i {
+    font-size: 2rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 50%;
+}
+
+.stat-card.stat-secondary {
+    padding: 1rem;
+    background: #f9fafb;
+}
+
+.stat-card.stat-secondary i {
+    font-size: 1.2rem;
+    padding: 0.8rem;
+    background: white;
+}
+
+.stat-info h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+    color: #111827;
+}
+
+.stat-info p {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* --- Account Tags (Color Coding) --- */
+.account-tag {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.tag-travels { background: #dbeafe; color: #1e40af; }
+.tag-marketing { background: #dcfce7; color: #166534; }
+.tag-company { background: #f3e8ff; color: #6b21a8; }
+.tag-associates { background: #fef3c7; color: #92400e; }
+
+/* --- Table Styling --- */
+.tracker-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tracker-table th {
+    text-align: left;
+    padding: 12px;
+    font-size: 0.85rem;
+    color: #6b7280;
+    border-bottom: 2px solid #f3f4f6;
+}
+
+.tracker-table td {
+    padding: 12px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+/* --- Filter Buttons --- */
+.date-filter-group button {
+    padding: 8px 16px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.date-filter-group button.active {
+    background: #4f46e5;
+    color: white;
+    border-color: #4f46e5;
+}
+
+.date-filter-group button:first-child { border-radius: 6px 0 0 6px; }
+.date-filter-group button:last-child { border-radius: 0 6px 6px 0; }
+
+@media (max-width: 768px) {
+    .mobile-hide { display: none; }
+    .stat-cards-container { grid-template-columns: 1fr 1fr; }
+}
+
+/* ====================================================================
+   Shrish Group - Premium Dashboard UI (v4.0)
+   Clean, Modern, and Professional Design
+   ====================================================================
+*/
+
+:root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --bg-main: #f8fafc;
+    --card-bg: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --radius: 1rem;
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+}
+
+/* --- Layout & Structure --- */
+.page-content {
+    background-color: var(--bg-main);
+    padding: 2rem;
+    min-height: 100vh;
+}
+
+.page-title-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+}
+
+.page-title-bar h1 {
+    font-size: 1.875rem;
+    font-weight: 800;
+    color: var(--text-main);
+    letter-spacing: -0.025em;
+}
+
+/* --- 4 Business Pillar Cards --- */
+.stat-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    padding: 1.75rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    border: 1px solid var(--border);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
+}
+
+.stat-card i {
+    font-size: 1.5rem;
+    height: 50px;
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #f1f5f9;
+}
+
+.stat-info h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin: 0 0 0.25rem 0;
+    font-feature-settings: "tnum";
+}
+
+.stat-info p {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+}
+
+/* --- Premium Operational Metrics Table --- */
+.operational-metrics-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-top: 1.5rem;
+}
+
+.metrics-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.metrics-table th {
+    background: #fdfdfd;
+    text-align: left;
+    padding: 1rem 1.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid var(--border);
+}
+
+.metrics-table td {
+    padding: 1.25rem 1.5rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-main);
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.metrics-table tr:hover td {
+    background-color: #f8fafc;
+}
+
+.metrics-table i {
+    width: 24px;
+    margin-right: 12px;
+    color: var(--primary);
+    opacity: 0.7;
+}
+
+/* --- Account Tags --- */
+.account-tag {
+    padding: 6px 12px;
+    border-radius: 2rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.025em;
+}
+
+.tag-travels { background: #eff6ff; color: #1d4ed8; }
+.tag-marketing { background: #ecfdf5; color: #047857; }
+.tag-company { background: #faf5ff; color: #7e22ce; }
+.tag-associates { background: #fffbeb; color: #b45309; }
+
+/* --- Tables & Lists --- */
+.tracker-table th {
+    padding: 1rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+}
+
+.tracker-table td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+/* --- Filters --- */
+.date-filter-group {
+    display: inline-flex;
+    background: #e2e8f0;
+    padding: 4px;
+    border-radius: 10px;
+}
+
+.date-filter-group button {
+    border: none;
+    background: transparent;
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.date-filter-group button.active {
+    background: white;
+    color: var(--primary);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+@media (max-width: 768px) {
+    .page-content { padding: 1rem; }
+    .stat-cards-container { grid-template-columns: 1fr; }
+    .mobile-hide { display: none; }
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.chart-toggle-group {
+    display: flex;
+    gap: 0.5rem;
+    background: #f1f5f9;
+    padding: 0.25rem;
+    border-radius: 0.5rem;
+}
+
+.chart-toggle-group button {
+    padding: 0.4rem 1rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.chart-toggle-group button.active {
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    color: var(--primary);
+}

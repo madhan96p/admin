@@ -1,426 +1,395 @@
 /**
- * ====================================================================
- * Shrish Travels - Financial Dashboard Logic (v2.0 with Filters)
- * ====================================================================
+ * Financial Dashboard Controller
+ * Handles data fetching, filtering by date range, and DOM injection.
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  // --- 1. Get All Page Elements ---
+  // --- State Management ---
+  let allEntries = []; // Stores the master list from API
+  let chartInstance = null;
+  let currentChartGroup = "monthly";
 
-  // Charts
-  const companyChartCtx = document
-    .getElementById("company-chart")
-    ?.getContext("2d");
-  const personalChartCtx = document
-    .getElementById("personal-chart")
-    ?.getContext("2d");
-  const companyBarChartCtx = document
-    .getElementById("company-bar-chart")
-    ?.getContext("2d");
+  // --- Utilities ---
 
-  // Summary Cards
-  const companyProfitEl = document.getElementById("company-profit");
-  const companyIncomeEl = document.getElementById("company-income");
-  const companyExpenseEl = document.getElementById("company-expense");
-  const personalExpenseEl = document.getElementById("personal-expense");
-
-  // Table
-  const transactionsTableBody = document.getElementById(
-    "recent-transactions-body",
-  );
-
-  // --- 2. Global Variables ---
-
-  let allEntries = []; // This will store ALL data from the API
-
-  // Chart instances (to destroy before redrawing)
-  let companyBarChartInstance = null;
-  let companyChartInstance = null;
-  let personalChartInstance = null;
-  let barChartType = "bar"; // 'bar' or 'line'
-  let barChartGrouping = "monthly"; // 'daily', 'monthly', or 'yearly'
-
-  // --- 3. Main Function to Fetch Data (Runs Once) ---
-
-  async function loadDashboardData() {
-    try {
-      transactionsTableBody.innerHTML =
-        '<tr><td colspan="5" style="text-align: center;">Loading data...</td></tr>';
-
-      const response = await fetch(
-        "/.netlify/functions/api?action=getFinancialData",
-      );
-      if (!response.ok) {
-        throw new Error(`API Error: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      allEntries = data.entries || []; // Store ALL entries globally
-
-      if (allEntries.length === 0) {
-        transactionsTableBody.innerHTML =
-          '<tr><td colspan="5" style="text-align: center;">No transactions found.</td></tr>';
-        return;
-      }
-
-      // --- CALL OUR NEW UPDATE FUNCTION ---
-      // This will show the default '1W' (7d) view
-      updateDashboardView("7d");
-    } catch (error) {
-      console.error("Failed to load dashboard:", error);
-      transactionsTableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: red;">Error: ${error.message}</td></tr>`;
-    }
-  }
-
-  // --- 4. Main Function to Filter and Update Dashboard ---
-
-  function updateDashboardView(range = "7d") {
-    // Default to '7d' (1 Week)
-
-    // --- 4.1. Filter Entries by Date ---
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set to start of today for accurate comparison
-    let filteredEntries = [];
-
-    if (range === "all") {
-      filteredEntries = allEntries;
-    } else if (range === "1d") {
-      filteredEntries = allEntries.filter((entry) => {
-        const entryDate = new Date(entry.Date);
-        entryDate.setHours(0, 0, 0, 0);
-        return entryDate.getTime() === today.getTime();
-      });
-    } else {
-      // Handle 7d, 30d, 365d
-      const days = parseInt(range.replace("d", ""));
-      const cutoffDate = new Date(today);
-      cutoffDate.setDate(today.getDate() - (days - 1)); // -1 to include today
-
-      filteredEntries = allEntries.filter((entry) => {
-        const entryDate = new Date(entry.Date);
-        return entryDate >= cutoffDate;
-      });
-    }
-
-    // --- 4.2. Process Data and Calculate Totals ---
-    let companyIncome = 0;
-    let companyExpense = 0;
-    let personalExpense = 0;
-    const companyExpenseCategories = {};
-    const personalExpenseCategories = {};
-
-    for (const entry of filteredEntries) {
-      // Use filteredEntries
-      const amount = parseFloat(entry.Amount) || 0;
-      if (entry.Account === "Company") {
-        if (entry.Flow === "Credit") {
-          companyIncome += amount;
-        } else if (entry.Flow === "Debit") {
-          companyExpense += amount;
-          const category = entry.Category || "Uncategorized";
-          companyExpenseCategories[category] =
-            (companyExpenseCategories[category] || 0) + Math.abs(amount);
-        }
-      } else if (entry.Account === "Personal" && entry.Flow === "Debit") {
-        personalExpense += amount;
-        const category = entry.Category || "Uncategorized";
-        personalExpenseCategories[category] =
-          (personalExpenseCategories[category] || 0) + Math.abs(amount);
-      }
-    }
-    const companyProfit = companyIncome + companyExpense;
-
-    const monthlyData = {}; // This is now 'groupedData'
-
-    // Loop through filtered entries, reverse for chronological order
-    for (const entry of filteredEntries.slice().reverse()) {
-      if (entry.Account !== "Company") continue;
-
-      const date = new Date(entry.Date);
-      let groupKey = "";
-
-      // --- NEW GROUPING LOGIC ---
-      switch (barChartGrouping) {
-        case "daily":
-          // Group by 'YYYY-MM-DD'
-          groupKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-          break;
-        case "yearly":
-          // Group by 'YYYY'
-          groupKey = `${date.getFullYear()}`;
-          break;
-        case "monthly":
-        default:
-          // Group by 'YYYY-MM'
-          groupKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-      }
-      // --- END NEW GROUPING LOGIC ---
-
-      if (!monthlyData[groupKey]) {
-        monthlyData[groupKey] = { income: 0, expense: 0 };
-      }
-
-      const amount = parseFloat(entry.Amount) || 0;
-      if (entry.Flow === "Credit") {
-        monthlyData[groupKey].income += amount;
-      } else if (entry.Flow === "Debit") {
-        monthlyData[groupKey].expense += Math.abs(amount);
-      }
-    }
-    // --- 4.4. Update Summary Cards ---
-    companyProfitEl.textContent = formatCurrency(companyProfit);
-    companyIncomeEl.textContent = formatCurrency(companyIncome);
-    companyExpenseEl.textContent = formatCurrency(Math.abs(companyExpense));
-    personalExpenseEl.textContent = formatCurrency(Math.abs(personalExpense));
-
-    // --- 4.5. Populate Recent Transactions Table ---
-    transactionsTableBody.innerHTML = ""; // Clear the table
-    const recentEntries = filteredEntries.slice(0, 10); // Show top 10 of the filtered list
-
-    if (recentEntries.length === 0) {
-      transactionsTableBody.innerHTML =
-        '<tr><td colspan="5" style="text-align: center;">No transactions found for this period.</td></tr>';
-    } else {
-      for (const entry of recentEntries) {
-        const row = document.createElement("tr");
-        const amount = parseFloat(entry.Amount) || 0;
-        const amountColor = amount < 0 ? "red" : "green";
-        row.innerHTML = `
-                    <td>${entry.Date || "N/A"}</td>
-                    <td class="mobile-hide">${entry.Account || "N/A"}</td>
-                    <td>${entry.Category || "N/A"}</td>
-                    <td class="mobile-hide">${entry.Particulars || "N/A"}</td>
-                    <td style="text-align: right; color: ${amountColor}; font-weight: 500;">
-                        ${formatCurrency(amount)}
-                    </td>
-                `;
-        transactionsTableBody.appendChild(row);
-      }
-    }
-
-    // --- 4.6. Render All Charts ---
-    if (companyBarChartCtx) {
-      renderBarChart(companyBarChartCtx, monthlyData);
-    }
-    if (companyChartCtx) {
-      renderDonutChart(companyChartCtx, "company", companyExpenseCategories);
-    }
-    if (personalChartCtx) {
-      renderDonutChart(personalChartCtx, "personal", personalExpenseCategories);
-    }
-  }
-
-  // --- 5. Helper Functions to Create Charts ---
-
-  // Helper to format currency for chart tooltips
-  const formatChartCurrency = (num) => {
-    return num.toLocaleString("en-IN", {
+  /**
+   * Formats numbers into Indian Rupee currency format.
+   * @param {number} num - The value to format.
+   */
+  const formatCurrency = (num) =>
+    new Intl.NumberFormat("en-IN", {
       style: "currency",
       currency: "INR",
       minimumFractionDigits: 2,
-    });
+    }).format(num || 0);
+
+  /**
+   * Safely parses a Date from the Google Sheets string (e.g., dd/MMM/yyyy or YYYY-MM-DD).
+   */
+  const parseSheetDate = (dateString) => {
+    if (!dateString) return new Date(0);
+    let d = new Date(dateString);
+    if (isNaN(d.getTime()) && typeof dateString === 'string') {
+      const parts = dateString.split('/');
+      if (parts.length === 3) {
+        d = new Date(`${parts[1]} ${parts[0]}, ${parts[2]}`);
+      }
+    }
+    return d;
   };
 
-  function renderDonutChart(ctx, chartType, categoryData) {
-    // Destroy the old chart if it exists, to prevent flickering
-    if (chartType === "company" && companyChartInstance) {
-      companyChartInstance.destroy();
-    } else if (chartType === "personal" && personalChartInstance) {
-      personalChartInstance.destroy();
+  // --- Core Functions ---
+
+  /**
+   * Fetches data from the Netlify Function API.
+   */
+  async function loadDashboard() {
+    const tableBody = document.getElementById("recent-transactions-body");
+
+    try {
+      // Show a loading state in the table
+      if (tableBody) tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center">Loading data...</td></tr>';
+
+      const response = await fetch("/.netlify/functions/api?action=getFinancialData");
+
+      if (!response.ok) throw new Error(` HTTP error! status: ${response.status}`);
+
+      const data = await response.json();
+
+      if (data && data.entries) {
+        // Filter out empty rows that might come from the sheet
+        allEntries = data.entries.filter(e => e.Date && e.Amount !== undefined);
+        // Fetch the currently active range directly from the DOM
+        const activeRangeBtn = document.querySelector(".date-filter-group button.active");
+        updateDashboardView(activeRangeBtn ? activeRangeBtn.getAttribute("data-range") : "30d");
+      } else {
+        throw new Error("Invalid data format received");
+      }
+    } catch (err) {
+      console.error("Dashboard Load Failed:", err);
+      if (tableBody) tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red">Error: ${err.message}</td></tr>`;
+    }
+  }
+  /**
+   * Filters an array of transactions based on the selected time range.
+   * @param {Array} transactions - The list of transaction objects.
+   * @param {string} range - The time range (e.g., '1d', '7d', '30d', '365d', 'all').
+   * @returns {Array} - The filtered list of transactions.
+   */
+  function filterByDate(transactions, range) {
+    if (range === 'all') {
+      return transactions;
     }
 
-    const labels = Object.keys(categoryData);
-    const data = Object.values(categoryData);
+    const today = new Date();
+    const cutoffDate = new Date(today);
 
-    const chartConfig = {
-      type: "doughnut",
+    // Set the time to midnight for more accurate date comparisons
+    cutoffDate.setHours(0, 0, 0, 0);
+
+    switch (range) {
+      case '1d':
+        cutoffDate.setDate(today.getDate() - 1);
+        break;
+      case '7d':
+        cutoffDate.setDate(today.getDate() - 7);
+        break;
+      case '30d':
+        cutoffDate.setDate(today.getDate() - 30);
+        break;
+      case '365d':
+        cutoffDate.setFullYear(today.getFullYear() - 1);
+        break;
+      default:
+        return transactions; // Return all if range is unrecognized
+    }
+
+    return transactions.filter(transaction => {
+      if (!transaction.Date) return false;
+      const transactionDate = parseSheetDate(transaction.Date);
+      return transactionDate >= cutoffDate;
+    });
+  }
+
+  /**
+   * Orchestrates the filtering and rendering process.
+   * @param {string} range - Days to look back (e.g., "7", "30", "all")
+   */
+  function updateDashboardView(range = "all") {
+    const filtered = filterByDate(allEntries, range);
+
+    // Calculate and update the stat cards (Business Unit Totals and Operational Metrics)
+    calculateMetrics(filtered);
+    renderChart(filtered, currentChartGroup);
+    renderTable(filtered);
+  }
+
+  /**
+   * Calculates sums for Business Units and Operational categories.
+   */
+  function calculateMetrics(entries) {
+    // Separate metrics by flow type to prevent "Cash Flow Summation" collapse
+    const m = {
+      travels: { revenue: 0, expense: 0, transfer: 0 },
+      marketing: { revenue: 0, expense: 0, transfer: 0 },
+      company: { revenue: 0, expense: 0, transfer: 0 },
+      associates: { revenue: 0, expense: 0, transfer: 0 },
+      fuel: 0, jegan: 0, pragadeesh: 0, staff: 0
+    };
+
+    entries.forEach(e => {
+      const amt = parseFloat(e.Amount) || 0;
+      const acc = e.Account;
+      const sub = e.Sub_Category;
+      const flow = e.Flow; // "Credit", "Debit", or "Transfer"
+
+      // Logic for Business Unit Totals
+      let target = null;
+      if (acc === "Travels") target = m.travels;
+      if (acc === "Marketing") target = m.marketing;
+      if (acc === "Company") target = m.company;
+      if (acc === "Associates") target = m.associates;
+
+      if (target) {
+        if (flow === "Credit") target.revenue += amt;
+        else if (flow === "Debit") target.expense += Math.abs(amt);
+        else if (flow === "Transfer") target.transfer += amt;
+      }
+
+      // Logic for Operational Deep-Dive (Absolute values for costs)
+      if (flow === "Debit") {
+        if (sub === "Fuel") m.fuel += Math.abs(amt);
+        if (sub === "Jegan") m.jegan += Math.abs(amt);
+        if (sub === "Pragadeesh") m.pragadeesh += Math.abs(amt);
+        if (sub === "Salaries" || sub === "Advance") m.staff += Math.abs(amt);
+      }
+    });
+
+    // Helper to safely update text content
+    const setTxt = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.innerText = formatCurrency(val);
+    };
+
+    // Helper to dynamically update the labels below the numbers
+    const setLabel = (id, labelText) => {
+      const el = document.getElementById(id);
+      if (el && el.nextElementSibling) {
+        el.nextElementSibling.innerText = labelText;
+      }
+    };
+
+    // Display Operational Profit (Revenue - Expense), ignoring Transfers
+    setTxt("travels-profit", m.travels.revenue - m.travels.expense);
+    setLabel("travels-profit", "Travels Op. Profit");
+
+    setTxt("marketing-profit", m.marketing.revenue - m.marketing.expense);
+    setLabel("marketing-profit", "Marketing Op. Profit");
+
+    setTxt("company-profit", m.company.revenue - m.company.expense);
+    setLabel("company-profit", "Company Op. Profit");
+
+    setTxt("associates-profit", m.associates.revenue - m.associates.expense);
+    setLabel("associates-profit", "Associates Op. Profit");
+
+    setTxt("total-fuel", m.fuel);
+    setTxt("cost-jegan", m.jegan);
+    setTxt("cost-pragadeesh", m.pragadeesh);
+    setTxt("total-staff", m.staff);
+  }
+
+  /**
+   * Renders the transaction list into the HTML table.
+   */
+  function renderTable(entries) {
+    const body = document.getElementById("recent-transactions-body");
+    if (!body) return;
+
+    if (entries.length === 0) {
+      body.innerHTML = '<tr><td colspan="5" style="text-align:center">No data found for this period.</td></tr>';
+      return;
+    }
+
+    // Sort entries by Date descending (newest first)
+    const sortedEntries = [...entries].sort((a, b) => parseSheetDate(b.Date) - parseSheetDate(a.Date));
+
+    body.innerHTML = sortedEntries.slice(0, 15).map(e => {
+      const isNegative = parseFloat(e.Amount) < 0;
+      return `
+        <tr>
+          <td>${e.Date}</td>
+          <td class="mobile-hide"><span class="account-tag tag-${(e.Account || '').toLowerCase()}">${e.Account}</span></td>
+          <td>${e.Sub_Category}</td>
+          <td class="mobile-hide"><small>${e.Reference || e.Particulars || '-'}</small></td>
+          <td style="text-align: right; font-weight: bold; color: ${isNegative ? '#b91c1c' : '#15803d'}">
+            ${formatCurrency(e.Amount)}
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  /**
+   * Groups data and renders the Chart.js performance chart
+   */
+  function renderChart(entries, grouping) {
+    const canvas = document.getElementById("main-performance-chart");
+    if (!canvas) return;
+
+    if (chartInstance) {
+      chartInstance.destroy(); // Clear old chart to prevent overlap bugs
+    }
+
+    const aggregatedData = {};
+
+    entries.forEach(e => {
+      const amt = parseFloat(e.Amount) || 0;
+      const date = parseSheetDate(e.Date);
+      if (isNaN(date.getTime())) return; // Skip invalid dates
+
+      let sortKey, displayLabel;
+
+      // Determine bucketing strategy
+      if (grouping === 'daily') {
+        sortKey = date.toISOString().split('T')[0]; // Outputs YYYY-MM-DD for clean sorting
+        displayLabel = date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+      } else if (grouping === 'monthly') {
+        sortKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        displayLabel = date.toLocaleString('default', { month: 'short', year: 'numeric' });
+      } else if (grouping === 'yearly') {
+        sortKey = date.getFullYear().toString();
+        displayLabel = sortKey;
+      }
+
+      // Initialize bucket
+      if (!aggregatedData[sortKey]) {
+        aggregatedData[sortKey] = { label: displayLabel, income: 0, expense: 0, transfer: 0 };
+      }
+
+      // Calculate separation based on actual Flow rather than just amount polarity
+      const flow = e.Flow;
+      if (flow === "Credit") {
+        aggregatedData[sortKey].income += amt;
+      } else if (flow === "Debit") {
+        aggregatedData[sortKey].expense += Math.abs(amt); // Debits are negative, chart uses positive bars
+      } else if (flow === "Transfer") {
+        aggregatedData[sortKey].transfer += amt;
+      }
+    });
+
+    // Sort dates chronologically before rendering
+    const sortedKeys = Object.keys(aggregatedData).sort();
+    const labels = sortedKeys.map(k => aggregatedData[k].label);
+    const incomeData = sortedKeys.map(k => aggregatedData[k].income);
+    const expenseData = sortedKeys.map(k => aggregatedData[k].expense);
+    const transferData = sortedKeys.map(k => aggregatedData[k].transfer);
+
+    chartInstance = new Chart(canvas.getContext("2d"), {
+      type: 'bar',
       data: {
         labels: labels,
         datasets: [
           {
-            label: "Expenses",
-            data: data,
-            backgroundColor: [
-              "#4f46e5",
-              "#ef4444",
-              "#f59e0b",
-              "#10b981",
-              "#3b82f6",
-              "#6366f1",
-              "#ec4899",
-              "#8b5cf6",
-            ],
-            hoverOffset: 4,
+            label: 'Revenue (Credits)',
+            data: incomeData,
+            backgroundColor: 'rgba(16, 185, 129, 0.85)',
+            hoverBackgroundColor: '#10b981',
+            borderRadius: 4,
+            maxBarThickness: 35
           },
-        ],
+          {
+            label: 'Expenses (Debits)',
+            data: expenseData,
+            backgroundColor: 'rgba(239, 68, 68, 0.85)',
+            hoverBackgroundColor: '#ef4444',
+            borderRadius: 4,
+            maxBarThickness: 35
+          },
+          {
+            label: 'Net Transfers',
+            data: transferData,
+            backgroundColor: 'rgba(59, 130, 246, 0.85)',
+            hoverBackgroundColor: '#3b82f6',
+            borderRadius: 4,
+            maxBarThickness: 35
+          }
+        ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: {
-          legend: { position: "top" },
-          tooltip: {
-            callbacks: {
-              label: function (context) {
-                let label = context.label || "";
-                let value = context.raw || 0;
-                return `${label}: ${formatChartCurrency(value)}`;
-              },
-            },
-          },
+        interaction: {
+          mode: 'index',
+          intersect: false,
         },
-      },
-    };
-
-    if (chartType === "company") {
-      companyChartInstance = new Chart(ctx, chartConfig);
-    } else if (chartType === "personal") {
-      personalChartInstance = new Chart(ctx, chartConfig);
-    }
-  }
-
-  function renderBarChart(ctx, monthlyData) {
-    if (companyBarChartInstance) {
-      companyBarChartInstance.destroy();
-    }
-
-    const labels = Object.keys(monthlyData).map((groupKey) => {
-      // --- NEW: Dynamic Label Formatting ---
-      const parts = groupKey.split("-");
-      let date;
-      if (barChartGrouping === "daily") {
-        date = new Date(parts[0], parts[1] - 1, parts[2]);
-        return date.toLocaleString("default", {
-          day: "numeric",
-          month: "short",
-        }); // "10 Oct"
-      } else if (barChartGrouping === "monthly") {
-        date = new Date(parts[0], parts[1] - 1);
-        return date.toLocaleString("default", {
-          month: "short",
-          year: "numeric",
-        }); // "Oct 2025"
-      } else {
-        // yearly
-        return groupKey; // "2025"
-      }
-      // --- END: Dynamic Label Formatting ---
-    });
-
-    const incomeData = Object.values(monthlyData).map((data) => data.income);
-    const expenseData = Object.values(monthlyData).map((data) => data.expense);
-
-    companyBarChartInstance = new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: "Income",
-            data: incomeData,
-            backgroundColor: "#10b981", // Green
-            borderColor: "#059669",
-            borderWidth: 1,
-            maxBarThickness: 80, // <-- ADD THIS
-          },
-          {
-            label: "Expense",
-            data: expenseData,
-            backgroundColor: "#ef4444", // Red
-            borderColor: "#b91c1c",
-            borderWidth: 1,
-            maxBarThickness: 80, // <-- ADD THIS
-          },
-        ],
-      },
-      options: {
-        responsive: true,
+        layout: {
+          padding: 10
+        },
         scales: {
+          x: {
+            grid: { display: false, drawBorder: false },
+            ticks: { font: { family: "'Inter', sans-serif" } }
+          },
           y: {
             beginAtZero: true,
-            ticks: {
-              callback: function (value) {
-                return formatChartCurrency(value);
-              },
+            grid: {
+              color: '#e5e7eb',
+              borderDash: [5, 5],
+              drawBorder: false
             },
-          },
+            ticks: {
+              font: { family: "'Inter', sans-serif" },
+              callback: value => '₹' + value.toLocaleString('en-IN')
+            }
+          }
         },
         plugins: {
-          legend: { position: "top" },
-          tooltip: {
-            callbacks: {
-              label: function (context) {
-                let label = context.dataset.label || "";
-                let value = context.raw || 0;
-                return `${label}: ${formatChartCurrency(value)}`;
-              },
-            },
+          legend: {
+            position: 'top',
+            labels: {
+              usePointStyle: true,
+              padding: 20,
+              font: { family: "'Inter', sans-serif", size: 12 }
+            }
           },
-        },
-      },
+          tooltip: {
+            backgroundColor: 'rgba(17, 24, 39, 0.9)',
+            titleFont: { family: "'Inter', sans-serif", size: 13 },
+            bodyFont: { family: "'Inter', sans-serif", size: 13 },
+            padding: 12,
+            usePointStyle: true,
+            boxPadding: 6,
+            callbacks: {
+              label: context => context.dataset.label + ': ' + formatCurrency(context.parsed.y)
+            }
+          }
+        }
+      }
     });
   }
 
-  // --- 6. Event Listeners for Date Filters ---
+  // --- Event Listeners ---
 
-  document.querySelectorAll(".date-filter-group button").forEach((button) => {
-    button.addEventListener("click", (e) => {
-      const range = e.target.dataset.range;
+  document.querySelectorAll(".date-filter-group button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      // Toggle active class
+      document.querySelectorAll(".date-filter-group button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
 
-      // Update active button
-      document
-        .querySelectorAll(".date-filter-group button")
-        .forEach((btn) => btn.classList.remove("active"));
-      e.target.classList.add("active");
-
-      // Re-render the dashboard with the new range
-      updateDashboardView(range);
+      // Update data view based on data-range attribute
+      updateDashboardView(btn.getAttribute("data-range"));
     });
   });
 
-  // Type Toggle (Bar/Line)
-  document.querySelectorAll("#bar-chart-type button").forEach((button) => {
-    button.addEventListener("click", (e) => {
-      const currentButton = e.target.closest("button");
-      barChartType = currentButton.dataset.type; // Set global state
-
-      // Update active class
-      document
-        .querySelectorAll("#bar-chart-type button")
-        .forEach((btn) => btn.classList.remove("active"));
-      currentButton.classList.add("active");
-
-      // Re-render dashboard
-      updateDashboardView(
-        document.querySelector(".date-filter-group button.active").dataset
-          .range,
-      );
+  document.querySelectorAll(".chart-toggle-group button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".chart-toggle-group button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentChartGroup = btn.getAttribute("data-group");
+      const activeRange = document.querySelector(".date-filter-group button.active").getAttribute("data-range");
+      updateDashboardView(activeRange);
     });
   });
 
-  // Grouping Toggle (Daily/Monthly/Yearly)
-  document.querySelectorAll("#bar-chart-grouping button").forEach((button) => {
-    button.addEventListener("click", (e) => {
-      barChartGrouping = e.target.dataset.group; // Set global state
-
-      // Update active class
-      document
-        .querySelectorAll("#bar-chart-grouping button")
-        .forEach((btn) => btn.classList.remove("active"));
-      e.target.classList.add("active");
-
-      // Re-render dashboard
-      updateDashboardView(
-        document.querySelector(".date-filter-group button.active").dataset
-          .range,
-      );
-    });
-  });
-
-  // --- 7. Initial Load ---
-  loadDashboardData();
+  // Initialize
+  loadDashboard();
 });

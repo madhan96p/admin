@@ -1,179 +1,369 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Financial Dashboard - Shrish Admin</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Financial Dashboard - Shrish Admin</title>
+  
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon/favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon/favicon.svg" />
+  <link rel="icon" type="image/x-icon" href="/assets/images/favicon/favicon.ico" />
 
-    <link
-      rel="apple-touch-icon"
-      sizes="180x180"
-      href="/assets/images/favicon/apple-touch-icon.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="96x96"
-      href="/assets/images/favicon/favicon-96x96.png"
-    />
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      href="/assets/images/favicon/favicon.svg"
-    />
-    <link
-      rel="icon"
-      type="image/x-icon"
-      href="/assets/images/favicon/favicon.ico"
-    />
-    <link rel="manifest" href="/assets/images/favicon/site.webmanifest" />
-    <meta property="og:title" content="Shrish Admin - Financial Dashboard" />
-    <meta property="og:type" content="website" />
-    <meta
-      property="og:description"
-      content="Secure admin panel for managing Shrish Group finances, duty slips, and invoices."
-    />
-    <meta
-      property="og:image"
-      content="https://admin.shrishgroup.com/assets/images/logo.webp"
-    />
-    <meta name="twitter:card" content="summary" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    />
-    <link rel="stylesheet" href="/assets/css/admin.css" />
-    <link rel="stylesheet" href="tracker.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/assets/css/admin.css" />
+  <link rel="stylesheet" href="/assets/css/common.css" />
+  <link rel="stylesheet" href="tracker.css" />
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <style>
+    /* Premium UI/UX Dashboard Enhancements */
+    
+    .page-title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .page-title-bar h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--color-text-dark);
+    }
+    
+    .page-title-bar p {
+      margin: 5px 0 0;
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  </head>
+    /* Segmented Controls */
+    .segmented-control {
+      display: flex;
+      background: #f1f5f9;
+      border-radius: 8px;
+      padding: 4px;
+      gap: 4px;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .segmented-control button {
+      border: none;
+      background: transparent;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .segmented-control button.active, 
+    .segmented-control button:hover {
+      background: #ffffff;
+      color: #0f172a;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
 
-  <body>
+    /* Stat Cards Enhancements */
+    .stat-cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .stat-card {
+      padding: 1.5rem;
+      border-radius: 12px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    }
+    
+    .stat-icon-wrapper {
+      width: 54px;
+      height: 54px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .stat-info p {
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+      margin: 0 0 4px 0;
+      color: #64748b;
+      font-weight: 600;
+    }
+    
+    .stat-info h3 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    /* Dashboard Layout Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 1.5rem;
+      align-items: stretch;
+      margin-bottom: 1.5rem;
+    }
+    
+    .chart-container {
+      position: relative;
+      height: 350px;
+      width: 100%;
+    }
+
+    /* Mini Metric Cards */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    
+    .metric-mini-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 1.25rem 1rem;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: background-color 0.2s;
+    }
+    
+    .metric-mini-card:hover {
+      background: #f1f5f9;
+    }
+    
+    .metric-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #64748b;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    
+    .metric-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    /* Mobile Overrides */
+    @media (max-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .page-title-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .header-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .segmented-control {
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: center;
+      }
+      .segmented-control button {
+        flex: 1;
+      }
+      .metrics-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .mobile-hide {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <script src="/assets/js/auth.js"></script>
+
+  <div class="admin-layout">
     <div id="admin-sidebar"></div>
 
-    <div class="admin-main-content">
+    <main class="admin-main-content">
       <div id="admin-header"></div>
-
-      <main class="page-content">
-        <div class="page-title-bar">
-          <h1>Financial Dashboard</h1>
-
-          <div class="date-filter-group">
-            <button data-range="1d">1D</button>
-            <button data-range="7d" class="active">1W</button>
-            <button data-range="30d">1M</button>
-            <button data-range="365d">1Y</button>
-            <button data-range="all">All</button>
+      
+      <div class="page-content">
+        <header class="page-title-bar">
+          <div>
+            <h1>Financial Dashboard</h1>
+            <p>Track your group's overall financial health and metrics</p>
           </div>
-          <a
-            href="add-entry.html"
-            class="btn-primary"
-            style="text-decoration: none"
-          >
-            <i class="fas fa-plus"></i> Add Transaction
-          </a>
-        </div>
+          <div class="header-actions">
+            <div class="segmented-control date-filter-group">
+              <button data-range="1d">1D</button>
+              <button data-range="7d">1W</button>
+              <button data-range="30d" class="active">1M</button>
+              <button data-range="365d">1Y</button>
+              <button data-range="all">All</button>
+            </div>
+            <a href="add-entry.html" class="btn-primary">
+              <i class="fas fa-plus"></i> Add Transaction
+            </a>
+          </div>
+        </header>
 
+        <!-- Business Unit Profits -->
         <div class="stat-cards-container">
-          <div class="stat-card stat-success">
-            <i class="fas fa-landmark"></i>
+          <div class="stat-card" style="border-left: 4px solid #3b82f6;">
+            <div class="stat-icon-wrapper" style="background: #eff6ff; color: #3b82f6;">
+              <i class="fas fa-shuttle-van"></i>
+            </div>
             <div class="stat-info">
+              <p>Travels Profit</p>
+              <h3 id="travels-profit">₹0.00</h3>
+            </div>
+          </div>
+          
+          <div class="stat-card" style="border-left: 4px solid #10b981;">
+            <div class="stat-icon-wrapper" style="background: #ecfdf5; color: #10b981;">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-info">
+              <p>Marketing Profit</p>
+              <h3 id="marketing-profit">₹0.00</h3>
+            </div>
+          </div>
+          
+          <div class="stat-card" style="border-left: 4px solid #8b5cf6;">
+            <div class="stat-icon-wrapper" style="background: #f5f3ff; color: #8b5cf6;">
+              <i class="fas fa-building"></i>
+            </div>
+            <div class="stat-info">
+              <p>Company Profit</p>
               <h3 id="company-profit">₹0.00</h3>
-              <p>Company Net Profit</p>
             </div>
           </div>
-
-          <div class="stat-card">
-            <i class="fas fa-arrow-down"></i>
-            <div class="stat-info">
-              <h3 id="company-income">₹0.00</h3>
-              <p>Company Income (Credit)</p>
+          
+          <div class="stat-card" style="border-left: 4px solid #f59e0b;">
+            <div class="stat-icon-wrapper" style="background: #fffbeb; color: #f59e0b;">
+              <i class="fas fa-handshake"></i>
             </div>
-          </div>
-
-          <div class="stat-card stat-critical">
-            <i class="fas fa-arrow-up"></i>
             <div class="stat-info">
-              <h3 id="company-expense">₹0.00</h3>
-              <p>Company Expense (Debit)</p>
-            </div>
-          </div>
-
-          <div class="stat-card stat-secondary">
-            <i class="fas fa-user-shield"></i>
-            <div class="stat-info">
-              <h3 id="personal-expense">₹0.00</h3>
-              <p>Personal Expense (Debit)</p>
+              <p>Associates Profit</p>
+              <h3 id="associates-profit">₹0.00</h3>
             </div>
           </div>
         </div>
 
-        <div class="content-card" style="margin-top: 2rem">
-          <div class="chart-header">
-            <h3>Company Performance</h3>
-
-            <div id="bar-chart-grouping" class="chart-toggle-group">
-              <button data-group="daily">Daily</button>
-              <button data-group="monthly" class="active">Monthly</button>
-              <button data-group="yearly">Yearly</button>
+        <div class="dashboard-grid">
+          <!-- Chart Section -->
+          <div class="content-card" style="display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+              <h3 style="margin: 0; font-size: 1.2rem;"><i class="fas fa-chart-bar" style="color: #64748b; margin-right: 8px;"></i> Group Performance</h3>
+              <div id="bar-chart-grouping" class="segmented-control chart-toggle-group"> 
+                <button data-group="daily">Daily</button>
+                <button data-group="monthly" class="active">Monthly</button>
+                <button data-group="yearly">Yearly</button>
+              </div>
             </div>
-
-            <div id="bar-chart-type" class="chart-toggle-group">
-              <button data-type="bar" class="active">
-                <i class="fas fa-chart-bar"></i>
-              </button>
-              <button data-type="line">
-                <i class="fas fa-chart-line"></i>
-              </button>
+            <div class="chart-container">
+              <canvas id="main-performance-chart"></canvas>
             </div>
           </div>
 
-          <canvas id="company-bar-chart"></canvas>
-        </div>
-        <div class="tracker-chart-grid">
+          <!-- Operational Metrics -->
           <div class="content-card">
-            <h3>Company Expenses</h3>
-            <div class="chart-wrapper">
-              <canvas id="company-chart"></canvas>
-            </div>
-          </div>
-          <div class="content-card">
-            <h3>Personal Expenses</h3>
-            <div class="chart-wrapper">
-              <canvas id="personal-chart"></canvas>
+            <h3 style="margin: 0 0 1.5rem 0; font-size: 1.2rem;"><i class="fas fa-wallet" style="color: #64748b; margin-right: 8px;"></i> Operating Expenses</h3>
+            <div class="metrics-grid">
+              <div class="metric-mini-card">
+                <div class="metric-header"><i class="fas fa-gas-pump" style="color: #f59e0b; font-size: 1.1rem;"></i> Total Fuel</div>
+                <div class="metric-value" id="total-fuel">₹0.00</div>
+              </div>
+              <div class="metric-mini-card">
+                <div class="metric-header"><i class="fas fa-users" style="color: #8b5cf6; font-size: 1.1rem;"></i> Staff & Adv</div>
+                <div class="metric-value" id="total-staff">₹0.00</div>
+              </div>
+              <div class="metric-mini-card">
+                <div class="metric-header"><i class="fas fa-user-tie" style="color: #3b82f6; font-size: 1.1rem;"></i> Jegan</div>
+                <div class="metric-value" id="cost-jegan">₹0.00</div>
+              </div>
+              <div class="metric-mini-card">
+                <div class="metric-header"><i class="fas fa-user-tie" style="color: #10b981; font-size: 1.1rem;"></i> Pragadeesh</div>
+                <div class="metric-value" id="cost-pragadeesh">₹0.00</div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="content-card" style="margin-top: 2rem">
-          <h3>Recent Transactions</h3>
-          <table class="tracker-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th class="mobile-hide">Account</th>
-                <th>Category</th>
-                <th class="mobile-hide">Particulars</th>
-                <th style="text-align: right">Amount</th>
-              </tr>
-            </thead>
-            <tbody id="recent-transactions-body">
-              <tr>
-                <td colspan="5" style="text-align: center">
-                  Loading transactions...
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <!-- Recent Transactions Table -->
+        <div class="content-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h3 style="margin: 0; font-size: 1.2rem;"><i class="fas fa-history" style="color: #64748b; margin-right: 8px;"></i> Recent Activity</h3>
+          </div>
+          
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th class="mobile-hide">Account</th>
+                  <th>Sub-Category</th>
+                  <th class="mobile-hide">Ref / Particulars</th>
+                  <th style="text-align: right">Amount</th>
+                </tr>
+              </thead>
+              <tbody id="recent-transactions-body">
+                <tr>
+                  <td colspan="5" style="text-align: center; padding: 2rem; color: #94a3b8;">
+                    <i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> Loading transactions...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </main>
+      </div>
 
       <div id="admin-footer"></div>
-    </div>
+    </main>
+  </div>
+  
+  <script src="/assets/js/common.js"></script>
+  <script src="tracker-dashboard.js"></script>
+</body>
 
-    <script src="/assets/js/common.js"></script>
-
-    <script src="tracker-dashboard.js"></script>
-  </body>
 </html>
