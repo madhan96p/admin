@@ -1933,12 +1933,17 @@ hr.footer-divider {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
+    background: rgba(0, 0, 0, 0.7); /* Darker overlay for better focus */
+    display: none; /* Controlled by JS */
     align-items: center;
     justify-content: center;
-    z-index: 2000;
-    padding: 1rem;
+    z-index: 9999; /* Make sure it's above the sidebar */
+}
+
+/* Add a class to handle showing it */
+.modal-overlay.active {
+    display: flex;
+    animation: fadeIn 0.3s ease;
 }
 
 .modal-content {

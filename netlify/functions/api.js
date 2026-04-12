@@ -219,7 +219,7 @@ async function sendEmail(subject, htmlBody) {
     await resend.emails.send({
       from: "Shrish Travels <travels@shrishgroup.com>",
       to: ["shrishtravels1@gmail.com"],
-      cc: ["travels@shrishgroup.com"],
+      cc: ["travels@shrishgroup.com", "drumsjega5466@gmail.com"],
       subject: subject,
       html: htmlBody,
     });
@@ -296,7 +296,9 @@ function sendClientClosedEmail(data) {
 }
 
 function generateInvoiceActionButtons(data) {
-  const viewInvoiceLink = data.Shareable_Link || `${ADMIN_URL}/view-invoice.html?id=${data.Public_ID}`;
+  const viewInvoiceLink =
+    data.Shareable_Link ||
+    `${ADMIN_URL}/view-invoice.html?id=${data.Public_ID}`;
   const editSlipLink = `${ADMIN_URL}/edit-slip.html?id=${data.Booking_ID}`;
 
   return `
@@ -333,7 +335,6 @@ function sendNewInvoiceEmail(data) {
 function generateSalaryActionButtons(data) {
   // Generate the unique slip ID
   const slipId = `${data.EmployeeID}-${data.PayPeriod}`;
-
 
   // 1. WhatsApp message for the Founder
   const founderReviewLink = `https://admin.shrishgroup.com/salary-form.html?id=${slipId}`;
@@ -767,7 +768,7 @@ exports.handler = async function (event, context) {
         const invoiceRows = await invoiceSheet.getRows();
         const bookingIdHeader = "Booking_ID";
         const foundRow = invoiceRows.find(
-          (row) => String(row[bookingIdHeader]) === String(bookingId)
+          (row) => String(row[bookingIdHeader]) === String(bookingId),
         );
         responseData = { exists: !!foundRow };
         break;

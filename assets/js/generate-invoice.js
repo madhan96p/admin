@@ -549,23 +549,31 @@ document.addEventListener("DOMContentLoaded", () => {
       const result = await response.json();
 
       if (result.success && result.shareableLink) {
-        const link = result.shareableLink;
-        elements.generatedLink.value = link;
-        // Show the modal
-        elements.successModal.style.display = "flex";
+        const invoiceLink = result.shareableLink;
+        elements.generatedLink.value = invoiceLink;
+        
+        // --- THE FIXES ---
+        // 1. MAKE IT POP: Show the success modal
+        elements.successModal.style.display = 'flex';
 
-        const guestName = invoiceData.Guest_Name || 'Guest';
-        const tripDate = formatDate(invoiceData.Trip_Start_Date);
-        const totalAmount = formatCurrency(grandTotal);
-
+        // 2. Set the WhatsApp logic with the correct dynamic data
         document.getElementById("whatsappShareBtn").onclick = () => {
-          const message = `Shrish Travels | Digital Invoice\n\nHello *${guestName}*,\nThank you for choosing us! Your trip details (DS #${bookingId}) have been finalized.\n\nDate: ${tripDate}\nTotal Amount: ${totalAmount}\nView & Pay: ${link}\n\nNote: This invoice includes the custom rates/adjustments as per our discussion.\n\nPlease complete the payment via the link or UPI to close your trip. We hope you enjoyed the ride!`;
+          // 2a. Capture the latest data from the form/variables
+          const guestName = (isManualFlow ? elements.manualGuestName.value : (currentTripData ? currentTripData.Guest_Name : '')) || "Guest";
+          const bookingId = elements.bookingIdInput.value || "N/A";
+          const tripDateValue = isManualFlow ? elements.manualStartDate.value : (currentTripData ? (currentTripData.Date_Out || currentTripData.Date) : '');
+          const tripDate = formatDate(tripDateValue);
+          const totalAmount = elements.runningGrandTotal.textContent || formatCurrency(grandTotal) || "0.00";
+          
+          // 2b. Construct and open the WhatsApp message
+          const message = `Shrish Travels | Digital Invoice\n\nHello *${guestName}*,\nThank you for choosing us! Your trip details (DS #${bookingId}) have been finalized.\n\nDate: ${tripDate}\nTotal Amount: ${totalAmount}\nView & Pay: ${invoiceLink}\n\nNote: This invoice includes the custom rates/adjustments as per our discussion.\n\nPlease complete the payment via the link or UPI to close your trip. We hope you enjoyed the ride!`;
           const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
           window.open(whatsappUrl, '_blank');
         };
 
+        // 3. Set up the copy link button
         document.getElementById("copyLinkBtn").onclick = () => {
-          navigator.clipboard.writeText(link).then(() => {
+          navigator.clipboard.writeText(invoiceLink).then(() => {
             const copyBtn = document.getElementById("copyLinkBtn");
             const originalText = copyBtn.innerHTML;
             copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
