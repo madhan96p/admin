@@ -554,7 +554,8 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // --- THE FIXES ---
         // 1. MAKE IT POP: Show the success modal
-        elements.successModal.style.display = 'flex';
+        // elements.successModal.style.display = 'flex';
+        elements.successModal.classList.add('active');
 
         // 2. Set the WhatsApp logic with the correct dynamic data
         document.getElementById("whatsappShareBtn").onclick = () => {
@@ -620,13 +621,24 @@ document.addEventListener("DOMContentLoaded", () => {
   elements.calcTotalHours.addEventListener('input', updateBillingSlabs);
 
   // Modal closing logic
+  // elements.closeModalBtn.addEventListener('click', () => {
+  //   elements.successModal.style.display = 'none';
+  // });
+
+  // elements.successModal.addEventListener('click', (e) => {
+  //   if (e.target === elements.successModal) {
+  //       elements.successModal.style.display = 'none';
+  //   }
+  // });
+
+  // Modal closing logic
   elements.closeModalBtn.addEventListener('click', () => {
-    elements.successModal.style.display = 'none';
+    elements.successModal.classList.remove('active');
   });
 
   elements.successModal.addEventListener('click', (e) => {
     if (e.target === elements.successModal) {
-        elements.successModal.style.display = 'none';
+        elements.successModal.classList.remove('active');
     }
   });
 

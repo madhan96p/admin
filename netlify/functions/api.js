@@ -90,7 +90,38 @@ function generateActionButtons(data) {
   const driverSignature = `\n\nRegards Shrish Group\nContact +91 8883451668 / 9176500207\n- Sent via Shrish Travels`;
 
   // 4. Modification: NEW WhatsApp Driver Message Format
-  const driverMessage = `*Duty Slip: #${data.DS_No}*\n\n👤 Guest: ${data.Guest_Name}\n📞 Guest Contact: +91 ${data.Guest_Mobile}\n⏰ Time: ${data.Reporting_Time}\n📍 Address: ${data.Reporting_Address}\n\n🔗 *Tap to Complete Duty Slip:* ${ADMIN_URL}/edit-slip.html?id=${data.DS_No}\n\n- Shrish Travels Team`;
+  const driverMessage = `🔔 *NEW DUTY ASSIGNMENT*
+
+  Dear Driver,
+
+You have been assigned the following trip.
+
+📋 Reference No: #${data.DS_No}
+
+👤 Guest Name: ${data.Guest_Name}
+📞 Guest Contact: +91 ${data.Guest_Mobile}
+
+⏰ Reporting Time: ${data.Reporting_Time}
+
+📍 Pickup Location:
+${data.Reporting_Address}
+
+━━━━━━━━━━━━━━━
+
+🔗 Complete Duty Slip:
+${ADMIN_URL}/edit-slip.html?id=${data.DS_No}
+
+Kindly update the duty slip and verify all trip details before reporting.
+
+Safe driving and best wishes.
+
+━━━━━━━━━━━━━━━
+
+*ShRish Group*
+🌐 http://shrishgroup.com
+
+*Transportation • Construction • Business Solutions*
+_Built on Trust. Driven by Progress._`;
   const driverLink = generateWhatsappLink(data.Driver_Mobile, driverMessage);
 
   // 2. Message for the Guest with chauffeur information
@@ -295,18 +326,30 @@ function sendClientClosedEmail(data) {
 }
 
 function generateInvoiceActionButtons(data) {
-  const viewInvoiceLink =
-    data.Shareable_Link ||
-    `${ADMIN_URL}/view-invoice.html?id=${data.Public_ID}`;
+  const viewInvoiceLink = data.Shareable_Link || `${ADMIN_URL}/view-invoice.html?id=${data.Public_ID}`;
   const editSlipLink = `${ADMIN_URL}/edit-slip.html?id=${data.Booking_ID}`;
+
+  // PRO MARKETING TRAVELER STRATEGY: Injecting Trust & Safety
+  const guestMessage = `Shrish Travels | Digital Invoice\n\nHello *${data.Guest_Name || 'Guest'}*,\nThank you for choosing us! Your trip details (DS #${data.Booking_ID}) have been finalized.\n\nGrand Total: ₹${formatCurrency(data.Grand_Total)}\nView & Pay Securely: ${viewInvoiceLink}\n\n*Note:* All our drivers hold Internationally Approved Driving Licenses for your safety. We prioritize quality above all.\n\nPlease complete the payment via the secure link. We look forward to serving you again.`;
+  
+  const guestShareLink = generateWhatsappLink(data.Guest_Mobile, guestMessage);
 
   return `
         <div style="margin: 40px 0 0 0; padding-top: 30px; border-top: 1px solid #e5e7eb;">
             <h3 style="color: #111827; text-align: center; margin: 0 0 25px 0; font-size: 18px; font-weight: 600; letter-spacing: 0.5px;">QUICK ACTIONS</h3>
             <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 14px;">
                 <tr>
-                    <td style="padding: 6px;"><a href="${viewInvoiceLink}" style="background-color: #4338CA; color: white; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: 600; display: block; letter-spacing: 0.5px;">View Invoice</a></td>
-                    <td style="padding: 6px;"><a href="${editSlipLink}" style="background-color: #374151; color: white; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: 600; display: block; letter-spacing: 0.5px;">Edit Duty Slip</a></td>
+                    <td style="padding: 6px;">
+                        <a href="${viewInvoiceLink}" style="background-color: #4338CA; color: white; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: 600; display: block; letter-spacing: 0.5px;">View Invoice</a>
+                    </td>
+                    <td style="padding: 6px;">
+                        <a href="${guestShareLink}" style="background-color: #25D366; color: white; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: 600; display: block; letter-spacing: 0.5px;">Share to Guest (WA)</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="padding: 6px;">
+                        <a href="${editSlipLink}" style="background-color: #374151; color: white; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: 600; display: block; letter-spacing: 0.5px;">Edit Original Duty Slip</a>
+                    </td>
                 </tr>
             </table>
             <div style="text-align:center; margin-top: 25px; font-size: 14px;">
@@ -461,7 +504,6 @@ exports.handler = async function (event, context) {
   const { action } = event.queryStringParameters;
   let responseData = {};
 
-  
   try {
     // --- 2. API Actions (Switch Statement) ---
     switch (action) {
@@ -1094,7 +1136,7 @@ exports.handler = async function (event, context) {
           Payment_Method: data.Payment_Method,
           Reference: data.Reference || "", // CAPTURES VEHICLE NO / CARD NAME
           Particulars: data.Particulars,
-          Timestamp: data.Timestamp
+          Timestamp: data.Timestamp,
         });
 
         responseData = { success: true, message: "Entry saved successfully." };

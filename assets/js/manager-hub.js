@@ -155,7 +155,38 @@ document.addEventListener("DOMContentLoaded", () => {
       "_blank",
     );
   }
+  const driverMessage = `🔔 *NEW DUTY ASSIGNMENT*
 
+  Dear Driver,
+
+You have been assigned the following trip.
+
+📋 Reference No: #${data.DS_No}
+
+👤 Guest Name: ${data.Guest_Name}
+📞 Guest Contact: +91 ${data.Guest_Mobile}
+
+⏰ Reporting Time: ${data.Reporting_Time}
+
+📍 Pickup Location:
+${data.Reporting_Address}
+
+━━━━━━━━━━━━━━━
+
+🔗 Complete Duty Slip:
+${ADMIN_URL}/edit-slip.html?id=${data.DS_No}
+
+Kindly update the duty slip and verify all trip details before reporting.
+
+Safe driving and best wishes.
+
+━━━━━━━━━━━━━━━
+
+*ShRish Group*
+🌐 http://shrishgroup.com
+
+*Transportation • Construction • Business Solutions*
+_Built on Trust. Driven by Progress._`;
   function shareInfoWithGuest(slip) {
     const mobile = slip.Guest_Mobile?.replace(/\D/g, "");
     if (!mobile) return alert("Guest mobile not found.");
