@@ -326,13 +326,21 @@ function sendClientClosedEmail(data) {
 }
 
 function generateInvoiceActionButtons(data) {
-  const viewInvoiceLink = data.Shareable_Link || `${ADMIN_URL}/view-invoice.html?id=${data.Public_ID}`;
+  const viewInvoiceLink =
+    data.Shareable_Link ||
+    `${ADMIN_URL}/view-invoice.html?id=${data.Public_ID}`;
   const editSlipLink = `${ADMIN_URL}/edit-slip.html?id=${data.Booking_ID}`;
 
   // PRO MARKETING TRAVELER STRATEGY: Injecting Trust & Safety
-  const guestMessage = `Shrish Travels | Digital Invoice\n\nHello *${data.Guest_Name || 'Guest'}*,\nThank you for choosing us! Your trip details (DS #${data.Booking_ID}) have been finalized.\n\nGrand Total: ₹${formatCurrency(data.Grand_Total)}\nView & Pay Securely: ${viewInvoiceLink}\n\n*Note:* All our drivers hold Internationally Approved Driving Licenses for your safety. We prioritize quality above all.\n\nPlease complete the payment via the secure link. We look forward to serving you again.`;
-  
+  const guestMessage = `Shrish Travels | Digital Invoice\n\nHello *${data.Guest_Name || "Guest"}*,\nThank you for choosing us! Your trip details (DS #${data.Booking_ID}) have been finalized.\n\nGrand Total: ₹${formatCurrency(data.Grand_Total)}\nView & Pay Securely: ${viewInvoiceLink}\n\n*Note:* All our drivers hold Internationally Approved Driving Licenses for your safety. We prioritize quality above all.\n\nPlease complete the payment via the secure link. We look forward to serving you again.`;
+
   const guestShareLink = generateWhatsappLink(data.Guest_Mobile, guestMessage);
+
+  // LOGIC FIX: Check if it is a manual invoice
+  const isManual = String(data.Booking_ID).startsWith("MANUAL-");
+  const editSlipHtml = isManual
+    ? `<td colspan="2" style="padding: 6px; color: #6b7280; font-size: 12px;"><em>(Manual Invoice: No original duty slip exists)</em></td>`
+    : `<td colspan="2" style="padding: 6px;"><a href="${editSlipLink}" style="background-color: #374151; color: white; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: 600; display: block; letter-spacing: 0.5px;">Edit Original Duty Slip</a></td>`;
 
   return `
         <div style="margin: 40px 0 0 0; padding-top: 30px; border-top: 1px solid #e5e7eb;">
@@ -347,9 +355,7 @@ function generateInvoiceActionButtons(data) {
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2" style="padding: 6px;">
-                        <a href="${editSlipLink}" style="background-color: #374151; color: white; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: 600; display: block; letter-spacing: 0.5px;">Edit Original Duty Slip</a>
-                    </td>
+                    ${editSlipHtml}
                 </tr>
             </table>
             <div style="text-align:center; margin-top: 25px; font-size: 14px;">
